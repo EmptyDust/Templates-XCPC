@@ -1,3 +1,8 @@
+---
+title: 数据结构A
+date: 2025-07-05 00:57:28
+categories: '算法竞赛'
+---
 ## 数据结构A
 
 ### 笛卡尔树
@@ -441,7 +446,7 @@ struct Segt {
 };
 ```
 
-#### 区间加法修改、区间最小值查询
+#### 区间加法修改、区间最小值查询 已修正 2025.7.19
 
 ```c++
 template<class T> struct Segt {
@@ -449,12 +454,12 @@ template<class T> struct Segt {
         int l, r;
         T w, rmq, lazy;
     };
-    vector<T> w;
-    vector<node> t;
+    std::vector<T> w;
+    std::vector<node> t;
 
     Segt() {}
     Segt(int n) { init(n); }
-    Segt(vector<int> in) {
+    Segt(std::vector<int> in) {
         int n = in.size() - 1;
         w.resize(n + 1);
         for (int i = 1; i <= n; i++) {
@@ -462,42 +467,42 @@ template<class T> struct Segt {
         }
         init(in.size() - 1);
     }
-    
-    #define GL (k << 1)
-    #define GR (k << 1 | 1)
-    
+
+#define GL (k << 1)
+#define GR (k << 1 | 1)
+
     void init(int n) {
         w.resize(n + 1);
         t.resize(n * 4 + 1);
         auto build = [&](auto self, int l, int r, int k = 1) {
             if (l == r) {
-                t[k] = {l, r, w[l], w[l], -1}; // 如果有赋值为 0 的操作，则懒标记必须要 -1
+                t[k] = { l, r, w[l], w[l], 0 }; // 如果有赋值为 0 的操作，则懒标记必须要 -1
                 return;
             }
-            t[k] = {l, r, 0, 0, -1};
+            t[k] = { l, r, 0, 0, 0 };
             int mid = (l + r) / 2;
             self(self, l, mid, GL);
             self(self, mid + 1, r, GR);
             pushup(k);
-        };
+            };
         build(build, 1, n);
     }
-    void pushdown(node &p, T lazy) { /* 【在此更新下递函数】 */
+    void pushdown(node& p, T lazy) { /* 【在此更新下递函数】 */
         p.w += (p.r - p.l + 1) * lazy;
         p.rmq += lazy;
         p.lazy += lazy;
     }
     void pushdown(int k) {
-        if (t[k].lazy == -1) return;
+        if (t[k].lazy == 0) return;
         pushdown(t[GL], t[k].lazy);
         pushdown(t[GR], t[k].lazy);
-        t[k].lazy = -1;
+        t[k].lazy = 0;
     }
     void pushup(int k) {
-        auto pushup = [&](node &p, node &l, node &r) { /* 【在此更新上传函数】 */
+        auto pushup = [&](node& p, node& l, node& r) { /* 【在此更新上传函数】 */
             p.w = l.w + r.w;
-            p.rmq = min(l.rmq, r.rmq); // RMQ -> min/max
-        };
+            p.rmq = std::min(l.rmq, r.rmq); // RMQ -> min/max
+            };
         pushup(t[k], t[GL], t[GR]);
     }
     void modify(int l, int r, T val, int k = 1) { // 区间修改
@@ -517,9 +522,9 @@ template<class T> struct Segt {
         }
         pushdown(k);
         int mid = (t[k].l + t[k].r) / 2;
-        T ans = numeric_limits<T>::max(); // RMQ -> 为 max 时需要修改为 ::lowest()
-        if (l <= mid) ans = min(ans, rmq(l, r, GL)); // RMQ -> min/max
-        if (mid < r) ans = min(ans, rmq(l, r, GR)); // RMQ -> min/max
+        T ans = std::numeric_limits<T>::max(); // RMQ -> 为 max 时需要修改为 ::lowest()
+        if (l <= mid) ans = std::min(ans, rmq(l, r, GL)); // RMQ -> min/max
+        if (mid < r) ans = std::min(ans, rmq(l, r, GR)); // RMQ -> min/max
         return ans;
     }
     T ask(int l, int r, int k = 1) { // 区间询问
@@ -534,11 +539,11 @@ template<class T> struct Segt {
         return ans;
     }
     void debug(int k = 1) {
-        cout << "[" << t[k].l << ", " << t[k].r << "]: ";
-        cout << "w = " << t[k].w << ", ";
-        cout << "Min = " << t[k].rmq << ", ";
-        cout << "lazy = " << t[k].lazy << ", ";
-        cout << endl;
+        std::cout << "[" << t[k].l << ", " << t[k].r << "]: ";
+        std::cout << "w = " << t[k].w << ", ";
+        std::cout << "Min = " << t[k].rmq << ", ";
+        std::cout << "lazy = " << t[k].lazy << ", ";
+        std::cout << std::endl;
         if (t[k].l == t[k].r) return;
         debug(GL), debug(GR);
     }
