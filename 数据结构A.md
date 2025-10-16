@@ -32,7 +32,7 @@ for (int i = 0; i < n; i++) {
 ```cpp
 struct dsu {
     std::vector<int> d;
-    dsu(int n) { d.resize(n); iota(d.begin(), d.end(), 0); }
+    dsu(int n) { d.resize(n + 1); iota(d.begin(), d.end(), 0); }
     int get_root(int x) { return d[x] = (x == d[x] ? x : get_root(d[x])); };
     bool merge(int u, int v) {
         if (get_root(u) != get_root(v)) {
