@@ -566,8 +566,6 @@ struct Tag {
     }
 };
 
-int k;
-
 struct Info {
     i64 x = 0;
     void apply(Tag t) {
@@ -1578,62 +1576,120 @@ sort(query.begin() + 1, query.end(), [&](auto x, auto y) {
 以 $\mathcal O(N^\frac{5}{3})$ 的复杂度完成 $Q$ 次询问的离线查询，其中每个分块的大小取 $N^\frac{2}{3}=\sqrt[3]{100000^2}=2154$ （直接取会略快），也可以使用 `pow(n, 0.6666)` 划分。
 
 ```c++
-signed main() {
-    int n, q;
-    cin >> n >> q;
-    vector<int> w(n + 1);
-    for (int i = 1; i <= n; i++) {
-        cin >> w[i];
-    }
-    
-    vector<array<int, 4>> query = {{}}; // {左区间, 右区间, 累计修改次数, 下标}
-    vector<array<int, 2>> modify = {{}}; // {修改的值, 修改的元素下标}
-    for (int i = 1; i <= q; i++) {
-        char op;
-        cin >> op;
+	int n, m;    std::cin >> n >> m;
+    std::vector<int> a(n + 1);
+    for (int i = 1;i <= n;i++)   std::cin >> a[i];
+
+    std::vector<a4> q{ {} };        // {左区间, 右区间, 累计修改次数, 下标}
+    std::vector<a2> upd{ {} };      // {修改位置，修改的值}
+    for (int i = 1;i <= m;i++) {
+        char op;    std::cin >> op;
         if (op == 'Q') {
-            int l, r;
-            cin >> l >> r;
-            query.push_back({l, r, (int)modify.size() - 1, (int)query.size()});
-        } else {
-            int idx, w;
-            cin >> idx >> w;
-            modify.push_back({w, idx});
+            int l, r;   std::cin >> l >> r;
+            q.push_back(a4{ l,r,(int)upd.size() - 1 ,(int)q.size() });
+        }
+        else {
+            int idx, val;   std::cin >> idx >> val;
+            upd.push_back({ idx,val });
         }
     }
-    
-    int Knum = 2154; // 计算块长
-    vector<int> K(n + 1);
-    for (int i = 1; i <= n; i++) { // 固定块长
-        K[i] = (i - 1) / Knum + 1;
-    }
-    sort(query.begin() + 1, query.end(), [&](auto x, auto y) {
-        if (K[x[0]] != K[y[0]]) return x[0] < y[0];
-        if (K[x[1]] != K[y[1]]) return x[1] < y[1];
+
+    int block = 2610;   //n ^ (2 / 3)
+    std::vector<int> b(n + 1);
+    for (int i = 1;i <= n;i++) b[i] = (i - 1) / block + 1;
+    std::sort(q.begin() + 1, q.end(), [&](auto x, auto y) {
+        if (b[x[0]] != b[y[0]]) return x[0] < y[0];
+        if (b[x[1]] != b[y[1]]) return x[1] < y[1];
         return x[3] < y[3];
-    });
-    
-    int l = 1, r = 0, val = 0;
-    int t = 0; // 累计修改次数
-    vector<int> ans(query.size());
-    for (int i = 1; i < query.size(); i++) {
-        auto [ql, qr, qt, id] = query[i];
-        auto add = [&](int x) -> void {};
-        auto del = [&](int x) -> void {};
-        auto time = [&](int x, int l, int r) -> void {};
-        while (l > ql) add(w[--l]);
-        while (r < qr) add(w[++r]);
-        while (l < ql) del(w[l++]);
-        while (r > qr) del(w[r--]);
+        });
+
+    n = q.size() - 1;
+    int l = 1, r = 0, t = 0;
+    std::vector<int> ans(n + 1);
+    for (int i = 1;i <= n;i++) {
+        auto [ql, qr, qt, id] = q[i];
+
+        auto add = [&](int x) {};
+        auto del = [&](int x) {};
+        auto time = [&](int t, int l, int r) {
+            int pos = upd[t][0];
+            int& val = upd[t][1];
+            if (pos >= l && pos <= r) {
+                del(a[pos]);
+                add(val);
+            }
+            std::swap(a[pos], val);
+            };
+
+        while (l > ql) add(a[--l]);
+        while (r < qr) add(a[++r]);
+        while (l < ql) del(a[l++]);
+        while (r > qr) del(a[r--]);
         while (t < qt) time(++t, ql, qr);
         while (t > qt) time(t--, ql, qr);
-        ans[id] = val;
+
+        ans[id] = cnt;
     }
-    for (int i = 1; i < ans.size(); i++) {
-        cout << ans[i] << endl;
-    }
-}
+    for (int i = 1;i <= n;i++)    std::cout << ans[i] << '\n';
 ```
+
+### 回滚莫队
+
+``` cpp
+ 	std::vector<a3> q(m + 1);
+    for (int i = 1;i <= m;i++) {
+        int l, r;   std::cin >> l >> r;
+        q[i] = { l,r,i };
+    }
+    int block = n / std::min<int>(n, sqrt(m));
+    std::vector<int> b(n + 1);
+    for (int i = 1;i <= n;i++) b[i] = (i - 1) / block + 1;
+    std::sort(q.begin() + 1, q.end(), [&](auto x, auto y) {
+        if (b[x[0]] != b[y[0]]) return x[0] < y[0];
+        return x[1] < y[1];
+        });
+
+    int l = 1, r = 0, cur_block = 0, tmpl;
+    int res = 0;
+    std::vector<i64> ans(m + 1);
+    for (int i = 1;i <= m;i++) {
+        auto [ql, qr, id] = q[i];
+
+        if (b[ql] == b[qr]) {
+            //暴力
+            for (int j = ql;j <= qr;j++);
+            //遍历答案
+            for (int j = ql;j <= qr;j++);
+            //撤销        
+            for (int j = ql;j <= qr;j++);
+            continue;
+        }
+
+        auto add = [&](int x, i64& res) {};
+        auto del = [&](int x) {};
+
+        //若当前更新到了一个新的块
+        if (b[ql] != cur_block) {
+            while (r > b[ql] * block) del(w[r--]);
+            while (l < b[ql] * block + 1) del(w[l++]);
+            res = 0;
+            cur_block = b[ql];
+        }
+        //先移动右指针
+        while (r < qr) add(w[++r], res);
+        tmpl = l;
+        i64 tmpres = res;
+        //查询答案
+        while (tmpl > ql) add(w[--tmpl], tmpres);
+        ans[id] = tmpres;
+        //回滚
+        while (tmpl < l) del(w[tmpl++]);
+    }
+
+    for (int i = 1;i <= m;i++)   std::cout << ans[i] << '\n';
+```
+
+
 
 ## 对顶堆
 
