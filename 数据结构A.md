@@ -147,7 +147,7 @@ struct DSU {
 用于解决区间可重复贡献问题，需要满足 $x \text{ 运算符 } x=x$ （如区间最大值：$\max(x,x)=x$ 、区间 $\gcd$：$\gcd(x,x)=x$ 等），但是不支持修改操作。$\mathcal O(N\log N)$ 预处理，$\mathcal O(1)$ 查询。
 
 ```c++
-template<class T>
+template<typename T>
 struct sparse_table
 {
     std::vector<std::vector<T>> vt;
@@ -186,7 +186,7 @@ struct Info
 ### Fenwick Tree 树状数组
 
 ```cpp
-template<class T> struct BIT {
+template<typename T> struct BIT {
     int n;
     vector<T> w;
     BIT(int n, auto &in) : n(n), w(n + 1) { // 预处理填值
@@ -294,7 +294,7 @@ signed main() {
 以 $\mathcal O(\log \log N)$ 的复杂度运行，但是即便如此依然略优于线段树（后者常数较大）。
 
 ```c++
-template<class T> struct BIT {
+template<typename T> struct BIT {
     int n;
     vector<T> w, base;
     #define low(x) (x & -x)
@@ -422,7 +422,7 @@ struct BIT_2D {
 #### LazyInfoTag线段树
 
 ``` cpp
-template<class Info, class Tag>
+template<typename Info, typename Tag>
 struct LazySegmentTree {
     int n;
     std::vector<Info> info;
@@ -431,14 +431,14 @@ struct LazySegmentTree {
     LazySegmentTree(int n_, Info v_ = Info()) {
         init(n_, v_);
     }
-    template<class T>
+    template<typename T>
     LazySegmentTree(std::vector<T> init_) {
         init(init_);
     }
     void init(int n_, Info v_ = Info()) {
         init(std::vector(n_, v_));
     }
-    template<class T>
+    template<typename T>
     void init(std::vector<T> init_) {
         n = init_.size();
         info.assign(4 << std::__lg(n), Info());
@@ -516,7 +516,7 @@ struct LazySegmentTree {
     void rangeApply(int l, int r, const Tag& v) {
         return rangeApply(1, 0, n, l, r, v);
     }
-    template<class F>
+    template<typename F>
     int findFirst(int p, int l, int r, int x, int y, F pred) {
         if (l >= y || r <= x || !pred(info[p])) {
             return -1;
@@ -532,11 +532,11 @@ struct LazySegmentTree {
         }
         return res;
     }
-    template<class F>
+    template<typename F>
     int findFirst(int l, int r, F pred) {
         return findFirst(1, 0, n, l, r, pred);
     }
-    template<class F>
+    template<typename F>
     int findLast(int p, int l, int r, int x, int y, F pred) {
         if (l >= y || r <= x || !pred(info[p])) {
             return -1;
@@ -552,7 +552,7 @@ struct LazySegmentTree {
         }
         return res;
     }
-    template<class F>
+    template<typename F>
     int findLast(int l, int r, F pred) {
         return findLast(1, 0, n, l, r, pred);
     }
@@ -624,7 +624,7 @@ const int inf = 2147483647;
 
 tree<pii, null_type, std::less<pii>, rb_tree_tag, tree_order_statistics_node_update> ver;
 
-template<class Info>
+template<typename Info>
 struct SegmentTree {
     int n;
     std::vector<Info> info;

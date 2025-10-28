@@ -235,7 +235,7 @@ cout << B1 << " " << B2 << "\n"; //你可以直接使用cout输出
 
 ```c++
 struct hash_pair { 
-    template <class T1, class T2> 
+    template<typename T1, typename T2> 
     size_t operator()(const pair<T1, T2> &p) const { 
         return hash<T1>()(p.fi) ^ hash<T2>()(p.se); 
     } 

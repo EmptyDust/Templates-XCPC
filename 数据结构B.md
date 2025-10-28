@@ -5,7 +5,7 @@
 严格 $\mathcal O(N)$ 预处理，$\mathcal O(1)$ 查询。
 
 ```c++
-template<class T, class Cmp = less<T>> struct RMQ {
+template<typename T, typename Cmp = less<T>> struct RMQ {
     const Cmp cmp = Cmp();
     static constexpr unsigned B = 64;
     using u64 = unsigned long long;
