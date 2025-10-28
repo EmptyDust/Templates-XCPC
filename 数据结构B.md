@@ -4,7 +4,7 @@
 
 严格 $\mathcal O(N)$ 预处理，$\mathcal O(1)$ 查询。
 
-```c++
+```cpp
 template<typename T, typename Cmp = less<T>> struct RMQ {
     const Cmp cmp = Cmp();
     static constexpr unsigned B = 64;
@@ -83,7 +83,7 @@ template<typename T, typename Cmp = less<T>> struct RMQ {
 
 区间赋值的数据结构都可以骗分，在数据随机的情况下，复杂度可以保证，时间复杂度：$\mathcal O(N\log\log N)$ 。
 
-```c++
+```cpp
 struct ODT {
     struct node {
         int l, r;
@@ -157,7 +157,7 @@ struct ODT {
 
 > 附常见成员函数：
 >
-> ```c++
+> ```cpp
 > empty() / size()
 > insert(x) // 插入元素x
 > erase(x) // 删除元素/迭代器x
@@ -168,7 +168,7 @@ struct ODT {
 > split(x, Tree) // 将大于x的元素放入Tree树
 > ```
 
-```c++
+```cpp
 #include <ext/pb_ds/assoc_container.hpp>
 using namespace __gnu_pbds;
 using V = pair<int, int>;
@@ -199,7 +199,7 @@ for (int i = 1, op, x; i <= n; i++) {
 
 ### vector 模拟实现平衡二叉树
 
-```c++
+```cpp
 #define ALL(x) x.begin(), x.end()
 #define pre lower_bound
 #define suf upper_bound
@@ -222,7 +222,7 @@ for (int i = 1, op, x; i <= n; i++) {
 
 区间的端点只是一个数字，即使被改变了，通过一定的转换也能够还原，所以我们可以 $\mathcal O(1)$ 解决这一问题。为了方便计算，我们规定下标从 $0$ 开始，即整个线段的区间为 $[0, n)$ ，随后，使用一个偏移量 `shift` 记录。使用 `shift = (shift + x) % n;` 更新偏移量；此后的区间查询/修改前，再将坐标偏移回去即可，下方代码使用区间修改作为示例。
 
-```c++
+```cpp
 cin >> l >> r >> x;
 l--; // 坐标修改为 0 开始
 r--;
@@ -245,7 +245,7 @@ if (l > r) { // 区间分离则分别操作
 
 输入格式为：第一行 $n$ 和 $q\ (1\le n, q\le 133333)$ 分别代表区间长度和操作数量；第二行 $n$ 个整数 $a_1,a_2\dots,a_n\ (1\le a_i\le 10^6)$ 代表初始颜色；随后 $q$ 行为具体操作。
 
-```c++
+```cpp
 const int N = 1e6 + 7;
 signed main() {
     int n, q;

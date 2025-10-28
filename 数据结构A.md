@@ -146,7 +146,7 @@ struct DSU {
 
 用于解决区间可重复贡献问题，需要满足 $x \text{ 运算符 } x=x$ （如区间最大值：$\max(x,x)=x$ 、区间 $\gcd$：$\gcd(x,x)=x$ 等），但是不支持修改操作。$\mathcal O(N\log N)$ 预处理，$\mathcal O(1)$ 查询。
 
-```c++
+```cpp
 template<typename T>
 struct sparse_table
 {
@@ -214,7 +214,7 @@ template<typename T> struct BIT {
 
 #### 逆序对扩展
 
-```c++
+```cpp
 struct BIT {
     int n;
     vector<int> w, chk; // chk 为传入的待处理数组
@@ -240,7 +240,7 @@ struct BIT {
 
 注意，被查询的值都应该小于等于 $N$ ，否则会越界；如果离散化不可使用，则需要使用平衡树替代。
 
-```c++
+```cpp
 struct BIT {
     int n;
     vector<int> w;
@@ -293,7 +293,7 @@ signed main() {
 
 以 $\mathcal O(\log \log N)$ 的复杂度运行，但是即便如此依然略优于线段树（后者常数较大）。
 
-```c++
+```cpp
 template<typename T> struct BIT {
     int n;
     vector<T> w, base;
@@ -326,7 +326,7 @@ template<typename T> struct BIT {
 
 **封装一：该版本不能同时进行区间修改+区间查询。**无离散化版本的空间占用为 $\mathcal O(NM)$ 、建树复杂度为 $\mathcal O(NM)$ 、单次查询复杂度为 $\mathcal O(\log N\cdot \log M)$ 。
 
-```c++
+```cpp
 struct BIT_2D {
     int n, m;
     vector<vector<int>> w;
@@ -364,7 +364,7 @@ struct BIT_2D {
 
 **封装二：该版本支持全部操作。**但是时空复杂度均比上一个版本多 $4$ 倍。
 
-```c++
+```cpp
 struct BIT_2D {
     int n, m;
     vector<vector<int>> b1, b2, b3, b4;
@@ -578,7 +578,7 @@ Info operator+(Info a, Info b) {
 
 #### 快速线段树（单点修改+区间最值）
 
-```c++
+```cpp
 struct Segt {
     vector<int> w;
     int n;
@@ -736,7 +736,7 @@ struct Info {
 
 手写 `bitset` 压位，以 $\mathcal O(N \log N)$ 的时间复杂度和 $\mathcal O(N + \frac{N \log N}{64})$ 的空间建树后，实现单次 $\mathcal O(\log N)$ 复杂度的区间第 $k$ 大值询问。建议使用 $\texttt{0-idx}$ 计数法，但是经测试 $\texttt{1-idx}$ 也有效，但需要更多的检验。
 
-```c++
+```cpp
 #define __count(x) __builtin_popcountll(x)
 struct Wavelet {
     vector<int> val, sum;
@@ -850,7 +850,7 @@ struct PreesidentTree {
 
 以 $\mathcal O(N \sqrt N)$ 的复杂度完成 $Q$ 次询问的离线查询，其中每个分块的大小取 $\sqrt N=\sqrt {10^5} = 317$ ，也可以使用 `n / min<int>(n, sqrt(q))` 、 `ceil((double)n / (int)sqrt(n))` 或者 `sqrt(n)` 划分。
 
-```c++
+```cpp
 signed main() {
     int n;
     cin >> n;
@@ -903,7 +903,7 @@ signed main() {
 
 以 $\mathcal O(N^\frac{5}{3})$ 的复杂度完成 $Q$ 次询问的离线查询，其中每个分块的大小取 $N^\frac{2}{3}=\sqrt[3]{100000^2}=2154$ （直接取会略快），也可以使用 `pow(n, 0.6666)` 划分。
 
-```c++
+```cpp
 	int n, m;    std::cin >> n >> m;
     std::vector<int> a(n + 1);
     for (int i = 1;i <= n;i++)   std::cin >> a[i];
@@ -1067,7 +1067,7 @@ namespace Set {
 
 在第 $k$ 维上的单次查询复杂度最坏为 $\mathcal O(n^{1-k^{-1}})$。
 
-```c++
+```cpp
 struct KDT {
     constexpr static int N = 1e5 + 10, K = 2;
     double alpha = 0.725;
