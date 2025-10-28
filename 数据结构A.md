@@ -147,40 +147,38 @@ struct DSU {
 用于解决区间可重复贡献问题，需要满足 $x \text{ 运算符 } x=x$ （如区间最大值：$\max(x,x)=x$ 、区间 $\gcd$：$\gcd(x,x)=x$ 等），但是不支持修改操作。$\mathcal O(N\log N)$ 预处理，$\mathcal O(1)$ 查询。
 
 ```c++
-struct ST {
-    const int n, k;
-    vector<int> in1, in2;
-    vector<vector<int>> Max, Min;
-    ST(int n) : n(n), in1(n + 1), in2(n + 1), k(__lg(n)) {
-        Max.resize(k + 1, vector<int>(n + 1));
-        Min.resize(k + 1, vector<int>(n + 1));
-    }
-    void init() {
-        for (int i = 1; i <= n; i++) {
-            Max[0][i] = in1[i];
-            Min[0][i] = in2[i];
-        }
-        for (int i = 0, t = 1; i < k; i++, t <<= 1) {
-            const int T = n - (t << 1) + 1;
-            for (int j = 1; j <= T; j++) {
-                Max[i + 1][j] = max(Max[i][j], Max[i][j + t]);
-                Min[i + 1][j] = min(Min[i][j], Min[i][j + t]);
+template<class T>
+struct sparse_table
+{
+    std::vector<std::vector<T>> vt;
+    sparse_table(std::vector<T> a) {
+        int n = a.size();
+        vt.assign(n, std::vector<T>(30));
+        for (int i = 0;i < n;++i)
+            vt[i][0] = a[i];
+        for (int s = 1;s < 30;++s) {
+            for (int i = 0;i < n;++i) {
+                int j = i + (1 << s - 1);
+                if (j < n) {
+                    vt[i][s] = vt[i][s - 1] + vt[i + (1 << s - 1)][s - 1];
+                }
+                else vt[i][s] = vt[i][s - 1];
             }
         }
     }
-    int getMax(int l, int r) {
-        if (l > r) {
-            swap(l, r);
-        }
-        int k = __lg(r - l + 1);
-        return max(Max[k][l], Max[k][r - (1 << k) + 1]);
+    T query(int l, int r) {//[l,r)
+        if (l == r) return T(0);
+        int len = r - l;
+        int x = std::__lg(len);
+        return vt[l][x] + vt[r - (1 << x)][x];
     }
-    int getMin(int l, int r) {
-        if (l > r) {
-            swap(l, r);
-        }
-        int k = __lg(r - l + 1);
-        return min(Min[k][l], Min[k][r - (1 << k) + 1]);
+};
+
+struct Info
+{
+    i64 a;
+    Info operator+(Info x) {
+        return Info(std::max(a, x.a));
     }
 };
 ```
