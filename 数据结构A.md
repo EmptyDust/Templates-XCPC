@@ -1,9 +1,10 @@
 ---
 title: 数据结构A
 date: 2025-07-05 00:57:28
-categories: '算法竞赛'
+categories: "算法竞赛"
 ---
-## 数据结构A
+
+## 数据结构 A
 
 ### 笛卡尔树
 
@@ -25,7 +26,7 @@ for (int i = 0; i < n; i++) {
 }
 ```
 
-### dsu并查集
+### dsu 并查集
 
 #### 路径优化(普遍)
 
@@ -46,7 +47,7 @@ struct dsu {
 
 #### 根据集合的大小优化
 
-~~~ cpp
+```cpp
 //左移位数根据节点个数定
 #define UFLIMIT (2<<17)
 int unicnt[UFLIMIT];
@@ -61,11 +62,11 @@ void uni(int x, int y) {
     unicnt[x] += unicnt[y];
     unicnt[y] = -x;
 }
-~~~
+```
 
 #### 按秩合并优化
 
-~~~ cpp
+```cpp
 class UnionFind {
 private:
     std::vector<int> parent;
@@ -96,7 +97,7 @@ public:
         return find(x) == find(y);
     }
 };
-~~~
+```
 
 #### 常用操作
 
@@ -146,8 +147,8 @@ struct DSU {
 
 用于解决区间可重复贡献问题，需要满足 $x \text{ 运算符 } x=x$ （如区间最大值：$\max(x,x)=x$ 、区间 $\gcd$：$\gcd(x,x)=x$ 等），但是不支持修改操作。$\mathcal O(N\log N)$ 预处理，$\mathcal O(1)$ 查询。
 
-```c++
-template<class T>
+```cpp
+template<typename T>
 struct sparse_table
 {
     std::vector<std::vector<T>> vt;
@@ -186,7 +187,7 @@ struct Info
 ### Fenwick Tree 树状数组
 
 ```cpp
-template<class T> struct BIT {
+template<typename T> struct BIT {
     int n;
     vector<T> w;
     BIT(int n, auto &in) : n(n), w(n + 1) { // 预处理填值
@@ -214,11 +215,11 @@ template<class T> struct BIT {
 
 #### 逆序对扩展
 
-```c++
+```cpp
 struct BIT {
     int n;
     vector<int> w, chk; // chk 为传入的待处理数组
-    BIT(int n, auto &in) : n(n), w(n + 1), chk(in) {} 
+    BIT(int n, auto &in) : n(n), w(n + 1), chk(in) {}
     /* 需要全部常规封装 */
     int get() {
         vector<array<int, 2>> alls;
@@ -240,7 +241,7 @@ struct BIT {
 
 注意，被查询的值都应该小于等于 $N$ ，否则会越界；如果离散化不可使用，则需要使用平衡树替代。
 
-```c++
+```cpp
 struct BIT {
     int n;
     vector<int> w;
@@ -293,8 +294,8 @@ signed main() {
 
 以 $\mathcal O(\log \log N)$ 的复杂度运行，但是即便如此依然略优于线段树（后者常数较大）。
 
-```c++
-template<class T> struct BIT {
+```cpp
+template<typename T> struct BIT {
     int n;
     vector<T> w, base;
     #define low(x) (x & -x)
@@ -326,11 +327,11 @@ template<class T> struct BIT {
 
 **封装一：该版本不能同时进行区间修改+区间查询。**无离散化版本的空间占用为 $\mathcal O(NM)$ 、建树复杂度为 $\mathcal O(NM)$ 、单次查询复杂度为 $\mathcal O(\log N\cdot \log M)$ 。
 
-```c++
+```cpp
 struct BIT_2D {
     int n, m;
     vector<vector<int>> w;
-    
+
     BIT_2D(int n, int m) : n(n), m(m) {
         w.resize(n + 1, vector<int>(m + 1));
     }
@@ -364,11 +365,11 @@ struct BIT_2D {
 
 **封装二：该版本支持全部操作。**但是时空复杂度均比上一个版本多 $4$ 倍。
 
-```c++
+```cpp
 struct BIT_2D {
     int n, m;
     vector<vector<int>> b1, b2, b3, b4;
-    
+
     BIT_2D(int n, int m) : n(n), m(m) {
         b1.resize(n + 1, vector<int>(m + 1));
         b2.resize(n + 1, vector<int>(m + 1));
@@ -419,10 +420,10 @@ struct BIT_2D {
 
 ### 线段树
 
-#### LazyInfoTag线段树
+#### LazyInfoTag 线段树
 
-``` cpp
-template<class Info, class Tag>
+```cpp
+template<typename Info, typename Tag>
 struct LazySegmentTree {
     int n;
     std::vector<Info> info;
@@ -431,14 +432,14 @@ struct LazySegmentTree {
     LazySegmentTree(int n_, Info v_ = Info()) {
         init(n_, v_);
     }
-    template<class T>
+    template<typename T>
     LazySegmentTree(std::vector<T> init_) {
         init(init_);
     }
     void init(int n_, Info v_ = Info()) {
         init(std::vector(n_, v_));
     }
-    template<class T>
+    template<typename T>
     void init(std::vector<T> init_) {
         n = init_.size();
         info.assign(4 << std::__lg(n), Info());
@@ -516,7 +517,7 @@ struct LazySegmentTree {
     void rangeApply(int l, int r, const Tag& v) {
         return rangeApply(1, 0, n, l, r, v);
     }
-    template<class F>
+    template<typename F>
     int findFirst(int p, int l, int r, int x, int y, F pred) {
         if (l >= y || r <= x || !pred(info[p])) {
             return -1;
@@ -532,11 +533,11 @@ struct LazySegmentTree {
         }
         return res;
     }
-    template<class F>
+    template<typename F>
     int findFirst(int l, int r, F pred) {
         return findFirst(1, 0, n, l, r, pred);
     }
-    template<class F>
+    template<typename F>
     int findLast(int p, int l, int r, int x, int y, F pred) {
         if (l >= y || r <= x || !pred(info[p])) {
             return -1;
@@ -552,7 +553,7 @@ struct LazySegmentTree {
         }
         return res;
     }
-    template<class F>
+    template<typename F>
     int findLast(int l, int r, F pred) {
         return findLast(1, 0, n, l, r, pred);
     }
@@ -574,11 +575,9 @@ Info operator+(Info a, Info b) {
 }
 ```
 
-
-
 #### 快速线段树（单点修改+区间最值）
 
-```c++
+```cpp
 struct Segt {
     vector<int> w;
     int n;
@@ -615,7 +614,7 @@ struct Segt {
 
 #### 线段树套平衡树
 
-``` cpp
+```cpp
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 using namespace __gnu_pbds;
@@ -624,7 +623,7 @@ const int inf = 2147483647;
 
 tree<pii, null_type, std::less<pii>, rb_tree_tag, tree_order_statistics_node_update> ver;
 
-template<class Info>
+template<typename Info>
 struct SegmentTree {
     int n;
     std::vector<Info> info;
@@ -736,13 +735,13 @@ struct Info {
 
 手写 `bitset` 压位，以 $\mathcal O(N \log N)$ 的时间复杂度和 $\mathcal O(N + \frac{N \log N}{64})$ 的空间建树后，实现单次 $\mathcal O(\log N)$ 复杂度的区间第 $k$ 大值询问。建议使用 $\texttt{0-idx}$ 计数法，但是经测试 $\texttt{1-idx}$ 也有效，但需要更多的检验。
 
-```c++
+```cpp
 #define __count(x) __builtin_popcountll(x)
 struct Wavelet {
     vector<int> val, sum;
     vector<u64> bit;
     int t, n;
-    
+
     int getSum(int i) {
         return sum[i >> 6] + __count(bit[i >> 6] & ((1ULL << (i & 63)) - 1));
     }
@@ -750,13 +749,13 @@ struct Wavelet {
     Wavelet(vector<int> v) : val(v), n(v.size()) {
         sort(val.begin(), val.end());
         val.erase(unique(val.begin(), val.end()), val.end());
-        
+
         int n_ = val.size();
         t = __lg(2 * n_ - 1);
         bit.resize((t * n + 64) >> 6);
         sum.resize(bit.size());
         vector<int> cnt(n_ + 1);
-        
+
         for (int &x : v) {
             x = lower_bound(val.begin(), val.end(), x) - val.begin();
             cnt[x + 1]++;
@@ -814,7 +813,7 @@ struct Wavelet {
 
 以 $\mathcal O(N\log N)$ 的时间复杂度建树、查询、修改。
 
-``` cpp
+```cpp
 struct PreesidentTree {
     static constexpr int N = 2e5 + 10;
     int cntNodes, root[N];
@@ -850,7 +849,7 @@ struct PreesidentTree {
 
 以 $\mathcal O(N \sqrt N)$ 的复杂度完成 $Q$ 次询问的离线查询，其中每个分块的大小取 $\sqrt N=\sqrt {10^5} = 317$ ，也可以使用 `n / min<int>(n, sqrt(q))` 、 `ceil((double)n / (int)sqrt(n))` 或者 `sqrt(n)` 划分。
 
-```c++
+```cpp
 signed main() {
     int n;
     cin >> n;
@@ -858,7 +857,7 @@ signed main() {
     for (int i = 1; i <= n; i++) {
         cin >> w[i];
     }
-    
+
     int q;
     cin >> q;
     vector<array<int, 3>> query(q + 1);
@@ -867,7 +866,7 @@ signed main() {
         cin >> l >> r;
         query[i] = {l, r, i};
     }
-    
+
     int Knum = n / min<int>(n, sqrt(q)); // 计算块长
     vector<int> K(n + 1);
     for (int i = 1; i <= n; i++) { // 固定块长
@@ -878,7 +877,7 @@ signed main() {
         if (K[x[0]] & 1) return x[1] < y[1];
         return x[1] > y[1];
     });
-    
+
     int l = 1, r = 0, val = 0;
     vector<int> ans(q + 1);
     for (int i = 1; i <= q; i++) {
@@ -897,13 +896,13 @@ signed main() {
 }
 ```
 
-​	需要注意的是，在普通莫队中，`K` 数组的作用是根据左边界的值进行排序，当询问次数很少时（$q \ll n$），可以直接合并到 `query` 数组中。
+​ 需要注意的是，在普通莫队中，`K` 数组的作用是根据左边界的值进行排序，当询问次数很少时（$q \ll n$），可以直接合并到 `query` 数组中。
 
 ### 带修改的莫队（带时间维度的莫队）
 
 以 $\mathcal O(N^\frac{5}{3})$ 的复杂度完成 $Q$ 次询问的离线查询，其中每个分块的大小取 $N^\frac{2}{3}=\sqrt[3]{100000^2}=2154$ （直接取会略快），也可以使用 `pow(n, 0.6666)` 划分。
 
-```c++
+```cpp
 	int n, m;    std::cin >> n >> m;
     std::vector<int> a(n + 1);
     for (int i = 1;i <= n;i++)   std::cin >> a[i];
@@ -963,7 +962,7 @@ signed main() {
 
 ### 回滚莫队
 
-``` cpp
+```cpp
  	std::vector<a3> q(m + 1);
     for (int i = 1;i <= m;i++) {
         int l, r;   std::cin >> l >> r;
@@ -988,7 +987,7 @@ signed main() {
             for (int j = ql;j <= qr;j++);
             //遍历答案
             for (int j = ql;j <= qr;j++);
-            //撤销        
+            //撤销
             for (int j = ql;j <= qr;j++);
             continue;
         }
@@ -1016,8 +1015,6 @@ signed main() {
 
     for (int i = 1;i <= m;i++)   std::cout << ans[i] << '\n';
 ```
-
-
 
 ### 对顶堆
 
@@ -1067,7 +1064,7 @@ namespace Set {
 
 在第 $k$ 维上的单次查询复杂度最坏为 $\mathcal O(n^{1-k^{-1}})$。
 
-```c++
+```cpp
 struct KDT {
     constexpr static int N = 1e5 + 10, K = 2;
     double alpha = 0.725;
@@ -1203,8 +1200,5 @@ struct KDT {
     }
 };
 ```
-
-
-
 
 <div style="page-break-after:always">/END/</div>

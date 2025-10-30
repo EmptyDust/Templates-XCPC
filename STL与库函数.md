@@ -2,14 +2,14 @@
 
 ### 数组打乱 shuffle
 
-```c++
+```cpp
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 shuffle(ver.begin(), ver.end(), rng);
 ```
 
-### bit 库与位运算函数 \__builtin\_
+### bit 库与位运算函数 \_\_builtin\_
 
-```c++
+```cpp
 __builtin_popcount(x) // 返回x二进制下含1的数量，例如x=15=(1111)时答案为4
 
 __builtin_ffs(x) // 返回x右数第一个1的位置(1-idx)，1(1) 返回 1，8(1000) 返回 4，26(11010) 返回 2
@@ -23,16 +23,16 @@ bit_width(x) // 返回x二进制下的位数，9(1001) 返回 4，26(11010) 返�
 
 ### 数字转字符串函数
 
-`itoa` 虽然能将整数转换成任意进制的字符串，但是其不是标准的C函数，且为Windows独有，且不支持 `long long` ，建议手写。
+`itoa` 虽然能将整数转换成任意进制的字符串，但是其不是标准的 C 函数，且为 Windows 独有，且不支持 `long long` ，建议手写。
 
-```c++
+```cpp
 // to_string函数会直接将你的各种类型的数字转换为字符串。
 // string to_string(T val);
 double val = 12.12;
 cout << to_string(val);
 ```
 
-```c++
+```cpp
 // 【不建议使用】itoa允许你将整数转换成任意进制的字符串，参数为待转换整数、目标字符数组、进制。
 // char* itoa(int value, char* string, int radix);
 char ans[10] = {};
@@ -44,7 +44,7 @@ cout << ans << endl; /*1100*/
 
 ### 字符串转数字
 
-```c++
+```cpp
 // stoi直接使用
 cout << stoi("12") << endl;
 
@@ -57,7 +57,7 @@ cout << stoi("0x3f3f3f3f", 0, 0) << endl; /*1061109567*/
 // 长整型函数名stoll，最高支持到long long型上限2^63。stoull、stod、stold同理。
 ```
 
-```c++
+```cpp
 // atoi直接使用，空字符返回0，允许正负符号，数字字符前有其他字符返回0，数字字符前有空白字符自动去除
 cout << atoi("12") << endl;
 cout << atoi("   12") << endl; /*12*/
@@ -67,17 +67,17 @@ cout << atoi("abc12") << endl; /*0*/
 // 长整型函数名atoll，最高支持到long long型上限2^63。
 ```
 
-### xxxxxxxxxx2 1p=(a+b+c)/2;2sum=sqrt(p*(p-a)*(p-b)*(p-c));cpp
+### xxxxxxxxxx2 1p=(a+b+c)/2;2sum=sqrt(p*(p-a)*(p-b)\*(p-c));cpp
 
 在提及这个函数时，我们先需要补充几点字典序相关的知识。
 
-> 对于三个字符所组成的序列`{a,b,c}`，其按照字典序的6种排列分别为：
+> 对于三个字符所组成的序列`{a,b,c}`，其按照字典序的 6 种排列分别为：
 > `{abc}`，`{acb}`，`{bac}`，`{bca}`，`{cab}`，`{cba}`
 > 其排序原理是：先固定 `a` (序列内最小元素)，再对之后的元素排列。而 `b` < `c` ，所以 `abc` < `acb` 。同理，先固定 `b` (序列内次小元素)，再对之后的元素排列。即可得出以上序列。
 
 $\tt{}next\_permutation$ 算法，即是按照**字典序顺序**输出的全排列；相对应的， $\tt{}prev\_permutation$ 则是按照**逆字典序顺序**输出的全排列。可以是数字，亦可以是其他类型元素。其直接在序列上进行更新，故直接输出序列即可。
 
-```c++
+```cpp
 int n;
 cin >> n;
 vector<int> a(n);
@@ -104,32 +104,32 @@ do {
 - `stoll(字符串, 0, x进制)` ：将一串 $\tt{}x$ 进制的字符串转换为 $\tt{}long\ long$ 型数字。
 - $\tt{}stoull，stod，stold$ 同理。
 
-### 数值转换为字符串函数 to\_string
+### 数值转换为字符串函数 to_string
 
 允许将**各种数值类型**转换为字符串类型。
 
-```c++
+```cpp
 //将数值num转换为字符串s
 string s = to_string(num);
 ```
 
-### 判断非递减 is\_sorted
+### 判断非递减 is_sorted
 
-```c++
+```cpp
 //a数组[start,end)区间是否是非递减的，返回bool型
 cout << is_sorted(a + start, a + end);
 ```
 
 ### 累加 accumulate
 
-```c++
+```cpp
 //将a数组[start,end)区间的元素进行累加，并输出累加和+x的值
 cout << accumulate(a + start, a + end, x);
 ```
 
 ### 迭代器 iterator
 
-```c++
+```cpp
 //构建一个UUU容器的正向迭代器，名字叫it
 UUU::iterator it;
 
@@ -139,7 +139,7 @@ vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时�
 
 ### 特殊函数 `next` 和 `prev` 详解：
 
-```c++
+```cpp
 auto it = s.find(x); // 建立一个迭代器
 prev(it) / next(it); // 默认返回迭代器it的前/后一个迭代器
 prev(it, 2) / next(it, 2); // 可选参数可以控制返回前/后任意个迭代器
@@ -151,7 +151,7 @@ int ed = *prev(S.end(), 1); // 返回最后一个元素
 
 ### 其他函数
 
-`exp2(x)` ：返回 $2^x$ 
+`exp2(x)` ：返回 $2^x$
 
 `log2(x)` ：返回 $\log_2(x)$
 
@@ -159,11 +159,11 @@ int ed = *prev(S.end(), 1); // 返回最后一个元素
 
 ## 容器与成员函数
 
-### 优先队列 priority\_queue
+### 优先队列 priority_queue
 
 默认升序（大根堆），自定义排序需要重载 `<` 。
 
-```c++
+```cpp
 //没有clear函数
 priority_queue<int, vector<int>, greater<int> > p; //重定义为降序（小根堆）
 push(x); //向栈顶插入x
@@ -171,7 +171,7 @@ top(); //获取栈顶元素
 pop(); //弹出栈顶元素
 ```
 
-```c++
+```cpp
 //重载运算符【注意，符号相反！！！】
 struct Node {
     int x; string s;
@@ -186,7 +186,7 @@ struct Node {
 
 将数据转换为二进制，从高位到低位排序，以 $0$ 为最低位。当位数相同时支持全部的位运算。
 
-```c++
+```cpp
 // 如果输入的是01字符串，可以直接使用">>"读入
 bitset<10> s;
 cin >> s;
@@ -233,12 +233,12 @@ cout << B1 << " " << B2 << "\n"; //你可以直接使用cout输出
 
 #### 对 pair、tuple 定义哈希
 
-```c++
-struct hash_pair { 
-    template <class T1, class T2> 
-    size_t operator()(const pair<T1, T2> &p) const { 
-        return hash<T1>()(p.fi) ^ hash<T2>()(p.se); 
-    } 
+```cpp
+struct hash_pair {
+    template<typename T1, typename T2>
+    size_t operator()(const pair<T1, T2> &p) const {
+        return hash<T1>()(p.fi) ^ hash<T2>()(p.se);
+    }
 };
 unordered_set<pair<int, int>, int, hash_pair> S;
 unordered_map<tuple<int, int, int>, int, hash_pair> M;
@@ -248,18 +248,18 @@ unordered_map<tuple<int, int, int>, int, hash_pair> M;
 
 需要两个条件，一个是在结构体中重载等于号（区别于非哈希容器需要重载小于号，如上所述，当冲突时编译器需要根据重载的等于号判断），第二是写一个哈希函数。注意 `hash<>()` 的尖括号中的类型匹配。
 
-```c++
-struct fff { 
+```cpp
+struct fff {
     string x, y;
     int z;
     friend bool operator == (const fff &a, const fff &b) {
         return a.x == b.x || a.y == b.y || a.z == b.z;
     }
 };
-struct hash_fff { 
-    size_t operator()(const fff &p) const { 
-        return hash<string>()(p.x) ^ hash<string>()(p.y) ^ hash<int>()(p.z); 
-    } 
+struct hash_fff {
+    size_t operator()(const fff &p) const {
+        return hash<string>()(p.x) ^ hash<string>()(p.y) ^ hash<int>()(p.z);
+    }
 };
 unordered_map<fff, int, hash_fff> mp;
 ```
@@ -268,20 +268,20 @@ unordered_map<fff, int, hash_fff> mp;
 
 以下两个方法均可。注意 `hash<>()` 的尖括号中的类型匹配。
 
-```c++
-struct hash_vector { 
+```cpp
+struct hash_vector {
     size_t operator()(const vector<int> &p) const {
         size_t seed = 0;
         for (auto it : p) {
             seed ^= hash<int>()(it);
         }
-        return seed; 
-    } 
+        return seed;
+    }
 };
 unordered_map<vector<int>, int, hash_vector> mp;
 ```
 
-```c++
+```cpp
 namespace std {
     template<> struct hash<vector<int>> {
         size_t operator()(const vector<int> &p) const {
