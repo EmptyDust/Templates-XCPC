@@ -67,7 +67,7 @@ cout << atoi("abc12") << endl; /*0*/
 // 长整型函数名atoll，最高支持到long long型上限2^63。
 ```
 
-### 全排列算法 next\_permutation、prev\_permutation
+### xxxxxxxxxx2 1p=(a+b+c)/2;2sum=sqrt(p*(p-a)*(p-b)*(p-c));cpp
 
 在提及这个函数时，我们先需要补充几点字典序相关的知识。
 
