@@ -903,7 +903,9 @@ signed main() {
 以 $\mathcal O(N^\frac{5}{3})$ 的复杂度完成 $Q$ 次询问的离线查询，其中每个分块的大小取 $N^\frac{2}{3}=\sqrt[3]{100000^2}=2154$ （直接取会略快），也可以使用 `pow(n, 0.6666)` 划分。
 
 ```cpp
-	int n, m;    std::cin >> n >> m;
+void solve(){
+    int n, m;    
+    std::cin >> n >> m;
     std::vector<int> a(n + 1);
     for (int i = 1;i <= n;i++)   std::cin >> a[i];
 
@@ -958,12 +960,14 @@ signed main() {
         ans[id] = cnt;
     }
     for (int i = 1;i <= n;i++)    std::cout << ans[i] << '\n';
+}
 ```
 
 ### 回滚莫队
 
 ```cpp
- 	std::vector<a3> q(m + 1);
+void solve(){
+    std::vector<a3> q(m + 1);
     for (int i = 1;i <= m;i++) {
         int l, r;   std::cin >> l >> r;
         q[i] = { l,r,i };
@@ -1014,6 +1018,7 @@ signed main() {
     }
 
     for (int i = 1;i <= m;i++)   std::cout << ans[i] << '\n';
+}
 ```
 
 ### 对顶堆
@@ -1200,5 +1205,3 @@ struct KDT {
     }
 };
 ```
-
-<div style="page-break-after:always">/END/</div>
