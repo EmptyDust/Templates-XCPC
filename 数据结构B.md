@@ -2,7 +2,7 @@
 
 ### 基于状压的线性 RMQ 算法
 
-严格 $\mathcal O(N)$ 预处理，$\mathcal O(1)$ 查询。
+严格 $\mathcal O(N)$ 预处理，$\mathcal O(1)$ 查询。查询区间为**左闭右开 $[l, r)$**，仅支持静态数组；`T` 需可用 `cmp` 比较（默认 `less<T>`，取区间最大改为 `greater<T>`）。
 
 ```cpp
 template<typename T, typename Cmp = less<T>> struct RMQ {
@@ -81,7 +81,7 @@ template<typename T, typename Cmp = less<T>> struct RMQ {
 
 ### 珂朵莉树 (OD Tree)
 
-区间赋值的数据结构都可以骗分，在数据随机的情况下，复杂度可以保证，时间复杂度：$\mathcal O(N\log\log N)$ 。
+核心是 `split(pos)` 把含 `pos` 的区间拆成两段并返回左端点为 `pos` 的段，`assign(l, r, x)` 把区间推平成一个值——只有大量区间覆盖/推平操作才有收益，**仅在数据随机时复杂度有保证（约 $\mathcal O(N\log\log N)$），否则可被卡回 $\mathcal O(N^2)$**。常用：`add(l,r,x)` 区间加，`kth(l,r,k)` 区间第 $k$ 小，`powersum(l,r,x,mod)` 区间元素 $x$ 次方和模 `mod`。
 
 ```cpp
 struct ODT {
@@ -153,7 +153,7 @@ struct ODT {
 
 ### pbds 扩展库实现平衡二叉树
 
-记得加上相应的头文件，同时需要注意定义时的参数，一般只需要修改第三个参数：即定义的是大根堆还是小根堆。
+记得加上下面的头文件与命名空间。模板第三个参数是比较器（默认 `less`，改成 `greater` 即翻转顺序）。`tree` 不容许重复键，用第二维计数 `{x, ++dic[x]}` 实现可重集合（见下例）。
 
 > 附常见成员函数：
 >
@@ -198,6 +198,8 @@ for (int i = 1, op, x; i <= n; i++) {
 ```
 
 ### vector 模拟实现平衡二叉树
+
+用 `lower_bound` 定位后在中间插入/删除，单次操作 $\mathcal O(N)$、总复杂度 $\mathcal O(N^2)$，**只适合小数据或暴力骗分**；需要 $\mathcal O(\log N)$ 维护有序序列请用 pbds `tree`。
 
 ```cpp
 #define ALL(x) x.begin(), x.end()
@@ -245,6 +247,8 @@ if (l > r) { // 区间分离则分别操作
 
 输入格式为：第一行 $n$ 和 $q\ (1\le n, q\le 133333)$ 分别代表区间长度和操作数量；第二行 $n$ 个整数 $a_1,a_2\dots,a_n\ (1\le a_i\le 10^6)$ 代表初始颜色；随后 $q$ 行为具体操作。
 
+带修莫队 = 普通莫队 + 时间维：查询按（左端点块，右端点块，时间）排序，`t` 指针沿时间维移动，`time()` 中用 `swap` 回溯修改；复杂度约 $\mathcal O(n^\frac{5}{3})$。
+
 ```cpp
 const int N = 1e6 + 7;
 signed main() {
@@ -271,7 +275,7 @@ signed main() {
         }
     }
 
-    int Knum = 2154; // 计算块长
+    int Knum = max(1, (int)pow(n, 2.0 / 3)); // 带修莫队块长取 n^(2/3) 最优（原来写死 2154，须按 n 改）
     vector<int> K(n + 1);
     for (int i = 1; i <= n; i++) { // 固定块长
         K[i] = (i - 1) / Knum + 1;

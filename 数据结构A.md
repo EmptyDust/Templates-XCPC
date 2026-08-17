@@ -1,14 +1,8 @@
----
-title: 数据结构A
-date: 2025-07-05 00:57:28
-categories: "算法竞赛"
----
-
 ## 数据结构 A
 
 ### 笛卡尔树
 
-小根笛卡尔树
+小根笛卡尔树：下标为键（中序遍历为原序列）、值为堆（小根）的二叉树，单调栈 $\mathcal O(N)$ 建树。常用于 RMQ 与 LCA 互转（区间最小值 = 两端点 LCA 处的值）。下方 `ls/rs` 为左右儿子，`-1` 表示空。
 
 ```cpp
 cin >> n;
@@ -47,6 +41,8 @@ struct dsu {
 
 #### 根据集合的大小优化
 
+数组版并查集：根为正数存集合大小的相反约定——这里根存**正整数大小**，非根存**负的父编号**（`unicnt[x] <= 0` 时 `-unicnt[x]` 为父）；`uni` 按大小合并。均摊约 $\mathcal O(\alpha(N))$。
+
 ```cpp
 //左移位数根据节点个数定
 #define UFLIMIT (2<<17)
@@ -65,6 +61,8 @@ void uni(int x, int y) {
 ```
 
 #### 按秩合并优化
+
+按秩（树高下界）合并 + 路径压缩，均摊约 $\mathcal O(\alpha(N))$，且比朴素路径压缩有更严格的最坏界。
 
 ```cpp
 class UnionFind {
@@ -118,7 +116,7 @@ struct DSU {
         }
         return x;
     }
-    bool merge(int x, int y) { // 设x是y的祖先
+    bool merge(int x, int y) { // 实际是"编号小的合并到大的上"（见下行 swap）
         if (x == y) f[get(x)] = 1;
         x = get(x), y = get(y);
         e[x]++;
@@ -145,7 +143,7 @@ struct DSU {
 
 ### ST 表
 
-用于解决区间可重复贡献问题，需要满足 $x \text{ 运算符 } x=x$ （如区间最大值：$\max(x,x)=x$ 、区间 $\gcd$：$\gcd(x,x)=x$ 等），但是不支持修改操作。$\mathcal O(N\log N)$ 预处理，$\mathcal O(1)$ 查询。
+用于解决区间可重复贡献问题，需要满足 $x \text{ 运算符 } x=x$ （如区间最大值：$\max(x,x)=x$ 、区间 $\gcd$：$\gcd(x,x)=x$ 等），但是不支持修改操作。$\mathcal O(N\log N)$ 预处理，$\mathcal O(1)$ 查询。下方 `vt` 的第二维硬编码为 `30`（支持 $n\le 2^{30}$），按 $n$ 改为 `__lg(n)+1` 即可；合并运算由 `Info::operator+` 表达。
 
 ```cpp
 template<typename T>
@@ -186,6 +184,8 @@ struct Info
 
 ### Fenwick Tree 树状数组
 
+基础版：单点加 + 前缀和，下标从 $1$ 开始，`ask(l, r)` 为 $[l, r]$ 区间和；构造时从数组 `in`（下标 $1..n$）逐点加入。
+
 ```cpp
 template<typename T> struct BIT {
     int n;
@@ -214,6 +214,8 @@ template<typename T> struct BIT {
 ```
 
 #### 逆序对扩展
+
+把元素按值从小到大排序逐个插入树状数组（位置为 `idx`），`ask(idx + 1, n)` 统计**已插入且位置更靠后**的个数——即当前元素的逆序对贡献（等值元素按位置先小后大排序，不会被误计）。总复杂度 $\mathcal O(N\log N)$。
 
 ```cpp
 struct BIT {
@@ -251,12 +253,12 @@ struct BIT {
             w[x] += v;
         }
     }
-    int kth(int x) { // 查找第 k 小的值
+    int kth(int k) { // 查找第 k 小的值
         int ans = 0;
         for (int i = __lg(n); i >= 0; i--) {
             int val = ans + (1 << i);
-            if (val < n && w[val] < x) {
-                x -= w[val];
+            if (val <= n && w[val] < k) { // val <= n：原来写成 < n，漏掉 w[n] 的情况
+                k -= w[val];
                 ans = val;
             }
         }
@@ -292,7 +294,7 @@ signed main() {
 
 #### 最值查询扩展（常规+区间最值查询+单点赋值）
 
-以 $\mathcal O(\log \log N)$ 的复杂度运行，但是即便如此依然略优于线段树（后者常数较大）。
+`update` 单点赋值、`getMax` 区间最值均为 $\mathcal O(\log N)$（原标注 $\log\log N$ 有误）。**注意 `update` 里 `base[x] = max(base[x], v)` 只能把值改大**，若需要改小（如删除/下调）请改用线段树。
 
 ```cpp
 template<typename T> struct BIT {
@@ -421,6 +423,8 @@ struct BIT_2D {
 ### 线段树
 
 #### LazyInfoTag 线段树
+
+用法约定：区间**左闭右开 $[l, r)$**；`Info` 需提供 `operator+`（合并）与 `apply(Tag)`（打懒标记），`Tag` 需提供复合自身的 `apply(Tag)`；`modify(p, v)` 单点赋值，`rangeQuery(l,r)` / `rangeApply(l,r,tag)` 区间查询/区间标记，`findFirst/findLast(l, r, pred)` 在区间内找第一个/最后一个使 `pred` 为真的位置（返回 `-1` 表示不存在，要求 `pred` 具有区间可判性）。下方 `Info/Tag` 为空白壳，按题目自行填写（如区间加：`Tag.x` 为增量，`Info::apply` 累加长度倍增量）。
 
 ```cpp
 template<typename Info, typename Tag>
@@ -577,6 +581,8 @@ Info operator+(Info a, Info b) {
 
 #### 快速线段树（单点修改+区间最值）
 
+zkw 式非递归线段树，单点修改/区间最值均为 $\mathcal O(\log N)$，常数极小；区间为**左闭右开 $[l, r)$**，初值 `-2E9` 按题目改成对应下界（最小时用 `2E9`）。
+
 ```cpp
 struct Segt {
     vector<int> w;
@@ -613,6 +619,8 @@ struct Segt {
 ### 树套树
 
 #### 线段树套平衡树
+
+线段树每个节点放一棵 pbds `tree`（存 `{值, 下标}` 去重键），单次 $\mathcal O(\log^2 N)$ 支持区间排名/前驱/后继：外区间拆成 $\log N$ 个节点，内层 `order_of_key` 等为 $\mathcal O(\log N)$。`build(a)` 按位置建树并启发式合并，`update(pos, old_val, new_val)` 单点修改，查询区间半开 $[x, y)$；前驱/后继不存在时返回 `±inf`。需要包含 pbds 头文件。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -733,7 +741,7 @@ struct Info {
 
 ### 小波矩阵树：高效静态区间第 K 大查询
 
-手写 `bitset` 压位，以 $\mathcal O(N \log N)$ 的时间复杂度和 $\mathcal O(N + \frac{N \log N}{64})$ 的空间建树后，实现单次 $\mathcal O(\log N)$ 复杂度的区间第 $k$ 大值询问。建议使用 $\texttt{0-idx}$ 计数法，但是经测试 $\texttt{1-idx}$ 也有效，但需要更多的检验。
+手写 `bitset` 压位，以 $\mathcal O(N \log N)$ 的时间复杂度和 $\mathcal O(N + \frac{N \log N}{64})$ 的空间建树后，实现单次 $\mathcal O(\log N)$ 复杂度的区间第 $k$ 大值询问。建议使用 $\texttt{0-idx}$ 计数法，但是经测试 $\texttt{1-idx}$ 也有效，但需要更多的检验。使用前定义 `using u64 = unsigned long long;`。
 
 ```cpp
 #define __count(x) __builtin_popcountll(x)
@@ -811,10 +819,10 @@ struct Wavelet {
 
 ### 主席树（可持久化线段树）
 
-以 $\mathcal O(N\log N)$ 的时间复杂度建树、查询、修改。
+$\mathcal O(N\log N)$ 建树与单点修改（每步新建一条链），查询 $\mathcal O(\log N)$。用法：把值域离散化到 $[1, m]$，`modify(root[i] = root[i - 1], ..., 离散值)` 建版本；静态区间第 $k$ 小查询 `kth(root[r], root[l - 1], 1, m, k)`。数组开 `4 * N + 17 * N`（约 17 层/次修改），`N` 按题目改。
 
 ```cpp
-struct PreesidentTree {
+struct PresidentTree {
     static constexpr int N = 2e5 + 10;
     int cntNodes, root[N];
 
@@ -896,11 +904,11 @@ signed main() {
 }
 ```
 
- 需要注意的是，在普通莫队中，`K` 数组的作用是根据左边界的值进行排序，当询问次数很少时（$q \ll n$），可以直接合并到 `query` 数组中。
+ 需要注意的是，在普通莫队中，`K` 数组的作用是根据左边界的值进行排序，当询问次数很少时（$q \ll n$），可以直接合并到 `query` 数组中。`add`/`del` 与 `val` 均为**待填钩子**：`add(x)` 加入一个元素并更新当前答案 `val`，`del(x)` 反之，最后 `ans[id] = val` 记答案。
 
 ### 带修改的莫队（带时间维度的莫队）
 
-以 $\mathcal O(N^\frac{5}{3})$ 的复杂度完成 $Q$ 次询问的离线查询，其中每个分块的大小取 $N^\frac{2}{3}=\sqrt[3]{100000^2}=2154$ （直接取会略快），也可以使用 `pow(n, 0.6666)` 划分。
+以 $\mathcal O(N^\frac{5}{3})$ 的复杂度完成 $Q$ 次询问的离线查询，其中每个分块的大小取 $N^\frac{2}{3}=\sqrt[3]{100000^2}=2154$ （直接取会略快），也可以使用 `pow(n, 0.6666)` 划分。`a2 = array<int, 2>`、`a4 = array<int, 4>` 需自行定义；下方 `add`/`del` 为待填钩子，`ans[id]` 记录当前答案（下面用 `val`）。
 
 ```cpp
 void solve(){
@@ -923,7 +931,7 @@ void solve(){
         }
     }
 
-    int block = 2610;   //n ^ (2 / 3)
+    int block = max(1, (int)pow(n, 2.0 / 3));   // n ^ (2 / 3)，原写死 2610 须按 n 改
     std::vector<int> b(n + 1);
     for (int i = 1;i <= n;i++) b[i] = (i - 1) / block + 1;
     std::sort(q.begin() + 1, q.end(), [&](auto x, auto y) {
@@ -933,7 +941,7 @@ void solve(){
         });
 
     n = q.size() - 1;
-    int l = 1, r = 0, t = 0;
+    int l = 1, r = 0, t = 0, val = 0;
     std::vector<int> ans(n + 1);
     for (int i = 1;i <= n;i++) {
         auto [ql, qr, qt, id] = q[i];
@@ -957,13 +965,15 @@ void solve(){
         while (t < qt) time(++t, ql, qr);
         while (t > qt) time(t--, ql, qr);
 
-        ans[id] = cnt;
+        ans[id] = val; // 原来写成 cnt（未定义变量）
     }
     for (int i = 1;i <= n;i++)    std::cout << ans[i] << '\n';
 }
 ```
 
 ### 回滚莫队
+
+用于**删除难实现**的问题（信息只有"加"容易撤销：如并查集、众数）：只比普通莫队多一个"右指针单调向右，左指针临时左移后回滚"的技巧。同一块内的询问直接暴力（三次遍历做"加入/统计/撤销"），跨块询问中右端点只增、左端点每次临时扩展后 `del` 撤销（**不真正删除**，而是退回临时指针）。复杂度 $\mathcal O(N\sqrt{Q}\cdot T_{add})$。`a3 = array<int, 3>` 需自行定义，`add(x, res)` 中 `res` 引用传递更新答案。
 
 ```cpp
 void solve(){
@@ -1023,6 +1033,8 @@ void solve(){
 
 ### 对顶堆
 
+用两个 `multiset` 维护**动态中位数**（支持插入/删除），哨兵 `±kInf` 避免边界判断：`less` 保存较小的一半（含中位数），`greater` 保存较大的一半，`adjust()` 保持两者大小差 $\le 1$。插入按与 `*greater.begin()` 比较分流，删除在两个集合内查找；当前中位数为 `*less.rbegin()`（奇数个元素时正中间）。若改为严格对顶"堆"，把 `multiset` 换成 `priority_queue` 并在删除时惰性弹出（配合标记）可更快。
+
 ```cpp
 namespace Set {
     const int kInf = 1e9 + 2077;
@@ -1067,7 +1079,7 @@ namespace Set {
 
 ### KD Tree
 
-在第 $k$ 维上的单次查询复杂度最坏为 $\mathcal O(n^{1-k^{-1}})$。
+第 $k$ 维上的单次查询复杂度最坏为 $\mathcal O(n^{1-k^{-1}})$。数组版（容量 `N = 1e5 + 10`，`K` 维），`insert` 平衡因子 $\alpha=0.725$ 触发拍平重建；`build` 按**方差最大的维**划分、`nth_element` 取中位数。下方 `query(a)` 统计**所有维都 ≤ a[i]** 的点数（`out` 剪枝整块在查询域之外，`all` 整块皆计入，`in` 单点判定）；常见扩展：最近点查询改成带界最值剪枝。
 
 ```cpp
 struct KDT {
