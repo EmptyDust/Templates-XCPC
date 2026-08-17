@@ -6417,29 +6417,35 @@ signed main() {
 ```
 ## 基础算法
 
+> 本章代码中 `i64` / `LL` 为 `long long`,`ld` 为 `long double`,如无声明按此理解。
+
 ### 常用函数
 
 ```cpp
-int mypow(int n, int k, int p = MOD) { // 复杂度是 log N
+int mypow(int n, int k, int p = MOD) { // 快速幂，复杂度 O(log k)
     int r = 1;
     for (; k; k >>= 1, n = n * n % p) {
         if (k & 1) r = r * n % p;
     }
     return r;
 }
-i64 mysqrt(i64 n) { // 针对 sqrt 无法精确计算 ll 型
+i64 mysqrt(i64 n) { // 针对 sqrt 无法精确计算 ll 型；n ≤ 1e18 时不溢出
     i64 ans = sqrt(n);
     while ((ans + 1) * (ans + 1) <= n) ans++;
     while (ans * ans > n) ans--;
     return ans;
 }
-int mylcm(int x, int y) {
+int mylcm(int x, int y) { // 先除后乘，防溢出
     return x / gcd(x, y) * y;
 }
 ```
 
+> 上述 `mypow` 中 `n * n` 在 `n ≥ 2^31` 时溢出：做大模数快速幂时改用 `__int128` 或数论章的防爆模乘。
+
 ```cpp
-template<typename T> int log2floor(T n) { // 针对 log2 无法精确计算 ll 型；向下取整
+// 模板版：对任意整型 T 均正确，用于防 log2/sqrt 等浮点函数大整数精度丢失；
+// int 型建议直接用下面的 __builtin 版（更快）。
+template<typename T> int log2floor(T n) {
     assert(n > 0);
     for (T i = 0, chk = 1;; i++, chk *= 2) {
         if (chk <= n && n < chk * 2) {
@@ -6447,7 +6453,7 @@ template<typename T> int log2floor(T n) { // 针对 log2 无法精确计算 ll �
         }
     }
 }
-template<typename T> int log2ceil(T n) { // 向上取整
+template<typename T> int log2ceil(T n) {
     assert(n > 0);
     for (T i = 0, chk = 1;; i++, chk *= 2) {
         if (n <= chk) {
@@ -6455,24 +6461,28 @@ template<typename T> int log2ceil(T n) { // 向上取整
         }
     }
 }
-int log2floor(int x) {
+// __builtin 版：仅 int（ll 版各加一个 ll 后缀）
+int log2floor(int x) { // 向下取整；x > 0
     return 31 - __builtin_clz(x);
 }
-int log2ceil(int x) { // 向上取整
+int log2ceil(int x) { // 向上取整；x > 0
     return log2floor(x) + (__builtin_popcount(x) != 1);
 }
 ```
 
 ```cpp
+// sign / floor / ceil 均为整数域版本：C++ 的除法向零取整，本实现改为
+// 向负无穷(floor) / 向正无穷(ceil)取整；对负数区间二分等处必须用这套语义。
 template<typename T> T sign(const T &a) {
     return a == 0 ? 0 : (a < 0 ? -1 : 1);
 }
-template<typename T> T floor(const T &a, const T &b) { // 注意大数据计算时会丢失精度
+template<typename T> T floor(const T &a, const T &b) {
+    // 注意 A + B - 1 对大 T 可能溢出（如 T = int 且 A,B ~ 2^31），大数场景改用 __int128
     T A = abs(a), B = abs(b);
     assert(B != 0);
     return sign(a) * sign(b) > 0 ? A / B : -(A + B - 1) / B;
 }
-template<typename T> T ceil(const T &a, const T &b) { // 注意大数据计算时会丢失精度
+template<typename T> T ceil(const T &a, const T &b) {
     T A = abs(a), B = abs(b);
     assert(b != 0);
     return sign(a) * sign(b) > 0 ? (A + B - 1) / B : -A / B;
@@ -6486,7 +6496,9 @@ template<typename T> T ceil(const T &a, const T &b) { // 注意大数据计算�
 **速度不如内置函数！** 以 $\mathcal O(\log(a+b))$ 的复杂度求解最大公约数。与内置函数 `__gcd` 功能基本相同（支持 $a,b \leq 0$ ）。
 
 ```cpp
-inline int mygcd(int a, int b) { return b ? gcd(b, a % b) : a; }
+inline int mygcd(int a, int b) { // 手写欧几里得，与 std::gcd 等价
+    return b ? mygcd(b, a % b) : a;
+}
 ```
 
 #### 位运算优化
@@ -6494,7 +6506,7 @@ inline int mygcd(int a, int b) { return b ? gcd(b, a % b) : a; }
 **略快于内置函数，用于卡常。**
 
 ```cpp
-LL gcd(LL a, LL b) { // 卡常 gcd！！
+LL gcd(LL a, LL b) { // 卡常 gcd！！（LL 为 long long）
     #define tz __builtin_ctzll
     if (!a || !b) return a | b;
     int t = tz(a | b);
@@ -6511,21 +6523,27 @@ LL gcd(LL a, LL b) { // 卡常 gcd！！
 
 ### 整数域二分
 
-#### by flyx
+#### 通用模板
+
+在**单调的 check** 上找"第一个满足条件的下标"。`check(mid)` 为 true 表示 mid 满足，此时答案在 `[l, mid]`，否则在 `[mid + 1, r]`。区间为左闭右闭，初始边界按题目放宽。
 
 ```cpp
-auto l = l, r = r;
-auto check = [&](auto x)->bool {
-
-    };
+long long l = 0, r = n; // 按题目改边界，保证答案在 [l, r] 内
+auto check = [&](long long x) -> bool {
+    // todo: x 是否满足条件（单调）
+    return false;
+};
 while (l < r) {
-    auto mid = l + r >> 1;
-    if (check(mid))r = mid;
+    auto mid = l + (r - l) / 2; // 防溢出的中点写法
+    if (check(mid)) r = mid;
     else l = mid + 1;
 }
+// l 即为答案；若 check 始终为 false，l 会停在 r，记得判无解
 ```
 
 #### 旧版（无法处理负数情况）
+
+> 该写法用 `(l + r) / 2` 中点，C++ 除法对负数**向零取整**，负数区间会出现 `mid = l` 的死循环，故仅适用于非负区间；且 `l + r` 有溢出风险。
 
 - 在递增序列 $a$ 中查找 $\geq x$ 数中最小的一个（即 $x$ 或 $x$ 的后继）
 
@@ -6557,10 +6575,12 @@ return a[l];
 
 #### 新版
 
+`while (l <= r)` + 记录答案的写法：边界与无解处理更直观，推荐日常使用。以下两段分别求"第一个满足 `judge` 的下标"（后继）与"最后一个满足的下标"（前驱），`judge` 单调。
+
 - $x$ 或 $x$ 的后继
 
 ```cpp
-int l = 0, r = 1E8, ans = r;
+int l = 0, r = 1E8, ans = r; // ans 初始化为无解时的值
 while (l <= r) {
     int mid = (l + r) / 2;
     if (judge(mid)) {
@@ -6576,7 +6596,7 @@ return ans;
 - $x$ 或 $x$ 的前驱
 
 ```cpp
-int l = 0, r = 1E8, ans = l;
+int l = 0, r = 1E8, ans = l; // ans 初始化为无解时的值
 while (l <= r) {
     int mid = (l + r) / 2;
     if (judge(mid)) {
@@ -6591,24 +6611,23 @@ return ans;
 
 ### 整体二分
 
+**离线**算法：把"对一组询问做二分答案"的 $\log$ 层二分合并成一次递归，每次递归对所有询问用一次 `cal` 同时向左/右儿子划分。复杂度约为 $\mathcal O((n + q)\log V \cdot T_{cal})$。适用条件：
+
 1. 询问的答案具有可二分性
-
 2. **修改对判定答案的贡献互相独立**，修改之间互不影响效果
-
 3. 修改如果对判定答案有贡献，则贡献为一确定的与判定标准无关的值
-
 4. 贡献满足交换律，结合律，具有可加性
-
 5. 题目允许使用离线算法
 
    ——许昊然《浅谈数据结构题几个非经典解法》
 
 ```cpp
-int cal(auto x) {
-    // todo
+int cal(auto x) { // todo: 以 mid = x 为判定标准，计算当前区间内"答案落在右儿子"的询问数
+    return 0;
 }
 
 void solve(int ql, int qr, int l, int r) {
+    // 回答第 ql..qr 个询问，此时其答案都在值域 [l, r] 内
     if (ql > qr)return;
     if (l > r)return;
     if (l == r) {
@@ -6622,15 +6641,15 @@ void solve(int ql, int qr, int l, int r) {
 }
 
 void solve() {
-    //input
-    solve(ql, qr, 0, n, zf);
-    //todo
+    // input
+    solve(ql, qr, 0, n); // TODO: 原骨架此处为 solve(ql, qr, 0, n, zf)，实参/形参数目不符，重构边界后需自行核对
+    // todo
 }
 ```
 
 ### 实数域二分
 
-目前主流的写法是限制二分次数。
+目前主流的写法是限制二分次数：100 次后区间长度缩小 $2^{-100}$ 倍，对 `double` 精度绰绰有余，且比 `while (r - l > eps)` 免去选取 eps 的麻烦。注意 `l, r` 初始必须在答案两侧（可放宽到 ±1e9）。
 
 ```cpp
 for (int t = 1; t <= 100; t++) {
@@ -6643,9 +6662,11 @@ cout << l << endl;
 
 ### 整数域三分
 
+用于**单峰函数**（先减后增）求极小值：`check(x) <= check(x + 1)` 时极值在 `x` 及其左侧，否则在右侧。凸函数上三分；非单峰函数不可用。
+
 ```cpp
 while (l < r) {
-    int mid = (l + r) / 2;
+    int mid = l + (r - l) / 2; // 防溢出中点
     if (check(mid) <= check(mid + 1)) r = mid;
     else l = mid + 1;
 }
@@ -6654,10 +6675,10 @@ cout << check(l) << endl;
 
 ### 实数域三分
 
-限制次数实现。
+限制次数实现，同样要求单峰：
 
 ```cpp
-ld l = -1E9, r = 1E9;
+ld l = -1E9, r = 1E9; // 初始边界要包住极值点
 for (int t = 1; t <= 100; t++) {
     ld mid1 = (l * 2 + r) / 3;
     ld mid2 = (l + r * 2) / 3;
