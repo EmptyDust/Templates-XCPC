@@ -9871,7 +9871,7 @@ signed main() {
 ```
 ## 数论
 
-本文对于数论的开头部分做一个简介。
+> 本章前半为定义与性质速查表，后半为板子；代码中 `LL` / `i64` 为 `long long`，`mod` / `MOD` / `p` 为模数，按题目替换。
 
 ### 整除
 
@@ -9927,7 +9927,7 @@ $0$ 是所有非 $0$ 整数的倍数。对于整数 $b\ne0$，$b$ 的约数只�
 
 ### 最大公约数与最小公倍数
 
-关于公约数、公倍数、最大公约数与最小公倍数，四个名词的定义，见 [最大公约数](./gcd.md)。
+四个名词的定义不再赘述（本节的标题即前两者的定义）。
 
 **Warning**
 一些作者认为 $0$ 和 $0$ 的最大公约数无定义，其余作者一般将其视为 $0$。C++ STL 的实现中采用后者，即认为 $0$ 和 $0$ 的最大公约数为 $0$[^gcdcpp]。
@@ -9980,11 +9980,11 @@ $0$ 是所有非 $0$ 整数的倍数。对于整数 $b\ne0$，$b$ 的约数只�
 
 多个整数互素，不一定两两互素。例如 $6$、$10$ 和 $15$ 互素，但是任意两个都不互素。
 
-互素的性质与最大公约数理论：裴蜀定理（Bézout's identity）。见 [裴蜀定理](./bezouts.md)。
+互素的性质与最大公约数理论：裴蜀定理（Bézout's identity），见 [后节](#裴蜀定理)。
 
 ### 素数与合数
 
-关于素数的算法见 [素数](./prime.md)。
+关于素数的算法见 [欧拉筛（线性筛）](#欧拉筛线性筛)。
 
 **定义**
 设整数 $p\ne0,\pm1$。如果 $p$ 除了平凡约数外没有其他约数，那么称 $p$ 为 **素数**（**不可约数**）。
@@ -10015,7 +10015,7 @@ $p$ 和 $-p$ 总是同为素数或者同为合数。**如果没有特别说明�
 对整数 $p\ne 0,\pm 1$，若对任意满足 $p\mid a_1a_2$ 的整数 $a_1,a_2$ 均有 $p\mid a_1$ 或 $p\mid a_2$ 成立，则称 $p$ 是素数。
 
 **Tip**
-这个定义的动机可以从 [素理想](../algebra/ring-theory.md#素理想) 中找到。
+这个定义的动机可以从素理想中找到。
 
 **算术基本定理（唯一分解定理）**
 设正整数 $a$，那么必有表示：
@@ -10054,7 +10054,7 @@ $$
 
 同余的性质：
 
-- 同余是 [等价关系](../order-theory.md#二元关系)，即同余具有
+- 同余是等价关系，即同余具有
   - 自反性：$a\equiv a\pmod m$。
   - 对称性：若 $a\equiv b\pmod m$，则 $b\equiv a\pmod m$。
   - 传递性：若 $a\equiv b\pmod m,b\equiv c\pmod m$，则 $a\equiv c\pmod m$。
@@ -10067,7 +10067,7 @@ $$
 - 若 $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*,d\mid m$，则当 $a\equiv b\pmod m$ 成立时，有 $a\equiv b\pmod d$。
 - 若 $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*$，则当 $a\equiv b\pmod m$ 成立时，有 $(a,m)=(b,m)$。若 $d$ 能整除 $m$ 及 $a,b$ 中的一个，则 $d$ 必定能整除 $a,b$ 中的另一个。
 
-还有性质是乘法逆元。见 [乘法逆元](./inverse.md)。
+还有性质是乘法逆元，见 [逆元](#逆元)。
 
 ### 同余类与剩余系
 
@@ -10103,16 +10103,16 @@ $$
 - 对任意整数 $a$，$a+\mathbf{Z}_m=\mathbf{Z}_m$；
 - 对任意与 $m$ 互质的整数 $b$，$b\mathbf{Z}_m=\mathbf{Z}_m$。
 
-由 [商群](../algebra/group-theory.md#商群) 的定义可知 $\mathbf{Z}_m=\mathbf{Z}/m\mathbf{Z}$，所以有时我们也会用 $\mathbf{Z}/m\mathbf{Z}$ 表示 $\mathbf{Z}_m$。
+由商群的定义可知 $\mathbf{Z}_m=\mathbf{Z}/m\mathbf{Z}$，所以有时我们也会用 $\mathbf{Z}/m\mathbf{Z}$ 表示 $\mathbf{Z}_m$。
 
-由 [抽屉原理](../combinatorics/drawer-principle.md) 可知：
+由抽屉原理可知：
 
 - 任取 $m+1$ 个整数，必有两个整数模 $m$ 同余。
 - 存在 $m$ 个两两模 $m$ 不同余的整数。
 
 由此我们给出完全剩余系的定义：
 
-**完全）剩余系**
+**完全剩余系**
 对 $m$ 个整数 $a_1,a_2,\dots,a_m$，若对任意的数 $x$，有且仅有一个数 $a_i$ 使得 $x$ 与 $a_i$ 模 $m$ 同余，则称这 $m$ 个整数 $a_1,a_2,\dots,a_m$ 为模 $m$ 的 **完全剩余系**，简称 **剩余系**。
 
 我们还可以定义模 $m$ 的：
@@ -10134,7 +10134,7 @@ $$
 **既约同余类**
 对同余类 $r\bmod m$，若 $(r,m)=1$，则称该同余类为 **既约同余类** 或 **既约剩余类**。
 
-我们把模 $m$ 既约剩余类的个数记作 $\varphi(m)$，称其为 [Euler 函数](./euler-totient.md)。
+我们把模 $m$ 既约剩余类的个数记作 $\varphi(m)$，称其为 Euler 函数（欧拉函数，见 [后节](#欧拉函数)）。
 
 我们把模 $m$ 的既约同余类全体构成的集合记为 $\mathbf{Z}_m^*$，即
 
@@ -10145,7 +10145,7 @@ $$
 **Warning**
 对于任意的整数 $a$ 和与 $m$ 互质的整数 $b$，$b\mathbf{Z}_m^*=\mathbf{Z}_m^*$，但是 $a+\mathbf{Z}_m^*$ 不一定为 $\mathbf{Z}_m^*$。这一点与 $\mathbf{Z}_m$ 不同。
 
-由 [抽屉原理](../combinatorics/drawer-principle.md) 可知：
+由抽屉原理可知：
 
 - 任取 $\varphi(m)+1$ 个与 $m$ 互质的整数，必有两个整数模 $m$ 同余。
 - 存在 $\varphi(m)$ 个与 $m$ 互质且两两模 $m$ 不同余的整数。
@@ -10203,7 +10203,7 @@ $$
 为模 $m$ 的 **既约** 剩余系。
 
 **Tip**
-该定理等价于证明 Euler 函数为 [积性函数](#积性函数)。
+该定理等价于证明 Euler 函数为积性函数。
 
 **证明**
 令 $Z_{m_1},Z_{m_2}$ 分别为模 $m_1,m_2$ 的完全剩余系，我们已经证明了
@@ -10385,7 +10385,7 @@ $$
 
 #### 调和级数
 
-满足调和级数 $\mathcal O\left( \dfrac{N}{1} +\dfrac{N}{2}+\dfrac{N}{3}+\dots + \dfrac{N}{N} \right)$，可以用 $ \approx N\ln N$ 来拟合，但是会略小，误差量级在 $10\%$ 左右。本地可以在 500ms 内完成 $10^8$ 量级的预处理计算。
+枚举 $1..N$ 的倍数（调和级数复杂度）：$\sum_{k=1}^{N} \frac{N}{k} \approx N\ln N$，误差量级在 $10\%$ 左右。常规评测机可以在 500ms 内完成 $10^8$ 量级的此类预处理计算。下表 N 的量级指 $10$ 的幂次数。
 
 | N 的量级 |  1  |  2  |   3   |   4    |     5     |     6      |      7      |       8       |       9        |
 | :------: | :-: | :-: | :---: | :----: | :-------: | :--------: | :---------: | :-----------: | :------------: |
@@ -10420,7 +10420,7 @@ for (int i = 1; i <= N; i++) {
 
 ### 欧拉筛（线性筛）
 
-时间复杂度为 $\mathcal{O}(N\log\log N)$ 。
+每个合数只被它的**最小质因子**筛掉一次，因此复杂度为 $\mathcal O(N)$（埃氏筛是 $\mathcal O(N\log\log N)$，此处原写有误）。下面的写法同时把最小质因子记录在 `v`/`minp` 中，可用于分解质因数。
 
 ```cpp
 vector<int> prime; // 这里储存筛出来的全部质数
@@ -10436,6 +10436,7 @@ auto euler_Prime = [&](int n) -> void {
             v[i * prime[j]] = prime[j];
         }
     }
+    // 筛完后 v[x] = x 的最小质因子（x 为质数时 v[x] = x）
 };
 ```
 
@@ -10469,13 +10470,18 @@ void sieve(int n) {
 
 ### 防爆模乘
 
+$10^{18}$ 量级的 `a * b % m` 直接乘会溢出，用二分拆开或 128 位中转。**首选 int128 版**（简单、可移植）；浮点版不依赖 `__int128` 且常数小，但依赖平台 `long double` 的精度：
+
+- x86 上 `long double` 为 80 位，`mul` 对 $<10^{18}$ 正确；
+- ARM / MSVC 上 `long double` 退化为 64 位 double，**会出错**，此时只能用 int128 版。
+
 #### 借助浮点数实现
 
-以 $\mathcal O(1)$ 计算 $a\cdot b\bmod p$ ，由于不取模，常数比 int128 法小很多。其中 $1 \le n, k, p \le 10^{18}$ 。
+$\mathcal O(1)$ 计算 $a\cdot b\bmod m$，常数比 int128 法小很多。其中 $1 \le a, b, m \le 10^{18}$。
 
 ```cpp
-int mul(int a, int b, int m) {
-    int r = a * b - m * (int)(1.L / m * a * b);
+LL mul(LL a, LL b, LL m) {
+    LL r = a * b - m * (LL)(1.L / m * a * b);
     return r - m * (r >= m) + m * (r < 0);
 }
 ```
@@ -10483,8 +10489,8 @@ int mul(int a, int b, int m) {
 #### 借助 int128 实现
 
 ```cpp
-int mul(int a, int b, int m) {
-    return (__int128)a * b % m;
+LL mul(LL a, LL b, LL m) {
+    return (LL)((__int128)a * b % m);
 }
 ```
 
@@ -10509,7 +10515,7 @@ int mul(int a, int b, int m) {
 
 裴蜀定理可以推广到 $n$ 个整数的情形：设 $a_1, a_2, \dots, a_n$ 是不全为零的整数，则存在整数 $x_1, x_2, \dots, x_n$, 使得 $a_1 x_1 + a_2 x_2 + \cdots + a_n x_n=\gcd(a_1, a_2, \dots, a_n)$。其逆定理也成立：设 $a_1, a_2, \dots, a_n$ 是不全为零的整数，$d > 0$ 是 $a_1, a_2, \dots, a_n$ 的公因数，若存在整数 $x_1, x_2, \dots, x_n$, 使得 $a_1 x_1 + a_2 x_2 + \cdots + a_n x_n=d$，则 $d = \gcd(a_1, a_2, \dots, a_n)$。
 
-例题：给定一个序列 $a$，找到一个序列 $x$，使得 $\sum_{i = 1}^n a_ix_i$ 最小。
+例题：给定一个序列 $a$，找到整数序列 $x$，使得 $\sum_{i = 1}^n a_ix_i$ 为最小的**正数**。答案就是 $\gcd(a_1,\dots,a_n)$（裴蜀定理可加出的最小正值）。
 
 ```cpp
 LL n, a, ans;
@@ -10567,7 +10573,7 @@ LL getInv(int a, int mod) { //求a在mod下的逆元，不存在逆元返回-1
 
 #### 离线求解：线性递推解
 
-以 $\mathcal O(N)$ 的复杂度完成 $1-N$ 中全部逆元的计算。
+以 $\mathcal O(N)$ 的复杂度完成 $1-N$ 中全部逆元的计算。**仅当 $p$ 为素数时成立。**
 
 ```cpp
 inv[1] = 1;
@@ -10591,12 +10597,13 @@ int exgcd(int a, int b, int &x, int &y) {
 }
 ```
 
-例题：求解二元一次不定方程 $A\cdot x + B\cdot y = C$ 。
+例题：求解二元一次不定方程 $A\cdot x + B\cdot y = C$ 的正整数解个数。
 
 ```cpp
-auto clac = [&](int a, int b, int c) {
+auto calc = [&](int a, int b, int c) {
+    // A*x + B*y = C，A、B 可为负
     int u = 1, v = 1;
-    if (a < 0) { // 负数特判，但是没用经过例题测试
+    if (a < 0) { // 负数先取绝对值，最后乘回符号
         a = -a;
         u = -1;
     }
@@ -10611,19 +10618,21 @@ auto clac = [&](int a, int b, int c) {
         return;
     }
     a /= d, b /= d, c /= d;
-    x *= c, y *= c; // 得到可行解
+    x *= c, y *= c; // 得到一组可行解
 
-    ans = (x % b + b - 1) % b + 1;
-    auto [A, B] = pair{u * ans, v * (c - ans * a) / b}; // x最小正整数 特解
+    ans = (x % b + b - 1) % b + 1; // x 的最小正整数解
+    auto [A, B] = pair{u * ans, v * (c - ans * a) / b};
 
-    ans = (y % a + a - 1) % a + 1;
-    auto [C, D] = pair{u * (c - ans * b) / a, v * ans}; // y最小正整数 特解
+    ans = (y % a + a - 1) % a + 1; // y 的最小正整数解
+    auto [C, D] = pair{u * (c - ans * b) / a, v * ans};
 
-    int num = (C - A) / b + 1; // xy均为正整数 的 解的组数
+    int num = (C - A) / b + 1; // x、y 均为正整数的解组数
 };
 ```
 
 ### 类欧几里得
+
+计算 $\sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor$（可扩展求 $\sum i^k\lfloor\cdot\rfloor$ 的若干变体）。复杂度 $\mathcal O(\log \max(a,c))$。
 
 $$
 euclidean(a,b,c,n)=\sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor
@@ -10803,6 +10812,8 @@ void init(int n) {
 
 #### 使用莫比乌斯反演求解欧拉函数
 
+由恒等式 $\sum_{d\mid n}\varphi(d)=n$ 对 $n$ 容斥递推：$\varphi(n)=n-\sum_{d\mid n, d<n}\varphi(d)$。先用倍数法预处理每个数的约数，再 $O(N\log N)$ 递推。
+
 ```cpp
 int phi[N];
 vector<int> fac[N];
@@ -10843,13 +10854,15 @@ $$
 a^{b}\equiv a^{b\,\mathrm{mod} \,\varphi(m)+\varphi(m)}(\mathrm{mod}\,m)
 $$
 
-式子仅在 $\varphi(m)\leq b$ 时成立
+式子仅在 $\varphi(m)\leq b$ 时成立。
+
+下面板子解决"指数 $b$ 以字符串给出（大到无法读入整数）"的场景：`read(MOD)` 边读边对 `MOD=φ(m)` 取模，同时用 `large_enough` 记录 $b\ge\varphi(m)$ 是否成立；最后按上式计算 $a^{b + \varphi(m)}\bmod m$。
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-bool large_enough = false; // 判断是否有b >= phi(m)
-inline int read(int MOD = 1e9 + 7) // 快速读入稍加修改即可以边读入边取模，不取模时直接模一个大于数据范围的数
+bool large_enough = false; // 判断是否有 b >= phi(m)
+inline int read(int MOD = 1e9 + 7) // 快速读入稍加修改即可以边读入边取模；不用扩展欧拉定理时直接模一个大数即可
 {
     int ans = 0;
     char c = getchar();
@@ -10935,7 +10948,7 @@ $\mathcal O(\sqrt N)$ 。
 ```cpp
 bool is_prime(int n) {
     if (n < 2) return false;
-    for (int i = 2; i <= x / i; i++) {
+    for (int i = 2; i <= n / i; i++) {
         if (n % i == 0) return false;
     }
     return true;
@@ -10962,7 +10975,7 @@ bool is_prime(int n) {
 
 ### 同余方程组、拓展中国剩余定理 excrt
 
-公式：$x \equiv b_i(\bmod\ a_i)$ ，即 $(x - b_i) \mid a_i$ 。
+求解方程组 $x \equiv a_i \pmod{b_i}$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。**模数不要求两两互质**（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x\equiv ans \pmod M$ 与新方程 $x\equiv a_i\pmod{b_i}$ 消元成 $M\cdot k \equiv a_i - ans \pmod{b_i}$，用 exgcd 解出 $k$。复杂度 $\mathcal O(n\log)$。
 
 ```cpp
 int n; LL ai[maxn], bi[maxn];
@@ -10979,12 +10992,13 @@ LL exgcd(LL a, LL b, LL &x, LL &y) {
     return gcd;
 }
 LL excrt() {
+    // 方程形式为 x ≡ ai[i] (mod bi[i])，模数不要求互质；互质时就是 CRT 的特例
     LL x, y, k;
-    LL M = bi[1], ans = ai[1];
+    LL M = bi[1], ans = ai[1]; // 当前合并后的模数与余数
     for (int i = 2; i <= n; ++ i) {
-        LL a = M, b = bi[i], c = (ai[i] - ans % b + b) % b;
+        LL a = M, b = bi[i], c = (ai[i] - ans % b + b) % b; // 变成 exgcd 可解形式 ax ≡ c (mod b)
         LL gcd = exgcd(a, b, x, y), bg = b / gcd;
-        if (c % gcd != 0) return -1;
+        if (c % gcd != 0) return -1; // 无解判定
         x = mul(x, c / gcd, bg);
         ans += x * M;
         M *= bg;
@@ -11002,7 +11016,7 @@ int main() {
 
 ### 求解连续按位异或
 
-以 $\mathcal O(1)$ 复杂度计算 $0\oplus1\oplus\dots\oplus n$ 。
+两段等价：$0\oplus1\oplus\dots\oplus n$ 按 $n\bmod 4$ 分类取 $n,1,n+1,0$。复杂度 $\mathcal O(1)$。第一版用位运算技巧，第二版直观。
 
 ```cpp
 unsigned xor_n(unsigned n) {
@@ -11023,7 +11037,7 @@ i64 xor_n(i64 n) {
 
 ### 高斯消元求解线性方程组
 
-题目大意：输入一个包含 $N$ 个方程 $N$ 个未知数的线性方程组，系数与常数均为实数（两位小数）。求解这个方程组。如果存在唯一解，则输出所有 $N$ 个未知数的解，结果保留两位小数。如果无数解，则输出 $\tt{}X$ ，如果无解，则输出 $\tt{}N$ 。
+解 $N$ 元一次方程组（实数系数的板子；模意义下把除法换成逆元即可）。列主元选绝对值最大行防止除小数放大误差，复杂度 $\mathcal O(N^3)$。返回值：$0$ = 唯一解（解存在 `a[i][n]`），$1$ = 无穷多解，$2$ = 无解。
 
 ```cpp
 const int N = 110;
@@ -11078,7 +11092,7 @@ int main(){
 
 ### Min25 筛
 
-求解 $1-N$ 的质数和，其中 $N \le 10^{10}$ 。
+求 $1..N$ 的质数和（$N\le 10^{10}$），板子对结果按 `mod` 取模。复杂度 $\mathcal O(N^{3/4}/\log N)$，实测 $10^{10}$ 很快；`id1/id2` 是两个 $\mathcal O(\sqrt N)$ 数组，把 $\lfloor N/x\rfloor$ 的取值线形编号。`init` 在筛质数后对数论分块的值做 $\mathcal O(\frac{N^{3/4}}{\log N})$ 的质数贡献筛，`solve` 返回 $2..N$ 质数和。求一般的积性函数前缀和需按题目改写 `calc` 与转移，具体参 oi-wiki 的 Min_25 筛一节。
 
 ```cpp
 namespace min25{
@@ -11152,7 +11166,7 @@ int main() {
 
 ### 矩阵四则运算
 
-[封装来自](https://ac.nowcoder.com/acm/contest/view-submission?submissionId=48594258) 。矩阵乘法复杂度 $\mathcal O(N^3)$ 。
+[封装来自](https://ac.nowcoder.com/acm/contest/view-submission?submissionId=48594258) 。矩阵乘法复杂度 $\mathcal O(N^3)$ 。**`SIZE` 按题目改**；`getinv` 用高斯-约当法在素模数下求逆（依赖 `mod` 为素数），失败时置全局 `ok = 0`。
 
 ```cpp
 const int SIZE = 2;
@@ -11222,10 +11236,10 @@ Matrix getinv(Matrix a) { //矩阵求逆
 
 ### 矩阵快速幂
 
-以 $\mathcal O(N^3\log M)$ 的复杂度计算。
+以 $\mathcal O(N^3\log M)$ 的复杂度计算（$M$ 为幂次，稀疏矩阵可用矩阵加速优化）。
 
 ```cpp
-const int N = 40;
+const int N = 40; // 按题目矩阵大小改
 using mat = std::array<std::array<i64, N + 1>, N + 1>;
 mat operator*(const mat& a, const mat& b) {
     mat ans{};
@@ -11252,8 +11266,16 @@ mat MatPow(mat a, i64 b) {
 
 ### 矩阵加速
 
+矩阵快速幂优化线性递推的示例：递推式 $f(n)=f(n-1)+f(n-3)$（初值 $f(1)=f(2)=f(3)=1$）。转移矩阵为
+
+$$
+\begin{pmatrix}1&0&1\\1&0&0\\0&1&0\end{pmatrix},\qquad
+\begin{pmatrix}f(n)\\f(n-1)\\f(n-2)\end{pmatrix}=\begin{pmatrix}1&0&1\\1&0&0\\0&1&0\end{pmatrix}^{n-3}\begin{pmatrix}1\\1\\1\end{pmatrix}
+$$
+
+复杂度 $\mathcal O(k^3\log n)$，$k$ 为状态数（此处 3）。
+
 ```cpp
-const int mod = 1e9 + 7;
 LL T, n, t[5][5], a[5][5], b[5][5];
 void matrixQp(LL y){
     while (y){
@@ -11299,17 +11321,17 @@ int main(){
 
 ### 莫比乌斯函数/反演
 
-莫比乌斯函数定义：$\displaystyle {\mu(n) = \begin{cases} 1 &n = 1 \\ (-1)^k &n = \prod_{i = 1}^k p_i \text{ 且 } p_i \text{ 互质 } \\ 0 &else \end{cases}}$ 。
+莫比乌斯函数定义：$\displaystyle {\mu(n) = \begin{cases} 1 &n = 1 \\ (-1)^k &n \text{ 为 } k \text{ 个互异素数之积} \\ 0 &else \end{cases}}$ 。（原文"$p_i$ 互质"意为 $p_i$ 两两不同）
 
 > 莫比乌斯函数性质：对于任意正整数 $n$ 满足 $\displaystyle {\sum_{d|n}\mu(d) = \begin{cases} 1 & n = 1 \\ 0 & n \neq 1\end{cases}}$ ；$\displaystyle {\sum_{d|n} \frac{\mu(d)}{d} = \frac{\varphi(n)}{n}}$ 。
 
-莫比乌斯反演定义：定义：$F(n)$ 和 $f(n)$ 是定义在非负整数集合上的两个函数，并且满足 $\displaystyle F(n) = \sum_{d|n}f(d)$ ，可得 $\displaystyle f(n) = \sum_{d|n}\mu(d)F(\left \lfloor \frac{n}{d} \right \rfloor)$ 。
+莫比乌斯反演定义：$F(n)$ 和 $f(n)$ 是定义在非负整数集合上的两个函数，并且满足 $\displaystyle F(n) = \sum_{d|n}f(d)$ ，可得 $\displaystyle f(n) = \sum_{d|n}\mu(d)F(\left \lfloor \frac{n}{d} \right \rfloor)$ 。用于"已知 $F$ 求 $f$"的莫反类题；也可以理解为 $F = f * 1 \iff f = F * \mu$。
 
 ```cpp
-const int N = 5e4 + 10;
+const int N = 5e4 + 10; // 按题目改
 bool st[N];
 int mu[N], prime[N], cnt, sum[N];
-void getMu() {
+void getMu() { // 线性筛 mu，再前缀和，O(N)
     mu[1] = 1;
     for (int i = 2; i <= N - 10; i++) {
         if (!st[i]) {
@@ -11349,6 +11371,8 @@ int main() {
 
 ### 整除（数论）分块
 
+把 $\lfloor n/i\rfloor$ 相同的 $i$ 并为一块：$j=\lfloor n/\lfloor n/i\rfloor\rfloor$ 是右端点，块内个数 $j-i+1$，块数 $\mathcal O(\sqrt n)$。莫反、杜教筛、前缀和题里"枚举 $\lfloor n/i\rfloor$"都用它。
+
 $\displaystyle \left\lfloor \frac{n}{l} \right\rfloor = \left\lfloor \frac{n}{l + 1} \right\rfloor = ... = \left\lfloor \frac{n}{r} \right\rfloor \iff \left\lfloor \frac{n}{l} \right\rfloor \le \frac{n}{r} < \left\lfloor \frac{n}{l} \right\rfloor + 1$ ，根据不等式左侧，得到 $\displaystyle r \le \left\lfloor \frac{n}{\lfloor \frac{n}{l} \rfloor} \right\rfloor$ 。
 
 ```cpp
@@ -11369,7 +11393,7 @@ int main() {
 
 ### Miller - Rabin 素数测试
 
-以平均 $\mathcal O (4\cdot \log^3X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本复杂度非常优秀，基本可以看作是 $\mathcal O(1)$ 。
+以平均 $\mathcal O (4\cdot \log^3X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本常数非常优秀，基本可以看作是 $\mathcal O(1)$ 。**确定性结论**：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $<3.8\times10^{18}$ 的数判定**完全确定无误**；如果题目给到 long long 全域（上限 $9.2\times10^{18}$），把底表扩到前 12 个素数 $2..37$ 即确定覆盖。
 
 ```cpp
 int mul(int a, int b, int m) {
@@ -11664,9 +11688,7 @@ $\tt ^1$ 先考虑没有 $k$ 的限制，那么即球盒模型：$m$ 个球放�
 
 ### 约瑟夫问题
 
-$n$ 个人编号 $0,1,2…,n-1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。
-
-$\mathcal O(N)$ 。
+$n$ 个人编号 $0,1,2…,n-1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。三段分别适用：线性 $\mathcal O(N)$ 任意 $k$；$\mathcal O(K\log N)$ 适合 $K$ 小；$\mathcal O(\sqrt N)$ 适合单次大询问。`repeat(i,a,b)` 是 i 从 a 到 b-1 的宏，可等价写成 `for (int i = a; i < b; ++i)`。
 
 ```c++
 int jos(int n,int k){
