@@ -1056,8 +1056,8 @@ template<typename T> T rotatingCalipers(vector<Point<T>> &p) {
 
 ```cpp
 std::vector<int> get_next(std::string& t) {
-    std::vector<int> next(t.size());
-    next[0] = -1;
+    std::vector<int> next(t.size() + 1); // 多开一位：循环里 i 先自增到 size 再写 next[i]，否则越界
+    next[0] = -1; // 哨兵；next[i] 为前缀 t[0..i-1] 的最长 border 长度
     for (int i = 0, j = -1; i < (int)t.size();) {
         if (j == -1 || t[i] == t[j]) {
             ++i, ++j;
@@ -1138,7 +1138,7 @@ int main(){
 
 #### 大数据解
 
-针对 $10^5$ 以内的数据。
+针对 $10^5$ 以内的数据。**要求两个序列都是排列**（元素互不相同），否则 `p[a[i]] = i` 的映射会互相覆盖。把第二个序列映射到第一个序列中的位置后跑 LIS，复杂度 $\mathcal O(N\log N)$。`maxn` 需自行定义。
 
 ```cpp
 const int INF = 0x7fffffff;
@@ -1176,7 +1176,7 @@ int main(){
 
 #### 双哈希封装
 
-随机质数列表：1111111121、1211111123、1311111119。
+使用前先调用 `init()` 生成幂表；`Zmod` 见数论章。字符串哈希值带前导哨兵 `1`（空串哈希为 `1`），`substring(l, r)` 取 $0$ 基准下标区间，`modify(idx, x)` 单点替换。随机质数列表：1111111121、1211111123、1311111119——固定 mod/base 有被针对性卡哈希的风险，随机 base 或换质数更稳。
 
 ```cpp
 const int N = 1 << 21;
@@ -1257,6 +1257,8 @@ string compress(vector<string> in) { // 前后缀压缩
 
 ### 马拉车
 
+$\mathcal O(N)$ 求每个位置的回文半径：`d1[i]` 为以 $i$ 为中心的奇回文半径（**含中心**），`d2[i]` 为以 $i$ 与 $i-1$ 中间为中心的偶回文半径。以 $i$ 为中心的最长奇回文长度为 `2*d1[i]-1`，偶回文为 `2*d2[i]`。下方 `check(l, r)` 返回 `true` 表示区间 $[l, r]$ **不是**回文（按原题语义，注意与直觉相反）。
+
 ```cpp
 struct Manachar {
     std::vector<int> d1, d2;
@@ -1300,6 +1302,8 @@ struct Manachar {
 
 #### 基础封装
 
+多模式串字典树，字符集为 `a-z A-Z 0-9` 共 $62$ 类（`init()` 建立映射表）。注意 `cnt[u]++` 是在经过路径上累计——`query` 返回的是**以该串为前缀**的串数；若要统计某个串恰好出现的次数，请在插入末尾单独标记。
+
 ```cpp
 struct Trie {
     int ch[N][63], cnt[N], idx = 0;
@@ -1342,6 +1346,8 @@ struct Trie {
 
 #### 01 字典树
 
+按二进制位（从高到低）插入数，`query(x)` 返回集合中与 $x$ 异或最大的结果。深度 `30` 按值域改（如 `long long` 用 `63`）。
+
 ```cpp
 struct Trie {
     int n, idx;
@@ -1377,7 +1383,7 @@ struct Trie {
 
 ### 后缀数组 SA
 
-以 $\mathcal O(N)$ 的复杂度求解。
+倍增法建后缀数组，复杂度为 $\mathcal O(N\log N)$（原标注 $\mathcal O(N)$ 有误，线性需 SA-IS）。`sa[i]` 为排名 $i$ 的后缀起点，`rk[i]` 为后缀 $i$ 的排名，`lc[rk[i]-1]` 为后缀 $i$ 与排名前一后缀的 LCP（即 height 数组）。常用结论：任意两后缀的 LCP 为对应区间 height 的 RMQ。
 
 ```cpp
 struct SuffixArray {
@@ -1463,7 +1469,7 @@ struct ACAutomaton {
         cnt[u]++;
     }
     void build() {
-        fill(ch[0], ch[0] + 26, 1);
+        fill(ch[0], ch[0] + 26, 1); // 0 号虚拟节点所有边指向根，便于 fail 转移
         queue<int> q;
         q.push(1);
         while (!q.empty()) {
@@ -1485,7 +1491,7 @@ struct ACAutomaton {
         int u = 1;
         for (auto c : t) {
             u = ch[u][c - 'a'];
-            for (int v = u; v && ~cnt[v]; v = fail[v]) {
+            for (int v = u; v && ~cnt[v]; v = fail[v]) { // cnt[v] 置 -1 标记"该模式串已统计"，即每个模式串只计一次
                 ans += cnt[v];
                 cnt[v] = -1;
             }
@@ -1496,6 +1502,9 @@ struct ACAutomaton {
 ```
 
 ```cpp
+// 第二个封装：fail 树 + 出现次数统计。
+// add(s) 返回 s 结尾节点；work(s) 先按文本走自动机，再在 fail 树上自底向上聚合，
+// 返回每个节点（模式串）在文本中的出现次数，常用于"每个模板串各出现几次"。
 struct AhoCorasick {
     static constexpr int ALPHABET = 26;
     struct Node {
@@ -1599,6 +1608,8 @@ struct AhoCorasick {
 
 ### 回文自动机 PAM（回文树）
 
+$\mathcal O(N)$ 在线维护所有**本质不同**的回文子串，节点数 $\le n+2$（两个根长度 $0$ 与 $-1$）。`len[v]` 为该节点回文长度，`fail[v]` 指向最长回文真后缀，`dep[v]` 为回文后缀链深度（即不同回文后缀个数），`cnt[v]` 需在建完后 `countAll()` 从大到小向 `fail` 累加才成为真实出现次数。插入按字符逐个 `insert(c, i)`。
+
 ```cpp
 struct PalindromeAutomaton {
     constexpr static int N = 5e5 + 10;
@@ -1644,6 +1655,7 @@ struct PalindromeAutomaton {
 ```
 
 ```cpp
+// 动态 vector 版（上面是固定数组版）：TL 为字符集大小，BC 为最小字符；节点含义同上。
 const int TL = 10;
 const char BC = '0';
 struct PAM {
@@ -1720,6 +1732,7 @@ struct PAM {
 
 ```cpp
 // 有向无环图
+// extend(p, c) 从最后一个节点 p 续加字符 c，返回新的 last；连续放多个串时把 last 复位为 0 即广义 SAM。
 struct SuffixAutomaton {
     static constexpr int N = 1e6;
     struct node {
@@ -1763,8 +1776,7 @@ struct SuffixAutomaton {
 };
 ```
 
-endpos, size 按需
-link 构造后缀树
+第二个 SAM 封装：`endpos` 为该状态最短出现位置记录（按需使用），`size` 为出现次数——按 `len` 降序（即节点编号倒序，clones 在前）把 `size` 累加到 `link` 上即可；以 `link` 为父边构成的后缀链接树可当后缀树用。复杂度 $\mathcal O(N\log |\Sigma|)$（`next` 用 `std::map`）。
 
 ```cpp
 struct SAM {
@@ -1842,47 +1854,14 @@ struct SAM {
 
 ### 子序列自动机
 
-对于给定的长度为 $n$ 的主串 $s$ ，以 $\mathcal O(n)$ 的时间复杂度预处理、$\mathcal O(m + \log \textrm{size:}s)$ 的复杂度判定长度为 $m$ 的询问串是否是主串的子序列。
+对于给定主串 $s$（长 $n$），以 $\mathcal O(n)$（对每个字符开桶存出现位置）预处理、单次 $\mathcal O(m\log n)$ 判定长度为 $m$ 的询问串是否为 $s$ 的子序列。核心是 `next[i][c]`：位置 $i$ 之后（不含 $i$）字符 $c$ 第一次出现的位置，匹配时贪心跳转。常见用途：
 
-好的，我们来谈谈子序列自动机（Subsequence Automaton）。
+1. 判断一个（或多个）串是否为主串的子序列
+2. 多串各自建自动机后同步转移，求最短公共超序列等公共子序列变种
+3. 在自动机上 DP 统计本质不同子序列个数
+4. 配合 DP 求字典序第 $k$ 小的子序列
 
-相比于后缀自动机（SAM）和回文自动机（PAM），子序列自动机在结构上要简单得多，但它同样是处理特定字符串问题的有效工具。它的主要应用领域集中在与**子序列**相关的匹配和统计问题上。
-
-### 什么是子序列自动机？
-
-对于一个给定的字符串 S（长度为 n），它的子序列自动机是一个能够识别 S 所有子序列的自动机。其构造非常直观和简单：
-
-它通常被实现为一个二维数组 `next[i][c]`，表示在字符串的第 `i` 个位置之后（不包括 `i`），字符 `c` 第一次出现的位置。这个数组可以在 O(n×∣Σ∣) 的时间内预处理出来，其中 ∣Σ∣ 是字符集的大小（例如，对于小写字母是 26）。
-
-举例：
-
-对于字符串 S = "banana"
-
-next[0]['b'] 是 1 (第一个 'b' 的位置)
-
-next[1]['n'] 是 3 (位置 1 'a' 之后，下一个 'n' 在位置 3)
-
-next[3]['n'] 是 5 (位置 3 'n' 之后，下一个 'n' 在位置 5)
-
-### 主要用途
-
-子序列自动机的主要用途可以归结为以下几点：
-
-1. **判断一个字符串是否为子序列（子序列匹配）**：
-   - 这是最核心和最常见的用途。给定一个模式串 T，要判断它是否是主串 S 的子序列，只需利用预处理好的 `next` 数组进行贪心匹配。从位置 0 开始，依次为 T 的每个字符在 S 中寻找下一个最近的匹配位置。这个过程的效率极高，时间复杂度为 O(∣T∣)。
-2. **解决“公共子序列”相关问题**：
-   - 虽然寻找“最长公共子序列”（LCS）通常使用动态规划，但在某些特定场景下，子序列自动机可以提供不同的解题思路。
-   - 例如，在多个字符串上构建各自的子序列自动机，然后通过在这些自动机上同步转移（类似 DP），可以用来寻找多个字符串的“最短的公共超序列”（Shortest Common Supersequence）或解决其他相关的公共子序列变种问题。
-3. **计算不同子序列的数量**：
-   - 可以通过在子序列自动机上进行动态规划（DP）来计算一个字符串本质不同的子序列有多少个。DP 状态通常定义为 `dp[i]` 表示从位置 `i` 开始的子序列个数。
-4. **寻找字典序第 k 小子序列**：
-   - 与计算数量类似，通过在自动机上进行 DP，预先计算出从每个位置出发能产生多少不同的子序列，然后就可以按位确定第 k 小的子序列应该选择哪个字符作为开头，并跳转到相应的位置。
-
-- **结构简单**：相比 SAM 和 PAM，它的概念和实现都非常简单，就是一个`next`数组。
-- **构建快速**：预处理速度很快，尤其适用于字符集较小的情况。
-- **匹配高效**：对于子序列匹配问题，查询效率是线性的，与主串长度无关。
-
-**子序列自动机是专门用于高效处理字符串“子序列”相关问题的简单数据结构。当题目需要反复、快速地判断一个或多个字符串是否为某个主串的子序列，或者需要对子序列进行统计和计数时，它就是非常有用的工具。**
+相比 SAM/PAM 结构简单、预处理快，适合字符集小、反复判断子序列的场景。
 
 #### 自动离散化、自动类型匹配封装
 
@@ -12992,6 +12971,8 @@ g++ -O2 -std=c++20 -pipe
 
 ### 树的直径
 
+两次 DFS 法：从任意点出发找最远点 `st`，再从 `st` 出发找最远点 `ed`，二者距离即直径（**要求边权非负**；负权边需换树形 DP）。`getlen(root)` 返回以 `root` 为起点的连通块直径，`map` 存深度系森林时避免多次初始化。复杂度 $\mathcal O(N)$。
+
 ```cpp
 struct Tree {
     int n;
@@ -13029,6 +13010,8 @@ struct Tree {
 ```
 
 ### 树论大封装（直径+重心+中心）
+
+`d1[u]` 为向下最长链、`d2[u]` 为向下次长链（`s1/s2` 记对应儿子），`up[u]` 为向上最长链；`getCenter()` 求"到最远点距离最小"的中心与半径（`radius = min max(d1, up)`）；`getCog()` 求重心（删去后最大连通块最小，`rem` 为该最小值，`cog` 为重心）。
 
 ```cpp
 struct Tree {
@@ -13096,7 +13079,7 @@ struct Tree {
             }
         }
         radius = max(d1[center], up[center]); //距离最远点的距离的最小值
-        diam = d1[center] + up[center] + 1; //直径
+        diam = d1[center] + up[center] + 1; //直径：仅在 center 位于直径中点时正确；一般应取 max(d1[i] + d2[i])
     }
 
     int rem; //删除重心后剩余连通块体积的最小值
@@ -13129,7 +13112,7 @@ struct Tree {
 
 ### 点分治 / 树的重心
 
-重心的定义：删除树上的某一个点，会得到若干棵子树；删除某点后，得到的最大子树最小，这个点称为重心。我们假设某个点是重心，记录此时最大子树的最小值，遍历完所有点后取最大值即可。
+重心的定义：删除树上的某一个点，会得到若干棵子树；删除某点后，得到的最大子树最小，这个点称为重心。我们假设某个点是重心，记录此时最大子树的最小值，遍历完所有点后取最小值对应的点即可。
 
 > 重心的性质：重心最多可能会有两个，且此时两个重心相邻。
 
@@ -13398,7 +13381,9 @@ struct Tree {
 
 #### st表预处理解法
 
-``` cpp
+欧拉序 + ST 表预处理 $\mathcal O(N\log N)$，$O(1)$ 查询 LCA（不维护其他信息时最快，且静态）；`id` 为欧拉序，`l[u]/r[u]` 为子树区间（可顺带做子树操作）。
+
+```cpp
 struct LCA {
     int n, LOG;
     std::vector<int> l, r, id, dep, parent, lg;
@@ -13490,7 +13475,7 @@ int intersection(int x, int y, int X, int Y) {
 
 ### 树上启发式合并 (DSU on tree)
 
-$\mathcal O(N\log N)$ 。
+$\mathcal O(N\log N)$ 。思路：先轻儿子、再重儿子（重儿子贡献保留，`hson` 标记跳过），`calc` 暴力统计轻儿子子树；`add(c)/del(c)` 为待填钩子，`res` 为当前答案。`add()` 与顶部加边的 `add(u, v)` 靠参数个数区分。
 
 ```cpp
 struct HLD {
@@ -13525,8 +13510,8 @@ struct HLD {
     void del(int c) {
     }
     void calc(int u, int fa, int f) {
-        if (f == 1) add();
-        else del();
+        if (f == 1) add(u); // 原来写 add() 缺参数，按规定应为对节点 u 的颜色操作
+        else del(u);
         for (auto v : e[u]) {
             if (v == fa || v == hson) continue;
             calc(v, u, f);
@@ -13591,31 +13576,26 @@ vector<int> pruefer_code() {
 ```
 
 ```python
-# 结点是从 0 标号的
-adj = [[]]
-
-
-def pruefer_code():
+# 结点从 0 标号；与上面 C++ 版等价（每次取编号最小的叶）
+def pruefer_code(adj):
     n = len(adj)
     leafs = set()
     degree = [0] * n
     killed = [False] * n
-    for i in range(1, n):
+    for i in range(n):
         degree[i] = len(adj[i])
         if degree[i] == 1:
-            leafs.intersection(i)
+            leafs.add(i)
     code = [0] * (n - 2)
-    for i in range(1, n - 2):
-        leaf = leafs[0]
-        leafs.pop()
+    for i in range(n - 2):
+        leaf = min(leafs)
+        leafs.remove(leaf)
         killed[leaf] = True
-        for u in adj[leaf]:
-            if killed[u] == False:
-                v = u
+        v = next(u for u in adj[leaf] if not killed[u])
         code[i] = v
+        degree[v] -= 1
         if degree[v] == 1:
-            degree[v] = degree[v] - 1
-            leafs.intersection(v)
+            leafs.add(v)
     return code
 ```
 
@@ -13638,6 +13618,8 @@ n^{k-2}\cdot\prod_{i=1}^ks_i
 $$
 
 ### 重链剖分
+
+轻量封装：给树标出重儿子与链顶，得到 `dfn` 序（`rank[tot] = u` 是其逆），只需 LCA 时用；下文"轻重链剖分/树链剖分"一节配线段树支持链上/子树修改。注意 `dist(u, v)` 返回的是**路径上的节点数**（`+1`），若要边距离需去掉 `+1`。
 
 ```cpp
 struct HPD_tree
