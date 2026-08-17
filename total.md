@@ -73,9 +73,9 @@ cout << atoi("abc12") << endl; /*0*/
 // 长整型函数名atoll，最高支持到long long型上限2^63。
 ```
 
-### xxxxxxxxxx2 1p=(a+b+c)/2;2sum=sqrt(p*(p-a)*(p-b)\*(p-c));cpp
+### 全排列 next_permutation 与 prev_permutation
 
-在提及这个函数时，我们先需要补充几点字典序相关的知识。
+在提及 $\tt{}next\_permutation$ 时，我们先补充几点字典序相关的知识。
 
 > 对于三个字符所组成的序列`{a,b,c}`，其按照字典序的 6 种排列分别为：
 > `{abc}`，`{acb}`，`{bac}`，`{bca}`，`{cab}`，`{cba}`
@@ -13400,20 +13400,18 @@ $\mathcal O(N\log N)$ 。
 
 ```cpp
 struct HLD {
-    vector<vector<int>> e;
-    vector<int> siz, son, cnt;
-    vector<LL> ans;
-    LL sum, Max;
+    std::vector<std::vector<int>> e;
+    std::vector<int> siz, son;
+    std::vector<i64> ans;
     int hson;
+    i64 res;
     HLD(int n) {
         e.resize(n + 1);
         siz.resize(n + 1);
         son.resize(n + 1);
         ans.resize(n + 1);
-        cnt.resize(n + 1);
         hson = 0;
-        sum = 0;
-        Max = 0;
+        res = 0;
     }
     void add(int u, int v) {
         e[u].push_back(v);
@@ -13428,17 +13426,16 @@ struct HLD {
             if (siz[v] > siz[son[u]]) son[u] = v;
         }
     }
-    void calc(int u, int fa, int val) {
-        cnt[color[u]] += val;
-        if (cnt[color[u]] > Max) {
-            Max = cnt[color[u]];
-            sum = color[u];
-        } else if (cnt[color[u]] == Max) {
-            sum += color[u];
-        }
+    void add(int c) {
+    }
+    void del(int c) {
+    }
+    void calc(int u, int fa, int f) {
+        if (f == 1) add();
+        else del();
         for (auto v : e[u]) {
             if (v == fa || v == hson) continue;
-            calc(v, u, val);
+            calc(v, u, f);
         }
     }
     void dfs2(int u, int fa, int opt) {
@@ -13448,16 +13445,16 @@ struct HLD {
         }
         if (son[u]) {
             dfs2(son[u], u, 1);
-            hson = son[u]; //记录重链编号，计算的时候跳过
+            hson = son[u];
         }
         calc(u, fa, 1);
-        hson = 0; //消除的时候所有儿子都清除
-        ans[u] = sum;
-        if (!opt) {
-            calc(u, fa, -1);
-            sum = 0;
-            Max = 0;
-        }
+        hson = 0;
+        ans[u] = res;
+        if (!opt)   calc(u, fa, -1);
+    }
+    void work() {
+        dfs1(1, 0);
+        dfs2(1, 0, 0);
     }
 };
 ```

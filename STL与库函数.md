@@ -67,9 +67,9 @@ cout << atoi("abc12") << endl; /*0*/
 // 长整型函数名atoll，最高支持到long long型上限2^63。
 ```
 
-### xxxxxxxxxx2 1p=(a+b+c)/2;2sum=sqrt(p*(p-a)*(p-b)\*(p-c));cpp
+### 全排列 next_permutation 与 prev_permutation
 
-在提及这个函数时，我们先需要补充几点字典序相关的知识。
+在提及 $\tt{}next\_permutation$ 时，我们先补充几点字典序相关的知识。
 
 > 对于三个字符所组成的序列`{a,b,c}`，其按照字典序的 6 种排列分别为：
 > `{abc}`，`{acb}`，`{bac}`，`{bca}`，`{cab}`，`{cba}`
