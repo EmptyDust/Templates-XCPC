@@ -3,7 +3,7 @@
 ### 数组打乱 shuffle
 
 ```cpp
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); // 用系统时间做种子，防 hack
 shuffle(ver.begin(), ver.end(), rng);
 ```
 
@@ -16,10 +16,12 @@ __builtin_ffs(x) // 返回x右数第一个1的位置(1-idx)，1(1) 返回 1，8(
 
 __builtin_ctz(x) // 返回x二进制下后导0的个数，1(1) 返回 0，8(1000) 返回 3
 
+__builtin_clz(x) // 返回x二进制下前导0的个数，8(1000) 返回 28；x为0时未定义
+
 bit_width(x) // 返回x二进制下的位数，9(1001) 返回 4，26(11010) 返回 5
 ```
 
-注：以上函数的 $\tt{}long\ long$ 版本只需要在函数后面加上 `ll` 即可（例如 `__builtin_popcountll(x)` )， $\tt{}unsigned\ long\ long$ 加上 `ull` 。
+注：以上函数为 GCC/Clang 内建，`long long` 版本只需在函数名后加 `ll`（如 `__builtin_popcountll(x)`），`unsigned long long` 加 `ull`；`bit_width` 为 C++20 标准库函数。
 
 ### 数字转字符串函数
 
@@ -48,7 +50,7 @@ cout << ans << endl; /*1100*/
 // stoi直接使用
 cout << stoi("12") << endl;
 
-// 【不建议使用】stoi转换进制，参数为待转换字符串、起始位置、进制。
+// stoi转换进制，参数为待转换字符串、起始位置、进制。radix 传 0 表示按前缀自动识别。
 // int stoi(string value, int st, int radix);
 cout << stoi("1010", 0, 2) << endl; /*10*/
 cout << stoi("c", 0, 16) << endl; /*12*/
@@ -83,7 +85,7 @@ cin >> n;
 vector<int> a(n);
 // iota(a.begin(), a.end(), 1);
 for (auto &it : a) cin >> it;
-sort(a.begin(), a.end());
+sort(a.begin(), a.end()); // 必须先排序，才能按字典序生成完整全排列
 
 do {
     for (auto it : a) cout << it << " ";
@@ -141,8 +143,10 @@ vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时�
 
 ```cpp
 auto it = s.find(x); // 建立一个迭代器
-prev(it) / next(it); // 默认返回迭代器it的前/后一个迭代器
-prev(it, 2) / next(it, 2); // 可选参数可以控制返回前/后任意个迭代器
+prev(it); // 返回迭代器it的前一个迭代器
+next(it); // 返回迭代器it的后一个迭代器
+prev(it, 2); // 可选参数k：返回it前k个的迭代器
+next(it, 2); // 返回it后k个的迭代器
 
 /* 以下是一些应用 */
 auto pre = prev(s.lower_bound(x)); // 返回第一个<x的迭代器
@@ -155,28 +159,28 @@ int ed = *prev(S.end(), 1); // 返回最后一个元素
 
 `log2(x)` ：返回 $\log_2(x)$
 
-`gcd(x, y) / lcm(x, y)` ：以 $\log$ 的复杂度返回 $\gcd(|x|, |y|)$ 与 ${\tt lcm}(|x|, |y|)$ ，且返回值符号也为正数。
+`gcd(x, y) / lcm(x, y)` ：C++17 标准库函数，$\mathcal O(\log \min(|x|,|y|))$ 返回 $\gcd(|x|, |y|)$ 与 $\mathrm{lcm}(|x|, |y|)$，返回值恒为正。注意 `lcm` 先除后乘不会溢出。
 
 ## 容器与成员函数
 
 ### 优先队列 priority_queue
 
-默认升序（大根堆），自定义排序需要重载 `<` 。
+默认大根堆（堆顶最大），自定义排序需要重载 `<`（比较语义与 `sort` 相反，见下例）。
 
 ```cpp
-//没有clear函数
-priority_queue<int, vector<int>, greater<int> > p; //重定义为降序（小根堆）
+//没有clear函数，可用 swap(p, priority_queue<int, vector<int>, greater<int>>()) 清空
+priority_queue<int, vector<int>, greater<int> > p; //重定义为小根堆（堆顶最小）
 push(x); //向栈顶插入x
 top(); //获取栈顶元素
 pop(); //弹出栈顶元素
 ```
 
 ```cpp
-//重载运算符【注意，符号相反！！！】
+//重载运算符【注意，比较语义与 sort 相反！！！】
 struct Node {
     int x; string s;
     friend bool operator < (const Node &a, const Node &b) {
-        if (a.x != b.x) return a.x > b.x;
+        if (a.x != b.x) return a.x > b.x; // 大根堆语义下，这样写得到的是 x 小者优先的小根堆
         return a.s > b.s;
     }
 };
@@ -208,13 +212,13 @@ bitset<x> ans; // 错误构造
 set(x) //将第x位置1，x省略时默认全部位置1
 reset(x) //将第x位置0，x省略时默认全部位置0
 flip(x) //将第x位取反，x省略时默认全部位取反
-to_ullong() //重转换为ULL类型
-to_string() //重转换为ULL类型
+to_ullong() //整体转换为ULL类型
+to_string() //转换为"01..."字符串
 count() //返回1的个数
 any() //判断是否至少有一个1
 none() //判断是否全为0
 
-_Find_fisrt() // 找到从低位到高位第一个1的位置
+_Find_first() // 找到从低位到高位第一个1的位置（libstdc++ 内部函数）
 _Find_next(x) // 找到当前位置x的下一个1的位置，复杂度 O(n/w + count)
 
 bitset<23> B1("11101001"), B2("11101000");
@@ -234,14 +238,26 @@ cout << B1 << " " << B2 << "\n"; //你可以直接使用cout输出
 #### 对 pair、tuple 定义哈希
 
 ```cpp
+// pair 的哈希
 struct hash_pair {
     template<typename T1, typename T2>
     size_t operator()(const pair<T1, T2> &p) const {
-        return hash<T1>()(p.fi) ^ hash<T2>()(p.se);
+        // 异或会把 <a,b> 与 <b,a> 混为同一个桶（只影响效率不影响正确性），可换成 std::hash 的组合
+        return (hash<T1>()(p.first) << 1) ^ hash<T2>()(p.second);
     }
 };
-unordered_set<pair<int, int>, int, hash_pair> S;
-unordered_map<tuple<int, int, int>, int, hash_pair> M;
+unordered_set<pair<int, int>, hash_pair> S;
+
+// tuple 的哈希（pair 拿 <T1,T2> 构造，可直接复用 hash_pair）
+struct hash_tuple {
+    template<typename... Ts>
+    size_t operator()(const tuple<Ts...> &t) const {
+        return apply([](const Ts &...xs) {
+            return (hash<Ts>()(xs) ^ ...); // 折叠表达式，C++17
+        }, t);
+    }
+};
+unordered_map<tuple<int, int, int>, int, hash_tuple> M;
 ```
 
 #### 对结构体定义哈希
@@ -253,7 +269,7 @@ struct fff {
     string x, y;
     int z;
     friend bool operator == (const fff &a, const fff &b) {
-        return a.x == b.x || a.y == b.y || a.z == b.z;
+        return a.x == b.x && a.y == b.y && a.z == b.z; // 必须全部相等才相等，注意是 && 不是 ||
     }
 };
 struct hash_fff {
