@@ -7167,7 +7167,11 @@ template<typename T> vector<Point<T>> halfcut(vector<Line<T>> lines) {
 <div style="page-break-after:always">/END/</div>
 ## 多项式
 
+默认模数 $998244353$（NTT 模，原根 $3$）。`Poly` / `dft` 依赖 mint（`MInt` / `Z`，见杂项取模类）。`i64` 为 `long long`。
+
 ### 线性凸包
+
+斜率优化 / 下凸壳维护直线 $y=ax+b$，查询 $\min_i ax+b$。构造时按斜率排序并弹出不优直线；`min(x)` 二分交点。`i64`，除法向 $-\infty$ 取整。不是几何凸包。
 
 ```cpp
 struct Line {
@@ -7204,6 +7208,8 @@ struct Lines : vector<Line> {
 
 ### 多项式封装
 
+依赖本节后面的 `dft` / `idft` 与 mint `MInt<P>`。默认模 $998244353$。乘法长度够大时走 NTT，否则 $O(n^2)$。`inv/log/exp/sqrt` 的 `m` 是要的前 $m$ 项。`eval` 是多点求值。
+
 ```cpp
 template<int P = 998244353> struct Poly : public vector<MInt<P>> {
     using Value = MInt<P>;
@@ -7217,7 +7223,8 @@ template<int P = 998244353> struct Poly : public vector<MInt<P>> {
     template<typename InputIt, typename = _RequireInputIter<InputIt>>
     explicit constexpr Poly(InputIt first, InputIt last) : vector<Value>(first, last) {}
 
-    template<typename F> F>plicit constexpr Poly(int n, F f) : vector<Value>(n) {
+    template<typename F>
+    explicit constexpr Poly(int n, F f) : vector<Value>(n) { // 原来写成 F>plicit，无法编译
         for (int i = 0; i < n; i++) {
             (*this)[i] = f(i);
         }
@@ -7436,6 +7443,8 @@ template<int P = 998244353> struct Poly : public vector<MInt<P>> {
 
 ### 离散傅里叶变换 dft 与其逆变换 idft
 
+长度必须是 $2$ 的幂。`idft` 里 `(1-P)/n` 在模 $P$ 下等于 $n^{-1}$。`rev` / `roots` 是全局表，多模数同时用会串。
+
 ```cpp
 vector<int> rev;
 template<int P> vector<MInt<P>> roots{0, 1};
@@ -7505,9 +7514,9 @@ template<int P> constexpr void idft(vector<MInt<P>> &a) { // 逆变换
 }
 ```
 
-### Berlekamp-Massey 算法（杜教筛）
+### Berlekamp-Massey 算法
 
-求解数列的最短线性递推式，最坏复杂度为 $\mathcal O(NM)$，其中 $N$ 为数列长度，$M$ 为它的最短递推式的阶数。
+求解数列的最短线性递推式（**不是**杜教筛）。返回多项式 $c$，满足递推；最坏 $\mathcal O(NM)$，$N$ 为数列长度，$M$ 为最短递推阶数。
 
 ```cpp
 template<int P = 998244353> Poly<P> berlekampMassey(const Poly<P> &s) {
@@ -7554,6 +7563,8 @@ template<int P = 998244353> Poly<P> berlekampMassey(const Poly<P> &s) {
 ```
 
 ### Linear-Recurrence 算法
+
+已知线性递推，求第 $n$ 项（$0$-index）。`q` 为特征多项式，$p$ 由初值决定。Bostan-Mori，$\mathcal O(M^2\log n)$ 或配 NTT 更快。$n$ 用 `i64`。
 
 ```cpp
 template<int P = 998244353> MInt<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n) {
@@ -7678,6 +7689,8 @@ struct FFT_mul {
 
 ### 快速数论变换 NTT
 
+模意义卷积，$\mathcal O(N\log N)$。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。
+
 $\mathcal O(N\log N)$ 。
 
 ```cpp
@@ -7746,10 +7759,10 @@ std::vector<i64> mul(std::vector<i64> a, std::vector<i64> b) {
     int M = a.size() + b.size() - 1u, N = 1;
     while (N < M) N <<= 1;
     std::vector<int> r(N);
-    for(int i = 1;i <= N;i++)
+    for (int i = 1; i < N; i++) // 原来 i <= N，r[N] 越界
         r[i] = r[i / 2] / 2 | (i % 2 ? N / 2 : 0);
 
-    Z ntt = [&](std::vector<i64> &a, bool inv) -> void {
+    auto ntt = [&](std::vector<i64> &a, bool inv) -> void { // 原来写成 Z ntt，类型不对
         a.resize(N);
         for(int i = 0;i < N;i++) if (i < r[i]) std::swap(a[i], a[r[i]]);
         for (int sz = 1; sz < N; sz <<= 1) {
@@ -7775,6 +7788,8 @@ std::vector<i64> mul(std::vector<i64> a, std::vector<i64> b) {
 
 ### 拉格朗日插值
 
+$n + 1$ 个点唯一确定最高 $n$ 次多项式。普通情况：$\displaystyle f(k) = \sum_{i = 1}^{n + 1} y_i \prod_{i \neq j} \frac{k - x[j]}{x[i] - x[j]}$ 。下面这块是连续点 $1..n+2$ 上对 $i^n$ 前缀和插值（自然数方幂和），不是任意点；依赖 `Z`。
+
 $n + 1$ 个点可以唯一确定一个最高为 $n$ 次的多项式。普通情况：$\displaystyle f(k) = \sum_{i = 1}^{n + 1} y_i \prod_{i \neq j} \frac{k - x[j]}{x[i] - x[j]}$ 。
 
 ```cpp
@@ -7792,8 +7807,7 @@ struct Lagrange {
     void init(int n) {
         iota(x.begin(), x.end(), 0);
         for (int i = 1; i <= n + 2; i++) {
-            Z t;
-            y[i] = y[i - 1] + t.power(i, n);
+            y[i] = y[i - 1] + mypow(Z(i), n); // 原来 Z t 未赋值再 t.power(i,n)
         }
         fac[0] = 1;
         for (int i = 1; i <= n + 2; i++) {
@@ -7828,6 +7842,8 @@ struct Lagrange {
 ```
 
 ### 结论 from LuanXR
+
+生成函数速查。泰勒与广义二项式用来展开、对拍系数。
 
 1. 序列 $a$ 的**普通生成函数**: $F(x) = \sum{a_nx^n}$
 2. 序列 $a$ 的**指数生成函数**: $F(x) = \sum{a_n \frac{x^n}{n!}}$
@@ -7869,7 +7885,7 @@ $$\frac{1}{(1-x)^n}=\sum_{i=0}^{\infty}\binom{n+i-1}{i}x^i$$
 - 求 $\displaystyle B_i = \sum_{k=i}^n C_k^iA_k$，即 $\displaystyle B_i=\dfrac{1}{i!}\sum_{k=i}^n\dfrac{1}{(k-i)!}\cdot k!A_k$，反转后卷积。
 - NTT 中，$\omega_n=$ `qpow(G,(mod-1)/n))`。
 - 遇到 $\displaystyle \sum_{i=0}^n[i\%k=0]f(i)$ 可以转换为 $\displaystyle \sum_{i=0}^n\dfrac 1 k\sum_{j=0}^{k-1}(\omega_k^i)^jf(i)$ 。（单位根卷积）
-- 广义二项式定理 $\displaystyle (1+x)^{\alpha}=\sum_{i=0}^{\infty}{n\choose \alpha}x^i$ 。
+- 广义二项式定理 $\displaystyle (1+x)^{\alpha}=\sum_{i=0}^{\infty}{\alpha\choose i}x^i$ 。
 
 #### 普通生成函数 / OGF
 
@@ -7882,7 +7898,7 @@ $$\frac{1}{(1-x)^n}=\sum_{i=0}^{\infty}\binom{n+i-1}{i}x^i$$
 - $C_m^0+C_m^1x+C_m^2x^2+...+C_m^mx^m=(1+x)^m$（二项式定理）；
 - $C_m^0+C_{m+1}^1x^1+C_{m+2}^2x^2+...=\dfrac{1}{(1-x)^{m+1}}$（归纳法证明）；
 - $\displaystyle\sum_{n=0}^{\infty}F_nx^n=\dfrac{(F_1-F_0)x+F_0}{1-x-x^2}$（F 为斐波那契数列，列方程 $G(x)=xG(x)+x^2G(x)+(F_1-F_0)x+F_0$）；
-- $\displaystyle\sum_{n=0}^{\infty} H_nx^n=\dfrac{1-\sqrt{n-4x}}{2x}$（H 为卡特兰数）；
+- $\displaystyle\sum_{n=0}^{\infty} H_nx^n=\dfrac{1-\sqrt{1-4x}}{2x}$（H 为卡特兰数；原来写成 $\sqrt{n-4x}$）；
 - 前缀和 $\displaystyle \sum_{n=0}^{\infty}s_nx^n=\dfrac{1}{1-x}f(x)$ ；
 - 五边形数定理：$\displaystyle \prod_{i=1}^{\infty}(1-x^i)=\sum_{k=0}^{\infty}(-1)^kx^{\frac 1 2k(3k\pm 1)}$ 。
 
@@ -7895,6 +7911,8 @@ $$\frac{1}{(1-x)^n}=\sum_{i=0}^{\infty}\binom{n+i-1}{i}x^i$$
   - $n$ 个点的生成树个数是 $\displaystyle P(x)=\sum_{n=1}^{\infty}n^{n-2}\dfrac{x^n}{n!}$，n 个点的生成森林个数是 $\exp P(x)$ ；
   - $n$ 个点的无向连通图个数是 $P(x)$，n 个点的无向图个数是 $\displaystyle\exp P(x)=\sum_{n=0}^{\infty}2^{\frac 1 2 n(n-1)}\dfrac{x^n}{n!}$ ；
   - 长度为 $n(n\ge 2)$ 的循环置换数是 $P(x)=-\ln(1-x)-x$，长度为 n 的错排数是 $\exp P(x)$ 。
+
+<div style="page-break-after:always">/END/</div>
 ## 常用例题
 
 ### 逆序对（归并排序解）
@@ -11826,7 +11844,11 @@ void jos(){
 ```
 ## 杂项
 
+赛场零碎：头文件、取模、高精度、对拍、读写。`i64` 为 `long long`。`N` / `mod` / `MAXN` 按题目改。
+
 ### 单测多测
+
+开场模板。多测把 `//cin >> t` 打开。末尾固定换行，单测题若判多空行再删。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -11843,11 +11865,11 @@ using a2 = std::array<int, 2>;
 using a3 = std::array<int, 3>;
 using a4 = std::array<int, 4>;
 
-const int N = 1e6;
+const int N = 1e6; // 按题目改
 const int MAXN = 1e6 + 10;
 const int inf = 1e9;
 // const int mod = 1e9 + 7;
-const int mod = 998244353;
+const int mod = 998244353; // 按题目改
 
 std::mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
 
@@ -11868,6 +11890,8 @@ signed main() {
 ```
 
 ### 三路比较运算符
+
+C++20。放进结构体里，一次生成 `==` `<` 等。`V` 换成自己的类型。
 
 ```cpp
 auto operator<=>(const V &) const = default;
@@ -11996,8 +12020,8 @@ template<const int &MOD> struct Zmod {
     }
 };
 
-int MOD[] = {998244353, 1000000007};
-using Z = Zmod<MOD[1]>;
+int MOD[] = {998244353, 1000000007}; // 模板参数要引用，所以用数组元素
+using Z = Zmod<MOD[1]>; // 现在是 1e9+7；要 998244353 改 MOD[0]
 ```
 
 ### 分数运算类
@@ -12056,6 +12080,8 @@ template<typename T> struct Frac {
 ```
 
 ### 大整数类（高精度计算）
+
+九位一节。符号在 `sign`。比 `__int128` 慢，位数过 $38$ 再用。
 
 ```cpp
 const int base = 1000000000;
@@ -12374,8 +12400,6 @@ struct bigint {
 
 构造题用，其有一些性质：将 $0$ 看作 $-1$；$1$ 看作 $+1$，整个矩阵可以构成一个 $2^k$ 维向量组，任意两个行、列向量的点积均为 $0$ [See](https://codeforces.com/contest/610/problem/C)。例如，在 $k=2$ 时行向量 $\vec{2}$ 和行向量 $\vec{3}$ 的点积为 $1\cdot1+(-1)\cdot1+1\cdot(-1)+(-1)\cdot(-1)=0$ 。
 
-xxxxxxxxxx2 1p=(a+b+c)/2;2sum=sqrt(p*(p-a)*(p-b)\*(p-c));cpp
-
 ![image.png](https://s2.loli.net/2023/10/02/hZu2aCfNcivB6jw.png)
 
 ```cpp
@@ -12518,6 +12542,8 @@ bool Solve() {
 
 ### 读取一行数字，个数未知
 
+先 `getline` 再 `stringstream`。前面如果刚 `cin >>` 过，先 `cin.ignore` 吃掉行尾。
+
 ```cpp
 string s;
 getline(cin, s);
@@ -12533,7 +12559,7 @@ while (ss >> s) {
 
 $n$ 个人编号 $0,1,2…,n-1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。
 
-$\mathcal O(N)$ 。
+$\mathcal O(N)$ 。`repeat` 为赛场宏，没有就写成 `for (int i = 1; i <= n; i++)`。
 
 ```cpp
 int jos(int n,int k){
@@ -12571,7 +12597,7 @@ void jos(){
 
 ### 日期换算（基姆拉尔森公式）
 
-已知年月日，求星期数。
+已知年月日，求星期。返回 $1..7$（周一到周日，看 `%7+1` 约定）。格里高利历。
 
 ```cpp
 int week(int y,int m,int d){
@@ -12705,7 +12731,7 @@ template<typename T> void Cout(T x) { // 注意，这里输出不带换行
 
 ### int128 输入输出流控制
 
-int128 只在基于 $linux$ 系统的环境下可用，需要 $\tt C++20$ 。38 位精度，除输入输出外与普通数据类型无差别。该封装支持负数读入，需要注意 `write` 函数结尾不输出多余空格与换行。
+int128 只在 Linux 下可用。约 $38$ 位十进制。下面 `>>` **没有处理负号**（原文写支持负数），负数要自己加。`<<` 也不写负号。
 
 ```cpp
 using i128 = __int128;
@@ -12731,6 +12757,8 @@ std::ostream& operator<<(std::ostream& os, i128 n) {
 ```
 
 ### 对拍板子
+
+本地对拍。上面 Windows（`fc` / `pause` / `.exe`），注释里是 Linux。循环到第一个不同输出停下。
 
 compare.cpp
 
@@ -13046,9 +13074,11 @@ signed main() {
 
 ### 编译器设置
 
-```cpp
+这是编译选项，不是 C++。赛时常用前两行。`-Wl,--stack=` 是 MinGW；Linux 不用。本机包装：`r a.cpp`（见 `~/.bashrc.d/cxx.sh`）。
+
+```
 g++ -O2 -std=c++20 -pipe
--Wall -Wextra -Wconversion /* 这部分是警告相关，可能用不到 */
+-Wall -Wextra -Wconversion
 -fstack-protector
 -Wl,--stack=268435456
 ```
