@@ -3998,7 +3998,7 @@ for (int i = 0; (1<<i)-1 <= n; i++) {
 
 ### SG 游戏（有向图游戏）
 
-有向图上的后继取 $\mathrm{mex}$。下面板子是取石子：每次从一堆取 $a[1..m]$ 中的数量，多堆异或。`num[]` 记忆化须先置 $-1$（已在 `Solve` 里 `memset`）。`yes` / `no` 为赛场宏，须自行定义。`N` 按题目改。
+有向图上的后继取 $\mathrm{mex}$。下面板子是取石子：先读 $m$ 种可取数量 $a[1..m]$，再读 $n$ 堆石子，每堆求 SG 后异或。`num[]` 记忆化须先置 $-1$（已在 `Solve` 里 `memset`，多测每组都要清）。`yes` / `no` 为赛场宏，须自行 `#define`。`N` 按最大石子数改。复杂度与后继数有关，取石子情形约 $\mathcal O(\sum x\cdot m)$。
 
 我们使用以下几条规则来定义暴力求解的过程：
 
@@ -4011,31 +4011,31 @@ for (int i = 0; (1<<i)-1 <= n; i++) {
 使用哈希表，以 $\mathcal{O} (N + M)$ 的复杂度计算。
 
 ```cpp
-int n, m, a[N], num[N]; // N 按题目改
+int n, m, a[N], num[N]; // n 堆数, m 种取法; N 按最大石子数改
 int sg(int x) {
-    if (num[x] != -1) return num[x];
+    if (num[x] != -1) return num[x]; // -1 未算，Solve 里 memset
 
-    unordered_set<int> S;
+    unordered_set<int> S; // 后继局面的 SG 集合
     for (int i = 1; i <= m; ++ i)
         if(x >= a[i])
-            S.insert(sg(x - a[i]));
+            S.insert(sg(x - a[i])); // 取走 a[i] 颗
 
-    for (int i = 0; ; ++ i)
+    for (int i = 0; ; ++ i) // mex：最小未出现的非负整数
         if (S.count(i) == 0)
             return num[x] = i;
 }
 void Solve() {
     cin >> m;
-    for (int i = 1; i <= m; ++ i) cin >> a[i];
+    for (int i = 1; i <= m; ++ i) cin >> a[i]; // 每次可取的数量
     cin >> n;
 
-    int ans = 0; memset(num, -1, sizeof num);
+    int ans = 0; memset(num, -1, sizeof num); // 多测须每组清空
     for (int i = 1; i <= n; ++ i) {
         int x; cin >> x;
-        ans ^= sg(x);
+        ans ^= sg(x); // 各堆独立，异或合并
     }
 
-    if (ans == 0) no; // yes/no 为赛场宏
+    if (ans == 0) no; // yes/no 为赛场宏，须自行定义
     else yes;
 }
 ```
@@ -4092,7 +4092,7 @@ $$
 
 ### 威佐夫博弈
 
-两堆，可从两堆同时取；冷局面由黄金分割给出。`n, m` 用 `int` 时注意 $10^9$ 量级 `lorry * x` 的精度，更大才需高精度。
+两堆，可从单堆取或两堆同时取同样多。冷局面 $(a_k,a_k+k)$，$a_k=\lfloor k\varphi\rfloor$，$\varphi=(1+\sqrt5)/2$。板子判 $(\min,\max)$ 是否落在冷局面：差为 $k$ 时检查 $\lfloor k\varphi\rfloor$ 是否等于较小堆。`int` 到 $10^9$ 用 `double` 一般够；再大换下面注释里的高精度常数，或上 `__int128` / 高精度。
 
 > 有两堆石子，给出每一堆的石子数量，两名玩家轮流行动，每人每次任选以下规定的一种操作石子：
 >
@@ -4110,20 +4110,20 @@ $\pmb{ (1, 2), (3, 5), (4, 7), (6, 10), …}$ 具体而言，每一对的第一�
 其中，在两堆石子的数量均大于 $10^9$ 时，由于需要使用高精度计算，我们需要人为定义 $\frac{1+\sqrt 5}{2}$ 的取值为 $lorry = 1.618033988749894848204586834$ 。
 
 ```cpp
-const double lorry = (sqrt(5.0) + 1.0) / 2.0;
-//const double lorry = 1.618033988749894848204586834;
+const double lorry = (sqrt(5.0) + 1.0) / 2.0; // 黄金分割 (1+√5)/2
+//const double lorry = 1.618033988749894848204586834; // 堆更大时换这段高精度常数
 void Solve() {
     int n, m; cin >> n >> m;
-    if (n < m) swap(n, m);
-    double x = n - m;
-    if ((int)(lorry * x) == m) cout << "lose\n";
+    if (n < m) swap(n, m); // 约定 n >= m
+    double x = n - m; // 冷局面差为 k，小堆应等于 floor(k * φ)
+    if ((int)(lorry * x) == m) cout << "lose\n"; // 落在冷局面，先手必败
     else cout << "win\n";
 }
 ```
 
 ### 斐波那契博弈
 
-先手不能一次取完，之后每次不超过对方上次的两倍。当且仅当 $N$ 为斐波那契数时先手必败。预处理到 $\mathrm{fib}[86]$ 可覆盖 `long long` 范围。
+先手不能一次取完，之后每次不超过对方上次的两倍。当且仅当 $N$ 为斐波那契数时先手必败。`Force()` 预处理到 $\mathrm{fib}[86]\approx 8.9\times 10^{17}$，覆盖 `long long`；须在 `Solve` 前调用一次。`n` 超过 `int` 时把读入也改成 `long long`。
 
 > 有一堆石子，数量为 $N$ ，两名玩家轮流行动，按以下规则取石子：
 >
@@ -4135,21 +4135,21 @@ void Solve() {
 
 ```cpp
 long long fib[100] = {1, 2}; // 原来 int，fib[47] 已超 INT_MAX
-map<long long, bool> mp;
-void Force() {
-  for (int i = 2; i <= 86; ++ i) fib[i] = fib[i - 1] + fib[i - 2];
+map<long long, bool> mp; // 是否斐波那契数
+void Force() { // 预处理，Solve 前调用一次
+  for (int i = 2; i <= 86; ++ i) fib[i] = fib[i - 1] + fib[i - 2]; // 86 项盖住约 9e17
     for (int i = 0; i <= 86; ++ i) mp[fib[i]] = 1;
 }
 void Solve() {
-    int n; cin >> n;
-    if (mp[n] == 1) cout << "lose\n";
+    int n; cin >> n; // n 超过 int 时改 long long
+    if (mp[n] == 1) cout << "lose\n"; // 斐波那契数先手必败
     else cout << "win\n";
 }
 ```
 
 ### 树上删边游戏
 
-删一条边并丢掉不与根相连的那一侧。须先建树到邻接表 `ver`（本段未定义）。`dfs` 返回 $R(v)=\mathrm{SG}(v)+1$（叶子返 $1$），故 `dfs==1` 当且仅当根 SG 为 $0$，先手必败。
+删一条边并丢掉不与根相连的那一侧。须先建树到邻接表 `ver`（本段未定义，1-index）。`dfs` 返回 $R(v)=\mathrm{SG}(v)+1$（叶子无孩子返 $1$），故 `dfs==1` 当且仅当根 SG 为 $0$，先手必败。复杂度 $\mathcal O(N)$。根不是 $1$ 时改调用入口。
 
 > 给出一棵 $N$ 个节点的有根树，两名玩家轮流行动，按以下规则操作：
 >
@@ -4165,15 +4165,15 @@ void Solve() {
 - 非叶子节点的 SG 值为其所有孩子节点 SG 值 $\pmb + 1$ 的异或和。
 
 ```cpp
-auto dfs = [&](auto self, int x, int fa) -> int {
-    int res = 0; // 原来 int x = 0 与参数同名，无法编译
+auto dfs = [&](auto self, int x, int fa) -> int { // 返回 R(x)=SG(x)+1
+    int res = 0; // 原来 int x = 0 与参数同名，无法编译；res 为孩子 R 的异或
     for (auto y : ver[x]) { // ver 为邻接表，须先建图
         if (y == fa) continue;
         res ^= self(self, y, x);
     }
-    return res + 1;
+    return res + 1; // 叶子没有孩子，返回 1 ⇔ SG=0
 };
-cout << (dfs(dfs, 1, 0) == 1 ? "Bob\n" : "Alice\n");
+cout << (dfs(dfs, 1, 0) == 1 ? "Bob\n" : "Alice\n"); // ==1 即根 SG=0，先手必败
 ```
 
 ### 无向图删边游戏（Fusion Principle 定理）
@@ -14089,25 +14089,25 @@ sum=sqrt(p*(p-a)*(p-b)*(p-c));
 
 #### 逆元+卢卡斯定理（质数取模）
 
-$\mathcal O(N)$ 预处理阶乘及逆元后 $\mathcal O(1)$ 查询。模数必须为质数，写在模意义整数类型 `Z` 里；本板依赖 `Z`。`comb(1 << 21)` 预处理上限按题目改。
+$\mathcal O(N)$ 预处理阶乘及逆元后 $\mathcal O(1)$ 查询。模数必须为质数，写在模意义整数类型 `Z` 里；本板依赖 `Z`。`comb(1 << 21)` 预处理上限按题目改；查询超出时 `fac/inv` 会自动 `init` 扩表。`_inv[i]=(i!)^{-1}`，不是 $i^{-1}$。
 
 ```cpp
 struct Comb {
-    int n;
-    vector<Z> _fac, _inv;
+    int n; // 当前已预处理到的上限
+    vector<Z> _fac, _inv; // _inv[i] = (i!)^{-1}，不是 i^{-1}
 
-    Comb() : _fac{1}, _inv{0} {}
+    Comb() : _fac{1}, _inv{0} {} // 0! = 1；_inv[0] 占位不用
     Comb(int n) : Comb() {
         init(n);
     }
     void init(int m) {
-        if (m <= n) return;
+        if (m <= n) return; // 只扩展不缩小
         _fac.resize(m + 1);
         _inv.resize(m + 1);
         for (int i = n + 1; i <= m; i++) {
             _fac[i] = _fac[i - 1] * i;
         }
-        _inv[m] = _fac[m].inv();
+        _inv[m] = _fac[m].inv(); // 先求最大阶乘的逆，再往回推
         for (int i = m; i > n; i--) {
             _inv[i - 1] = _inv[i] * i;
         }
@@ -14117,15 +14117,15 @@ struct Comb {
         if (x > n) init(x);
         return _fac[x];
     }
-    Z inv(int x) {
+    Z inv(int x) { // 返回 (x!)^{-1}
         if (x > n) init(x);
         return _inv[x];
     }
-    Z C(int x, int y) {
+    Z C(int x, int y) { // C(x,y)，非法下标返回 0
         if (x < 0 || y < 0 || x < y) return 0;
         return fac(x) * inv(y) * inv(x - y);
     }
-    Z P(int x, int y) {
+    Z P(int x, int y) { // 排列数 P(x,y)
         if (x < 0 || y < 0 || x < y) return 0;
         return fac(x) * inv(x - y);
     }
@@ -14134,10 +14134,10 @@ struct Comb {
 
 #### 质因数分解
 
-此法适用于：$1 \lt n, m, MOD \lt 10^7$ 的情况。
+此法适用于：$1 \lt n, m, MOD \lt 10^7$ 的情况。数组按 $10^7$ 开，模数 `MOD` 须自行定义。`c()` 内部每次都跑欧拉筛，多测应把筛提出来只做一次。
 
 ```cpp
-int n,m,p,b[10000005],prime[1000005],t,min_prime[10000005];
+int n,m,p,b[10000005],prime[1000005],t,min_prime[10000005]; // 上限按 1e7，按题目改
 void euler_Prime(int n){//用欧拉筛求出1~n中每个数的最小质因数的编号是多少，保存在min_prime中
     for(int i=2;i<=n;i++){
         if(b[i]==0){
@@ -14181,20 +14181,20 @@ long long c(int n,int m,int p){//计算C(n,m)%p的值
 int main(){
     cin>>n>>m;
     m=min(m,n-m);//小优化
-    cout<<c(n,m,MOD);
+    cout<<c(n,m,MOD); // MOD 须自行定义
 }
 ```
 
 #### 杨辉三角（精确计算）
 
-$60$ 以内 `long long` 可解，$130$ 以内 `__int128` 可解。
+$60$ 以内 `long long` 可解，$130$ 以内 `__int128` 可解。递推 $\mathcal O(n^2)$，不取模；要取模请改用上面的 `Comb`。
 
 ```cpp
 vector C(n + 1, vector<long long>(n + 1)); // 原来 vector<int>，C(34,17)≈2e9 就爆 int
 C[0][0] = 1;
 for (int i = 1; i <= n; i++) {
     C[i][0] = 1;
-    for (int j = 1; j <= n; j++) {
+    for (int j = 1; j <= n; j++) { // j>i 时加出来仍是 0，不单独截断
         C[i][j] = C[i - 1][j] + C[i - 1][j - 1];
     }
 }
@@ -14217,7 +14217,7 @@ cout << C[n][m] << endl;
 
 ### lucas 定理
 
-$n,m$ 很大而模数 $p$ 为不超过约 $10^5$ 的质数时用。`C()` 需自行预处理小于 $p$ 的组合数。
+$n,m$ 很大而模数 $p$ 为不超过约 $10^5$ 的质数时用。`C(a,b,p)` 需自行预处理小于 $p$ 的组合数（上面 `Comb` 或杨辉均可）。递归层数 $\mathcal O(\log_p n)$。
 
 Lucas 定理内容如下：对于质数 $p$，有
 
@@ -14231,7 +14231,7 @@ $$
 
 ```cpp
 long long Lucas(long long n, long long m, long long p) { // 原来参数名 lm，函数体用 m，无法编译
-  if (m == 0) return 1;
+  if (m == 0) return 1; // C(n,0)=1；C 需预处理到 p
   return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p;
 }
 ```
@@ -14463,13 +14463,13 @@ dp[n-m][m]     & n\ge m  \\
 \end{matrix}\right.
 $$
 
-读入一组 $n,m$，依次输出 12 种模型答案，本质是对拍器。数组大小 $800010$、模数 $998244353$ 按题目改。
+读入一组 $n,m$，依次输出 12 种模型答案，对应上文 I–XII，本质是对拍器。`solve4` 算出第二类斯特林行供 `solve6` 用，`solve10` 的生成函数系数留在 `ans[]` 给 `solve12` 用，顺序不能打乱。数组大小 $800010$、模数 $998244353$（NTT 模，原根 $3$）按题目改；$n$ 须能被补到 $2$ 的幂。
 
 ```cpp
 #include <algorithm>
 #include <cstdio>
-int n, m, fac[400010], minv[400010]; // 数组上限按 n+m 改
-int const mod = 998244353, g = 3, gi = (mod + 1) / g; // 模数按题目改
+int n, m, fac[400010], minv[400010]; // fac 阶乘，minv 阶乘逆元；上限按 n+m 改
+int const mod = 998244353, g = 3, gi = (mod + 1) / g; // NTT 模与原根，按题目改
 int C(int x, int y)
 {
     if (x < 0 || y < 0 || x < y)
@@ -14489,19 +14489,19 @@ int pow(int x, int y)
     return res;
 }
 struct NTT {
-    int r[800010], lim;
+    int r[800010], lim; // r 为位逆序置换，lim 为变换长度（2 的幂）
     NTT()
         : r()
         , lim()
     {
     }
-    void getr(int lm)
+    void getr(int lm) // 预处理位逆序，调用 NTT 前必须先 getr
     {
         lim = lm;
         for (int i = 0; i < lim; i++)
             r[i] = (r[i >> 1] >> 1) | ((i & 1) * (lim >> 1));
     }
-    void operator()(int* a, int type)
+    void operator()(int* a, int type) // type=1 DFT，type=-1 IDFT
     {
         for (int i = 0; i < lim; i++)
             if (i < r[i])
@@ -14521,7 +14521,7 @@ struct NTT {
                 a[i] = 1ll * a[i] * p % mod;
     }
 } ntt;
-void inv(int const* a, int* ans, int n)
+void inv(int const* a, int* ans, int n) // 多项式求逆，n 须为 2 的幂
 {
     static int tmp[800010];
     for (int i = 0; i < n << 1; i++)
@@ -14540,19 +14540,19 @@ void inv(int const* a, int* ans, int n)
             ans[i] = 0;
     }
 }
-void inte(int const* a, int* ans, int n)
+void inte(int const* a, int* ans, int n) // 多项式积分
 {
     for (int i = n - 1; i; i--)
         ans[i] = 1ll * a[i - 1] * pow(i, mod - 2) % mod;
     ans[0] = 0;
 }
-void der(int const* a, int* ans, int n)
+void der(int const* a, int* ans, int n) // 多项式求导
 {
     for (int i = 1; i < n; i++)
         ans[i - 1] = 1ll * i * a[i] % mod;
     ans[n - 1] = 0;
 }
-void ln(int const* a, int* ans, int n)
+void ln(int const* a, int* ans, int n) // 多项式 ln，要求 a[0]=1
 {
     static int b[800010];
     for (int i = 0; i < n << 1; i++)
@@ -14569,7 +14569,7 @@ void ln(int const* a, int* ans, int n)
         b[i] = 0;
     inte(b, ans, n);
 }
-void exp(int const* a, int* ans, int n)
+void exp(int const* a, int* ans, int n) // 多项式 exp，要求 a[0]=0
 {
     static int f[800010];
     for (int i = 0; i < n << 1; i++)
@@ -14590,15 +14590,15 @@ void exp(int const* a, int* ans, int n)
             ans[i] = 0;
     }
 }
-void solve1() { printf("%d\n", pow(m, n)); }
-void solve2()
+void solve1() { printf("%d\n", pow(m, n)); } // I 球异盒异：m^n
+void solve2() // II 球异盒异、每盒至多一个：A(m,n)
 {
     if (m < n)
         puts("0");
     else
         printf("%lld\n", 1ll * fac[m] * minv[m - n] % mod);
 }
-void solve3()
+void solve3() // III 球异盒异、每盒至少一个：容斥
 {
     if (n < m)
         return puts("0"), void();
@@ -14607,8 +14607,8 @@ void solve3()
         ans = (ans + 1ll * pow(mod - 1, i) * C(m, i) % mod * pow(m - i, n)) % mod;
     printf("%d\n", ans);
 }
-int s[800010];
-void solve4()
+int s[800010]; // 第二类斯特林行 {n,0}..{n,n}，solve4 写入、solve6 读取
+void solve4() // IV 球异盒同：sum_{i<=m} {n,i}，NTT 卷积
 {
     static int tmp[800010];
     for (int i = 0; i <= n; i++)
@@ -14628,13 +14628,13 @@ void solve4()
         ans = (ans + s[i]) % mod;
     printf("%d\n", ans);
 }
-void solve5() { printf("%d\n", int(m >= n)); }
-void solve6() { printf("%d\n", s[m]); }
-void solve7() { printf("%d\n", C(n + m - 1, m - 1)); }
-void solve8() { printf("%d\n", C(m, n)); }
-void solve9() { printf("%d\n", C(n - 1, m - 1)); }
-int ans[800010];
-void solve10()
+void solve5() { printf("%d\n", int(m >= n)); } // V 球异盒同、每盒至多一个
+void solve6() { printf("%d\n", s[m]); } // VI 球异盒同、每盒至少一个：{n,m}，依赖 solve4
+void solve7() { printf("%d\n", C(n + m - 1, m - 1)); } // VII 球同盒异：插板
+void solve8() { printf("%d\n", C(m, n)); } // VIII 球同盒异、每盒至多一个
+void solve9() { printf("%d\n", C(n - 1, m - 1)); } // IX 球同盒异、每盒至少一个
+int ans[800010]; // 分拆生成函数系数，solve10 写入、solve12 读 ans[n-m]
+void solve10() // X 球同盒同：1/∏(1-x^i) 的 [x^n]
 {
     static int tmp[800010];
     for (int i = 1; i <= m; i++)
@@ -14650,8 +14650,8 @@ void solve10()
     inv(tmp, ans, lim);
     printf("%d\n", ans[n]);
 }
-void solve11() { printf("%d\n", int(m >= n)); }
-void solve12()
+void solve11() { printf("%d\n", int(m >= n)); } // XI 同 V
+void solve12() // XII 球同盒同、每盒至少一个：读 solve10 留下的 ans[n-m]
 {
     printf("%d\n", n - m >= 0 ? ans[n - m] : 0);
 }
@@ -14690,6 +14690,8 @@ int main()
 
 #### 二进制枚举解
 
+$\mathcal O(2^m\cdot m)$。`LL` 为 `long long`。子集积超过 $n$ 对答案无贡献，用 `t > n` 剪掉以免溢出。
+
 ```cpp
 int main(){
     ios::sync_with_stdio(false);cin.tie(0);
@@ -14699,20 +14701,20 @@ int main(){
     for (int i = 0; i < m; i ++ )
         cin >> p[i];
     LL ans = 0;
-    for (int i = 1; i < (1 << m); i ++ ){
-        LL t = 1, cnt = 0;
+    for (int i = 1; i < (1 << m); i ++ ){ // 枚举非空质因子子集
+        LL t = 1, cnt = 0; // t 为子集积，cnt 为子集大小
         for (int j = 0; j < m; j ++ ){
             if (i >> j & 1){
                 cnt ++ ;
                 t *= p[j];
-                if (t > n){
+                if (t > n){ // 积已 >n，n/t=0，再乘会爆 long long
                     t = -1;
                     break;
                 }
             }
         }
         if (t != -1){
-            if (cnt & 1) ans += n / t;
+            if (cnt & 1) ans += n / t; // 奇数个加，偶数个减
             else ans -= n / t;
         }
     }
@@ -14723,6 +14725,8 @@ int main(){
 
 #### dfs 解
 
+与二进制版等价，用 `s <= n / p[x]` 判断再乘是否溢出。入口 `odd=-1` 是因为空集先被跳过，选第一个质数时翻成 $+1$。
+
 ```cpp
 int main(){
     ios::sync_with_stdio(false);cin.tie(0);
@@ -14732,16 +14736,16 @@ int main(){
     for (int i = 0; i < m; i ++ )
         cin >> p[i];
     LL ans = 0;
-    function<void(LL, LL, LL)> dfs = [&](LL x, LL s, LL odd){
+    function<void(LL, LL, LL)> dfs = [&](LL x, LL s, LL odd){ // x 当前下标，s 已选积，odd 容斥符号
         if (x == m){
-            if (s == 1) return;
+            if (s == 1) return; // 空集不贡献
             ans += odd * (n / s);
             return;
         }
-        dfs(x + 1, s, odd);
-        if (s <= n / p[x]) dfs(x + 1, s * p[x], -odd);
+        dfs(x + 1, s, odd); // 不选 p[x]
+        if (s <= n / p[x]) dfs(x + 1, s * p[x], -odd); // 选；先除后乘防溢出
     };
-    dfs(0, 1, -1);
+    dfs(0, 1, -1); // odd 初值 -1，选第一个数后变成 +
     cout << ans << "\n";
     return 0;
 }
@@ -14846,7 +14850,7 @@ $$
 
 #### 正向展开普通解法
 
-将一个字典序排列转换成序号。例如：12345->1，12354->2。
+将一个字典序排列转换成序号。例如：12345->1，12354->2。`f[]` 用 `int`，只适于 $n\le 12$；更大用下一节取模版。`kangtuo` 读全局 `str`。
 
 ```cpp
 int f[20];
@@ -14854,7 +14858,7 @@ void jie_cheng(int n) { // 打出1-n的阶乘表
     f[0] = f[1] = 1; // 0的阶乘为1
     for (int i = 2; i <= n; i++) f[i] = f[i - 1] * i;
 }
-string str;
+string str; // kangtuo 读这个全局串
 int kangtuo() {
     int ans = 1; // 注意，因为 12345 是算作0开始计算的，最后结果要把12345看作是第一个
     int len = str.length();
@@ -14869,7 +14873,7 @@ int kangtuo() {
 }
 int main() {
     jie_cheng(10);
-    string str = "52413";
+    str = "52413"; // 原来又定义了局部 string str，kangtuo 读的是全局空串
     cout << kangtuo() << endl;
 }
 ```
@@ -14878,19 +14882,19 @@ int main() {
 
 给定一个全排列，求出它是 1 ~ $n$ 所有全排列的第几个，答案对 $998244353$ 取模。
 
-答案就是 $\sum_{i = 1}^{n} res_{a_i} (n - i)!$ 。$res_x$ 表示剩下的比 $x$ 小的数字的数量，通过**树状数组**处理。
+答案就是 $\sum_{i = 1}^{n} res_{a_i} (n - i)!$ 。$res_x$ 表示剩下的比 $x$ 小的数字的数量，通过**树状数组**处理。复杂度 $\mathcal O(n\log n)$。`N`、`mod` 按题目改。
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 #define LL long long
-const int mod = 998244353, N = 1e6 + 10;
+const int mod = 998244353, N = 1e6 + 10; // 模数与数组上限按题目改
 LL fact[N];
 struct fwt{
     LL n;
     vector <LL> a;
     fwt(LL n) : n(n), a(n + 1) {}
-    LL sum(LL x){
+    LL sum(LL x){ // 前缀和 [1,x]
         LL res = 0;
         for (; x; x -= x & -x)
             res += a[x];
@@ -14912,27 +14916,27 @@ int main(){
     fact[0] = 1;
     for (int i = 1; i <= n; i ++ ){
         fact[i] = fact[i - 1] * i % mod;
-        a.add(i, 1);
+        a.add(i, 1); // 每个数还剩 1 次
     }
     LL ans = 0;
     for (int i = 1; i <= n; i ++ ){
         LL x;
         cin >> x;
-        ans = (ans + a.query(1, x - 1) * fact[n - i] % mod ) % mod;
-        a.add(x, -1);
+        ans = (ans + a.query(1, x - 1) * fact[n - i] % mod ) % mod; // 左边未用且比 x 小的个数
+        a.add(x, -1); // 用掉 x
     }
-    cout << (ans + 1) % mod << "\n";
+    cout << (ans + 1) % mod << "\n"; // +1 变成 1-indexed 排名
     return 0;
 }
 ```
 
 #### 逆向还原
 
-由 $1$-indexed 排名还原 $1\sim n$ 的排列数字串。依赖上一节的 `jie_cheng` / `f[]`。`n` 须 $\le 9$（用 `'0'+j` 拼串）；更大用 `vector<int>`。
+由 $1$-indexed 排名还原 $1\sim n$ 的排列数字串。依赖上一节的 `jie_cheng` / `f[]`（须先调用）。`n` 须 $\le 9$（用 `'0'+j` 拼串）；更大用 `vector<int>`。`f[]` 为 `int` 时 $n\le 12$。
 
 ```cpp
 string inv_kangtuo(int ans, int n) { // 原来本节误粘了正向展开
-    vector<int> used(n + 1, 0);
+    vector<int> used(n + 1, 0); // 1..n 是否已用
     string s;
     ans--; // 转 0-indexed
     for (int i = 0; i < n; i++) {
@@ -14943,7 +14947,7 @@ string inv_kangtuo(int ans, int n) { // 原来本节误粘了正向展开
             if (used[j]) continue;
             if (cnt == rk) {
                 used[j] = 1;
-                s += char('0' + j);
+                s += char('0' + j); // n>9 时改成 vector<int>
                 break;
             }
             cnt++;
