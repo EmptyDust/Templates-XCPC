@@ -1,0 +1,46 @@
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],
+    displayMath: [['\\[', '\\]'], ['$$', '$$']],
+    processEscapes: true
+  }
+};
+</script>
+<script src="./tex-chtml-full.js"></script>
+<style>
+@page { size: A4; margin: 12mm; }
+html {
+  text-rendering: geometricPrecision;
+}
+html, body {
+  font-family: "Noto Serif CJK SC", "Noto Sans CJK SC", serif;
+  font-size: 9.5pt;
+  line-height: 1.45;
+  color: #111;
+  background: #fff;
+  max-width: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+pre, code, pre code {
+  font-family: "Noto Sans Mono CJK SC", "DejaVu Sans Mono", monospace;
+  font-size: 8pt;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  page-break-inside: avoid;
+  background: #f6f6f6;
+  padding: 0.4em 0.6em;
+}
+h1, h2, h3, h4 { page-break-after: avoid; }
+div[style*="page-break-after"] {
+  page-break-after: always;
+  break-after: page;
+  height: 0;
+  overflow: hidden;
+  color: transparent;
+}
+mjx-container { page-break-inside: avoid; }
+</style>
