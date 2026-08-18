@@ -6766,19 +6766,23 @@ cout << l << endl;
 <div style="page-break-after:always">/END/</div>
 ## 多边形相关
 
+依赖二维章的 `Point` / `Line` / `cross` / `sign` / `Pt` / `Lt`。多边形顶点按逆时针存时面积为正。
+
 ### 平面多边形
 
 #### 两向量构成的平面四边形有向面积
 
+以 $p_1$ 为公共顶点，$\vec{p_1p_2}\times\vec{p_1p_3}$，是平行四边形有向面积（三角形的两倍）。
+
 ```cpp
 template<typename T> T areaEx(Point<T> p1, Point<T> p2, Point<T> p3) {
-    return cross(b, c, a);
+    return cross(p2, p3, p1); // 原来写 cross(b,c,a)，参数名对不上，无法编译
 }
 ```
 
 #### 判断四个点能否组成矩形/正方形
 
-可以处理浮点数、共点的情况。返回分为三种情况：$2$ 代表构成正方形；$1$ 代表构成矩形；$0$ 代表其他情况。
+可以处理浮点数、共点的情况。返回分为三种情况：$2$ 代表构成正方形；$1$ 代表构成矩形；$0$ 代表其他情况。`Pt` / `Lt` 见二维章。先按坐标排序再两两对边。
 
 ```cpp
 template<typename T> int isSquare(vector<Pt> x) {
@@ -6796,7 +6800,7 @@ template<typename T> int isSquare(vector<Pt> x) {
 
 #### 点是否在任意多边形内
 
-射线法判定，$t$ 为穿越次数，当其为奇数时即代表点在多边形内部；返回 $2$ 代表点在多边形边界上。
+射线法判定，$t$ 为穿越次数，当其为奇数时即代表点在多边形内部；返回 $2$ 代表点在多边形边界上，返回 $1$ 在内、$0$ 在外。复杂度 $\mathcal O(n)$。不要求凸。
 
 ```cpp
 template<typename T> int pointInPolygon(Point<T> a, vector<Point<T>> p) {
@@ -6821,6 +6825,8 @@ template<typename T> int pointInPolygon(Point<T> a, vector<Point<T>> p) {
 ```
 
 #### 线段是否在任意多边形内部
+
+两端点都在多边形内（含边界），且与边的相交不是“穿出去”。凹多边形要处理顶点处的局部拐向，分支较多。
 
 ```cpp
 template<typename T>
@@ -6889,6 +6895,8 @@ bool segmentInPolygon(Line<T> l, vector<Point<T>> p) {
 
 #### 任意多边形的面积
 
+鞋带公式。逆时针为正；要绝对值就包一层 `abs`。与二维章三角形 `area` 同名。
+
 ```cpp
 template<typename T> ld area(vector<Point<T>> P) {
     int n = P.size();
@@ -6906,7 +6914,7 @@ template<typename T> ld area(vector<Point<T>> P) {
 
 #### 任意多边形上/内的网格点个数（仅能处理整数）
 
-皮克定理用。
+皮克定理用。边上点数每条边计 $\gcd(\Delta x,\Delta y)$（每顶点恰好计一次）。内部 $I=A-B/2+1$。
 
 ```cpp
 int onPolygonGrid(vector<Point<int>> p) { // 多边形上
@@ -6932,7 +6940,7 @@ int inPolygonGrid(vector<Point<int>> p) { // 多边形内
 
 #### 获取二维静态凸包（Andrew 算法）
 
-`flag` 用于判定凸包边上的点、重复的顶点是否要加入到凸包中，为 $0$ 时代表加入凸包（不严格）；为 $1$ 时不加入凸包（严格）。时间复杂度为 $\mathcal O(N\log N)$ 。
+`flag` 用于判定凸包边上的点、重复的顶点是否要加入到凸包中，为 $0$ 时代表加入凸包（不严格）；为 $1$ 时不加入凸包（严格）。时间复杂度为 $\mathcal O(N\log N)$ 。返回点按逆时针，起点为最左下。
 
 ```cpp
 template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int flag = 1) {
@@ -6943,15 +6951,19 @@ template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int f
     vector<Point<T>> ans(n * 2);
     sort(A.begin(), A.end());
     int now = -1;
+    auto bad = [&](Point<T> o, Point<T> a, Point<T> b) { // flag=1 弹出共线，flag=0 保留
+        auto cr = cross(o, a, b);
+        return flag ? cr <= 0 : cr < 0; // 原来写死 <=0，flag 参数没用上
+    };
     for (int i = 0; i < n; i++) { // 维护下凸包
-        while (now > 0 && cross(A[i], ans[now], ans[now - 1]) <= 0) {
+        while (now > 0 && bad(A[i], ans[now], ans[now - 1])) {
             now--;
         }
         ans[++now] = A[i];
     }
     int pre = now;
     for (int i = n - 2; i >= 0; i--) { // 维护上凸包
-        while (now > pre && cross(A[i], ans[now], ans[now - 1]) <= 0) {
+        while (now > pre && bad(A[i], ans[now], ans[now - 1])) {
             now--;
         }
         ans[++now] = A[i];
@@ -6963,7 +6975,7 @@ template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int f
 
 #### 二维动态凸包
 
-固定为 `int` 型，需要重新书写 `Line` 函数，`cmp` 用于判定边界情况。可以处理如下两个要求：
+固定为 `int` 型，需要重新书写 `Line` 函数（与二维章的 `Line` 冲突，不要同时编译），`cmp` 用于判定边界情况。可以处理如下两个要求：
 
 - 动态插入点 $(x,y)$ 到当前凸包中；
 - 判断点 $(x,y)$ 是否在凸包上或是在内部（包括边界）。
@@ -7051,7 +7063,7 @@ struct ConvexHull {
 
 #### 点与凸包的位置关系
 
-$0$ 代表点在凸包外面；$1$ 代表在凸壳上；$2$ 代表在凸包内部。
+$0$ 代表点在凸包外面；$1$ 代表在凸壳上；$2$ 代表在凸包内部。输入须按绕序。复杂度 $\mathcal O(n)$；凸包上二分可以做到 $\mathcal O(\log n)$，本板未写。
 
 ```cpp
 template<typename T> int contains(Point<T> p, vector<Point<T>> A) {
@@ -7075,7 +7087,7 @@ template<typename T> int contains(Point<T> p, vector<Point<T>> A) {
 
 #### 闵可夫斯基和
 
-计算两个凸包合成的大凸包。
+计算两个凸包的向量和 $\{p+q\}$，结果仍是凸包。输入须已是有序凸包。复杂度 $\mathcal O(n+m)$。
 
 ```cpp
 template<typename T> vector<Point<T>> mincowski(vector<Point<T>> P1, vector<Point<T>> P2) {
@@ -7101,16 +7113,15 @@ template<typename T> vector<Point<T>> mincowski(vector<Point<T>> P1, vector<Poin
 
 #### 半平面交
 
-计算多条直线左边平面部分的交集。
+计算多条直线左边平面部分的交集。直线方向 `a→b`，左侧为半平面。`sign(d1)` 把向量当标量无法编译，须按极角半平面定义（见二维 SMU_inch 的 `quad()`：上半平面为 $1$）。平行同向取更紧的那条，反向则空。
 
 ```cpp
 template<typename T> vector<Point<T>> halfcut(vector<Line<T>> lines) {
     sort(lines.begin(), lines.end(), [&](auto l1, auto l2) {
         auto d1 = l1.b - l1.a;
         auto d2 = l2.b - l2.a;
-        if (sign(d1) != sign(d2)) {
+        if (sign(d1) != sign(d2)) { // TODO：sign 原只收标量；向量请改成 quad/极角半平面
             return sign(d1) == 1;
-        }
         return cross(d1, d2) > 0;
     });
     deque<Line<T>> ls;
@@ -7152,6 +7163,8 @@ template<typename T> vector<Point<T>> halfcut(vector<Line<T>> lines) {
     return vector(ps.begin(), ps.end());
 }
 ```
+
+<div style="page-break-after:always">/END/</div>
 ## 多项式
 
 ### 线性凸包
@@ -13961,12 +13974,15 @@ struct HLD {
 <div style="page-break-after:always">/END/</div>
 ## 线性代数
 
+`i64` 即 `long long`。线性基默认处理到 bit $63$（有符号 `long long` 的符号位），只要非负数可改成 $62$ / `BASE-1`。
+
 ### 线性基
 
-求 $n$ 个数的值为 $k$ 的方案数。如果 $k$ 不能被早已出来，那么为 $0$ 。否则为 $2^{n-m}$（m 为线性基中的元素个数）。证明：考虑不是线性基中的 $n$ 个数，对于每一个子集，都可以在线性基中找到唯一一种方案使得异或和为 $k$ 。
+下面这段求的是能异或出的**最大值**。若问“异或和为 $k$ 的方案数”：插不进 $k$ 则为 $0$，否则为 $2^{n-m}$（$m$ 为基中非零个数）。证明：不在基里的每个子集，都能在基中找到唯一补丁使异或和为 $k$。
 
 ```cpp
-std::vector<i64> get_linear_basis(std::vector<i64>& nums, int N = 63) {
+using i64 = long long;
+std::vector<i64> get_linear_basis(std::vector<i64>& nums, int N = 63) { // N 按值域最高位改
     std::vector<i64> p(N + 1);
     auto insert = [&](i64 x) {
         for (int s = N;s >= 0;--s)if (x >> s & 1) {
@@ -13987,10 +14003,11 @@ signed main() {
     int n;std::cin >> n;
     std::vector<i64> nums(n);
     for (auto& x : nums)std::cin >> x;
-    auto p = get_linear_basis(nums, 63);
+    const int N = 63; // 原来直接用 N，main 里未定义
+    auto p = get_linear_basis(nums, N);
     i64 ans = 0;
     for (int s = N;s >= 0;--s)
-        ans = std::max(ans, ans ^ p[s]);
+        ans = std::max(ans, ans ^ p[s]); // 从高位贪心
     std::cout << ans;
     return 0;
 }
@@ -13998,12 +14015,12 @@ signed main() {
 
 #### 高斯消元法
 
-设向量长度为 $N$（一般取 $63$），总数为 $M$，时间复杂度为 $\mathcal O(NM)$ 。
+线性基封装。设位长为 `BASE`（一般取 $63$，循环用到 $0..62$），插入 $M$ 个数复杂度 $\mathcal O(M\cdot \mathrm{BASE})$。`insert` 失败则能异或出 $0$（`flag=1`）。`kthquery` 前必须先 `rebuild()`。
 
 ```cpp
 struct LB { // Linear Basis
     using i64 = long long;
-    const int BASE = 63;
+    const int BASE = 63; // 按值域改；这里用到 bit 0..62
     std::vector<i64> d, p;
     int cnt, flag;
 
@@ -14048,8 +14065,10 @@ struct LB { // Linear Basis
         for (int i = 0; i <= BASE - 1; i++) {
             if (d[i]) return d[i];
         }
+        return 0; // 空基；原来没有返回值
     }
-    void rebuild() { // 第k小值独立预处理
+    void rebuild() { // 第k小值独立预处理，把 d 消成对角再压进 p[0..cnt)
+        cnt = 0;
         for (int i = BASE - 1; i >= 0; i--) {
             for (int j = i - 1; j >= 0; j--) {
                 if (d[i] & (1ll << j)) d[i] ^= d[j];
@@ -14064,7 +14083,7 @@ struct LB { // Linear Basis
         if (!k) return 0;
         i64 res = 0;
         if (k >= (1ll << cnt)) return -1;
-        for (int i = BASE - 1; i >= 0; i--) {
+        for (int i = 0; i < cnt; i++) { // 原来按下标 BASE 取 p[i]，p 只填了 [0,cnt)
             if (k & (1LL << i)) res ^= p[i];
         }
         return res;
@@ -14081,6 +14100,8 @@ struct LB { // Linear Basis
 
 ### 三角形面积
 
+与多边形章鞋带公式同一件事。输入按 $x_1,y_1,x_2,y_2,x_3,y_3$。
+
 #### 行列式求面积
 
 $$
@@ -14095,7 +14116,7 @@ int main(){
     float sum = 0.0;
     sum = 0.5*(num[0]*num[3]+num[2]*num[5]+num[4]*num[1]-num[0]*num[5]-num[2]*num[1]-num[4]*num[3]);
     cout << "三角形的面积为: ";
-    sum == 0 ? cout << "Impossible" : cout <<sum;
+    sum == 0 ? cout << "Impossible" : cout <<sum; // 共线面积为 0；float 比较用 == 不稳，可改 sign
     return 0;
 }
 ```
@@ -14106,10 +14127,14 @@ $$
 S = \frac{1}{4}\sqrt{(a+b+c)(a+b-c)(a+c-b)(b+c-a)}
 $$
 
+与 $S=\sqrt{p(p-a)(p-b)(p-c)}$、$p=(a+b+c)/2$ 相同。浮点近退化时不稳定，赛场优先叉乘。
+
 ```cpp
 p=(a+b+c)/2;
 sum=sqrt(p*(p-a)*(p-b)*(p-c));
 ```
+
+<div style="page-break-after:always">/END/</div>
 ## 组合数学
 
 ### 组合数
