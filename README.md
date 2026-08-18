@@ -23,6 +23,17 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 ./build.sh
 ```
 
+## 导出 PDF
+
+不经过 Typora / XeLaTeX。`pandoc` 把 Markdown 收成 Typst，公式仍按 LaTeX 交给 mitex，`typst` 出 PDF。首次编译会从 Typst Universe 拉 `@preview/mitex:0.2.7`。
+
+```sh
+./export-pdf.sh           # build/total.pdf
+./export-pdf.sh 博弈论.md  # build/博弈论.pdf
+```
+
+需要：`pandoc`、`typst`、`python3`，以及系统里的 Noto CJK 字体。外链图片不下载，PDF 里只留地址。
+
 ## 克隆与提交
 
 ```sh
