@@ -321,6 +321,8 @@ unordered_set<vector<int> > S;
 <div style="page-break-after:always">/END/</div>
 ## 三维几何及常见例题
 
+依赖二维章的 `ld`、`EPS`、`sign`、`PI`。`Point3` / `Line3` / `Plane` 三点定面。原文把 `P3` / `L3` 当别名用但未 typedef，下面补上。叉积用 `crossEx` 返回向量，`cross` 返回模长。
+
 ### 三维几何必要初始化
 
 #### 点线面封装
@@ -335,7 +337,7 @@ struct Point3 {
     Point3 &operator-=(Point3 p) & {
         return x -= p.x, y -= p.y, z -= p.z, *this;
     }
-    Point3 &operator*=(Point3 p) & {
+    Point3 &operator*=(Point3 p) & { // 按分量乘，不是叉积；linePlaneCross 靠这个凑点积
         return x *= p.x, y *= p.y, z *= p.z, *this;
     }
     Point3 &operator*=(ld t) & {
@@ -361,8 +363,10 @@ struct Line3 {
     Point3 a, b;
 };
 struct Plane {
-    Point3 u, v, w;
+    Point3 u, v, w; // 三点定面；共线时 getVec 为零向量
 };
+using P3 = Point3;
+using L3 = Line3;
 ```
 
 #### 其他函数
@@ -400,7 +404,7 @@ P3 standardize(P3 vec) { // 将三维向量转换为单位向量
 
 #### 空间三点是否共线
 
-其中第二个函数是专门用来判断给定的三个点能否构成平面的，因为不共线的三点才能构成平面。
+叉积模长为 $0$ 则共线。其中第二个函数是专门用来判断给定的三个点能否构成平面的，因为不共线的三点才能构成平面。
 
 ```cpp
 bool onLine(P3 p1, P3 p2, P3 p3) { // 三点是否共线
@@ -521,7 +525,7 @@ bool segmentIntersection(L3 l1, L3 l2) { // 重叠、相交于端点均视为相
         return !pointOnSegmentSide(l1.a, l1.b, l2) && !pointOnSegmentSide(l2.a, l2.b, l1);
     }
     return pointOnSegment(l1.a, l2) || pointOnSegment(l1.b, l2) || pointOnSegment(l2.a, l1) ||
-           pointOnSegment(l2.b, l2);
+           pointOnSegment(l2.b, l1); // 原来写成 pointOnSegment(l2.b, l2)，点在自身线段上恒真
 }
 bool segmentIntersection1(L3 l1, L3 l2) { // 重叠、相交于端点不视为相交
     return onPlane(l1.a, l1.b, l2.a, l2.b) && !pointOnSegmentSide(l1.a, l1.b, l2) &&
@@ -565,7 +569,7 @@ pair<bool, P3> linePlaneCross(L3 l, Plane s) {
         return {0, {}};
     }
     P3 vec = getVec(s);
-    P3 U = vec * (s.u - l.a), V = vec * (l.b - l.a);
+    P3 U = vec * (s.u - l.a), V = vec * (l.b - l.a); // 按分量乘，下一行求和即点积
     ld val = (U.x + U.y + U.z) / (V.x + V.y + V.z);
     return {1, l.a + (l.b - l.a) * val};
 }
@@ -590,6 +594,8 @@ pair<bool, L3> planeIntersection(Plane s1, Plane s2) {
 
 #### 点到直线的最近点与最近距离
 
+面积除以底边得距离。直线方向用 `l.a-l.b`，与后面单位化一致。
+
 ```cpp
 pair<ld, P3> pointToLine(P3 p, L3 l) {
     ld val = cross(p - l.a, l.a - l.b) / dis(l.a, l.b); // 面积除以底边长
@@ -600,16 +606,20 @@ pair<ld, P3> pointToLine(P3 p, L3 l) {
 
 #### 点到平面的最近点与最近距离
 
+距离取绝对值；垂足必须用**有向**距离，否则法向另一侧会走到平面反方向。
+
 ```cpp
 pair<ld, P3> pointToPlane(P3 p, Plane s) {
     P3 vec = getVec(s);
-    ld val = dot(vec, p - s.u);
-    val = abs(val) / len(vec); // 面积除以底边长
-    return {val, p - val * standardize(vec)};
+    ld signed_d = dot(vec, p - s.u) / len(vec); // 有向距离
+    ld val = abs(signed_d);
+    return {val, p - signed_d * standardize(vec)}; // 原来用 abs 后再减，法向另一侧垂足会反
 }
 ```
 
 #### 空间两直线的最近距离与最近点对
+
+公垂线方向为两方向叉积；平行时 `vec` 为零，不要调用。返回 `{距离, l1 上最近点, l2 上最近点}`。
 
 ```cpp
 tuple<ld, P3, P3> lineToLine(L3 l1, L3 l2) {
@@ -667,6 +677,8 @@ ld V(ld l, int n) { // 正n棱锥体积公式
 ```
 
 #### 四面体体积
+
+标量三重积除以 $6$。与上面正棱锥的 `V(l,n)` 同名，不要同时编译。
 
 ```cpp
 ld V(P3 a, P3 b, P3 c, P3 d) {
@@ -1937,7 +1949,11 @@ struct SequenceAutomaton {
 <div style="page-break-after:always">/END/</div>
 ## 二维几何
 
+本章默认 `ld = long double`，`EPS = 1e-7`（文末 SMU_inch 板子改用 `double` + `1e-9`，两套不要混）。`T` 用 `int` / `long long` 做整点，用 `ld` 做浮点。`Pd` / `Ld` 为 `Point<ld>` / `Line<ld>`，`Pi` 为 `Point<int>`；模板里的 `Pt` / `Lt` 原文未 typedef，约定为 `Point<T>` / `Line<T>`，用前自行 `using`。`sign` 返回 $-1/0/1$。
+
 ### format 格式化输出小数点
+
+C++20。没有 `format` 时用下面预置里的 `cc(x)`（`fixed << setprecision`）。
 
 ```cpp
 cout << format("{:.2f}", 114514.1919810) << endl;
@@ -1946,8 +1962,10 @@ cout << format("{:.2f}", 114514.1919810) << endl;
 
 ### 库实数类实现（双精度）
 
+上半用 `std::complex`，`Real = int` 只适于整点（叉积会溢出就改 `long long`）。下半按 `.x/.y` 写，与 `complex` 不是同一种类型，**两套 `cross/dot` 不能同时编译**（重定义），按题目留一套。
+
 ```cpp
-using Real = int;
+using Real = int; // 整点；需要更大范围改 long long
 using Point = complex<Real>;
 
 Real cross(const Point &a, const Point &b) {
@@ -1957,6 +1975,7 @@ Real dot(const Point &a, const Point &b) {
     return (conj(a) * b).real();
 }
 
+// 下面按 Point.x/.y 写，与上面 complex 版不能同时存在
 Real cross(const Point &a, const Point &b) {
     return a.x * b.y - a.y * b.x;
 } 
@@ -1969,8 +1988,10 @@ Real dot(const Point &a, const Point &b) {
 
 #### 字符串读入浮点数
 
+去掉小数点后按 $k$ 位补零，当成整数用。`Knum` 按题目小数位数改；位数多时 `stoi` 会溢出，改 `stoll`。
+
 ```cpp
-const int Knum = 4;
+const int Knum = 4; // 保留小数位数，按题目改
 int read(int k = Knum) {
     string s;
     cin >> s;
@@ -1990,10 +2011,12 @@ int read(int k = Knum) {
 
 #### 预置函数
 
+全章浮点比较都走 `EPS` / `sign` / `equal`，不要直接 `==`。`EPS` 按坐标范围改。
+
 ```cpp
 using ld = long double;
 const ld PI = acos(-1);
-const ld EPS = 1e-7;
+const ld EPS = 1e-7; // 按坐标范围改；SMU_inch 板是 1e-9
 const ld INF = numeric_limits<ld>::max();
 #define cc(x) cout << fixed << setprecision(x);
 
@@ -2055,7 +2078,7 @@ struct Point {  // 在C++17下使用emplace_back绑定可能会导致CE！
         return is >> p.x >> p.y;
     }
     friend ostream &operator<<(ostream &os, const Point &p) {
-        return os << format("({},{})", p.x, p.y);     // C++20
+        return os << format("({},{})", p.x, p.y);     // C++20；没有 format 删本行，留下面
         return os << '(' << p.x << ',' << p.y << ')'; // C++17
     }
 };
@@ -2072,6 +2095,10 @@ struct Line {
         return os << '<' << l.a << ',' << l.b << '>';
     }
 };
+using Pd = Point<ld>;
+using Ld = Line<ld>;
+using Pi = Point<int>;
+// 模板里的 Pt/Lt 约定为 Point<T>/Line<T>，用前 using Pt = Point<T>; using Lt = Line<T>;
 ```
 
 #### 叉乘
@@ -2087,7 +2114,7 @@ T cross(Point<T> p1, Point<T> p2, Point<T> p0) { return cross(p1 - p0, p2 - p0);
 
 #### 点乘
 
-定义公式 $a\times b=|a||b|\cos \theta$。
+定义公式 $a\cdot b=|a||b|\cos \theta$。（原文写成了 $\times$，与叉乘混淆）
 
 ```cpp
 template<typename T>  // 点乘
@@ -2101,9 +2128,8 @@ T dot(Point<T> p1, Point<T> p2, Point<T> p0) { return dot(p1 - p0, p2 - p0); }
 最常用的距离公式。**需要注意**，开根号会丢失精度，如无强制要求，先不要开根号，留到最后一步一起开。
 
 ```cpp
-// Use with caution! This might not be the correct implementation of disEx as described below
 template<typename T>
-T disEx(Point<T> a, Point<T> b) {
+T disEx(Point<T> a, Point<T> b) { // 平方距离，先不要开方
     return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 }
 template<typename T>
@@ -2130,9 +2156,7 @@ Point<ld> standardize(Point<ld> vec) { // 转换为单位向量
 
 #### 向量旋转
 
-// SHIT ???
-
-将当前向量移动至原点后顺时针旋转 $90^{\circ}$ ，即获取垂直于当前向量的、起点为原点的向量。在计算垂线时非常有用。例如，要想获取点 $a$ 绕点 $o$ 顺时针旋转 $90^{\circ}$ 后的点，可以这样书写代码：`auto ans = o + rotate(o, a);` ；如果是逆时针旋转，那么只需更改符号即可：`auto ans = o - rotate(o, a);` 。
+将当前向量移动至原点后顺时针旋转 $90^{\circ}$ ，即获取垂直于当前向量的、起点为原点的向量。在计算垂线时非常有用。例如，要想获取点 $a$ 绕点 $o$ 顺时针旋转 $90^{\circ}$ 后的点，可以这样书写代码：`auto ans = o + rotate(o, a);` ；如果是逆时针旋转，那么只需更改符号即可：`auto ans = o - rotate(o, a);` 。参数顺序是 `(原点, 被旋转点)`。
 
 ```cpp
 template<typename T> Point<T> rotate(Point<T> p1, Point<T> p2) { // 旋转
@@ -2197,16 +2221,16 @@ Point<ld> rotate(Point<ld> p, ld rad) {
 
 #### 点绕点旋转任意角度
 
-逆时针旋转，转换公式：$\left\{\begin{matrix}
-x'=(x_0-x_1)\cos\theta+(y_0-y_1)\sin\theta+x_1 \\ 
-y'=(x_1-x_0)\sin\theta+(y_0-y_1)\cos\theta+y_1
+点 $a$ 绕点 $b$ 逆时针转 `rad` 弧度。转换公式：$\left\{\begin{matrix}
+x'=(x_0-x_1)\cos\theta-(y_0-y_1)\sin\theta+x_1 \\
+y'=(x_0-x_1)\sin\theta+(y_0-y_1)\cos\theta+y_1
 \end{matrix}\right.$
 
 ```cpp
-// potentially incorrect?
 Point<ld> rotate(Point<ld> a, Point<ld> b, ld rad) {
-    ld x = (a.x - b.x) * cos(rad) + (a.y - b.y) * sin(rad) + b.x;
-    ld y = (b.x - a.x) * sin(rad) + (a.y - b.y) * cos(rad) + b.y;
+    // 原来 x 用了 +sin、y 用了 (b.x-a.x)*sin，是顺时针，与“逆时针”及 rotate(p,rad) 不一致
+    ld x = (a.x - b.x) * cos(rad) - (a.y - b.y) * sin(rad) + b.x;
+    ld y = (a.x - b.x) * sin(rad) + (a.y - b.y) * cos(rad) + b.y;
     return {x, y};
 }
 ```
@@ -2249,7 +2273,7 @@ template<typename T> bool pointNotOnLineSide(Pt p1, Pt p2, Lt vec) {
 
 #### 两直线相交交点
 
-在使用前需要先判断直线是否平行。
+参数方程求交。在使用前需要先判断直线是否平行，否则分母为 $0$。必须用浮点类型。
 
 ```cpp
 Pd lineIntersection(Ld l1, Ld l2) {
@@ -2294,11 +2318,11 @@ template<typename T> ld disPointToLine(Pt p, Lt l) {
 #### 点是否在线段上
 
 ```cpp
-template<typename T> bool pointOnSegment(Pt p, Lt l) { // 端点也算作在直线上
+template<typename T> bool pointOnSegment(Pt p, Lt l) { // 端点也算
     return sign(cross(p, l.a, l.b)) == 0 && min(l.a.x, l.b.x) <= p.x && p.x <= max(l.a.x, l.b.x) &&
            min(l.a.y, l.b.y) <= p.y && p.y <= max(l.a.y, l.b.y);
 }
-template<typename T> bool pointOnSegment(Pt p, Lt l) { // 端点不算
+template<typename T> bool pointOnSegmentEx(Pt p, Lt l) { // 端点不算；原来与上一函数同名，无法重载
     return pointOnSegment(p, l) && min(l.a.x, l.b.x) < p.x && p.x < max(l.a.x, l.b.x) &&
            min(l.a.y, l.b.y) < p.y && p.y < max(l.a.y, l.b.y);
 }
@@ -2386,7 +2410,7 @@ template<typename T> tuple<int, Pt, Pt> segmentIntersection(Lt l1, Lt l2) {
 如果不需要求交点，那么使用快速排斥+跨立实验即可，其中重叠、相交于端点均视为相交。
 
 ```cpp
-// potentially incorrect?
+// TODO：跨立点序与上面 tuple 版不同；原文 sign==1 会把端点/重叠判成不相交，与“均视为相交”矛盾
 template<typename T> bool segmentIntersection(Lt l1, Lt l2) {
     auto [s1, e1] = l1;
     auto [s2, e2] = l2;
@@ -2395,8 +2419,8 @@ template<typename T> bool segmentIntersection(Lt l1, Lt l2) {
     auto C = max(s2.x, e2.x), CC = min(s2.x, e2.x);
     auto D = max(s2.y, e2.y), DD = min(s2.y, e2.y);
     return A >= CC && B >= DD && C >= AA && D >= BB &&
-           sign(cross(s1, s2, e1) * cross(s1, e1, e2)) == 1 &&
-           sign(cross(s2, s1, e2) * cross(s2, e2, e1)) == 1;
+           sign(cross(s1, s2, e1) * cross(s1, e1, e2)) != 1 && // 原来 ==1，端点/重叠会判不相交
+           sign(cross(s2, s1, e2) * cross(s2, e2, e1)) != 1;
 }
 ```
 
@@ -2427,7 +2451,7 @@ pair<Pd, ld> pointToCircle(Pd p, Pd o, ld r) {
 
 #### 根据圆心角获取圆上某点
 
-将圆上最右侧的点以圆心为旋转中心，逆时针旋转 `rad` 度。
+将圆上最右侧的点以圆心为旋转中心，逆时针旋转 `rad` **弧度**（原文写成“度”，与 `cos/sin` 不符）。
 
 ```cpp
 Point<ld> getPoint(Point<ld> p, ld r, ld rad) {
@@ -2506,7 +2530,7 @@ tuple<int, Pd, Pd> circleIntersection(Pd p1, ld r1, Pd p2, ld r2) {
         sinb = sqrt(1 - cosb * cosb);
         Pd ans1 = {x1 + r1 * cosa, y1 + r1 * sina};
         Pd ans2 = {x1 + r1 * cosb, y1 + r1 * sinb};
-        if (sign(dis(ans1, p1) - r2)) ans1.y = y1 - r1 * sina;
+        if (sign(dis(ans1, p2) - r2)) ans1.y = y1 - r1 * sina; // 原来写成 dis(ans1, p1)，点在圆1上恒为 r1
         if (sign(dis(ans2, p2) - r2)) ans2.y = y1 - r1 * sinb;
         if (ans1 == ans2) ans1.y = y1 - r1 * sina;
         return {3, ans1, ans2};
@@ -2550,8 +2574,9 @@ tuple<int, Pd, ld> getCircle(Pd A, Pd B, Pd C) {
 
 #### 求解点到圆的切线数量与切点
 
+点 $p$ 向圆 $(A,r)$ 引切线。返回切线数量和切点。
+
 ```cpp
-// potentially incorrect?
 pair<int, vector<Point<ld>>> tangent(Point<ld> p, Point<ld> A, ld r) {
     vector<Point<ld>> ans; // 储存切点
     Point<ld> u = A - p;
@@ -2562,9 +2587,11 @@ pair<int, vector<Point<ld>>> tangent(Point<ld> p, Point<ld> A, ld r) {
         ans.push_back(p);
         return {1, ans};
     } else {
-        ld ang = asin(r / d);
-        ans.push_back(getPoint(A, r, -ang));
-        ans.push_back(getPoint(A, r, ang));
+        ld base = atan2(p.y - A.y, p.x - A.x); // 圆心指向 p
+        ld ang = acos(r / d);
+        // 原来 getPoint(A,r,±asin(r/d))，相对 +x 轴，与 p 的位置无关
+        ans.push_back(getPoint(A, r, base - ang));
+        ans.push_back(getPoint(A, r, base + ang));
         return {2, ans};
     }
 }
@@ -2582,7 +2609,7 @@ tuple<int, vector<Point<ld>>, vector<Point<ld>>> tangent(Point<ld> A, ld Ar, Poi
         swap(A, B);
         swap(a, b);
     }
-    int d = disEx(A, B), dif = Ar - Br, sum = Ar + Br;
+    ld d = disEx(A, B), dif = Ar - Br, sum = Ar + Br; // 原来 int d，大坐标平方会溢出；d 是距离平方
     if (d < dif * dif) { // 内含，无
         return {0, {}, {}};
     }
@@ -2636,7 +2663,7 @@ template<typename T> Pt center1(Pt p1, Pt p2, Pt p3) { // 外心
 
 #### 三角形内心
 
-三角形内切圆的圆心，也是三角形三个内角的角平分线的交点。其到三角形三边的距离相等。
+三角形内切圆的圆心，也是三角形三个内角的角平分线的交点。其到三角形三边的距离相等。`#define atan2(p)` 会污染库函数，用完注意作用域。两角平分线夹角可能跨过 $\pm\pi$ 接缝，极端数据优先用边权公式 $I=(aA+bB+cC)/(a+b+c)$。
 
 ```cpp
 Pd center2(Pd p1, Pd p2, Pd p3) { // 内心
@@ -2790,6 +2817,8 @@ tuple<int, ld, ld> getAns(ld a, ld b, ld c) {
 ```
 
 ### SMU_inch
+
+另一套自包含板子（`double` + `EPS=1e-9`，点类型是 `P` 不是上面的 `Point`）。`#define pop pop_back`、`#define list vector` 会污染标准名，用时小心。`N` / `MOD` 按题目改。与上文模板不要混用。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -3294,6 +3323,8 @@ int main() {
         solve();
 }
 ```
+
+<div style="page-break-after:always">/END/</div>
 ## 动态规划
 
 ### 01 背包
