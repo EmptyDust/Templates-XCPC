@@ -13036,14 +13036,24 @@ signed main() {
 
 ### 编译器设置
 
-选项本身：`-std=gnu++20` 是比赛常用 GNU 方言（不是纯 ISO）；`-pipe` 让 cc1 和 as 之间走管道、不写临时 `.s`，不改程序。`-O2` 编译慢跑得快。`-Wl,--stack=` 只给 MinGW。
+`-std=gnu++20`：比赛常用 GNU 方言，不是纯 ISO C++20。
+`-pipe`：cc1 和 as 之间走管道，不写临时 `.s`，不改程序。
+`-O2`：优化，编译慢跑得快。
+`-O0`：不优化。
+`-g`：调试信息，asan 才能报行号。
+`-Wall -Wextra`：多开警告。
+`-fsanitize=address`：越界、use-after-free。
+`-fsanitize=undefined`：有符号溢出等未定义行为。
+`-Wl,--stack=`：只给 MinGW。
 
-编跑函数直接追加到默认 init 末尾：Linux `~/.bashrc`，Windows PowerShell `$PROFILE`。不要另写 `.bashrc.d`。`run` 不优化，`runo` 带 `-O2`，`rund` 调试。二进制固定一个临时文件，最后一行 `rm` 自己决定留不留。
+函数追加到默认 init 末尾：Linux `~/.bashrc`，Windows `$PROFILE`。不要 `.bashrc.d`。
+`run` 不优化。`runo` 带 `-O2`。`rund` 调试。
+二进制固定一个临时文件。最后一行 `rm` 自己决定留不留。
 
 Linux（`~/.bashrc` 末尾）：
 
 ```bash
-# run / runo(-O2) / rund   run a.cpp < in.txt
+# run a.cpp < in.txt
 # 二进制 /tmp/a.out
 run() {
     g++ -std=gnu++20 -pipe "$1" -o /tmp/a.out
