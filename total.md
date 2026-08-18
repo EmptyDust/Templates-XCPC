@@ -13056,27 +13056,24 @@ signed main() {
 
 将下列函数追加到默认 init 末尾：Linux 为 `~/.bashrc`，Windows PowerShell 为 `$PROFILE`。不要使用 `~/.bashrc.d`。
 `run` 不启用优化；`runo` 使用 `-O2`；`rund` 用于本地诊断。
-目标文件固定单一临时路径。最后一行 `rm` 可按需删除。
+目标文件固定单一临时路径，下次覆盖，不删除。
 
 Linux（`~/.bashrc` 末尾）：
 
 ```bash
 # run a.cpp < in.txt
-# 二进制 /tmp/a.out
+# /tmp/a.out，下次覆盖
 run() {
     g++ -std=gnu++20 -pipe "$1" -o /tmp/a.out &&
     /tmp/a.out
-    rm /tmp/a.out
 }
 runo() {
     g++ -O2 -std=gnu++20 -pipe "$1" -o /tmp/a.out &&
     /tmp/a.out
-    rm /tmp/a.out
 }
 rund() {
     g++ -O0 -g -std=gnu++20 -pipe -Wall -Wextra -fsanitize=address,undefined "$1" -o /tmp/a.out &&
     /tmp/a.out
-    rm /tmp/a.out
 }
 ```
 
@@ -13088,17 +13085,14 @@ Windows 只考虑 PowerShell（`$PROFILE` 末尾）。`rm` 是 `Remove-Item` 的
 function run {
     g++ -std=gnu++20 -pipe $args[0] -o "$env:TEMP\a.exe"
     if ($?) { & "$env:TEMP\a.exe" }
-    rm "$env:TEMP\a.exe"
 }
 function runo {
     g++ -O2 -std=gnu++20 -pipe $args[0] -o "$env:TEMP\a.exe"
     if ($?) { & "$env:TEMP\a.exe" }
-    rm "$env:TEMP\a.exe"
 }
 function rund {
     g++ -O0 -g -std=gnu++20 -pipe -Wall -Wextra -fsanitize=address,undefined $args[0] -o "$env:TEMP\a.exe"
     if ($?) { & "$env:TEMP\a.exe" }
-    rm "$env:TEMP\a.exe"
 }
 ```
 
