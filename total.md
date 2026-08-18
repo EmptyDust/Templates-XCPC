@@ -3317,7 +3317,7 @@ for (int i = 1; i <= n; i++)
 
 ```cpp
 for (int i = 1; i <= n; i++)  //当前装第 i 件物品
-    for (int j = W; j >= w[i]; j--)  //背包容量为 j
+    for (int j = W; j >= w[i]; j--)  //背包容量为 j，逆序遍历保证每件物品只被使用一次
         dp[j] = max(dp[j], dp[j - w[i]] + v[i]);  //判断背包容量为 j 的情况下能是实现总价值最大是多少
 ```
 
@@ -3347,7 +3347,7 @@ for (int i = 1; i <= n; i++)
     }
 ```
 
-和 01 背包 类似地压缩成一维
+和 01 背包 类似地压缩成一维——注意完全背包是**顺序**遍历（`dp[j-w[i]]` 用的是当轮新值，等价于可以重复取），与 01 背包的逆序相对。
 
 ```cpp
 for (int i = 1; i <= n; i++)
@@ -3392,7 +3392,7 @@ for (int i = 1; i <= num; i++)
         dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
 ```
 
-尽管采用了 **二进制优化**，时间复杂度还是太高，采用 **单调队列优化**，将时间复杂度优化至 $O(n * m)$
+尽管采用了 **二进制优化**，时间复杂度还是太高，采用 **单调队列优化**，将时间复杂度优化至 $O(n * m)$：按 $j \bmod w$ 分组后在每组内做滑动窗口，窗口长度为 $s+1$，维护 $g[k] - \lfloor (k-j)/w\rfloor v$ 的最大值。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -3613,6 +3613,8 @@ for (int i = 1; i <= n; i++)
 
 ### 数位 DP
 
+下方第一个板子统计 $[0, x]$ 中数字 $d$ 出现的次数（`solve(r, d) - solve(l - 1, d)` 即区间计数）。第二个板子统计 $\le n$ 的数中"数位和能整除该数"的个数：枚举可能的数位和 `mod`（$\le 9\cdot len$），每趟记录 `(余数, 当前数位和)` 两维。
+
 ```cpp
 /* pos 表示当前枚举到第几位
 sum 表示 d 出现的次数
@@ -3681,7 +3683,7 @@ signed main() {
 
 ### 状压 DP
 
-**题意：**在 $n * n$ 的棋盘里面放 $k$ 个国王，使他们互不攻击，共有多少种摆放方案。国王能攻击到它上下左右，以及左上左下右上右下八个方向上附近的各一个格子，共 8 个格子。
+**题意：**在 $n * n$ 的棋盘里面放 $k$ 个国王，使他们互不攻击，共有多少种摆放方案。国王能攻击到它上下左右，以及左上左下右上右下八个方向上附近的各一个格子，共 8 个格子。做法：预处理出所有"同行不相邻"的合法状态 `st`，转移时要求本行状态与上一行状态（含左右移）按位与为 $0$；复杂度 $\mathcal O(n\cdot k\cdot |S|^2)$，$|S|$ 为合法状态数（约 $1.6^n$ 量级）。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -3729,6 +3731,8 @@ int main(){
 
 #### 最短 Hamilton 路径
 
+求从 $0$ 号点出发、恰好经过每个点一次到达 $n-1$ 的最短路。`f[S][j]` 为经过点集 $S$、终点为 $j$ 的最短路（用位表示集合，`f[1][0] = 0`），枚举上一站 $k$ 转移，复杂度 $\mathcal O(N^2\cdot 2^N)$。
+
 ```cpp
 using namespace std;
 
@@ -3751,7 +3755,7 @@ int main(){
             if(i >> j & 1)//该状态存在j点
                 for (int k = 0; k < n; k ++ )//枚举从j倒数第二个点k
                     if(i >> k & 1)//倒数点k存在
-                        f[i][j]=min(f[i][j],f[i-(1<<j)][k]+w[k][j]);//状态转移方程，在f[i][j]和状态去掉j的点f[i-(i<<j)][k]+w[k][j]取最小值
+                        f[i][j]=min(f[i][j],f[i-(1<<j)][k]+w[k][j]);//状态转移方程，在f[i][j]和状态去掉j的点f[i-(1<<j)][k]+w[k][j]取最小值
     cout<<f[(1<<n)-1][n-1]<<endl;//输出状态全满也就是所有点都经过且到最后一个点的最短距离
     return 0;
 }
@@ -3805,6 +3809,9 @@ int main(){
     for (int i = 1; i < len; i++){
         if ((s[i] == ')' && s[i - 1 - dp[i - 1]] == '(' ) || (s[i] == ']' && s[i - 1 - dp[i - 1]] == '[')){
             dp[i] = dp[i - 1] + 2 + dp[i - 2 - dp[i - 1]];
+            // ↑ 当 dp[i-1] = i-1（前缀整体匹配，如 "()" 的第二个字符）时 i-2-dp[i-1] = -1，
+            //   直接写 dp[-1] 是数组越界（UB），应改成：
+            //   dp[i] = dp[i - 1] + 2 + (i - 2 - dp[i - 1] >= 0 ? dp[i - 2 - dp[i - 1]] : 0);
             if (dp[i] > ans) {
                 ans = dp[i];  //记录长度
                 id = i;  //记录位置
@@ -3857,6 +3864,8 @@ int main(){
 
 ### SOSdp 高维前缀和
 
+高维前缀和（SOS DP）：对每个二进制位做一维前缀和，$\mathcal O(n\cdot 2^n)$。第一段求 `f[i] = Σ f[所有 i 的子集]`（子集向超集贡献），第二段求 `f[i] = Σ f[所有包含 i 的超集]`（超集向子集贡献，注意逆序枚举与补分号）。常用于按"包含关系"计数、子集卷积前置。
+
 子集向超集转移
 
 ```cpp
@@ -3870,10 +3879,12 @@ for(int j = 0; j < n; j++)
 ```cpp
 for(int j = 0; j < n; j++)
     for(int i = (1 << n) - 1; i >= 0 ; i--)
-        if(!(i >> j & 1)) f[i] += f[i ^ (1 << j)]
+        if(!(i >> j & 1)) f[i] += f[i ^ (1 << j)]; // 原来行尾缺分号，无法编译
 ```
 
 ### 汉明权重
+
+Gosper's hack：按升序枚举 $[0, n]$ 中**二进制恰好含 $i$ 个 $1$** 的所有数，$\mathcal O(\mathrm{组合数})$。外层 $i$ 从 $0$ 到 $\log_2(n+1)$，内层从最小组合 `(1<<i)-1` 通过 `t = x + (x & -x)` 的组合位技巧得到下一个同权重数，常用于枚举大小为 $i$ 的子集状态。
 
 ```cpp
 for (int i = 0; (1<<i)-1 <= n; i++) {
@@ -15177,7 +15188,7 @@ using Flow = Flow_<int>;
 
 #### 预流推进 HLPP
 
-理论最坏复杂度为 $\mathcal O(N^2\sqrt M)$ ，例题范围：$N=1200,\ m=1.2\times 10^5$ 。
+预流推进（HLPP，最高标号预流推进）是实际运行速度最快的最大流实现之一，适合大数据量、边较多的场合；理论最坏复杂度为 $\mathcal O(N^2\sqrt M)$ ，例题范围：$N=1200,\ m=1.2\times 10^5$ 。用法与 Dinic 相同：`PushRelabel<long long> pr(n);`（模板参数须能容纳 `INF = 0x3f3f3f3f3f3f3f3f3f`）→ 反复 `addedge(u, v, w)` → `pr.work(s, t)`。实现要点：`init` 从汇点反向 BFS 赋高度标签（`f` 控制是否入 gap 桶），`PushPoint` 对虚流做推流/重贴标签，`gobalcnt` 累计入桶次数、超过 $10n$ 时重新 `init` 防退化。注意 `work` 开头 `ex[s] = INF` 只是哨兵，结尾 `ex[s] -= INF` 扣回，`maxflow` 也由此而来；**同一对象不能重复 `work`**（残留的虚流会污染结果），多组询问请每次新建对象。
 
 ```cpp
 template<typename T> struct PushRelabel {
@@ -15300,7 +15311,7 @@ template<typename T> struct PushRelabel {
 
 建图：建立源点 $S$ 向左半部连边，建立汇点 $T$ 向右半部连边，如果某个项目需要某个材料，则新增一条容量 $+\infty$ 的跨部边。
 
-割边：放弃某个项目则断开 $S$ 至该项目的边，购买某个原料则断开该原料至 $T$ 的边，最终的图一定不存在从 $S$ 到 $T$ 的路径，此时我们得到二分图的一个 $S-T$ 割。此时最小割即为求解最大流，边权之和减去最大流即为最大收益。
+割边：放弃某个项目则断开 $S$ 至该项目的边，购买某个原料则断开该原料至 $T$ 的边，最终的图一定不存在从 $S$ 到 $T$ 的路径，此时我们得到二分图的一个 $S-T$ 割；容量 $1E18$ 的跨部边不可能被割断，用来强制"项目存在 ⇒ 所需原料已购买"的依赖。此时最小割即为求解最大流，边权之和减去最大流即为最大收益。
 
 ```cpp
 signed main() {
@@ -15308,7 +15319,7 @@ signed main() {
     cin >> n >> m;
 
     int S = n + m + 1, T = n + m + 2;
-    Flow flow(T);
+    Flow_<long long> flow(T); // 跨部边容量用 1E18，int 装不下（原写 Flow 即 Flow_<int>，会溢出 UB），必须用 long long
     for (int i = 1; i <= n; i++) {
         int w;
         cin >> w;
@@ -15332,10 +15343,10 @@ signed main() {
 
 无向连通图抽象出的一棵树，满足任意两点间的距离是他们的最小割。一共需要跑 $n$ 轮最小割，总复杂度 $\mathcal O(N^3M)$ ，预处理最小割树上任意两点的距离 $\mathcal O(N^2)$ 。
 
-过程：分治 $n$ 轮，每一轮在图上随机选点，跑一轮最小割后连接树边；这一网络的残留网络会将剩余的点分为两组，根据分组分治。
+过程：分治 $n$ 轮，每一轮在图上随机选点，跑一轮最小割后连接树边；这一网络的残留网络会将剩余的点分为两组，根据分组分治。实现上每个连通分量用 `fa[x] == x` 的点作代表（初始全部归属 0），每轮取第一个非代表的点与其代表跑最小割，再按残留网络可达性（点集 `vis`）把另一侧的点改挂到新代表；**每轮 `work` 前必须先退流（`reset`）**，否则残留网络混着上一轮的流量、分组错误。
 
 ```cpp
-void reset() { // struct需要额外封装退流
+void reset() { // 原为独立函数，须移入 Flow 结构体作成员：把每条边的反向边流量退回正向边
     for (int i = 0; i < ver.size(); i += 2) {
         ver[i].w += ver[i ^ 1].w;
         ver[i ^ 1].w = 0;
@@ -15364,9 +15375,10 @@ signed main() { // Gomory-Hu Tree
         }
         int t = fa[s];
 
-        int ans = flow.work(s, t); // 残留网络将点集分为两组，分治
-        adj[s].push_back({t, ans});
-        adj[t].push_back({s, ans});
+        flow.reset(); // 每轮最小割前退流，否则残留网络不干净、分组错误
+        int cut = flow.work(s, t); // 残留网络将点集分为两组，分治
+        adj[s].push_back({t, cut});
+        adj[t].push_back({s, cut});
 
         vis.assign(n + 1, 0);
         auto dfs = [&](auto dfs, int u) -> void {
@@ -15409,7 +15421,7 @@ signed main() { // Gomory-Hu Tree
 
 ### 费用流
 
-给定一个带费用的网络，规定 $(u,v)$ 间的费用为 $f(u,v) \times w(u,v)$ ，求解该网络中总花费最小的最大流称之为**最小费用最大流**。总时间复杂度为 $\mathcal O(NMf)$ ，其中 $f$ 代表最大流。
+给定一个带费用的网络，规定 $(u,v)$ 间的费用为 $f(u,v) \times w(u,v)$ ，求解该网络中总花费最小的最大流称之为**最小费用最大流**。用法：`MinCostFlow mcf(n);` → 反复 `mcf.add(u, v, 流量, 费用)`（负费用的处理见 `add` 的注释）→ `mcf.flow(s, t)` 返回 `{最大流, 最小费用}`。下方实现用 **Dijkstra + 势能**（`h` 数组，Johnson 重赋权保证边权非负）代替 SPFA 找增广路，单次增广 $\mathcal O(M\log N)$，总复杂度 $\mathcal O(f\cdot M\log N)$（$f$ 为最大流的值）。
 
 ```cpp
 struct MinCostFlow {
@@ -15427,7 +15439,7 @@ struct MinCostFlow {
     vector<int> pre;
 
     MinCostFlow(int n) : n(n), g(n) {}
-    void add(int u, int v, int c, int f) { // c 流量, f 费用
+    void add(int u, int v, int c, int f) { // c 流量, f 费用；f < 0 时打开注释分支（先沿反向流满 c，"平移"成正费用，注意残余网络含义变化）
         // if (f < 0) {
         //     g[u].push_back(e.size());
         //     e.emplace_back(v, 0, f);
@@ -15461,12 +15473,13 @@ struct MinCostFlow {
         }
         return dis[t] != INF;
     }
-    pair<int, LL> flow(int s, int t) {
+    pair<int, LL> flow(int s, int t) { // 最大流可能超过 int 时把 int 改 long long
         int flow = 0;
         LL cost = 0;
         h.assign(n, 0);
         while (dijkstra(s, t)) {
-            for (int i = 0; i < n; ++i) h[i] += dis[i];
+            for (int i = 0; i < n; ++i)
+                if (dis[i] != INF) h[i] += dis[i]; // 不可达点 dis = INF，直接加会溢出 long long，必须判掉
             int aug = numeric_limits<int>::max();
             for (int i = t; i != s; i = e[pre[i] ^ 1].v) aug = min(aug, e[pre[i]].c);
             for (int i = t; i != s; i = e[pre[i] ^ 1].v) {
