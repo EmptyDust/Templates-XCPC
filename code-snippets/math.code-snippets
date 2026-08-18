@@ -27,7 +27,7 @@
 			"    }",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_1": {
 		"scope": "cpp",
@@ -48,7 +48,7 @@
 			"    }",
 			"};"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"sieve": {
 		"scope": "cpp",
@@ -78,7 +78,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Sieve"
+		"description": "线性筛"
 	},
 	"mul": {
 		"scope": "cpp",
@@ -89,7 +89,7 @@
 			"    return r - m * (r >= m) + m * (r < 0);",
 			"}"
 		],
-		"description": "Mul"
+		"description": "乘法/防爆模乘"
 	},
 	"mul_1": {
 		"scope": "cpp",
@@ -99,7 +99,7 @@
 			"    return (__int128)a * b % m;",
 			"}"
 		],
-		"description": "Mul"
+		"description": "乘法/防爆模乘"
 	},
 	"gcd": {
 		"scope": "cpp",
@@ -120,7 +120,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Gcd"
+		"description": "gcd"
 	},
 	"inv": {
 		"scope": "cpp",
@@ -128,7 +128,7 @@
 		"body": [
 			"LL inv(LL x) { return mypow(x, mod - 2, mod);}"
 		],
-		"description": "Inv"
+		"description": "逆元"
 	},
 	"exgcd": {
 		"scope": "cpp",
@@ -151,7 +151,7 @@
 			"    return d == 1 ? (x % mod + mod) % mod : -1;",
 			"}"
 		],
-		"description": "Exgcd"
+		"description": "扩欧"
 	},
 	"code": {
 		"scope": "cpp",
@@ -161,7 +161,7 @@
 			"for (int i = 2; i <= n; i ++ )",
 			"    inv[i] = (p - p / i) * inv[p % i] % p;"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"exgcd_1": {
 		"scope": "cpp",
@@ -177,7 +177,7 @@
 			"    return d;",
 			"}"
 		],
-		"description": "Exgcd"
+		"description": "扩欧"
 	},
 	"if": {
 		"scope": "cpp",
@@ -211,7 +211,7 @@
 			"    int num = (C - A) / b + 1; // xy均为正整数 的 解的组数",
 			"};"
 		],
-		"description": "If"
+		"description": "if"
 	},
 	"euclidean": {
 		"scope": "cpp",
@@ -227,7 +227,7 @@
 			"    return m * n - euclidean(c, c - b - 1, a, m - 1);",
 			"}"
 		],
-		"description": "Euclidean"
+		"description": "类欧几里得"
 	},
 	"bsgs": {
 		"scope": "cpp",
@@ -306,7 +306,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Bsgs"
+		"description": "BSGS"
 	},
 	"phi": {
 		"scope": "cpp",
@@ -324,7 +324,7 @@
 			"    return ans;",
 			"}"
 		],
-		"description": "Phi"
+		"description": "欧拉函数"
 	},
 	"euler": {
 		"scope": "cpp",
@@ -356,7 +356,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Euler"
+		"description": "欧拉筛/欧拉函数"
 	},
 	"init": {
 		"scope": "cpp",
@@ -385,7 +385,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Init"
+		"description": "初始化"
 	},
 	"get_eulers": {
 		"scope": "cpp",
@@ -469,7 +469,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"std_1": {
 		"scope": "cpp",
@@ -494,7 +494,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"is_prime": {
 		"scope": "cpp",
@@ -566,7 +566,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Mypow"
+		"description": "快速幂"
 	},
 	"xor_n": {
 		"scope": "cpp",
@@ -645,7 +645,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Gauss"
+		"description": "高斯消元"
 	},
 	"min25": {
 		"scope": "cpp",
@@ -719,7 +719,7 @@
 			"    // }",
 			"}"
 		],
-		"description": "Min25"
+		"description": "Min_25 筛"
 	},
 	"matrix": {
 		"scope": "cpp",
@@ -789,7 +789,7 @@
 			"    return res;",
 			"}"
 		],
-		"description": "Matrix"
+		"description": "矩阵"
 	},
 	"for_2": {
 		"scope": "cpp",
@@ -819,7 +819,7 @@
 			"    return ans;",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"matrixqp": {
 		"scope": "cpp",
@@ -867,7 +867,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Matrixqp"
+		"description": "矩阵快速幂"
 	},
 	"getmu": {
 		"scope": "cpp",
@@ -913,7 +913,7 @@
 			"    while (T--) solve();",
 			"}"
 		],
-		"description": "Getmu"
+		"description": "莫比乌斯"
 	},
 	"code_1": {
 		"scope": "cpp",
@@ -933,7 +933,7 @@
 			"    while (T--) solve();",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"mul_2": {
 		"scope": "cpp",
@@ -972,7 +972,7 @@
 			"    return 1;",
 			"}"
 		],
-		"description": "Mul"
+		"description": "乘法/防爆模乘"
 	},
 	"pr": {
 		"scope": "cpp",
@@ -1021,7 +1021,7 @@
 			"    return ans;",
 			"}"
 		],
-		"description": "Pr"
+		"description": "质数相关"
 	},
 	"code_2": {
 		"scope": "cpp",
@@ -1029,7 +1029,7 @@
 		"body": [
 			"std::log(n) + 0.5772156649 + 1.0 / (2 * n)"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_3": {
 		"scope": "cpp",
@@ -1067,7 +1067,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"clac": {
 		"scope": "cpp",
@@ -1081,7 +1081,7 @@
 			"    return ans;",
 			"}"
 		],
-		"description": "Clac"
+		"description": "计算（原名拼写）"
 	},
 	"jos": {
 		"scope": "cpp",
@@ -1093,7 +1093,7 @@
 			"    return res; // res+1，如果编号从1开始",
 			"}"
 		],
-		"description": "Jos"
+		"description": "约瑟夫"
 	},
 	"jos_1": {
 		"scope": "cpp",
@@ -1108,7 +1108,7 @@
 			"    return res; // res+1，如果编号从1开始",
 			"}"
 		],
-		"description": "Jos"
+		"description": "约瑟夫"
 	},
 	"jos_2": {
 		"scope": "cpp",
@@ -1123,7 +1123,7 @@
 			"    cout << a + 1 << '\\n';",
 			"}"
 		],
-		"description": "Jos"
+		"description": "约瑟夫"
 	},
 	"get_linear_basis": {
 		"scope": "cpp",
@@ -1241,7 +1241,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Lb"
+		"description": "线性基封装"
 	},
 	"code_4": {
 		"scope": "cpp",
@@ -1258,7 +1258,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_5": {
 		"scope": "cpp",
@@ -1267,7 +1267,7 @@
 			"p=(a+b+c)/2;",
 			"sum=std::sqrt(p*(p-a)*(p-b)*(p-c));"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"comb": {
 		"scope": "cpp",
@@ -1312,7 +1312,7 @@
 			"    }",
 			"} comb(1 << 21);"
 		],
-		"description": "Comb"
+		"description": "组合数"
 	},
 	"euler_prime": {
 		"scope": "cpp",
@@ -1381,7 +1381,7 @@
 			"}",
 			"std::cout << C[n][m] << std::endl;"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"lucas": {
 		"scope": "cpp",
@@ -1392,7 +1392,7 @@
 			"  return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p;",
 			"}"
 		],
-		"description": "Lucas"
+		"description": "Lucas 定理"
 	},
 	"ntt": {
 		"scope": "cpp",
@@ -1611,7 +1611,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Ntt"
+		"description": "NTT"
 	},
 	"code_6": {
 		"scope": "cpp",
@@ -1646,7 +1646,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_7": {
 		"scope": "cpp",
@@ -1674,7 +1674,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"jie_cheng": {
 		"scope": "cpp",
@@ -1754,7 +1754,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Fwt"
+		"description": "树状数组/FWT"
 	},
 	"kangtuo": {
 		"scope": "cpp",
@@ -1780,6 +1780,6 @@
 			"    std::cout<<kangtuo()<<std::endl;",
 			"}"
 		],
-		"description": "Kangtuo"
+		"description": "康托展开"
 	}
 }

@@ -33,7 +33,7 @@
 			"    top = k;",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"dsu": {
 		"scope": "cpp",
@@ -52,7 +52,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Dsu"
+		"description": "并查集"
 	},
 	"ufinit": {
 		"scope": "cpp",
@@ -73,7 +73,7 @@
 			"    unicnt[y] = -x;",
 			"}"
 		],
-		"description": "Ufinit"
+		"description": "并查集初始化"
 	},
 	"unionfind": {
 		"scope": "cpp",
@@ -110,7 +110,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Unionfind"
+		"description": "并查集"
 	},
 	"dsu_1": {
 		"scope": "cpp",
@@ -156,7 +156,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Dsu"
+		"description": "并查集"
 	},
 	"sparse_table": {
 		"scope": "cpp",
@@ -228,7 +228,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Bit"
+		"description": "树状数组"
 	},
 	"bit_1": {
 		"scope": "cpp",
@@ -254,7 +254,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Bit"
+		"description": "树状数组"
 	},
 	"bit_2": {
 		"scope": "cpp",
@@ -307,7 +307,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Bit"
+		"description": "树状数组"
 	},
 	"bit_3": {
 		"scope": "cpp",
@@ -340,7 +340,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Bit"
+		"description": "树状数组"
 	},
 	"bit_2d": {
 		"scope": "cpp",
@@ -594,7 +594,7 @@
 			"    return { a.x + b.x };",
 			"}"
 		],
-		"description": "Lazysegmenttree"
+		"description": "懒标记线段树"
 	},
 	"segt": {
 		"scope": "cpp",
@@ -621,7 +621,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Segt"
+		"description": "线段树"
 	},
 	"segmenttree": {
 		"scope": "cpp",
@@ -742,7 +742,7 @@
 			"    tree<pii, null_type, std::less<pii>, rb_tree_tag, tree_order_statistics_node_update> ver;",
 			"};"
 		],
-		"description": "Segmenttree"
+		"description": "线段树"
 	},
 	"wavelet": {
 		"scope": "cpp",
@@ -820,7 +820,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Wavelet"
+		"description": "小波矩阵"
 	},
 	"preesidenttree": {
 		"scope": "cpp",
@@ -856,7 +856,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Preesidenttree"
+		"description": "主席树（原拼写）"
 	},
 	"code": {
 		"scope": "cpp",
@@ -907,7 +907,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_1": {
 		"scope": "cpp",
@@ -972,7 +972,7 @@
 			"    for (int i = 1;i <= n;i++)    std::cout << ans[i] << '\\n';",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_2": {
 		"scope": "cpp",
@@ -1032,7 +1032,7 @@
 			"    for (int i = 1;i <= m;i++)   std::cout << ans[i] << '\\n';",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"set": {
 		"scope": "cpp",
@@ -1219,7 +1219,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Kdt"
+		"description": "KD 树"
 	},
 	"rmq": {
 		"scope": "cpp",
@@ -1298,7 +1298,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Rmq"
+		"description": "RMQ"
 	},
 	"odt": {
 		"scope": "cpp",
@@ -1370,6 +1370,6 @@
 			"    }",
 			"};"
 		],
-		"description": "Odt"
-	},
+		"description": "珂朵莉树"
+	}
 }

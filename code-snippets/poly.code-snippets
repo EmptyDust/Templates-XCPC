@@ -503,7 +503,7 @@
 			"}",
 			""
 		],
-		"description": "Poly"
+		"description": "多项式封装（NTT 乘法/求逆/ln/exp）"
 	},
 	"line": {
 		"scope": "cpp",
@@ -540,7 +540,7 @@
 			"  }",
 			"};"
 		],
-		"description": "Line"
+		"description": "直线"
 	},
 	"poly": {
 		"scope": "cpp",
@@ -774,7 +774,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Poly"
+		"description": "多项式封装（NTT 乘法/求逆/ln/exp）"
 	},
 	"findprimitiveroot": {
 		"scope": "cpp",
@@ -847,7 +847,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Findprimitiveroot"
+		"description": "原根"
 	},
 	"berlekampmassey": {
 		"scope": "cpp",
@@ -895,7 +895,7 @@
 			"    return c;",
 			"}"
 		],
-		"description": "Berlekampmassey"
+		"description": "Berlekamp-Massey"
 	},
 	"linearrecurrence": {
 		"scope": "cpp",
@@ -921,7 +921,7 @@
 			"    return p[0] / q[0];",
 			"}"
 		],
-		"description": "Linearrecurrence"
+		"description": "线性递推第 n 项"
 	},
 	"fft_mul": {
 		"scope": "cpp",
@@ -1054,7 +1054,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Polynomial"
+		"description": "多项式"
 	},
 	"qpow": {
 		"scope": "cpp",
@@ -1098,7 +1098,7 @@
 			"    return a;",
 			"}"
 		],
-		"description": "Qpow"
+		"description": "快速幂"
 	},
 	"lagrange": {
 		"scope": "cpp",
@@ -1152,6 +1152,6 @@
 			"    }",
 			"};"
 		],
-		"description": "Lagrange"
+		"description": "拉格朗日插值"
 	}
 }

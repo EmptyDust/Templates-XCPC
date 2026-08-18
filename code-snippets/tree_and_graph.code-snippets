@@ -45,7 +45,7 @@
 			"    return { u,v,cur };",
 			"}"
 		],
-		"description": "get_diam"
+		"description": "树的直径"
 	},
 	"lca": {
 		"scope": "cpp",
@@ -82,7 +82,7 @@
 			"    return depth[u] + depth[v] - depth[c] * 2;",
 			"}"
 		],
-		"description": "lca"
+		"description": "LCA"
 	},
 	"hpd_tree": {
 		"scope": "cpp",
@@ -175,7 +175,7 @@
 			"    }",
 			"};"
 		],
-		"description": "hpd_tree"
+		"description": "重链剖分"
 	},
 	"scc": {
 		"scope": "cpp",
@@ -242,7 +242,7 @@
 			"};",
 			""
 		],
-		"description": "scc"
+		"description": "强连通分量"
 	},
 	"ebcc": {
 		"scope": "cpp",
@@ -336,7 +336,7 @@
 			"    }",
 			"};"
 		],
-		"description": "ebcc"
+		"description": "边双连通分量"
 	},
 	"maxflow": {
 		"scope": "cpp",
@@ -454,7 +454,7 @@
 			"    }",
 			"};"
 		],
-		"description": "maxflow"
+		"description": "最大流"
 	},
 	"bf": {
 		"scope": "cpp",
@@ -488,7 +488,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Bf"
+		"description": "Bellman-Ford"
 	},
 	"add": {
 		"scope": "cpp",
@@ -531,7 +531,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Add"
+		"description": "加边/加点"
 	},
 	"floyd": {
 		"scope": "cpp",
@@ -607,7 +607,7 @@
 			"    }",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"prim": {
 		"scope": "cpp",
@@ -696,7 +696,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Dsu"
+		"description": "并查集"
 	},
 	"scc_1": {
 		"scope": "cpp",
@@ -758,7 +758,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Scc"
+		"description": "强连通分量"
 	},
 	"edcc": {
 		"scope": "cpp",
@@ -829,7 +829,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Edcc"
+		"description": "边双"
 	},
 	"v_dcc": {
 		"scope": "cpp",
@@ -983,7 +983,7 @@
 			"    }",
 			"} // namespace Graph"
 		],
-		"description": "Graph"
+		"description": "图"
 	},
 	"graph_1": {
 		"scope": "cpp",
@@ -1104,7 +1104,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Graph"
+		"description": "图"
 	},
 	"q": {
 		"scope": "cpp",
@@ -1348,7 +1348,7 @@
 			"    auto ans = match();",
 			"}"
 		],
-		"description": "Q"
+		"description": "队列"
 	},
 	"code": {
 		"scope": "cpp",
@@ -1387,7 +1387,7 @@
 			"    std::cout << ans << std::endl;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"hopcroftkarp": {
 		"scope": "cpp",
@@ -1492,7 +1492,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Hopcroftkarp"
+		"description": "Hopcroft-Karp"
 	},
 	"maxcostmatch": {
 		"scope": "cpp",
@@ -1608,7 +1608,7 @@
 			"    match.getMatch(n1, n2);",
 			"}"
 		],
-		"description": "Maxcostmatch"
+		"description": "最大权匹配"
 	},
 	"konig": {
 		"scope": "cpp",
@@ -1616,7 +1616,7 @@
 		"body": [
 			"std::cout << n - flow.work(s, t) << std::endl;"
 		],
-		"description": "Konig"
+		"description": "König"
 	},
 	"dag": {
 		"scope": "cpp",
@@ -1673,7 +1673,7 @@
 			"    cout << dag.topsort(s, t) << \"\\n\";",
 			"}"
 		],
-		"description": "Dag"
+		"description": "DAG"
 	},
 	"g": {
 		"scope": "cpp",
@@ -1733,7 +1733,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "G"
+		"description": "图"
 	},
 	"stoerwagner": {
 		"scope": "cpp",
@@ -1800,7 +1800,7 @@
 			"    std::cout << MinCut << std::endl;",
 			"}"
 		],
-		"description": "Stoerwagner"
+		"description": "Stoer-Wagner"
 	},
 	"hierholzers": {
 		"scope": "cpp",
@@ -1838,7 +1838,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Hierholzers"
+		"description": "Hierholzer 欧拉回路"
 	},
 	"hierholzers_1": {
 		"scope": "cpp",
@@ -1877,7 +1877,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Hierholzers"
+		"description": "Hierholzer 欧拉回路"
 	},
 	"for_1": {
 		"scope": "cpp",
@@ -1898,7 +1898,7 @@
 			"    cout << it << \" \";",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"hierholzers_2": {
 		"scope": "cpp",
@@ -1915,7 +1915,7 @@
 			"};",
 			"dfs(dfs, s);"
 		],
-		"description": "Hierholzers"
+		"description": "Hierholzer 欧拉回路"
 	},
 	"code_1": {
 		"scope": "cpp",
@@ -1953,7 +1953,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"twosat": {
 		"scope": "cpp",
@@ -2009,7 +2009,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Twosat"
+		"description": "2-SAT"
 	},
 	"check": {
 		"scope": "cpp",
@@ -2039,7 +2039,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Check"
+		"description": "检查"
 	},
 	"for_2": {
 		"scope": "cpp",
@@ -2058,7 +2058,7 @@
 			"dfs(1, 0);",
 			"std::cout << ans << std::endl;"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"add_1": {
 		"scope": "cpp",
@@ -2093,7 +2093,7 @@
 			"    std::cout << ans << std::endl;",
 			"}"
 		],
-		"description": "Add"
+		"description": "加边/加点"
 	},
 	"clear": {
 		"scope": "cpp",
@@ -2155,7 +2155,7 @@
 			"    std::cout << ans.val() << std::endl;",
 			"}"
 		],
-		"description": "Clear"
+		"description": "清空"
 	},
 	"add_2": {
 		"scope": "cpp",
@@ -2198,7 +2198,7 @@
 			"    else cout << \"No\" << endl;",
 			"}"
 		],
-		"description": "Add"
+		"description": "加边/加点"
 	},
 	"for_3": {
 		"scope": "cpp",
@@ -2232,7 +2232,7 @@
 			"}",
 			"std::cout << -1;"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_4": {
 		"scope": "cpp",
@@ -2262,7 +2262,7 @@
 			"    }",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"flody": {
 		"scope": "cpp",
@@ -2290,7 +2290,7 @@
 			"    return ans;",
 			"}"
 		],
-		"description": "Flody"
+		"description": "Floyd（原拼写）"
 	},
 	"for_5": {
 		"scope": "cpp",
@@ -2319,7 +2319,7 @@
 			"}",
 			"std::cout << ans;"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_6": {
 		"scope": "cpp",
@@ -2356,7 +2356,7 @@
 			"}",
 			"cout << (ans - m) / 2 << \"\\n\";"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_7": {
 		"scope": "cpp",
@@ -2390,7 +2390,7 @@
 			"    }",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_8": {
 		"scope": "cpp",
@@ -2416,7 +2416,7 @@
 			"}",
 			"std::cout << ans << std::endl;"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_9": {
 		"scope": "cpp",
@@ -2450,7 +2450,7 @@
 			"    }",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"code_2": {
 		"scope": "cpp",
@@ -2485,7 +2485,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"tree": {
 		"scope": "cpp",
@@ -2525,7 +2525,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Tree"
+		"description": "树"
 	},
 	"tree_1": {
 		"scope": "cpp",
@@ -2626,7 +2626,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Tree"
+		"description": "树"
 	},
 	"for_10": {
 		"scope": "cpp",
@@ -2691,7 +2691,7 @@
 			"get(get, 1, 0, n);",
 			"dfz(dfz, root, 0);"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"hld": {
 		"scope": "cpp",
@@ -2757,7 +2757,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Hld"
+		"description": "重链剖分"
 	},
 	"tree_2": {
 		"scope": "cpp",
@@ -2813,7 +2813,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Tree"
+		"description": "树"
 	},
 	"tree_3": {
 		"scope": "cpp",
@@ -2889,7 +2889,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Tree"
+		"description": "树"
 	},
 	"intersection": {
 		"scope": "cpp",
@@ -2905,7 +2905,7 @@
 			"    return 1 + clac(t[2], t[3]);",
 			"}"
 		],
-		"description": "Intersection"
+		"description": "交"
 	},
 	"hld_1": {
 		"scope": "cpp",
@@ -2973,7 +2973,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Hld"
+		"description": "重链剖分"
 	},
 	"pruefer_code": {
 		"scope": "cpp",
@@ -3099,7 +3099,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Hpd Tree"
+		"description": "重链剖分"
 	},
 	"segt": {
 		"scope": "cpp",
@@ -3273,7 +3273,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Segt"
+		"description": "线段树"
 	},
 	"flow_": {
 		"scope": "cpp",
@@ -3464,7 +3464,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Pushrelabel"
+		"description": "预流推进"
 	},
 	"code_3": {
 		"scope": "cpp",
@@ -3494,7 +3494,7 @@
 			"    std::cout << sum - flow.work(S, T) << std::endl;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"reset": {
 		"scope": "cpp",
@@ -3571,7 +3571,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Reset"
+		"description": "退流/重置"
 	},
 	"mincostflow": {
 		"scope": "cpp",
@@ -3645,6 +3645,6 @@
 			"    }",
 			"};"
 		],
-		"description": "Mincostflow"
+		"description": "最小费用最大流"
 	}
 }

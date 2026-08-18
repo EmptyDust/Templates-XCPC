@@ -175,7 +175,7 @@
 			"    }",
 			"}"
 		],
-		"description": "geometry"
+		"description": "二维几何初始化"
 	},
 	"point3": {
 		"scope": "cpp",
@@ -219,7 +219,7 @@
 			"    Point3 u, v, w;",
 			"};"
 		],
-		"description": "Point3"
+		"description": "三维点"
 	},
 	"len": {
 		"scope": "cpp",
@@ -252,7 +252,7 @@
 			"    return vec / len(vec);",
 			"}"
 		],
-		"description": "Len"
+		"description": "向量模长"
 	},
 	"online": {
 		"scope": "cpp",
@@ -265,7 +265,7 @@
 			"    return onLine(s.u, s.v, s.w);",
 			"}"
 		],
-		"description": "Online"
+		"description": "三点共线"
 	},
 	"onplane": {
 		"scope": "cpp",
@@ -276,7 +276,7 @@
 			"    return sign(val) == 0;",
 			"}"
 		],
-		"description": "Onplane"
+		"description": "四点共面"
 	},
 	"pointonsegment": {
 		"scope": "cpp",
@@ -293,7 +293,7 @@
 			"           std::min(l.a.z, l.b.z) < p.z && p.z < std::max(l.a.z, l.b.z);",
 			"}"
 		],
-		"description": "Pointonsegment"
+		"description": "点在线段上"
 	},
 	"pointonsegmentside": {
 		"scope": "cpp",
@@ -307,7 +307,7 @@
 			"    return sign(val) == 1;",
 			"}"
 		],
-		"description": "Pointonsegmentside"
+		"description": "两点在线段同侧"
 	},
 	"pointonplaneside": {
 		"scope": "cpp",
@@ -318,7 +318,7 @@
 			"    return sign(val) == 1;",
 			"}"
 		],
-		"description": "Pointonplaneside"
+		"description": "两点在平面同侧"
 	},
 	"lineparallel": {
 		"scope": "cpp",
@@ -331,7 +331,7 @@
 			"    return sign(dot(l1.a - l1.b, l2.a - l2.b)) == 0;",
 			"}"
 		],
-		"description": "Lineparallel"
+		"description": "直线平行/垂直"
 	},
 	"planeparallel": {
 		"scope": "cpp",
@@ -346,7 +346,7 @@
 			"    return sign(val) == 0;",
 			"}"
 		],
-		"description": "Planeparallel"
+		"description": "平面平行/垂直"
 	},
 	"same": {
 		"scope": "cpp",
@@ -356,7 +356,7 @@
 			"    return lineParallel(l1, l2) && lineParallel({l1.a, l2.b}, {l1.b, l2.a});",
 			"}"
 		],
-		"description": "Same"
+		"description": "直线/平面重合"
 	},
 	"same_1": {
 		"scope": "cpp",
@@ -367,7 +367,7 @@
 			"           onPlane(s1.w, s2.u, s2.v, s2.w);",
 			"}"
 		],
-		"description": "Same"
+		"description": "直线/平面重合"
 	},
 	"lineplaneparallel": {
 		"scope": "cpp",
@@ -378,7 +378,7 @@
 			"    return sign(val) == 0;",
 			"}"
 		],
-		"description": "Lineplaneparallel"
+		"description": "线面平行"
 	},
 	"segmentintersection": {
 		"scope": "cpp",
@@ -399,7 +399,7 @@
 			"           !pointOnSegmentSide(l2.a, l2.b, l1);",
 			"}"
 		],
-		"description": "Segmentintersection"
+		"description": "线段相交"
 	},
 	"lineintersection": {
 		"scope": "cpp",
@@ -425,7 +425,7 @@
 			"    return {1, s1 + (e1 - s1) * val};",
 			"}"
 		],
-		"description": "Lineintersection"
+		"description": "直线交点"
 	},
 	"lineplanecross": {
 		"scope": "cpp",
@@ -441,7 +441,7 @@
 			"    return {1, l.a + (l.b - l.a) * val};",
 			"}"
 		],
-		"description": "Lineplanecross"
+		"description": "线面交点"
 	},
 	"planeintersection": {
 		"scope": "cpp",
@@ -458,7 +458,7 @@
 			"    return {1, {U, V}};",
 			"}"
 		],
-		"description": "Planeintersection"
+		"description": "平面交线"
 	},
 	"pointtoline": {
 		"scope": "cpp",
@@ -470,7 +470,7 @@
 			"    return {val, l.a + val1 * standardize(l.a - l.b)};",
 			"}"
 		],
-		"description": "Pointtoline"
+		"description": "点到直线"
 	},
 	"pointtoplane": {
 		"scope": "cpp",
@@ -483,7 +483,7 @@
 			"    return {val, p - val * standardize(vec)};",
 			"}"
 		],
-		"description": "Pointtoplane"
+		"description": "点到平面"
 	},
 	"linetoline": {
 		"scope": "cpp",
@@ -500,7 +500,7 @@
 			"    return {val, l1.a + (l1.b - l1.a) * t1, l2.a + (l2.b - l2.a) * t2};",
 			"}"
 		],
-		"description": "Linetoline"
+		"description": "异面直线距离"
 	},
 	"linecos": {
 		"scope": "cpp",
@@ -510,7 +510,7 @@
 			"    return dot(l1.a - l1.b, l2.a - l2.b) / len(l1.a - l1.b) / len(l2.a - l2.b);",
 			"}"
 		],
-		"description": "Linecos"
+		"description": "两直线夹角余弦"
 	},
 	"planecos": {
 		"scope": "cpp",
@@ -521,7 +521,7 @@
 			"    return dot(U, V) / len(U) / len(V);",
 			"}"
 		],
-		"description": "Planecos"
+		"description": "两平面夹角余弦"
 	},
 	"lineplanesin": {
 		"scope": "cpp",
@@ -532,7 +532,7 @@
 			"    return dot(l.a - l.b, vec) / len(l.a - l.b) / len(vec);",
 			"}"
 		],
-		"description": "Lineplanesin"
+		"description": "线面夹角正弦"
 	},
 	"v": {
 		"scope": "cpp",
@@ -542,7 +542,7 @@
 			"    return l * l * l * n / (12 * std::tan(PI / n)) * std::sqrt(1 - 1 / (4 * std::sin(PI / n) * std::sin(PI / n)));",
 			"}"
 		],
-		"description": "V"
+		"description": "体积"
 	},
 	"v_1": {
 		"scope": "cpp",
@@ -552,7 +552,7 @@
 			"    return std::abs(dot(d - a, crossEx(b - a, c - a))) / 6;",
 			"}"
 		],
-		"description": "V"
+		"description": "体积"
 	},
 	"pointontriangle": {
 		"scope": "cpp",
@@ -563,7 +563,7 @@
 			"           pointOnSegmentSide(p, p3, {p1, p2});",
 			"}"
 		],
-		"description": "Pointontriangle"
+		"description": "点在空间三角形上"
 	},
 	"segmentontriangle": {
 		"scope": "cpp",
@@ -586,7 +586,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Segmentontriangle"
+		"description": "线段与空间三角形"
 	},
 	"triangleintersection": {
 		"scope": "cpp",
@@ -604,7 +604,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Triangleintersection"
+		"description": "空间三角形相交"
 	},
 	"code": {
 		"scope": "cpp",
@@ -620,7 +620,7 @@
 			"    cout << l * cos(alpha) << \" \" << l * sin(alpha) << endl;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"sqr": {
 		"scope": "cpp",
@@ -665,7 +665,7 @@
 			"    std::cout << std::sqrt(dis) << std::endl;",
 			"}"
 		],
-		"description": "Sqr"
+		"description": "平方"
 	},
 	"code_1": {
 		"scope": "cpp",
@@ -698,7 +698,7 @@
 			"    std::cout << ans << std::endl;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_2": {
 		"scope": "cpp",
@@ -738,7 +738,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_3": {
 		"scope": "cpp",
@@ -763,7 +763,7 @@
 			"    std::cout << cnt / 2 + 1 << std::endl;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_4": {
 		"scope": "cpp",
@@ -790,7 +790,7 @@
 			"    cout << \"Yes\\n\";",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_5": {
 		"scope": "cpp",
@@ -829,7 +829,7 @@
 			"    cout << i + 1 << \" \" << j + 1 << \" \" << k + 1 << endl;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"rotatingcalipers": {
 		"scope": "cpp",
@@ -861,7 +861,7 @@
 			"    #undef S",
 			"}"
 		],
-		"description": "Rotatingcalipers"
+		"description": "旋转卡壳"
 	},
 	"format": {
 		"scope": "cpp",
@@ -870,7 +870,7 @@
 			"cout << format(\"{:.2f}\", 114514.1919810) << endl;",
 			"// output: 114514.19"
 		],
-		"description": "Format"
+		"description": "格式化输出"
 	},
 	"cross": {
 		"scope": "cpp",
@@ -893,7 +893,7 @@
 			"    return a.x * b.x + a.y * b.y;",
 			"}"
 		],
-		"description": "Cross"
+		"description": "叉积"
 	},
 	"read": {
 		"scope": "cpp",
@@ -916,7 +916,7 @@
 			"    return stoi(s);",
 			"}"
 		],
-		"description": "Read"
+		"description": "定点小数读入"
 	},
 	"fgcd": {
 		"scope": "cpp",
@@ -941,7 +941,7 @@
 			"    return x < 0 ? -1 : 1;",
 			"}"
 		],
-		"description": "Fgcd"
+		"description": "实数 gcd / 符号函数"
 	},
 	"point": {
 		"scope": "cpp",
@@ -1006,7 +1006,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Point"
+		"description": "二维点"
 	},
 	"cross_1": {
 		"scope": "cpp",
@@ -1017,7 +1017,7 @@
 			"template<typename T>  // 叉乘 (p1 - p0) x (p2 - p0);",
 			"T cross(Point<T> p1, Point<T> p2, Point<T> p0) { return cross(p1 - p0, p2 - p0); }"
 		],
-		"description": "Cross"
+		"description": "叉积"
 	},
 	"dot": {
 		"scope": "cpp",
@@ -1028,7 +1028,7 @@
 			"template<typename T>  // 点乘 (p1 - p0) * (p2 - p0);",
 			"T dot(Point<T> p1, Point<T> p2, Point<T> p0) { return dot(p1 - p0, p2 - p0); }"
 		],
-		"description": "Dot"
+		"description": "点积"
 	},
 	"disex": {
 		"scope": "cpp",
@@ -1044,7 +1044,7 @@
 			"    return std::sqrt(disEx(a, b));",
 			"}"
 		],
-		"description": "Disex"
+		"description": "平方距离"
 	},
 	"dis1": {
 		"scope": "cpp",
@@ -1054,7 +1054,7 @@
 			"    return std::abs(p1.x - p2.x) + std::abs(p1.y - p2.y);",
 			"}"
 		],
-		"description": "Dis1"
+		"description": "曼哈顿距离"
 	},
 	"standardize": {
 		"scope": "cpp",
@@ -1064,7 +1064,7 @@
 			"    return vec / std::sqrt(vec.x * vec.x + vec.y * vec.y);",
 			"}"
 		],
-		"description": "Standardize"
+		"description": "单位向量"
 	},
 	"rotate": {
 		"scope": "cpp",
@@ -1075,7 +1075,7 @@
 			"    return {-vec.y, vec.x};",
 			"}"
 		],
-		"description": "Rotate"
+		"description": "旋转"
 	},
 	"todeg": {
 		"scope": "cpp",
@@ -1088,7 +1088,7 @@
 			"    return PI / 180 * x;",
 			"}"
 		],
-		"description": "Todeg"
+		"description": "弧度角度互转"
 	},
 	"angle": {
 		"scope": "cpp",
@@ -1099,7 +1099,7 @@
 			"    return val;",
 			"}"
 		],
-		"description": "Angle"
+		"description": "夹角"
 	},
 	"angle_1": {
 		"scope": "cpp",
@@ -1110,7 +1110,7 @@
 			"    return std::abs(atan2(val, a.x * b.x + a.y * b.y));",
 			"}"
 		],
-		"description": "Angle"
+		"description": "夹角"
 	},
 	"rotate_1": {
 		"scope": "cpp",
@@ -1120,7 +1120,7 @@
 			"    return {p.x * std::cos(rad) - p.y * std::sin(rad), p.x * std::sin(rad) + p.y * std::cos(rad)};",
 			"}"
 		],
-		"description": "Rotate"
+		"description": "旋转"
 	},
 	"rotate_2": {
 		"scope": "cpp",
@@ -1133,7 +1133,7 @@
 			"    return {x, y};",
 			"}"
 		],
-		"description": "Rotate"
+		"description": "旋转"
 	},
 	"online_1": {
 		"scope": "cpp",
@@ -1146,7 +1146,7 @@
 			"    return onLine(p, l.a, l.b);",
 			"}"
 		],
-		"description": "Online"
+		"description": "三点共线"
 	},
 	"pointonlineleft": {
 		"scope": "cpp",
@@ -1156,7 +1156,7 @@
 			"    return cross(l.b, p, l.a) > 0;",
 			"}"
 		],
-		"description": "Pointonlineleft"
+		"description": "点在直线左侧"
 	},
 	"pointonlineside": {
 		"scope": "cpp",
@@ -1171,7 +1171,7 @@
 			"    return sign(val) == -1;",
 			"}"
 		],
-		"description": "Pointonlineside"
+		"description": "两点直线同侧"
 	},
 	"lineintersection_1": {
 		"scope": "cpp",
@@ -1182,7 +1182,7 @@
 			"    return l1.a + (l1.b - l1.a) * val;",
 			"}"
 		],
-		"description": "Lineintersection"
+		"description": "直线交点"
 	},
 	"lineparallel_1": {
 		"scope": "cpp",
@@ -1199,7 +1199,7 @@
 			"           lineParallel(Line{l1.a, l2.a}, {l1.b, l2.b}) && lineParallel(l1, l2);",
 			"}"
 		],
-		"description": "Lineparallel"
+		"description": "直线平行/垂直"
 	},
 	"pointtoline_1": {
 		"scope": "cpp",
@@ -1210,7 +1210,7 @@
 			"    return {ans, dis(p, ans)};",
 			"}"
 		],
-		"description": "Pointtoline"
+		"description": "点到直线"
 	},
 	"dispointtoline": {
 		"scope": "cpp",
@@ -1221,7 +1221,7 @@
 			"    return std::abs(ans) / dis(l.a, l.b); // 面积除以底边长",
 			"}"
 		],
-		"description": "Dispointtoline"
+		"description": "点到直线距离"
 	},
 	"pointonsegment_1": {
 		"scope": "cpp",
@@ -1236,7 +1236,7 @@
 			"           std::min(l.a.y, l.b.y) < p.y && p.y < std::max(l.a.y, l.b.y);",
 			"}"
 		],
-		"description": "Pointonsegment"
+		"description": "点在线段上"
 	},
 	"pointtosegment": {
 		"scope": "cpp",
@@ -1251,7 +1251,7 @@
 			"    return pointToLine(p, l);",
 			"}"
 		],
-		"description": "Pointtosegment"
+		"description": "点到线段"
 	},
 	"project": {
 		"scope": "cpp",
@@ -1263,7 +1263,7 @@
 			"    return l.a + vec * r;",
 			"}"
 		],
-		"description": "Project"
+		"description": "投影"
 	},
 	"midsegment": {
 		"scope": "cpp",
@@ -1274,7 +1274,7 @@
 			"    return {mid, mid + rotate(l.a, l.b)};",
 			"}"
 		],
-		"description": "Midsegment"
+		"description": "中垂线"
 	},
 	"segmentintersection_1": {
 		"scope": "cpp",
@@ -1321,7 +1321,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Segmentintersection"
+		"description": "线段相交"
 	},
 	"segmentintersection_2": {
 		"scope": "cpp",
@@ -1340,7 +1340,7 @@
 			"           sign(cross(s2, s1, e2) * cross(s2, e2, e1)) == 1;",
 			"}"
 		],
-		"description": "Segmentintersection"
+		"description": "线段相交"
 	},
 	"pointtocircle": {
 		"scope": "cpp",
@@ -1363,7 +1363,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Pointtocircle"
+		"description": "点到圆"
 	},
 	"getpoint": {
 		"scope": "cpp",
@@ -1373,7 +1373,7 @@
 			"    return {p.x + std::cos(rad) * r, p.y + std::sin(rad) * r};",
 			"}"
 		],
-		"description": "Getpoint"
+		"description": "圆上点"
 	},
 	"linecirclecross": {
 		"scope": "cpp",
@@ -1391,7 +1391,7 @@
 			"    return {2, P + vec, P - vec};",
 			"}"
 		],
-		"description": "Linecirclecross"
+		"description": "直线与圆交点"
 	},
 	"segmentcirclecross": {
 		"scope": "cpp",
@@ -1413,7 +1413,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Segmentcirclecross"
+		"description": "线段与圆交点"
 	},
 	"circleintersection": {
 		"scope": "cpp",
@@ -1452,7 +1452,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Circleintersection"
+		"description": "两圆交点"
 	},
 	"circleintersectionarea": {
 		"scope": "cpp",
@@ -1472,7 +1472,7 @@
 			"    return area1 + area2;",
 			"}"
 		],
-		"description": "Circleintersectionarea"
+		"description": "两圆相交面积"
 	},
 	"getcircle": {
 		"scope": "cpp",
@@ -1488,7 +1488,7 @@
 			"    return {1, O, dis(A, O)};",
 			"}"
 		],
-		"description": "Getcircle"
+		"description": "三点定圆"
 	},
 	"tangent": {
 		"scope": "cpp",
@@ -1512,7 +1512,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Tangent"
+		"description": "切线"
 	},
 	"tangent_1": {
 		"scope": "cpp",
@@ -1556,7 +1556,7 @@
 			"    return {a.size(), a, b};",
 			"}"
 		],
-		"description": "Tangent"
+		"description": "切线"
 	},
 	"area": {
 		"scope": "cpp",
@@ -1566,7 +1566,7 @@
 			"    return std::abs(cross(b, c, a)) / 2;",
 			"}"
 		],
-		"description": "Area"
+		"description": "面积"
 	},
 	"center1": {
 		"scope": "cpp",
@@ -1576,7 +1576,7 @@
 			"    return lineIntersection(midSegment({p1, p2}), midSegment({p2, p3}));",
 			"}"
 		],
-		"description": "Center1"
+		"description": "外心"
 	},
 	"center2": {
 		"scope": "cpp",
@@ -1597,7 +1597,7 @@
 			"    return lineIntersection(U, V);",
 			"}"
 		],
-		"description": "Center2"
+		"description": "内心"
 	},
 	"center3": {
 		"scope": "cpp",
@@ -1609,7 +1609,7 @@
 			"    return lineIntersection(U, V);",
 			"}"
 		],
-		"description": "Center3"
+		"description": "垂心"
 	},
 	"slope": {
 		"scope": "cpp",
@@ -1622,7 +1622,7 @@
 			"    return slope(l.a, l.b);",
 			"}"
 		],
-		"description": "Slope"
+		"description": "斜率"
 	},
 	"slopeex": {
 		"scope": "cpp",
@@ -1634,7 +1634,7 @@
 			"    return U / V; // 调用分数精确计算",
 			"}"
 		],
-		"description": "Slopeex"
+		"description": "分数斜率"
 	},
 	"getfun": {
 		"scope": "cpp",
@@ -1668,7 +1668,7 @@
 			"    return std::tuple{A, B, C}; // Ax + By = C",
 			"}"
 		],
-		"description": "Getfun"
+		"description": "直线方程互转"
 	},
 	"getfun_1": {
 		"scope": "cpp",
@@ -1706,7 +1706,7 @@
 			"    return {{x1, y1}, {x2, y2}};",
 			"}"
 		],
-		"description": "Getfun"
+		"description": "直线方程互转"
 	},
 	"getans": {
 		"scope": "cpp",
@@ -1729,7 +1729,7 @@
 			"    return {2, ans1, ans2};",
 			"}"
 		],
-		"description": "Getans"
+		"description": "抛物线与 x 轴"
 	},
 	"p": {
 		"scope": "cpp",
@@ -2237,7 +2237,7 @@
 			"        solve();",
 			"}"
 		],
-		"description": "P"
+		"description": "点结构"
 	},
 	"areaex": {
 		"scope": "cpp",
@@ -2247,7 +2247,7 @@
 			"    return cross(b, c, a);",
 			"}"
 		],
-		"description": "Areaex"
+		"description": "有向平行四边形面积"
 	},
 	"issquare": {
 		"scope": "cpp",
@@ -2265,7 +2265,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Issquare"
+		"description": "四点矩形/正方形"
 	},
 	"pointinpolygon": {
 		"scope": "cpp",
@@ -2291,7 +2291,7 @@
 			"    return t == 1;",
 			"}"
 		],
-		"description": "Pointinpolygon"
+		"description": "点在多边形内"
 	},
 	"segmentinpolygon": {
 		"scope": "cpp",
@@ -2360,7 +2360,7 @@
 			"    return true;",
 			"}"
 		],
-		"description": "Segmentinpolygon"
+		"description": "线段在多边形内"
 	},
 	"area_1": {
 		"scope": "cpp",
@@ -2375,7 +2375,7 @@
 			"    return ans / 2.0;",
 			"}"
 		],
-		"description": "Area"
+		"description": "面积"
 	},
 	"onpolygongrid": {
 		"scope": "cpp",
@@ -2399,7 +2399,7 @@
 			"    return (ans - onPolygonGrid(p)) / 2 + 1;",
 			"}"
 		],
-		"description": "Onpolygongrid"
+		"description": "多边形格点"
 	},
 	"staticconvexhull": {
 		"scope": "cpp",
@@ -2430,7 +2430,7 @@
 			"    return ans;",
 			"}"
 		],
-		"description": "Staticconvexhull"
+		"description": "静态凸包 Andrew"
 	},
 	"line": {
 		"scope": "cpp",
@@ -2515,7 +2515,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Line"
+		"description": "直线"
 	},
 	"contains": {
 		"scope": "cpp",
@@ -2539,7 +2539,7 @@
 			"    return in ? 2 : 0;",
 			"}"
 		],
-		"description": "Contains"
+		"description": "点与凸包位置"
 	},
 	"mincowski": {
 		"scope": "cpp",
@@ -2565,7 +2565,7 @@
 			"    return ans;",
 			"}"
 		],
-		"description": "Mincowski"
+		"description": "闵可夫斯基和"
 	},
 	"halfcut": {
 		"scope": "cpp",
@@ -2619,6 +2619,6 @@
 			"    return std::vector(ps.begin(), ps.end());",
 			"}"
 		],
-		"description": "Halfcut"
+		"description": "半平面交"
 	}
 }

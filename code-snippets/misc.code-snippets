@@ -64,7 +64,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "communication"
+		"description": "交互"
 	},
 	"sort": {
 		"scope": "cpp",
@@ -72,7 +72,7 @@
 		"body": [
 			"ranges::sort(${a});"
 		],
-		"description": "sort"
+		"description": "排序"
 	},
 	"MultiTests": {
 		"scope": "c++,cpp",
@@ -113,7 +113,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "MultiTests"
+		"description": "多测模板"
 	},
 	"OneTest": {
 		"scope": "c++,cpp",
@@ -154,7 +154,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "OneTest"
+		"description": "单测模板"
 	},
 	"all": {
 		"scope": "c++,cpp",
@@ -178,7 +178,7 @@
 		"body": [
 			"memset(${x}, ${value:-1}, sizeof ${x});"
 		],
-		"description": "mem"
+		"description": "记忆化"
 	},
 	"rng": {
 		"scope": "cpp",
@@ -186,7 +186,7 @@
 		"body": [
 			"std::mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());"
 		],
-		"description": "rng"
+		"description": "随机数"
 	},
 	"DynModInt": {
 		"scope": "cpp",
@@ -295,7 +295,7 @@
 			"template<u32 Id>",
 			"Barrett DynModInt<Id>::bt = 998244353;"
 		],
-		"description": "DynModInt"
+		"description": "动态模数 mint"
 	},
 	"modInt": {
 		"scope": "cpp",
@@ -484,7 +484,7 @@
 			"",
 			"using Z = ModInt<mod>;"
 		],
-		"description": "modInt"
+		"description": "mint"
 	},
 	"ModUint": {
 		"scope": "cpp",
@@ -642,7 +642,7 @@
 			"    return os << s;",
 			"}"
 		],
-		"description": "i128"
+		"description": "int128 读写"
 	},
 	"division": {
 		"scope": "cpp",
@@ -677,7 +677,7 @@
 			"    }",
 			"}"
 		],
-		"description": "chmax"
+		"description": "chmax/chmin"
 	},
 	"shuffle": {
 		"scope": "cpp",
@@ -686,7 +686,7 @@
 			"mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().std::count());",
 			"shuffle(ver.begin(), ver.end(), rng);"
 		],
-		"description": "Shuffle"
+		"description": "洗牌"
 	},
 	"bit___builtin_": {
 		"scope": "cpp",
@@ -711,7 +711,7 @@
 			"double val = 12.12;",
 			"std::cout << to_string(val);"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_1": {
 		"scope": "cpp",
@@ -725,7 +725,7 @@
 			"",
 			"// 长整型函数名ltoa，最高支持到int型上限2^31。ultoa同理。"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_2": {
 		"scope": "cpp",
@@ -742,7 +742,7 @@
 			"",
 			"// 长整型函数名stoll，最高支持到long long型上限2^63。stoull、stod、stold同理。"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_3": {
 		"scope": "cpp",
@@ -756,7 +756,7 @@
 			"",
 			"// 长整型函数名atoll，最高支持到long long型上限2^63。"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"xxxxxxxxxx2_1pabc22sumsqrtppapbpccpp": {
 		"scope": "cpp",
@@ -801,7 +801,7 @@
 			"//将a数组[start,end)区间的元素进行累加，并输出累加和+x的值",
 			"std::cout << std::accumulate(a + start, a + end, x);"
 		],
-		"description": "Accumulate"
+		"description": "accumulate"
 	},
 	"iterator": {
 		"scope": "cpp",
@@ -813,7 +813,7 @@
 			"std::vector<int>::iterator it; //创建一个正向迭代器，++ 操作时指向下一个",
 			"std::vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时指向上一个"
 		],
-		"description": "Iterator"
+		"description": "迭代器"
 	},
 	"next_prev": {
 		"scope": "cpp",
@@ -897,7 +897,7 @@
 			"cout << (B1 == B2) << \"\\n\"; //比较是否相等",
 			"cout << B1 << \" \" << B2 << \"\\n\"; //你可以直接使用cout输出"
 		],
-		"description": "Bitset"
+		"description": "bitset"
 	},
 	"hash_pair": {
 		"scope": "cpp",
@@ -932,7 +932,7 @@
 			"};",
 			"std::unordered_map<fff, int, hash_fff> mp;"
 		],
-		"description": "Fff"
+		"description": "读入优化"
 	},
 	"hash_vector": {
 		"scope": "cpp",
@@ -968,7 +968,7 @@
 			"}",
 			"std::unordered_set<std::vector<int> > S;"
 		],
-		"description": "Hash"
+		"description": "哈希"
 	},
 	"for": {
 		"scope": "cpp",
@@ -981,7 +981,7 @@
 			"            dp[i][j] = std::max(dp[i][j], dp[i - 1][j - w[i]] + v[i]);",
 			"    }"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"code_4": {
 		"scope": "cpp",
@@ -991,7 +991,7 @@
 			"    for (int j = W; j >= w[i]; j--)  //背包容量为 j",
 			"        dp[j] = std::max(dp[j], dp[j - w[i]] + v[i]);  //判断背包容量为 j 的情况下能是实现总价值最大是多少"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_5": {
 		"scope": "cpp",
@@ -1002,7 +1002,7 @@
 			"        for (int k = 0; k * w[i] <= j; k++)    //选取几个物品",
 			"            dp[i][j] = std::max(dp[i][j], dp[i - 1][j - k * w[i]] + k * v[i]);"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"for_1": {
 		"scope": "cpp",
@@ -1015,7 +1015,7 @@
 			"            dp[i][j] = std::max(dp[i][j], dp[i][j - w[i]] + v[i]);",
 			"    }"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"code_6": {
 		"scope": "cpp",
@@ -1025,7 +1025,7 @@
 			"    for (int j = w[i]; j <= W; j++)",
 			"        dp[j] = std::max(dp[j], dp[j - w[i]] + v[i]);"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"for_2": {
 		"scope": "cpp",
@@ -1038,7 +1038,7 @@
 			"            dp[j] = std::max(dp[j], dp[j - k * w[i]] + k * v[i]);",
 			"        }"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_3": {
 		"scope": "cpp",
@@ -1060,7 +1060,7 @@
 			"    for (int j = W; j >= w[i]; j--)",
 			"        dp[j] = std::max(dp[j], dp[j - w[i]] + v[i]);"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"std": {
 		"scope": "cpp",
@@ -1090,7 +1090,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"std_1": {
 		"scope": "cpp",
@@ -1132,7 +1132,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"code_7": {
 		"scope": "cpp",
@@ -1143,7 +1143,7 @@
 			"        for (int k = M; k >= m; k--)  //重量限制",
 			"            dp[j][k] = std::max(dp[j][k], dp[j - w][k - m] + v);"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"std_2": {
 		"scope": "cpp",
@@ -1169,7 +1169,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"std_3": {
 		"scope": "cpp",
@@ -1202,7 +1202,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"std_4": {
 		"scope": "cpp",
@@ -1232,7 +1232,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"for_4": {
 		"scope": "cpp",
@@ -1245,7 +1245,7 @@
 			"            dp[i][j] = std::max(dp[i][j], dp[i + 1][j - w[i]] + v[i]);",
 			"    }"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"if": {
 		"scope": "cpp",
@@ -1257,7 +1257,7 @@
 			"        W -= w[i];",
 			"    }"
 		],
-		"description": "If"
+		"description": "if"
 	},
 	"dfs": {
 		"scope": "cpp",
@@ -1293,7 +1293,7 @@
 			"    return dfs(len, 0, 1, 1, d);",
 			"}"
 		],
-		"description": "Dfs"
+		"description": "DFS"
 	},
 	"std_5": {
 		"scope": "cpp",
@@ -1331,7 +1331,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"std_6": {
 		"scope": "cpp",
@@ -1379,7 +1379,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"std_7": {
 		"scope": "cpp",
@@ -1411,7 +1411,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"code_8": {
 		"scope": "cpp",
@@ -1419,7 +1419,7 @@
 		"body": [
 			"f[i][j]=std::min(f[i][j],f[i-(1<<j)][k]+w[k][j]);"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"std_8": {
 		"scope": "cpp",
@@ -1441,7 +1441,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"std_9": {
 		"scope": "cpp",
@@ -1470,7 +1470,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"dfs_1": {
 		"scope": "cpp",
@@ -1507,7 +1507,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Dfs"
+		"description": "DFS"
 	},
 	"sosdp": {
 		"scope": "cpp",
@@ -1517,7 +1517,7 @@
 			"    for(int i = 0; i < 1 << n; i++)",
 			"        if(i >> j & 1) f[i] += f[i ^ (1 << j)];"
 		],
-		"description": "Sosdp"
+		"description": "SOS DP"
 	},
 	"sosdp_1": {
 		"scope": "cpp",
@@ -1527,7 +1527,7 @@
 			"    for(int i = (1 << n) - 1; i >= 0 ; i--)",
 			"        if(!(i >> j & 1)) f[i] += f[i ^ (1 << j)]"
 		],
-		"description": "Sosdp"
+		"description": "SOS DP"
 	},
 	"code_9": {
 		"scope": "cpp",
@@ -1539,7 +1539,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"sg": {
 		"scope": "cpp",
@@ -1573,7 +1573,7 @@
 			"    else yes;",
 			"}"
 		],
-		"description": "Sg"
+		"description": "SG 函数"
 	},
 	"code_10": {
 		"scope": "cpp",
@@ -1589,7 +1589,7 @@
 			"    else cout << \"win\\n\";",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"force": {
 		"scope": "cpp",
@@ -1607,7 +1607,7 @@
 			"    else cout << \"win\\n\";",
 			"}"
 		],
-		"description": "Force"
+		"description": "预处理"
 	},
 	"for_5": {
 		"scope": "cpp",
@@ -1623,7 +1623,7 @@
 			"};",
 			"cout << (dfs(dfs, 1, 0) == 1 ? \"Bob\\n\" : \"Alice\\n\");"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"mypow": {
 		"scope": "cpp",
@@ -1646,7 +1646,7 @@
 			"    return x / std::gcd(x, y) * y;",
 			"}"
 		],
-		"description": "Mypow"
+		"description": "快速幂"
 	},
 	"log2floor": {
 		"scope": "cpp",
@@ -1675,7 +1675,7 @@
 			"    return log2floor(x) + (__builtin_popcount(x) != 1);",
 			"}"
 		],
-		"description": "Log2Floor"
+		"description": "整数 log2"
 	},
 	"sign": {
 		"scope": "cpp",
@@ -1695,7 +1695,7 @@
 			"    return sign(a) * sign(b) > 0 ? (A + B - 1) / B : -A / B;",
 			"}"
 		],
-		"description": "Sign"
+		"description": "符号函数"
 	},
 	"mygcd": {
 		"scope": "cpp",
@@ -1703,7 +1703,7 @@
 		"body": [
 			"inline int mygcd(int a, int b) { return b ? std::gcd(b, a % b) : a; }"
 		],
-		"description": "Mygcd"
+		"description": "手写 gcd"
 	},
 	"gcd": {
 		"scope": "cpp",
@@ -1723,7 +1723,7 @@
 			"    #undef tz",
 			"}"
 		],
-		"description": "Gcd"
+		"description": "gcd"
 	},
 	"while": {
 		"scope": "cpp",
@@ -1739,7 +1739,7 @@
 			"    else l = mid + 1;",
 			"}"
 		],
-		"description": "While"
+		"description": "while 循环"
 	},
 	"while_1": {
 		"scope": "cpp",
@@ -1755,7 +1755,7 @@
 			"}",
 			"return a[l];"
 		],
-		"description": "While"
+		"description": "while 循环"
 	},
 	"while_2": {
 		"scope": "cpp",
@@ -1771,7 +1771,7 @@
 			"}",
 			"return a[l];"
 		],
-		"description": "While"
+		"description": "while 循环"
 	},
 	"while_3": {
 		"scope": "cpp",
@@ -1789,7 +1789,7 @@
 			"}",
 			"return ans;"
 		],
-		"description": "While"
+		"description": "while 循环"
 	},
 	"while_4": {
 		"scope": "cpp",
@@ -1807,7 +1807,7 @@
 			"}",
 			"return ans;"
 		],
-		"description": "While"
+		"description": "while 循环"
 	},
 	"cal": {
 		"scope": "cpp",
@@ -1836,7 +1836,7 @@
 			"    //todo",
 			"}"
 		],
-		"description": "Cal"
+		"description": "计算"
 	},
 	"for_6": {
 		"scope": "cpp",
@@ -1849,7 +1849,7 @@
 			"}",
 			"std::cout << l << std::endl;"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"while_5": {
 		"scope": "cpp",
@@ -1862,7 +1862,7 @@
 			"}",
 			"std::cout << check(l) << std::endl;"
 		],
-		"description": "While"
+		"description": "while 循环"
 	},
 	"for_7": {
 		"scope": "cpp",
@@ -1880,7 +1880,7 @@
 			"}",
 			"std::cout << l << std::endl;"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"mergesort": {
 		"scope": "cpp",
@@ -1909,7 +1909,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Mergesort"
+		"description": "归并/逆序对"
 	},
 	"code_11": {
 		"scope": "cpp",
@@ -1954,7 +1954,7 @@
 			"    }",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"for_8": {
 		"scope": "cpp",
@@ -1978,7 +1978,7 @@
 			"};",
 			"dfs(dfs, k, 0, 0);"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_9": {
 		"scope": "cpp",
@@ -2003,7 +2003,7 @@
 			"    comb = (z / x >> 1) | y;",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"card": {
 		"scope": "cpp",
@@ -2212,7 +2212,7 @@
 			"    return 1;",
 			"}"
 		],
-		"description": "Card"
+		"description": "扑克牌"
 	},
 	"std_10": {
 		"scope": "cpp",
@@ -2252,7 +2252,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"t": {
 		"scope": "cpp",
@@ -2306,7 +2306,7 @@
 			"    return std::vector(ps.begin(), ps.end());",
 			"}"
 		],
-		"description": "T"
+		"description": "多测 t"
 	},
 	"pushup": {
 		"scope": "cpp",
@@ -2354,7 +2354,7 @@
 			"    cout << query(1, 1, n, c) - 1 << \" \";",
 			"}"
 		],
-		"description": "Pushup"
+		"description": "线段树 pushup"
 	},
 	"code_12": {
 		"scope": "cpp",
@@ -2378,7 +2378,7 @@
 			"    cout << s.size() << \"\\n\";",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_13": {
 		"scope": "cpp",
@@ -2396,7 +2396,7 @@
 			"});",
 			"std::cout << ans[val.front().second] << std::endl;"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_14": {
 		"scope": "cpp",
@@ -2439,7 +2439,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_15": {
 		"scope": "cpp",
@@ -2447,7 +2447,7 @@
 		"body": [
 			"auto operator<=>(const V &) const = default;"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"zmod": {
 		"scope": "cpp",
@@ -2574,7 +2574,7 @@
 			"int MOD[] = {998244353, 1000000007};",
 			"using Z = Zmod<MOD[1]>;"
 		],
-		"description": "Zmod"
+		"description": "取模类"
 	},
 	"frac": {
 		"scope": "cpp",
@@ -2629,7 +2629,7 @@
 			"    friend constexpr bool operator!=(const Frac i, const Frac j) { return i.x * j.y != i.y * j.x; }",
 			"};"
 		],
-		"description": "Frac"
+		"description": "分数"
 	},
 	"bigint": {
 		"scope": "cpp",
@@ -2946,7 +2946,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Bigint"
+		"description": "大整数"
 	},
 	"for_10": {
 		"scope": "cpp",
@@ -2976,7 +2976,7 @@
 			"    }",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_11": {
 		"scope": "cpp",
@@ -2996,7 +2996,7 @@
 			"    }",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_12": {
 		"scope": "cpp",
@@ -3014,7 +3014,7 @@
 			"}",
 			"std::cout << val.size() << std::endl;"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"for_13": {
 		"scope": "cpp",
@@ -3055,7 +3055,7 @@
 			"    cout << it << \" \";",
 			"}"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"cout": {
 		"scope": "cpp",
@@ -3067,7 +3067,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Cout"
+		"description": "输出"
 	},
 	"cout_1": {
 		"scope": "cpp",
@@ -3079,7 +3079,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Cout"
+		"description": "输出"
 	},
 	"while_6": {
 		"scope": "cpp",
@@ -3094,7 +3094,7 @@
 			"    std::cout << res * 100 << std::endl;",
 			"}"
 		],
-		"description": "While"
+		"description": "while 循环"
 	},
 	"jos": {
 		"scope": "cpp",
@@ -3106,7 +3106,7 @@
 			"    return res; // res+1，如果编号从1开始",
 			"}"
 		],
-		"description": "Jos"
+		"description": "约瑟夫"
 	},
 	"jos_1": {
 		"scope": "cpp",
@@ -3121,7 +3121,7 @@
 			"    return res; // res+1，如果编号从1开始",
 			"}"
 		],
-		"description": "Jos"
+		"description": "约瑟夫"
 	},
 	"jos_2": {
 		"scope": "cpp",
@@ -3136,7 +3136,7 @@
 			"    cout << a + 1 << '\\n';",
 			"}"
 		],
-		"description": "Jos"
+		"description": "约瑟夫"
 	},
 	"week": {
 		"scope": "cpp",
@@ -3147,7 +3147,7 @@
 			"    return (d+2*m+3*(m+1)/5+y+y/4-y/100+y/400)%7+1;",
 			"}"
 		],
-		"description": "Week"
+		"description": "基姆拉尔森星期"
 	},
 	"mypow10": {
 		"scope": "cpp",
@@ -3184,7 +3184,7 @@
 			"    std::cout << mypow10(n, k, p) << std::endl; // 暴力快速幂",
 			"}"
 		],
-		"description": "Mypow10"
+		"description": "十进制快速幂"
 	},
 	"phi": {
 		"scope": "cpp",
@@ -3227,7 +3227,7 @@
 			"    std::cout << mypow(n, k, p) << std::endl;",
 			"}"
 		],
-		"description": "Phi"
+		"description": "欧拉函数"
 	},
 	"getc": {
 		"scope": "cpp",
@@ -3258,7 +3258,7 @@
 			"    putchar(x % 10 + '0');",
 			"}"
 		],
-		"description": "Getc"
+		"description": "快读"
 	},
 	"if_1": {
 		"scope": "cpp",
@@ -3285,7 +3285,7 @@
 			"    return os << s;",
 			"}"
 		],
-		"description": "If"
+		"description": "if"
 	},
 	"r": {
 		"scope": "cpp",
@@ -3331,7 +3331,7 @@
 			"    }",
 			"}"
 		],
-		"description": "R"
+		"description": "读入"
 	},
 	"myhash": {
 		"scope": "cpp",
@@ -3355,7 +3355,7 @@
 			"};",
 			"// unordered_map<int, int, myhash>"
 		],
-		"description": "Myhash"
+		"description": "手工哈希"
 	},
 	"for_14": {
 		"scope": "cpp",
@@ -3383,7 +3383,7 @@
 			"",
 			"constexpr double Pi = numbers::pi; // C++20 支持"
 		],
-		"description": "For"
+		"description": "for 循环"
 	},
 	"code_16": {
 		"scope": "cpp",
@@ -3391,7 +3391,7 @@
 		"body": [
 			"using i64 = __int128; // 64 位 GNU C++11 支持"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"code_17": {
 		"scope": "cpp",
@@ -3402,7 +3402,7 @@
 			"int x = dic.size() - 1;",
 			"std::cout << x << std::endl;"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	},
 	"std_11": {
 		"scope": "cpp",
@@ -3426,7 +3426,7 @@
 			"    cout << cnt << \"\\n\";",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"std_12": {
 		"scope": "cpp",
@@ -3447,7 +3447,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Std"
+		"description": "板子"
 	},
 	"code_18": {
 		"scope": "cpp",
@@ -3458,6 +3458,6 @@
 			"-fstack-protector",
 			"-Wl,--std::stack=268435456"
 		],
-		"description": "Code"
+		"description": "代码片段"
 	}
 }

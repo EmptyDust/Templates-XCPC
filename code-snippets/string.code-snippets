@@ -54,7 +54,7 @@
 			"    return false;",
 			"}"
 		],
-		"description": "Kmp"
+		"description": "KMP"
 	},
 	"z_function": {
 		"scope": "cpp",
@@ -99,7 +99,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Lcs"
+		"description": "最长公共子序列"
 	},
 	"lcs_1": {
 		"scope": "cpp",
@@ -135,7 +135,7 @@
 			"    return 0;",
 			"}"
 		],
-		"description": "Lcs"
+		"description": "最长公共子序列"
 	},
 	"string": {
 		"scope": "cpp",
@@ -184,7 +184,7 @@
 			"    }",
 			"};"
 		],
-		"description": "String"
+		"description": "字符串哈希"
 	},
 	"compress": {
 		"scope": "cpp",
@@ -216,7 +216,7 @@
 			"    return ans.substr(1);",
 			"}"
 		],
-		"description": "Compress"
+		"description": "字符串压缩"
 	},
 	"manachar": {
 		"scope": "cpp",
@@ -259,7 +259,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Manachar"
+		"description": "马拉车"
 	},
 	"trie": {
 		"scope": "cpp",
@@ -303,7 +303,7 @@
 			"    }",
 			"} trie;"
 		],
-		"description": "Trie"
+		"description": "字典树"
 	},
 	"trie_1": {
 		"scope": "cpp",
@@ -340,7 +340,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Trie"
+		"description": "字典树"
 	},
 	"suffixarray": {
 		"scope": "cpp",
@@ -405,7 +405,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Suffixarray"
+		"description": "后缀数组"
 	},
 	"acautomaton": {
 		"scope": "cpp",
@@ -460,7 +460,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Acautomaton"
+		"description": "AC 自动机"
 	},
 	"ahocorasick": {
 		"scope": "cpp",
@@ -566,7 +566,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Ahocorasick"
+		"description": "AC 自动机"
 	},
 	"palindromeautomaton": {
 		"scope": "cpp",
@@ -614,7 +614,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Palindromeautomaton"
+		"description": "回文自动机"
 	},
 	"pam": {
 		"scope": "cpp",
@@ -674,7 +674,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Pam"
+		"description": "回文自动机"
 	},
 	"suffixautomaton": {
 		"scope": "cpp",
@@ -723,7 +723,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Suffixautomaton"
+		"description": "后缀自动机"
 	},
 	"sam": {
 		"scope": "cpp",
@@ -801,7 +801,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Sam"
+		"description": "后缀自动机"
 	},
 	"sequenceautomaton": {
 		"scope": "cpp",
@@ -847,7 +847,7 @@
 			"    }",
 			"};"
 		],
-		"description": "Sequenceautomaton"
+		"description": "子序列自动机"
 	},
 	"sequenceautomaton_1": {
 		"scope": "cpp",
@@ -874,6 +874,6 @@
 			"    }",
 			"};"
 		],
-		"description": "Sequenceautomaton"
+		"description": "子序列自动机"
 	}
 }
