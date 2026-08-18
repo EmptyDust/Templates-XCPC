@@ -25,14 +25,14 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 
 ## 导出 PDF
 
-不经过 Typora / XeLaTeX / Typst。`pandoc` 收成 HTML，公式仍是 LaTeX，由本地 MathJax 渲染，Chromium 打成 PDF。
+不经过 Typora / XeLaTeX / Typst。过程是：`pandoc` 把 Markdown 收成 HTML（`$...$` 仍是 LaTeX，只改成 MathJax 的 `\(...\)`），Chromium 打开这份 HTML 打成 PDF。
 
 ```sh
 ./export-pdf.sh           # build/total.pdf
 ./export-pdf.sh 博弈论.md  # build/博弈论.pdf
 ```
 
-需要：`pandoc`、`chromium`、`python3`、`curl`。首次会拉 MathJax 到 `export/vendor/`（不进 git）。
+需要：`pandoc`、`chromium`、`curl`。首次会拉 MathJax 到 `export/vendor/`（不进 git）。
 
 ## 克隆与提交
 

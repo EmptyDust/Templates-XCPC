@@ -1,28 +1,22 @@
 #!/bin/sh
-# Markdown + LaTeX 数学 → HTML（MathJax）→ Chromium 打 PDF。
-# 不走 Typora / XeLaTeX / Typst。
+# md + LaTeX 数学 → HTML → PDF。
+# pandoc 只把 Markdown 收成 HTML、把 $...$ 收成 MathJax 能吃的 \(...\)；
+# 公式语言不换。打印就是 Chromium 打开这份 HTML。
 # 用法：
 #   ./export-pdf.sh              # 先 build.sh，再导出 build/total.pdf
 #   ./export-pdf.sh 博弈论.md    # 导出单章到 build/博弈论.pdf
 set -eu
 cd "$(dirname "$0")"
 
-if ! command -v pandoc >/dev/null 2>&1; then
-    echo "需要 pandoc" >&2
-    exit 1
-fi
-if ! command -v chromium >/dev/null 2>&1; then
-    echo "需要 chromium" >&2
-    exit 1
-fi
-if ! command -v python3 >/dev/null 2>&1; then
-    echo "需要 python3" >&2
-    exit 1
-fi
-if ! command -v curl >/dev/null 2>&1; then
-    echo "需要 curl（首次拉取 MathJax）" >&2
-    exit 1
-fi
+need() {
+    if ! command -v "$1" >/dev/null 2>&1; then
+        echo "需要 $1" >&2
+        exit 1
+    fi
+}
+need pandoc
+need chromium
+need curl
 
 src=${1:-total.md}
 if [ "$src" = "total.md" ] || [ "$src" = "./total.md" ]; then
@@ -55,30 +49,16 @@ fi
 
 cp "$vendor" build/tex-chtml-full.js
 
+# --mathjax：正文里的数学变成 \(...\)，不用默认模板里的 polyfill / 系统 MathJax 路径。
 pandoc "$src" \
     --from markdown \
-    --to html \
+    --to html5 \
     --standalone \
+    --template=export/template.html \
     --mathjax \
     --metadata title="$title" \
     --include-in-header=export/header.html \
     -o "$html"
-
-python3 - "$html" <<'PY'
-import re
-import sys
-from pathlib import Path
-p = Path(sys.argv[1])
-t = p.read_text()
-t = re.sub(r'<script src="https://polyfill\.io[^"]*"></script>\s*', "", t)
-t = re.sub(
-    r'<script src="/usr/share/javascript/mathjax/MathJax\.js"\s*type="text/javascript"></script>\s*',
-    "",
-    t,
-)
-t = t.replace('lang=""', 'lang="zh-CN"', 1)
-p.write_text(t)
-PY
 
 budget=20000
 timeout=30000
@@ -87,13 +67,11 @@ if [ "$base" = "total" ]; then
     timeout=200000
 fi
 
-html_abs=$(pwd)/$html
-pdf_abs=$(pwd)/$pdf
 chromium --headless=new --disable-gpu --no-sandbox --disable-dev-shm-usage \
     --no-pdf-header-footer \
     --virtual-time-budget="$budget" \
     --timeout="$timeout" \
     --run-all-compositor-stages-before-draw \
-    --print-to-pdf="$pdf_abs" \
-    "file://$html_abs" >/dev/null
+    --print-to-pdf="$(pwd)/$pdf" \
+    "file://$(pwd)/$html" >/dev/null
 echo "$pdf"
