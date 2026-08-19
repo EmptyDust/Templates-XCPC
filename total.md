@@ -8,12 +8,16 @@
 
 ### 数组打乱 shuffle
 
+均匀打乱。引擎用 `mt19937_64`，不要 `srand` + 已弃用的 `random_shuffle`。对拍造数据、随机化算法用。
+
 ```cpp
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); // 用系统时间做种子，防 hack
 shuffle(ver.begin(), ver.end(), rng);
 ```
 
 ### bit 库与位运算函数 \_\_builtin\_
+
+GCC/Clang 内建，比手写循环快。`x=0` 时 `clz/ctz` 未定义。`long long` 后缀 `ll`。
 
 ```cpp
 __builtin_popcount(x) // 返回x二进制下含1的数量，例如x=15=(1111)时答案为4
@@ -51,6 +55,8 @@ cout << ans << endl; /*1100*/
 ```
 
 ### 字符串转数字
+
+`stoi`/`stoll` 是 C++ 标准，可指定进制；`atoi` 是 C，非法时给 $0$、不抛异常。前导空白会跳过。
 
 ```cpp
 // stoi直接使用
@@ -123,6 +129,8 @@ string s = to_string(num);
 
 ### 判断非递减 is_sorted
 
+`is_sorted(l, r)` 为真当且仅当区间非降。自定义序传比较器。
+
 ```cpp
 //a数组[start,end)区间是否是非递减的，返回bool型
 cout << is_sorted(a + start, a + end);
@@ -130,12 +138,16 @@ cout << is_sorted(a + start, a + end);
 
 ### 累加 accumulate
 
+`accumulate(l, r, init)` 从 `init` 起累加（或传入二元运算）。初值类型决定结果类型，求和用 `0LL`。
+
 ```cpp
 //将a数组[start,end)区间的元素进行累加，并输出累加和+x的值
 cout << accumulate(a + start, a + end, x);
 ```
 
 ### 迭代器 iterator
+
+指向容器元素的指针状对象。`begin` 首元素，`end` 尾后。随机访问容器可加减整数。
 
 ```cpp
 //构建一个UUU容器的正向迭代器，名字叫it
@@ -146,6 +158,8 @@ vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时�
 ```
 
 ### 特殊函数 `next` 和 `prev` 详解：
+
+不修改原迭代器，返回前进/后退 $n$ 步的副本。`list` 等没有 `+`，用这两个。
 
 ```cpp
 auto it = s.find(x); // 建立一个迭代器
@@ -243,6 +257,8 @@ cout << B1 << " " << B2 << "\n"; //你可以直接使用cout输出
 
 #### 对 pair、tuple 定义哈希
 
+`unordered_map` 默认不能以 `pair` 为键。把两维哈希异或/相乘混一下；自定义结构体同理。
+
 ```cpp
 // pair 的哈希
 struct hash_pair {
@@ -325,7 +341,11 @@ unordered_set<vector<int> > S;
 
 ### 三维几何必要初始化
 
+三维点当向量。点积、叉积（结果仍是向量，垂直于两因子）。平面用点+法向，或三点叉积得法向。
+
 #### 点线面封装
+
+`P3` 点/向量，`L3` 点+方向，`S3` 平面（点+法向）。运算见成员函数。
 
 ```cpp
 struct Point3 {
@@ -371,6 +391,8 @@ using L3 = Line3;
 
 #### 其他函数
 
+长度、单位化、混合积。混积 $[a,b,c]=a\cdot(b\times c)$ 是定向体积。
+
 ```cpp
 ld len(P3 p) { // 原点到当前点的距离计算
     return sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
@@ -402,6 +424,8 @@ P3 standardize(P3 vec) { // 将三维向量转换为单位向量
 
 ### 三维点线面相关
 
+四点共面：混积 $[AB,AC,AD]=0$。线面平行：方向点法向为 $0$。两线最近距离：公垂线方向是两方向叉积。
+
 #### 空间三点是否共线
 
 叉积模长为 $0$ 则共线。其中第二个函数是专门用来判断给定的三个点能否构成平面的，因为不共线的三点才能构成平面。
@@ -417,6 +441,8 @@ bool onLine(Plane s) {
 
 #### 四点是否共面
 
+混积 $[AB,AC,AD]=0$。
+
 ```cpp
 bool onPlane(P3 p1, P3 p2, P3 p3, P3 p4) { // 四点是否共面
     ld val = dot(getVec({p1, p2, p3}), p4 - p1);
@@ -425,6 +451,8 @@ bool onPlane(P3 p1, P3 p2, P3 p3, P3 p4) { // 四点是否共面
 ```
 
 #### 空间点是否在线段上
+
+共线（叉积为零）且夹在两端点之间。
 
 ```cpp
 bool pointOnSegment(P3 p, L3 l) {
@@ -466,6 +494,8 @@ bool pointOnPlaneSide(P3 p1, P3 p2, Plane s) {
 
 #### 空间两直线是否平行/垂直
 
+方向平行（叉积为零）/ 垂直（点积为零）。平行不必共面。
+
 ```cpp
 bool lineParallel(L3 l1, L3 l2) {
     return sign(cross(l1.a - l1.b, l2.a - l2.b)) == 0;
@@ -476,6 +506,8 @@ bool lineVertical(L3 l1, L3 l2) {
 ```
 
 #### 两平面是否平行/垂直
+
+法向平行则平面平行；法向垂直则平面垂直。
 
 ```cpp
 bool planeParallel(Plane s1, Plane s2) {
@@ -490,6 +522,8 @@ bool planeVertical(Plane s1, Plane s2) {
 
 #### 空间两直线是否是同一条
 
+平行且一点在另一线上。
+
 ```cpp
 bool same(L3 l1, L3 l2) {
     return lineParallel(l1, l2) && lineParallel({l1.a, l2.b}, {l1.b, l2.a});
@@ -497,6 +531,8 @@ bool same(L3 l1, L3 l2) {
 ```
 
 #### 两平面是否是同一个
+
+法向平行且一点在另一面上。
 
 ```cpp
 bool same(Plane s1, Plane s2) {
@@ -507,6 +543,8 @@ bool same(Plane s1, Plane s2) {
 
 #### 直线是否与平面平行
 
+方向点法向为 $0$。再看一点是否在面上，区分含于平面。
+
 ```cpp
 bool linePlaneParallel(L3 l, Plane s) {
     ld val = dot(l.a - l.b, getVec(s));
@@ -515,6 +553,8 @@ bool linePlaneParallel(L3 l, Plane s) {
 ```
 
 #### 空间两线段是否相交
+
+先求两直线交点（须共面），再判交点落在两段内。
 
 ```cpp
 bool segmentIntersection(L3 l1, L3 l2) { // 重叠、相交于端点均视为相交
@@ -636,6 +676,8 @@ tuple<ld, P3, P3> lineToLine(L3 l1, L3 l2) {
 
 ### 三维角度与弧度
 
+与二维相同：三角函数用弧度。夹角取点积。
+
 #### 空间两直线夹角的 cos 值
 
 任意位置的空间两直线。
@@ -648,6 +690,8 @@ ld lineCos(L3 l1, L3 l2) {
 
 #### 空间两平面夹角的 cos 值
 
+法向夹角的余弦。注意取锐角还是两面角。
+
 ```cpp
 ld planeCos(Plane s1, Plane s2) {
     P3 U = getVec(s1), V = getVec(s2);
@@ -657,6 +701,8 @@ ld planeCos(Plane s1, Plane s2) {
 
 #### 直线与平面夹角的 sin 值
 
+方向与法向夹角的余角。$\sin\theta=|d\cdot n|/(|d||n|)$。
+
 ```cpp
 ld linePlaneSin(L3 l, Plane s) {
     P3 vec = getVec(s);
@@ -665,6 +711,8 @@ ld linePlaneSin(L3 l, Plane s) {
 ```
 
 ### 空间多边形
+
+顶点须共面。面积把边叉积累加再取模的一半。
 
 #### 正 N 棱锥体积公式
 
@@ -740,6 +788,8 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 
 ### 常用结论
 
+体积、夹角、距离的公式速查。混积绝对值是平行六面体体积。
+
 #### 平面几何结论归档
 
 - `hypot` 函数可以直接计算直角三角形的斜边长；
@@ -766,6 +816,8 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 - 已知向量 $\vec{r}=\{x,y,z\}$ ，则该向量的三个方向余弦为 $\cos \alpha =\dfrac{x}{|\vec r|}=\dfrac{x}{\sqrt{x^2+y^2+z^2}}; \ \cos \beta = \dfrac{y}{|\vec r|};\ \cos \gamma =\dfrac{z}{|\vec r|}$ 。其中 $\alpha,\beta,\gamma\in [0,\pi]$ ，$\cos^2\alpha+\cos^2\beta+\cos^2\gamma=1$ 。
 
 ### 常用例题
+
+旋转、最近点对、旋转卡壳等平面题，和三维封装放在一章。
 
 #### 将平面某点旋转任意角度
 
@@ -1101,7 +1153,7 @@ bool kmp(std::string& s, std::string& t) {
 
 ### zfunction
 
-获取字符串 $s$ 和 $s[i,n-1]$ （即以 $s[i]$ 开头的后缀）的最长公共前缀（LCP）的长度，总复杂度 $\mathcal O(N)$。
+$z[i]$ 为 $s$ 与后缀 $s[i..]$ 的 LCP。维护已匹配窗口 $[l,r]$，窗口内可 $O(1)$ 抄 $z[i-l]$，出界再暴力延。整串 $\mathcal O(N)$。匹配 $t$ 时对 $t+\#+s$ 跑 Z。
 
 ```cpp
 std::vector<int> z_function(std::string s) {
@@ -1123,11 +1175,11 @@ std::vector<int> z_function(std::string s) {
 
 ### 最长公共子序列 LCS
 
-求解两个串的最长公共子序列的长度。
+两串公共子序列的最长长度（可不连续）。$f[i][j]=\max(f[i-1][j],f[i][j-1],f[i-1][j-1]+[s_i=t_j])$。$n\le 10^3$ 用二维 DP；$n$ 更大把一串 LIS 化（转成另一串出现位置）。
 
 #### 小数据解
 
-针对 $10^3$ 以内的数据。
+$n,m\le 10^3$，$\mathcal O(nm)$。
 
 ```cpp
 const int N = 1e3 + 10;
@@ -1186,9 +1238,11 @@ int main(){
 
 ### 字符串哈希
 
+把串看成 $B$ 进制数对模取余，子串哈希用前缀差：$h[r+1]-h[l]\cdot B^{r-l+1}$。$\mathcal O(N)$ 预处理，$\mathcal O(1)$ 比相等。单模可能被卡，双模或随机底数更稳。
+
 #### 双哈希封装
 
-使用前先调用 `init()` 生成幂表；`Zmod` 见数论章。字符串哈希值带前导哨兵 `1`（空串哈希为 `1`），`substring(l, r)` 取 $0$ 基准下标区间，`modify(idx, x)` 单点替换。随机质数列表：1111111121、1211111123、1311111119——固定 mod/base 有被针对性卡哈希的风险，随机 base 或换质数更稳。
+先 `init()` 生成幂表；`Zmod` 见数论章。前导哨兵 `1`（空串哈希为 `1`），`substring(l, r)` 为 $0$ 下标闭区间，`modify(idx, x)` 单点替换。随机质数：1111111121、1211111123、1311111119。
 
 ```cpp
 const int N = 1 << 21;
@@ -1312,9 +1366,11 @@ struct Manachar {
 
 ### 字典树 trie
 
+按字符（或二进制位）从根往下开儿子。公共前缀共用一条路径。查前缀、统计出现、01 trie 贪心异或最值都靠它。
+
 #### 基础封装
 
-多模式串字典树，字符集为 `a-z A-Z 0-9` 共 $62$ 类（`init()` 建立映射表）。注意 `cnt[u]++` 是在经过路径上累计——`query` 返回的是**以该串为前缀**的串数；若要统计某个串恰好出现的次数，请在插入末尾单独标记。
+字符集 `a-z A-Z 0-9` 共 $62$ 类（先 `init()` 建映射）。`cnt[u]++` 记在路径上——`query` 返回**以该串为前缀**的个数；要恰好出现次数，在插入末尾单独打标记。
 
 ```cpp
 struct Trie {
@@ -1358,7 +1414,7 @@ struct Trie {
 
 #### 01 字典树
 
-按二进制位（从高到低）插入数，`query(x)` 返回集合中与 $x$ 异或最大的结果。深度 `30` 按值域改（如 `long long` 用 `63`）。
+按二进制从高到低插入。`query(x)` 每步优先走与 $x$ 相反的位，贪心得到集合中与 $x$ 异或的最大值。深度 `30` 按值域改（`long long` 用 `63`）。
 
 ```cpp
 struct Trie {
@@ -1877,6 +1933,8 @@ struct SAM {
 
 #### 自动离散化、自动类型匹配封装
 
+字符不必是 `char`：先离散再按值建后继表。用法同上，适合整数序列上的子序列判定。
+
 ```cpp
 template<typename T> struct SequenceAutomaton {
     vector<T> alls;
@@ -1986,6 +2044,8 @@ Real dot(const Point &a, const Point &b) {
 
 ### 平面几何必要初始化
 
+浮点比较用 `eps`（约 $1e-8$～$1e-12$）。`sign` 把差压成 $-1/0/1$。下面点线圆都靠叉积/点积。
+
 #### 字符串读入浮点数
 
 去掉小数点后按 $k$ 位补零，当成整数用。`Knum` 按题目小数位数改；位数多时 `stoi` 会溢出，改 `stoll`。
@@ -2035,6 +2095,8 @@ int sign(T x) {
 ```
 
 #### 点线封装
+
+点当向量用。加减缩放、`dot` 点积、`cross` 叉积。直线用点+方向，或一般式 $ax+by+c=0$。
 
 ```cpp
 template<typename T>
@@ -2140,6 +2202,8 @@ ld dis(Point<T> a, Point<T> b) {
 
 #### 曼哈顿距离公式
 
+$|x_1-x_2|+|y_1-y_2|$。转坐标 $(x+y,x-y)$ 后变切比雪夫。
+
 ```cpp
 template<typename T> T dis1(Point<T> p1, Point<T> p2) { // 曼哈顿距离公式
     return abs(p1.x - p2.x) + abs(p1.y - p2.y);
@@ -2147,6 +2211,8 @@ template<typename T> T dis1(Point<T> p1, Point<T> p2) { // 曼哈顿距离公式
 ```
 
 #### 将向量转换为单位向量
+
+除以模长。零向量不要除。
 
 ```cpp
 Point<ld> standardize(Point<ld> vec) { // 转换为单位向量
@@ -2167,7 +2233,11 @@ template<typename T> Point<T> rotate(Point<T> p1, Point<T> p2) { // 旋转
 
 ### 平面角度与弧度
 
+C++ 三角函数吃弧度。$\pi$ 用 `acos(-1)`。
+
 #### 弧度角度相互转换
+
+$\mathrm{deg}=\mathrm{rad}\cdot 180/\pi$。
 
 ```cpp
 ld toDeg(ld x) { // 弧度转角度
@@ -2237,7 +2307,11 @@ Point<ld> rotate(Point<ld> a, Point<ld> b, ld rad) {
 
 ### 平面点线相关
 
+叉积为 $0$ 则共线/点在直线上；符号判断左右侧。点到直线距离是叉积绝对值除以方向长。投影：沿法向落到直线上。
+
 #### 点是否在直线上（三点是否共线）
+
+叉积为 $0$。浮点用 `sign`。
 
 ```cpp
 template<typename T> bool onLine(Point<T> a, Point<T> b, Point<T> c) {
@@ -2259,6 +2333,8 @@ template<typename T> bool pointOnLineLeft(Pt p, Lt l) {
 ```
 
 #### 两点是否在直线同侧/异侧
+
+两点对直线叉积同号则同侧，异号则异侧。
 
 ```cpp
 template<typename T> bool pointOnLineSide(Pt p1, Pt p2, Lt vec) {
@@ -2284,6 +2360,8 @@ Pd lineIntersection(Ld l1, Ld l2) {
 
 #### 两直线是否平行/垂直/相同
 
+方向叉积 $0$ 平行；点积 $0$ 垂直；平行再看一点是否在另一线上即相同。
+
 ```cpp
 template<typename T> bool lineParallel(Lt p1, Lt p2) {
     return sign(cross(p1.a - p1.b, p2.a - p2.b)) == 0;
@@ -2298,6 +2376,8 @@ template<typename T> bool same(Line<T> l1, Line<T> l2) {
 ```
 
 #### 点到直线的最近距离与最近点
+
+垂足。距离 $=|AB\times AP|/|AB|$。
 
 ```cpp
 pair<Pd, ld> pointToLine(Pd p, Ld l) {
@@ -2317,6 +2397,8 @@ template<typename T> ld disPointToLine(Pt p, Lt l) {
 
 #### 点是否在线段上
 
+共线且在两端点包围盒内（点积 $\le 0$ 或坐标夹在中间）。
+
 ```cpp
 template<typename T> bool pointOnSegment(Pt p, Lt l) { // 端点也算
     return sign(cross(p, l.a, l.b)) == 0 && min(l.a.x, l.b.x) <= p.x && p.x <= max(l.a.x, l.b.x) &&
@@ -2329,6 +2411,8 @@ template<typename T> bool pointOnSegmentEx(Pt p, Lt l) { // 端点不算；原�
 ```
 
 #### 点到线段的最近距离与最近点
+
+垂足落在段内用垂足，否则取较近端点。
 
 ```cpp
 pair<Pd, ld> pointToSegment(Pd p, Ld l) {
@@ -2343,6 +2427,8 @@ pair<Pd, ld> pointToSegment(Pd p, Ld l) {
 
 #### 点在直线上的投影点（垂足）
 
+$A+\mathrm{proj}_{AB}(AP)$。直线两端无线。
+
 ```cpp
 Pd project(Pd p, Ld l) { // 投影
     Pd vec = l.b - l.a;
@@ -2352,6 +2438,8 @@ Pd project(Pd p, Ld l) { // 投影
 ```
 
 #### 线段的中垂线
+
+中点 + 方向旋转 $90^\circ$。外心、垂直平分用。
 
 ```cpp
 template<typename T> Lt midSegment(Lt l) {
@@ -2425,6 +2513,8 @@ template<typename T> bool segmentIntersection(Lt l1, Lt l2) {
 ```
 
 ### 平面圆相关（浮点数处理）
+
+圆是圆心+半径。相交看圆心距与两半径关系；切线从点向圆作垂直于半径的线。交点、切点都用单位方向拼出来。浮点，先 `sign` 再算。
 
 #### 点到圆的最近点
 
@@ -2560,6 +2650,8 @@ ld circleIntersectionArea(Pd p1, ld r1, Pd p2, ld r2) {
 
 #### 三点确定一圆
 
+外接圆，圆心是两边中垂线交点。共线无解。
+
 ```cpp
 tuple<int, Pd, ld> getCircle(Pd A, Pd B, Pd C) {
     if (onLine(A, B, C)) { // 特判三点共线
@@ -2643,7 +2735,11 @@ tuple<int, vector<Point<ld>>, vector<Point<ld>>> tangent(Point<ld> A, ld Ar, Poi
 
 ### 平面三角形相关（浮点数处理）
 
+面积 $|AB\times AC|/2$。外心：三边中垂线交点；内心：角平分线，到三边等距；垂心：高线交点。退化（共线）时这些心无定义。
+
 #### 三角形面积
+
+$|AB\times AC|/2$。有向面积保留符号。
 
 ```cpp
 ld area(Point<ld> a, Point<ld> b, Point<ld> c) {
@@ -2695,6 +2791,8 @@ Pd center3(Pd p1, Pd p2, Pd p3) { // 垂心
 ```
 
 ### 平面直线方程转换
+
+两点式、点向式、一般式 $ax+by+c=0$ 互转。一般式不唯一，可约掉公约数。
 
 #### 浮点数计算直线的斜率
 
@@ -3644,6 +3742,8 @@ for (int i = 1; i <= n; i++)
 
 ### 数位 DP
 
+从高位往低位填。`limit` 表示是否还贴着上界，`zero` 表示是否仍是前导零。无限制且无前导零才能记记忆化。区间 $[l,r]$ 用 $f(r)-f(l-1)$。
+
 下方第一个板子统计 $[0, x]$ 中数字 $d$ 出现的次数（`solve(r, d) - solve(l - 1, d)` 即区间计数）。第二个板子统计 $\le n$ 的数中"数位和能整除该数"的个数：枚举可能的数位和 `mod`（$\le 9\cdot len$），每趟记录 `(余数, 当前数位和)` 两维。
 
 ```cpp
@@ -4314,9 +4414,11 @@ $G=(V,E)$ 是一个无向图。
 
 ### 单源最短路径（SSSP 问题）
 
+固定源点到其余点的最短路。边权非负用 Dijkstra；有负权无负环用 Bellman-Ford / SPFA；路上有负环则该点无最短路。全源用 Floyd。
+
 #### （正权稀疏图）动态数组存图+Dijkstra 算法
 
-使用优先队列优化，以 $\mathcal O(M\log N)$ 的复杂度计算。
+堆优化 $\mathcal O(M\log N)$。每次弹出当前距离最小的未确定点，用它松弛邻边；正权保证弹出即为最终答案。`d` 初值 INF。
 
 #### （负权图）Bellman ford 算法
 
@@ -4477,9 +4579,11 @@ for (int i = 1; i <= n; i++) {
 
 ### 最小生成树（MST 问题）
 
+连通无向图上边权和最小的生成树。割性质：跨越当前割的最小边一定在某棵 MST 里。Kruskal 按边权排序再并查集合并；Prim 不断吸收离树最近的点。
+
 #### （稠密图）Prim 算法
 
-使用邻接矩阵存图，以 $\mathcal{O}(N^2+M)$ 的复杂度计算，思想与 Dijkstra 基本一致：`d` 维护每个点到"已加入生成树的点集"的最小距离。
+邻接矩阵，$\mathcal{O}(N^2+M)$。思想同 Dijkstra：`d` 维护每个点到「已在树内点集」的最短边。不连通返回 INF。
 
 ```cpp
 const int N = 550, INF = 0x3f3f3f3f;
@@ -4514,7 +4618,7 @@ int main() {
 
 #### （稀疏图）Kruskal 算法
 
-平均时间复杂度为 $\mathcal{O}(M\log M)$ ，简化了并查集。
+边按权排序后依次加入，并查集判是否成环，加入 $n-1$ 条即成树。$\mathcal{O}(M\log M)$，瓶颈在排序。不连通则边数不够。
 
 ```cpp
 struct DSU {
@@ -4568,9 +4672,11 @@ struct Tree {
 
 ### 缩点（Tarjan 算法）
 
+把「互相可达」的点缩成一个点。有向图得 DAG（SCC），无向图得桥/边双。`dfn/low`：`low` 能回到自己或祖先则还在同一个分量里。
+
 #### （有向图）强连通分量缩点
 
-强连通分量缩点后的图称为 SCC。以 $\mathcal O (N + M)$ 的复杂度完成上述全部操作。
+强连通分量缩点后的图称为 SCC。$\mathcal O(N+M)$。
 
 > 性质：缩点后的图拥有拓扑序 $color_{cnt}, color_{cnt-1},…,1$ ，可以不需再另跑一遍 $\tt topsort$ ；缩点后的图是一张有向无环图（ $\tt DAG$ 、拓扑图）。
 
@@ -5717,6 +5823,8 @@ signed main() {
 
 ### 欧拉路径/欧拉回路 Hierholzers
 
+一笔画完所有边。存在性看度数；求路径用 Hierholzer：DFS 把边删掉，回溯再写入答案（得到反序，最后 reverse）。必须连通（忽略孤立点）。
+
 > 欧拉路径：一笔画完图中全部边，画的顺序就是一个可行解；当起点终点相同时称欧拉回路。
 
 #### 有向图欧拉路径存在判定
@@ -5878,9 +5986,11 @@ signed main() {
 
 ### 2-Sat
 
+每个布尔变量拆成 $x$ 与 $\neg x$ 两个点。条款 $(a\lor b)$ 连边 $\neg a\to b$、$\neg b\to a$。同一 SCC 里同时出现 $x$ 与 $\neg x$ 则无解；否则拓扑序靠后的那个取值。
+
 #### 基础封装
 
-基于 tarjan 缩点，时间复杂度为 $\mathcal O(N+M)$ 。注意下标从 $0$ 开始，`work()` 返回是否存在解，`answer()` 给出**一组**可行解：当 `id[2i] > id[2i+1]` 时取 `ans[i] = true`。这样得到的**不一定是字典序最小的解**（字典序最小需按变量顺序逐一 DFS 构造）；`add(u, f, v, g)` 表示条件 `(u 取 f) ⇒ (v 取 g)`（变量为 `true` 时编号 `2u+1`，为 `false` 时 `2u`）。
+基于 tarjan 缩点，$\mathcal O(N+M)$。下标从 $0$ 开始。`work()` 返回是否有解，`answer()` 给**一组**可行解：`id[2i] > id[2i+1]` 时 `ans[i] = true`。**不一定字典序最小**（最小需按变量顺序逐一 DFS）。`add(u, f, v, g)` 表示 $(u$ 取 $f)\Rightarrow(v$ 取 $g)$（`true` 编号 `2u+1`，`false` 编号 `2u`）。
 
 ```cpp
 struct TwoSat {
@@ -5967,6 +6077,8 @@ for (int i = 0; i < n; i++) {
 ```
 
 ### 图论常见结论及例题
+
+建模对照，不是证明。对上题意再套。
 
 #### 常见结论
 
@@ -6154,7 +6266,7 @@ void Solve() {
 
 #### 判定图中是否存在负环
 
-使用 SPFA ，复杂度为 $\mathcal{O}(KM)$ ，其中常数 $K$ 相较裸的 SPFA 更高。
+SPFA：某点入队超过 $n$ 次（或某点松弛次数 $\ge n$）则存在负环。$\mathcal{O}(KM)$，常数比裸最短路更高，可被卡。
 
 ```c++
 const int N = 1e5 + 7, M = 1e6 + 7;
@@ -6419,7 +6531,7 @@ cout << ans << endl;
 
 #### 输出有向图任意一个环
 
-原题：给出一张有向图，输出任意一个环，数据包括二元环和自环。使用 dfs 染色法。
+DFS 三色：访问中的后向边指向栈上祖先，即找到环。含二元环和自环。任意一个即可。
 
 ```c++
 vector<int> dis(n + 1), vis(n + 1), fa(n + 1);
@@ -6493,6 +6605,8 @@ signed main() {
 
 ### 常用函数
 
+赛场常写的几件：二进制快速幂、整数平方根纠偏、先除后乘的 lcm、整数 $\log_2$、向 $\pm\infty$ 取整的除法。C++ 除法向零取整，负数区间二分必须用这里的 `floor`/`ceil`。
+
 ```cpp
 int mypow(int n, int k, int p = MOD) { // 快速幂，复杂度 O(log k)
     int r = 1;
@@ -6563,6 +6677,8 @@ template<typename T> T ceil(const T &a, const T &b) {
 
 ### 最大公约数 `gcd`
 
+$\gcd(a,b)=\gcd(b,a\bmod b)$，辗转到 $0$。$\mathcal O(\log(a+b))$。日常用 `std::gcd`；卡常用二进制版（先剥公因子 $2$，再减）。
+
 #### 欧几里得算法
 
 **速度不如内置函数！** 以 $\mathcal O(\log(a+b))$ 的复杂度求解最大公约数。与内置函数 `__gcd` 功能基本相同（支持 $a,b \leq 0$ ）。
@@ -6575,7 +6691,7 @@ inline int mygcd(int a, int b) { // 手写欧几里得，与 std::gcd 等价
 
 #### 位运算优化
 
-**略快于内置函数，用于卡常。**
+Stein：提出公共的 $2$，奇数相减代替取模。**略快于内置，卡常用。** `tz` 是后导零个数。
 
 ```cpp
 LL gcd(LL a, LL b) { // 卡常 gcd！！（LL 为 long long）
@@ -6594,6 +6710,8 @@ LL gcd(LL a, LL b) { // 卡常 gcd！！（LL 为 long long）
 ```
 
 ### 整数域二分
+
+在单调谓词上找分界。先写清 `check(x)` 为真时答案在哪一侧，再选「第一个真」还是「最后一个真」。中点用 `l+(r-l)/2`，避免 `l+r` 溢出。
 
 #### 通用模板
 
@@ -6747,6 +6865,8 @@ cout << check(l) << endl;
 
 ### 实数域三分
 
+单峰函数上取两个三等分点，丢掉较差的那一侧。限制 $100$ 次，免选 eps。非单峰会错。
+
 限制次数实现，同样要求单峰：
 
 ```cpp
@@ -6769,6 +6889,8 @@ cout << l << endl;
 依赖二维章的 `Point` / `Line` / `cross` / `sign` / `Pt` / `Lt`。多边形顶点按逆时针存时面积为正。
 
 ### 平面多边形
+
+顶点按序给出。面积用叉积求和（鞋带）；点在形内用绕数或射线。逆时针面积为正。
 
 #### 两向量构成的平面四边形有向面积
 
@@ -6938,9 +7060,11 @@ int inPolygonGrid(vector<Point<int>> p) { // 多边形内
 
 ### 二维凸包
 
+包住所有点的最小凸多边形。Andrew：按坐标排序，左右各扫一遍，叉积 $\le 0$ 则弹出（右转不凸）。$\mathcal O(N\log N)$，瓶颈在排序。
+
 #### 获取二维静态凸包（Andrew 算法）
 
-`flag` 用于判定凸包边上的点、重复的顶点是否要加入到凸包中，为 $0$ 时代表加入凸包（不严格）；为 $1$ 时不加入凸包（严格）。时间复杂度为 $\mathcal O(N\log N)$ 。返回点按逆时针，起点为最左下。
+`flag=0` 边上的点也加入（不严格）；`flag=1` 不加入（严格）。返回逆时针，起点最左下。
 
 ```cpp
 template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int flag = 1) {
@@ -7443,7 +7567,7 @@ template<int P = 998244353> struct Poly : public vector<MInt<P>> {
 
 ### 离散傅里叶变换 dft 与其逆变换 idft
 
-长度必须是 $2$ 的幂。`idft` 里 `(1-P)/n` 在模 $P$ 下等于 $n^{-1}$。`rev` / `roots` 是全局表，多模数同时用会串。
+点值与系数互换：单位根上求值。卷积变成点值相乘再变回。长度必须是 $2$ 的幂。`idft` 里 `(1-P)/n` 在模 $P$ 下等于 $n^{-1}$。`rev` / `roots` 是全局表，多模数同时用会串。
 
 ```cpp
 vector<int> rev;
@@ -7879,6 +8003,8 @@ $$\frac{1}{(1-x)^n}=\sum_{i=0}^{\infty}\binom{n+i-1}{i}x^i$$
    $(1-x)^{-n}=\sum_{i=0}^{\infty}(-1)^i\binom{n+i-1}{i}(-x)^i=\sum_{i=0}^{\infty}\binom{n+i-1}{i}x^i$
 
 ### 常用结论
+
+生成函数与单位根的速查。OGF 管组合计数，EGF 管有标号；卷积对应乘法。用前对一下下标从 $0$ 还是 $1$。
 
 #### 杂
 
@@ -8434,7 +8560,11 @@ for (int i = 0; i < n; i++) {
 
 ### dsu 并查集
 
+维护不相交集合：同一块共用一个根。路径压缩把访问链直接接到根上，按秩/按大小合并压树高，均摊约 $\mathcal O(\alpha(N))$。判连通、Kruskal、维护块内点数/边数都用它。下标按各封装是 $0..n-1$ 或 $1..n$。
+
 #### 路径优化(普遍)
+
+只做路径压缩，合并不看大小。最短，均摊仍约 $\mathcal O(\alpha(N))$。下标 $1..n$。`merge` 成功返回 true。
 
 ```cpp
 struct dsu {
@@ -8510,6 +8640,8 @@ public:
 ```
 
 #### 常用操作
+
+路径压缩，并维护块内点数 `p`、边数 `e`、是否有自环 `f`。`merge` 把编号小的根挂到大的上。`same` / `size` / `E` / `F` 查询前都会先 `get` 到根。
 
 ```cpp
 struct DSU {
@@ -8596,7 +8728,7 @@ struct Info
 
 ### Fenwick Tree 树状数组
 
-基础版：单点加 + 前缀和，下标从 $1$ 开始，`ask(l, r)` 为 $[l, r]$ 区间和；构造时从数组 `in`（下标 $1..n$）逐点加入。
+下标从 $1$ 开始。`x & -x` 取出最低位 $1$，沿这条链走到父区间；单点加往上走、前缀和往下走，是同一棵隐式树的对偶。`ask(l, r)` 为 $[l, r]$ 区间和。不能直接区间覆盖（改差分）。构造时从 `in`（下标 $1..n$）逐点加入。
 
 ```cpp
 template<typename T> struct BIT {
@@ -8834,6 +8966,8 @@ struct BIT_2D {
 
 ### 线段树
 
+把区间递归对半切开，每个节点管一段。区间修改打懒标记，下推时才传给儿子；查询把路过的节点合并起来。比树状数组慢，能做的运算更宽（最值、取模、可判谓词）。本板区间均为 $[l,r)$。
+
 #### LazyInfoTag 线段树
 
 用法约定：区间**左闭右开 $[l, r)$**；`Info` 需提供 `operator+`（合并）与 `apply(Tag)`（打懒标记），`Tag` 需提供复合自身的 `apply(Tag)`；`modify(p, v)` 单点赋值，`rangeQuery(l,r)` / `rangeApply(l,r,tag)` 区间查询/区间标记，`findFirst/findLast(l, r, pred)` 在区间内找第一个/最后一个使 `pred` 为真的位置（返回 `-1` 表示不存在，要求 `pred` 具有区间可判性）。下方 `Info/Tag` 为空白壳，按题目自行填写（如区间加：`Tag.x` 为增量，`Info::apply` 累加长度倍增量）。
@@ -9026,9 +9160,11 @@ struct Segt {
 
 #### 拆位运算
 
-原题同上。使用若干棵线段树维护每一位的值，区间异或转变为区间翻转。
+原题同上。每一位一棵线段树（或 bitset），区间异或变成该位的区间翻转。位之间独立，答案再拼回去。
 
 ### 树套树
+
+外层按位置分区间，内层按值排序。一次操作拆成 $\log N$ 个外节点，每个再 $\log N$，故 $\mathcal O(\log^2 N)$。用来做动态区间第 $k$ 小、排名、前驱后继。
 
 #### 线段树套平衡树
 
@@ -10464,6 +10600,8 @@ $$
 
 ### 常见数列
 
+赛场用的量级与近似，不是证明。调和级数估枚举倍数的时间；素数密度估筛到多少；高度合成数估因数个数上界。
+
 #### 调和级数
 
 枚举 $1..N$ 的倍数（调和级数复杂度）：$\sum_{k=1}^{N} \frac{N}{k} \approx N\ln N$，误差量级在 $10\%$ 左右。常规评测机可以在 500ms 内完成 $10^8$ 量级的此类预处理计算。下表 N 的量级指 $10$ 的幂次数。
@@ -10523,6 +10661,8 @@ auto euler_Prime = [&](int n) -> void {
 
 #### 最小质因数
 
+线性筛的副产品：`minp[x]` 为 $x$ 的最小质因子。分解 $x$ 只需反复除 `minp[x]`，单次 $\mathcal O(\log x)$。先 `sieve(n)`。
+
 ```cpp
 std::vector<int> minp, primes;
 
@@ -10568,6 +10708,8 @@ LL mul(LL a, LL b, LL m) {
 ```
 
 #### 借助 int128 实现
+
+`(__int128)a * b % m`，语义就是普通模乘。Linux / gcc 有 `__int128`，MSVC 没有。优先用这个。
 
 ```cpp
 LL mul(LL a, LL b, LL m) {
@@ -10616,6 +10758,8 @@ int main(){
 ```
 
 ### 逆元
+
+满足 $ax\equiv 1\pmod m$ 的 $x$，用来把除法变乘法。存在当且仅当 $\gcd(a,m)=1$。模质数用费马 $a^{p-2}$；一般模用 exgcd；要 $1..n$ 全部逆元用线性递推。
 
 #### 费马小定理解（借助快速幂）
 
@@ -10812,9 +10956,11 @@ int main() {
 
 ### 欧拉函数
 
+$\varphi(n)$：$1..n$ 中与 $n$ 互质的个数。$n=\prod p_i^{k_i}$ 则 $\varphi(n)=n\prod(1-1/p_i)$。欧拉定理：$a^{\varphi(n)}\equiv 1\pmod n$（$\gcd(a,n)=1$），用来降幂。
+
 #### 直接求解单个数的欧拉函数
 
-$1$ 到 $N$ 中与 $N$ 互质数的个数称为欧拉函数，记作 $\varphi (N)$ 。求解欧拉函数的过程即为分解质因数的过程，复杂度 $\mathcal{O}(\sqrt{n})$ 。
+分解质因数后套公式，$\mathcal{O}(\sqrt{n})$。
 
 ```cpp
 int phi(int n) { //求解 phi(n)
@@ -11022,9 +11168,11 @@ int main() {
 
 ### 试除法判是否是质数
 
+试到 $\sqrt n$ 即可：有因数则必有一个 $\le\sqrt n$。$n<2$ 不是质数。大批量改用筛。
+
 #### 标准解
 
-$\mathcal O(\sqrt N)$ 。
+$\mathcal O(\sqrt N)$。循环写 `i <= n / i` 防溢出。
 
 ```cpp
 bool is_prime(int n) {
@@ -11562,6 +11710,8 @@ vector<int> fac(int n) {
 
 ### 常见结论和定理
 
+构造与存在性的速查，不是算法。用前确认条件（互质、奇偶、上下界）。
+
 #### 麦乐鸡定理
 
 给定两个互质的数 $n,m$ ，定义 $x=a*n+b*m（a \ge 0,b \ge 0）$，当 $x > n*m-n-m$ 时，该式子恒成立。
@@ -11592,6 +11742,8 @@ vector<int> fac(int n) {
 > 原理是 $and$ 意味着取交集，$or$ 意味着取子集。[来源 - 牛客小白月赛 49C](https://ac.nowcoder.com/acm/contest/11226/C)
 
 #### 调和级数近似公式
+
+$H_n\approx \ln n+\gamma+1/(2n)$，$\gamma\approx 0.5772156649$。估 $\sum\lfloor n/i\rfloor$ 的量级。
 
 ```c++
 log(n) + 0.5772156649 + 1.0 / (2 * n)
@@ -12416,9 +12568,11 @@ for (int i = 1; i <= n * n; i++) {
 
 ### 最长严格/非严格递增子序列 (LIS)
 
+子序列可不连续。`val[i]` 表示长 $i+1$ 的上升子序列的最小结尾；新数二分插入，能替换则换、否则追加。长度即 LIS。`upper_bound` 严格、`lower_bound` 非严格。$\mathcal O(N\log N)$。
+
 #### 一维
 
-注意子序列是不连续的。使用二分搜索，以 $\mathcal O(N\log N)$ 复杂度通过，另也有 $\mathcal O(N^2)$ 的 $\tt dp$ 解法。
+Dilworth：剖成最少单调不升子序列的个数 $=$ 最长上升子序列长度。
 
 > Dilworth: 对于任意有限偏序集，其最大反链中元素的数目必等于最小链划分中链的数目.
 > 将一个序列剖成若干个单调不升子序列的最小个数等于该序列最长上升子序列的个数
@@ -12438,6 +12592,8 @@ cout << val.size() << endl;
 ```
 
 #### 二维+输出方案
+
+先按第一维升序，第一维相同则第二维降序（避免等 $x$ 误接），再对第二维做 LIS。`pre` 记前驱，从最长结尾回溯。
 
 ```cpp
 vector<array<int, 3>> in(n + 1);
@@ -12826,6 +12982,8 @@ int main() {
 
 ### 随机数生成与样例构造
 
+`r(a,b)` 均匀闭区间。`graph(n)` 先随机树再按需加边：拒绝自环重边，最后打乱输出。对拍造数据用；`rnd()%(b-a+1)` 略有偏差，赛场够用。
+
 ```cpp
 
 mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
@@ -12870,6 +13028,8 @@ void graph(int n, int root = -1, int m = -1) {
 
 ### 手工哈希
 
+给 `unordered_map` 用的整数/ pair 哈希。SplitMix64 搅匀再 xor 时间种子，减轻被卡。自定义 `unordered_map<K,V,myhash>`。
+
 ```cpp
 struct myhash {
     static uint64_t hash(uint64_t x) {
@@ -12891,6 +13051,8 @@ struct myhash {
 ```
 
 ### Python 常用语法
+
+大整数、高精度、简单脚本用。递归默认深度约 $1000$，要改 `setrecursionlimit`。输出用 `print`，大量输出注意不要逐行 flush。
 
 #### 读入与定义
 
@@ -12919,6 +13081,8 @@ struct myhash {
 - 按行写入：`w.write(XX)`
 
 #### 增加输出流长度、递归深度
+
+`sys.setrecursionlimit` 把递归上限抬高；`sys.set_int_max_str_digits` 允许超长整数转字符串（3.11+）。过大可能爆栈。
 
 ```python
 import sys
@@ -12963,6 +13127,8 @@ for i in w:
 
 #### GNU C++ 版本测试
 
+用预定义宏看编译器版本，确认 `__int128`、pbds、gnu++20 能不能用。
+
 ```cpp
 for (int i : {1, 2}) {} // GNU C++11 支持范围表达式
 
@@ -12988,6 +13154,8 @@ constexpr double Pi = numbers::pi; // C++20 支持
 ```
 
 #### 编译器位数测试
+
+`sizeof` 指针或 `long` 判断 32/64 位。OJ 几乎都是 64 位。
 
 ```cpp
 using i64 = __int128; // 64 位 GNU C++11 支持
@@ -13325,9 +13493,11 @@ dfz(dfz, root, 0);
 
 ### 最近公共祖先 LCA
 
+树上两点路径的最高点。任意路径 $u\to v$ 拆成 $u\to\mathrm{lca}$ 与 $v\to\mathrm{lca}$。剖分 $\mathcal O(\log N)$、倍增 $\mathcal O(\log N)$、欧拉序+ST $\mathcal O(1)$。先 `work(root)` 再查。
+
 #### 树链剖分解法
 
-预处理时间复杂度 $\mathcal O(N)$ ；单次查询 $\mathcal O(\log N)$ ，常数较小。
+预处理 $\mathcal O(N)$，单次 $\mathcal O(\log N)$，常数较小。沿重链跳 `top`，深度大的那条先跳，直到两点顶在同一条链上再比深度。
 
 ```cpp
 struct HLD {
@@ -13603,7 +13773,7 @@ struct LCA {
 
 ### 树上路径交
 
-计算两条路径的交点数量，直接载入任意 LCA 封装即可。
+两条路径相交当且仅当其中一条的 LCA 落在另一条上。四个端点两两求 LCA，按深度排序后判断。返回交点个数（可退化成一个点）。直接载入任意 LCA 封装。
 
 ```cpp
 int intersection(int x, int y, int X, int Y) {
@@ -13684,9 +13854,11 @@ struct HLD {
 
 ### prufur 序列
 
+$n$ 点带标号树 $\leftrightarrow$ 长 $n-2$、值域为点编号的序列，一一对应。度数 $d$ 的点在序列里出现 $d-1$ 次。用来计数生成树，不常用来存树。
+
 #### 对树建立 Prüfer 序列
 
-Prüfer 是这样建立的：每次选择一个编号最小的叶结点并删掉它，然后在序列中记录下它连接到的那个结点。重复 $n-2$ 次后就只剩下两个结点，算法结束。
+每次取编号最小的叶删掉，记下它连向的那个点。做 $n-2$ 次后剩两点。用堆/set 取最小叶是 $\mathcal O(n\log n)$。结点从 $0$ 标号。
 
 显然使用堆可以做到 $O(n\log n)$ 的复杂度
 
@@ -14196,6 +14368,8 @@ sum=sqrt(p*(p-a)*(p-b)*(p-c));
 
 ### 组合数
 
+$\binom{n}{k}=n!/(k!(n-k)!)$，选 $k$ 个。模质数：预处理阶乘逆后 $\mathcal O(1)$，或 Lucas 把 $n,k$ 按模拆开。模任意：质因数分解或杨辉。非法下标当 $0$。
+
 #### debug
 
 提供一组测试数据：$\binom{132}{66}=$ 377'389'666'165'540'953'244'592'352'291'892'721'700，模数为 $998244353$ 时为 $241'200'029$；$10^9+7$ 时为 $598375978$。
@@ -14410,6 +14584,8 @@ $$
 
 ### 斯特林数
 
+第一类 $[n,m]$：分成 $m$ 个非空轮换；第二类 $\{n,m\}$：分成 $m$ 个非空无标号子集。轮换有圆排列，子集没有。递推都是「自己开新组 / 加入已有组」。
+
 #### 第一类斯特林数
 
 $[n,m]$ 为 $n$ 个元素分成 $m$ 个非空轮换的方案数。
@@ -14477,6 +14653,8 @@ $M_n = \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} C_k$ (C 为卡特兰数)
 要求路径中始终不能低于 x 轴,终点必须在 $(n,0)$ ，问方案数。
 
 ### 球盒模型
+
+球是否相同、盒是否相同、盒是否可空，三种开关组出十二种。隔板法对应无标号球+可空盒；第二类斯特林对应有标号球+不可空无标号盒。对上条件再套公式。
 
 #### $n$ 个球 全部放入 $m$ 个盒子
 
@@ -15134,6 +15312,8 @@ $$ D_t(n,m) = \frac{m-tn+1}{n+m+1}\binom{n+m+1}{n} $$
 
 ### 不相交格路问题
 
+多条格路互不穿越的方案。常化成行列式（LGV）或卡特兰之差。下面是不交 Dyck / 自由路的计数公式。
+
 #### n 阶不交 Dyck 路计数
 
 **定义 3.1:** 从 $(0,0)$ 到 $(n,n)$ 的两条 Dyck 路 $P, Q$。若 $Q$ 始终不穿过 $P$ (即 $Q$ 在 $P$ 的下方或与之重合),则称 $(P,Q)$ 是一对**不交 Dyck 路**。
@@ -15287,9 +15467,11 @@ _图示:一条从 A 到 B 的不合法路径(红色),在第一个接触点 P 处
 
 ### 最大流
 
+源到汇能同时挤过的最大流量。每条边容量、反向边退流。最大流 $=$ 最小割。Dinic 分层后多路增广；HLPP 推预流。建图：`add(u,v,c)` 会自动加反向边。
+
 #### Dinic 解
 
-使用 $\tt Dinic$ 算法，理论最坏复杂度为 $\mathcal O(N^2M)$ ，例题范围：$N=1200,\ m=5\times 10^3$ 。一般步骤：$\tt BFS$ 建立分层图，无回溯 $\tt DFS$ 寻找所有可行的增广路径。封装：求从点 $S$ 到点 $T$ 的最大流。
+理论最坏 $\mathcal O(N^2M)$，例题范围 $N=1200,\ m=5\times 10^3$。BFS 分层，当前弧 DFS 一次找完该层所有增广。`work(s, t)` 返回最大流。
 
 ```cpp
 template<typename T> struct Flow_ {
