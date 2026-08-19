@@ -12720,9 +12720,10 @@ std::ostream& operator<<(std::ostream& os, i128 n) {
 
 ### 对拍板子
 
-同目录多题：`A.cpp` / `Astd.cpp` / `Agen.cpp`，B 题同理。
+同目录多题：`A.cpp` / `A-std.cpp` / `A-gen.cpp`。
+一题多份源（`F.cpp` / `F-1.cpp` / `F-Brute.cpp`）共用该题一份暴力和生成器。
 对拍器做成函数，追加到 `~/.bashrc` / `$PROFILE`。
-prefix：`stress A`，题号当前缀拼三个文件名。
+prefix：`stress A` 或 `stress F-1`。被测用完整参数，std/gen 只取第一段连字符前的题号。
 manual：`stress a.cpp brute.cpp gen.cpp`，三个路径原样用。
 其它个数直接返回。
 编译产物与中间文件均在临时目录固定路径，下次覆盖，不 `rm`。
@@ -12731,15 +12732,16 @@ manual：`stress a.cpp brute.cpp gen.cpp`，三个路径原样用。
 Linux（`~/.bashrc` 末尾）：
 
 ```bash
-# prefix: stress A
+# prefix: stress A / stress F-1 → F-1.cpp F-std.cpp F-gen.cpp
 # manual: stress a.cpp brute.cpp gen.cpp
 # /tmp/x /tmp/xstd /tmp/gen /tmp/test.in /tmp/x.out /tmp/xstd.out
 stress() {
     case $# in
     1)
         sol=$1.cpp
-        std=$1std.cpp
-        gen=$1gen.cpp
+        p=${1%%-*}
+        std=$p-std.cpp
+        gen=$p-gen.cpp
         ;;
     3)
         sol=$1
@@ -12769,14 +12771,15 @@ stress() {
 Windows PowerShell（`$PROFILE` 末尾）：
 
 ```powershell
-# prefix: stress A
+# prefix: stress A / stress F-1 → F-1.cpp F-std.cpp F-gen.cpp
 # manual: stress a.cpp brute.cpp gen.cpp
 function stress {
     switch ($args.Count) {
         1 {
             $sol = "$($args[0]).cpp"
-            $std = "$($args[0])std.cpp"
-            $gen = "$($args[0])gen.cpp"
+            $p = ($args[0] -split '-', 2)[0]
+            $std = "$p-std.cpp"
+            $gen = "$p-gen.cpp"
         }
         3 {
             $sol = $args[0]
@@ -12804,7 +12807,7 @@ function stress {
 }
 ```
 
-生成器骨架（存成 `Agen.cpp`）：
+生成器骨架（存成 `A-gen.cpp`）：
 
 ```cpp
 #include <bits/stdc++.h>
