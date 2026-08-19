@@ -2,12 +2,16 @@
 
 ### 数组打乱 shuffle
 
+均匀打乱。引擎用 `mt19937_64`，不要 `srand` + 已弃用的 `random_shuffle`。对拍造数据、随机化算法用。
+
 ```cpp
 mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); // 用系统时间做种子，防 hack
 shuffle(ver.begin(), ver.end(), rng);
 ```
 
 ### bit 库与位运算函数 \_\_builtin\_
+
+GCC/Clang 内建，比手写循环快。`x=0` 时 `clz/ctz` 未定义。`long long` 后缀 `ll`。
 
 ```cpp
 __builtin_popcount(x) // 返回x二进制下含1的数量，例如x=15=(1111)时答案为4
@@ -45,6 +49,8 @@ cout << ans << endl; /*1100*/
 ```
 
 ### 字符串转数字
+
+`stoi`/`stoll` 是 C++ 标准，可指定进制；`atoi` 是 C，非法时给 $0$、不抛异常。前导空白会跳过。
 
 ```cpp
 // stoi直接使用
@@ -117,6 +123,8 @@ string s = to_string(num);
 
 ### 判断非递减 is_sorted
 
+`is_sorted(l, r)` 为真当且仅当区间非降。自定义序传比较器。
+
 ```cpp
 //a数组[start,end)区间是否是非递减的，返回bool型
 cout << is_sorted(a + start, a + end);
@@ -124,12 +132,16 @@ cout << is_sorted(a + start, a + end);
 
 ### 累加 accumulate
 
+`accumulate(l, r, init)` 从 `init` 起累加（或传入二元运算）。初值类型决定结果类型，求和用 `0LL`。
+
 ```cpp
 //将a数组[start,end)区间的元素进行累加，并输出累加和+x的值
 cout << accumulate(a + start, a + end, x);
 ```
 
 ### 迭代器 iterator
+
+指向容器元素的指针状对象。`begin` 首元素，`end` 尾后。随机访问容器可加减整数。
 
 ```cpp
 //构建一个UUU容器的正向迭代器，名字叫it
@@ -140,6 +152,8 @@ vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时�
 ```
 
 ### 特殊函数 `next` 和 `prev` 详解：
+
+不修改原迭代器，返回前进/后退 $n$ 步的副本。`list` 等没有 `+`，用这两个。
 
 ```cpp
 auto it = s.find(x); // 建立一个迭代器
@@ -236,6 +250,8 @@ cout << B1 << " " << B2 << "\n"; //你可以直接使用cout输出
 如果将不支持哈希的类型作为 `key` 值代入，编译器就无法正常运行，这时需要我们为其手写哈希函数。而我们写的这个哈希函数的正确性其实并不是特别重要（但是不可以没有），当发生冲突时编译器会调用 `key` 的 `operator ==` 函数进行进一步判断。[参考](https://finixlei.blog.csdn.net/article/details/110267430?spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-3-110267430-blog-101406104.topnsimilarv1&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-3-110267430-blog-101406104.topnsimilarv1&utm_relevant_index=4)
 
 #### 对 pair、tuple 定义哈希
+
+`unordered_map` 默认不能以 `pair` 为键。把两维哈希异或/相乘混一下；自定义结构体同理。
 
 ```cpp
 // pair 的哈希
