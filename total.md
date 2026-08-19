@@ -12720,24 +12720,34 @@ std::ostream& operator<<(std::ostream& os, i128 n) {
 
 ### 对拍板子
 
-题目录下放三个源文件。默认名字：`x.cpp`（被测）、`xstd.cpp`（暴力）、`gen.cpp`（数据）。
+题目录下放三个源文件。被测每次指定；暴力默认 `xstd.cpp`，数据默认 `gen.cpp`，这两个少换。
 对拍器做成函数，追加到 `~/.bashrc` / `$PROFILE`。
-在该目录执行 `stress`，或 `stress a.cpp brute.cpp gen.cpp`。
+默认 `stress x.cpp`；三个都换则 `stress a.cpp brute.cpp gen.cpp`。其它个数直接返回。
 编译产物与中间文件均在临时目录固定路径，下次覆盖，不 `rm`。
 挂了去看临时目录里的输入输出。三个 `g++` 都成功才进入循环。
 
 Linux（`~/.bashrc` 末尾）：
 
 ```bash
-# stress
-# stress a.cpp
-# stress a.cpp brute.cpp
+# stress x.cpp
 # stress a.cpp brute.cpp gen.cpp
 # /tmp/x /tmp/xstd /tmp/gen /tmp/test.in /tmp/x.out /tmp/xstd.out
 stress() {
-    sol=${1:-x.cpp}
-    std=${2:-xstd.cpp}
-    gen=${3:-gen.cpp}
+    case $# in
+    1)
+        sol=$1
+        std=xstd.cpp
+        gen=gen.cpp
+        ;;
+    3)
+        sol=$1
+        std=$2
+        gen=$3
+        ;;
+    *)
+        return
+        ;;
+    esac
     g++ -std=gnu++20 -O2 -pipe -o /tmp/gen "$gen" &&
     g++ -std=gnu++20 -O2 -pipe -o /tmp/x "$sol" &&
     g++ -std=gnu++20 -O2 -pipe -o /tmp/xstd "$std" && {
@@ -12757,12 +12767,22 @@ stress() {
 Windows PowerShell（`$PROFILE` 末尾）：
 
 ```powershell
-# stress
+# stress x.cpp
 # stress a.cpp brute.cpp gen.cpp
 function stress {
-    $sol = if ($args.Count -ge 1) { $args[0] } else { "x.cpp" }
-    $std = if ($args.Count -ge 2) { $args[1] } else { "xstd.cpp" }
-    $gen = if ($args.Count -ge 3) { $args[2] } else { "gen.cpp" }
+    switch ($args.Count) {
+        1 {
+            $sol = $args[0]
+            $std = "xstd.cpp"
+            $gen = "gen.cpp"
+        }
+        3 {
+            $sol = $args[0]
+            $std = $args[1]
+            $gen = $args[2]
+        }
+        default { return }
+    }
     g++ -std=gnu++20 -O2 -pipe -o "$env:TEMP\gen.exe" $gen
     if (-not $?) { return }
     g++ -std=gnu++20 -O2 -pipe -o "$env:TEMP\x.exe" $sol
