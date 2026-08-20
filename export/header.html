@@ -15,83 +15,102 @@ window.MathJax = {
 </script>
 <script src="./tex-svg-full.js"></script>
 <style>
-/* Latin = Noto Serif / DejaVu (TTF → CID TrueType). CJK = converted Noto Serif CJK SC TTF.
-   Chromium prints CFF/OTC as Type 3 bitmaps; do not put CJK fonts first. */
+/* 西文 / 中文分成两个 family：缺字才回退。全部 TTF，Chromium 才能打成 CID TrueType。 */
 @font-face {
-  font-family: "Print Serif";
+  font-family: "Print Latin";
   src: url("./fonts/NotoSerif-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
-  unicode-range: U+0000-036F, U+0370-03FF, U+1D00-1DFF, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF;
 }
 @font-face {
-  font-family: "Print Serif";
+  font-family: "Print Latin";
   src: url("./fonts/NotoSerif-Italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
-  unicode-range: U+0000-036F, U+0370-03FF, U+1D00-1DFF, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF;
 }
 @font-face {
-  font-family: "Print Serif";
+  font-family: "Print Latin";
   src: url("./fonts/NotoSerif-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
-  unicode-range: U+0000-036F, U+0370-03FF, U+1D00-1DFF, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF;
 }
 @font-face {
-  font-family: "Print Serif";
+  font-family: "Print Latin";
   src: url("./fonts/NotoSerif-BoldItalic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
-  unicode-range: U+0000-036F, U+0370-03FF, U+1D00-1DFF, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF;
 }
 @font-face {
-  font-family: "Print Serif";
+  font-family: "Print CJK";
   src: url("./fonts/NotoSerifCJKsc-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
-  unicode-range: U+2E80-2FFF, U+3000-303F, U+3040-30FF, U+3100-312F, U+31A0-31FF, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF;
 }
 @font-face {
-  font-family: "Print Serif";
+  font-family: "Print CJK";
   src: url("./fonts/NotoSerifCJKsc-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
-  unicode-range: U+2E80-2FFF, U+3000-303F, U+3040-30FF, U+3100-312F, U+31A0-31FF, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF;
+}
+@font-face {
+  font-family: "Print CJK";
+  src: url("./fonts/NotoSerifCJKsc-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Print CJK";
+  src: url("./fonts/NotoSerifCJKsc-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
 }
 @font-face {
   font-family: "Print Mono";
   src: url("./fonts/DejaVuSansMono.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
-  unicode-range: U+0000-036F, U+0370-03FF, U+1D00-1DFF, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF;
 }
 @font-face {
   font-family: "Print Mono";
   src: url("./fonts/DejaVuSansMono-Oblique.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
-  unicode-range: U+0000-036F, U+0370-03FF, U+1D00-1DFF, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF;
 }
 @font-face {
   font-family: "Print Mono";
   src: url("./fonts/DejaVuSansMono-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
-  unicode-range: U+0000-036F, U+0370-03FF, U+1D00-1DFF, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF;
 }
 @font-face {
   font-family: "Print Mono";
   src: url("./fonts/DejaVuSansMono-BoldOblique.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
-  unicode-range: U+0000-036F, U+0370-03FF, U+1D00-1DFF, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF;
 }
 @font-face {
   font-family: "Print Mono CJK";
   src: url("./fonts/NotoSansMonoCJKsc-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
+}
+@font-face {
+  font-family: "Print Mono CJK";
+  src: url("./fonts/NotoSansMonoCJKsc-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Print Mono CJK";
+  src: url("./fonts/NotoSansMonoCJKsc-Regular.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Print Mono CJK";
+  src: url("./fonts/NotoSansMonoCJKsc-Regular.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
 }
 
 @page { size: A4; margin: 14mm 15mm; }
@@ -102,8 +121,8 @@ html {
   font-kerning: normal;
   font-feature-settings: "kern" 1, "liga" 1;
 }
-html, body {
-  font-family: "Print Serif", "Noto Serif", "Noto Serif CJK SC", serif;
+html, body, p, li, td, th, blockquote {
+  font-family: "Print Latin", "Print CJK";
   font-size: 10.5pt;
   line-height: 1.48;
   color: #1c1c1c;
@@ -117,7 +136,7 @@ html, body {
   html, body { font-size: 10.5pt !important; color: #1c1c1c; background: #fff; }
 }
 h1, h2, h3, h4, h5 {
-  font-family: "Print Serif", serif;
+  font-family: "Print Latin", "Print CJK";
   font-weight: 700;
   line-height: 1.25;
   page-break-after: avoid;
@@ -129,7 +148,7 @@ h3 { font-size: 11.5pt; margin: 1.05em 0 0.35em; }
 h4 { font-size: 10.5pt; margin: 0.9em 0 0.3em; }
 p { margin: 0.45em 0; }
 pre, code, pre code, code.sourceCode, pre.sourceCode, pre.sourceCode code {
-  font-family: "Print Mono", "Print Mono CJK", "Print Serif", monospace !important;
+  font-family: "Print Mono", "Print Mono CJK", "Print CJK" !important;
   font-variant-ligatures: none;
   font-feature-settings: "kern" 0, "liga" 0;
 }
