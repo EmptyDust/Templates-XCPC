@@ -32,7 +32,7 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 ./export-pdf.sh 博弈论.md  # build/博弈论.pdf
 ```
 
-需要：`pandoc`、`chromium`、`curl`。首次会拉 MathJax 到 `export/vendor/`（不进 git）。
+需要：`pandoc`、`chromium`、`curl`。首次会拉 MathJax SVG 到 `export/vendor/`，并把 Noto Serif CJK 转成 TTF（Chromium 对 CFF 只会打出 Type 3 位图）。这些都不进 git。西文用 Noto Serif，代码用 DejaVu Sans Mono。
 
 ## 克隆与提交
 

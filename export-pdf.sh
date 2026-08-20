@@ -2,6 +2,8 @@
 # md + LaTeX 数学 → HTML → PDF。
 # pandoc 只把 Markdown 收成 HTML、把 $...$ 收成 MathJax 能吃的 \(...\)；
 # 公式语言不换。打印就是 Chromium 打开这份 HTML。
+# 西文/代码用系统 TTF（CID TrueType）；CJK 由 CFF TTC 转成 TTF 再嵌入，
+# 避免 Chromium 把 CFF 打成 Type 3 位图。
 # 用法：
 #   ./export-pdf.sh              # 先 build.sh，再导出 build/total.pdf
 #   ./export-pdf.sh 博弈论.md    # 导出单章到 build/博弈论.pdf
@@ -28,15 +30,58 @@ if [ ! -f "$src" ]; then
     exit 1
 fi
 
-vendor=export/vendor/tex-chtml-full.js
-if [ ! -s "$vendor" ]; then
-    mkdir -p export/vendor
-    url=https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js
-    echo "拉取 MathJax → $vendor"
-    if ! curl -fsSL --max-time 30 -o "$vendor" "$url"; then
-        curl -fsSL --max-time 40 --proxy socks5h://192.168.50.213:1233 -o "$vendor" "$url"
+fetch() {
+    dest=$1
+    url=$2
+    if [ -s "$dest" ]; then
+        return 0
     fi
-fi
+    mkdir -p "$(dirname "$dest")"
+    echo "拉取 → $dest"
+    if ! curl -fsSL --max-time 30 -o "$dest" "$url"; then
+        curl -fsSL --max-time 40 --proxy socks5h://192.168.50.213:1233 -o "$dest" "$url"
+    fi
+}
+
+# MathJax SVG：公式是矢量路径，不依赖网页字体。
+fetch export/vendor/tex-svg-full.js \
+    https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js
+
+# CJK TTC 是 CFF，Chromium 会打成 Type 3。转成 TTF 后按 CID TrueType 嵌入。
+fontdir=export/vendor/fonts
+mkdir -p "$fontdir"
+ensure_cjk() {
+    dest=$1
+    ttc=$2
+    family=$3
+    new_family=$4
+    if [ -s "$dest" ]; then
+        return 0
+    fi
+    need python3
+    echo "转换 $family → $dest"
+    python3 export/cff2ttf.py "$ttc" "$dest" "$family" "$new_family"
+}
+ensure_cjk "$fontdir/NotoSerifCJKsc-Regular.ttf" \
+    /usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc "Noto Serif CJK SC" PrintSerifCJK
+ensure_cjk "$fontdir/NotoSerifCJKsc-Bold.ttf" \
+    /usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc "Noto Serif CJK SC" PrintSerifCJK
+ensure_cjk "$fontdir/NotoSansMonoCJKsc-Regular.ttf" \
+    /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc "Noto Sans Mono CJK SC" PrintMonoCJK
+
+mkdir -p build/fonts
+cp "$fontdir/NotoSerifCJKsc-Regular.ttf" "$fontdir/NotoSerifCJKsc-Bold.ttf" \
+   "$fontdir/NotoSansMonoCJKsc-Regular.ttf" build/fonts/
+cp /usr/share/fonts/truetype/noto/NotoSerif-Regular.ttf \
+   /usr/share/fonts/truetype/noto/NotoSerif-Bold.ttf \
+   /usr/share/fonts/truetype/noto/NotoSerif-Italic.ttf \
+   /usr/share/fonts/truetype/noto/NotoSerif-BoldItalic.ttf \
+   build/fonts/
+cp /usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf \
+   /usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf \
+   /usr/share/fonts/truetype/dejavu/DejaVuSansMono-Oblique.ttf \
+   /usr/share/fonts/truetype/dejavu/DejaVuSansMono-BoldOblique.ttf \
+   build/fonts/
 
 mkdir -p build
 base=$(basename "$src" .md)
@@ -47,15 +92,17 @@ if [ "$base" = "total" ]; then
     title="风铃的模板库"
 fi
 
-cp "$vendor" build/tex-chtml-full.js
+cp export/vendor/tex-svg-full.js build/tex-svg-full.js
 
-# --mathjax：正文里的数学变成 \(...\)，不用默认模板里的 polyfill / 系统 MathJax 路径。
+# --mathjax：正文里的数学变成 \(...\)，公式由 SVG 输出。
+# tango：浅底高亮，覆盖 pandoc 默认的 Menlo/Consolas。
 pandoc "$src" \
     --from markdown \
     --to html5 \
     --standalone \
     --template=export/template.html \
     --mathjax \
+    --highlight-style=tango \
     --metadata title="$title" \
     --include-in-header=export/header.html \
     -o "$html"
@@ -69,6 +116,7 @@ fi
 
 chromium --headless=new --disable-gpu --no-sandbox --disable-dev-shm-usage \
     --no-pdf-header-footer \
+    --font-render-hinting=medium \
     --virtual-time-budget="$budget" \
     --timeout="$timeout" \
     --run-all-compositor-stages-before-draw \
