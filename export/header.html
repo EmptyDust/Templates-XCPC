@@ -52,18 +52,8 @@ window.MathJax = {
   font-weight: 700;
   font-style: normal;
 }
-@font-face {
-  font-family: "Print CJK";
-  src: url("./fonts/NotoSerifCJKsc-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-}
-@font-face {
-  font-family: "Print CJK";
-  src: url("./fonts/NotoSerifCJKsc-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: italic;
-}
+/* CJK 无斜体；不声明 italic face，Chromium 合成斜体时会把 CJK 画成 Type 3 位图。
+   留 normal 两个字重即可，斜体中文回落到 Regular。 */
 @font-face {
   font-family: "Print Mono";
   src: url("./fonts/DejaVuSansMono.ttf") format("truetype");
@@ -94,24 +84,8 @@ window.MathJax = {
   font-weight: 400;
   font-style: normal;
 }
-@font-face {
-  font-family: "Print Mono CJK";
-  src: url("./fonts/NotoSansMonoCJKsc-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-}
-@font-face {
-  font-family: "Print Mono CJK";
-  src: url("./fonts/NotoSansMonoCJKsc-Regular.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-}
-@font-face {
-  font-family: "Print Mono CJK";
-  src: url("./fonts/NotoSansMonoCJKsc-Regular.ttf") format("truetype");
-  font-weight: 700;
-  font-style: italic;
-}
+/* Mono CJK 只有 Regular 一个文件；bold/italic 不另声明 face，
+   全部回落到 normal 400，避免 Chromium 合成加粗/斜体生成 Type 3 位图。 */
 
 @page {
   size: A4;
