@@ -126,14 +126,22 @@ if [ "$base" = "total" ]; then
     timeout=200000
 fi
 
-chromium --headless=new --disable-gpu --no-sandbox --disable-dev-shm-usage \
-    --no-pdf-header-footer \
-    --font-render-hinting=medium \
-    --virtual-time-budget="$budget" \
-    --timeout="$timeout" \
-    --run-all-compositor-stages-before-draw \
-    --print-to-pdf="$(pwd)/$pdf" \
-    "file://$(pwd)/$html" >/dev/null
+print_pdf() {
+    chromium --headless=new --disable-gpu --no-sandbox --disable-dev-shm-usage \
+        --no-pdf-header-footer \
+        --font-render-hinting=medium \
+        --virtual-time-budget="$budget" \
+        --timeout="$timeout" \
+        --run-all-compositor-stages-before-draw \
+        --print-to-pdf="$(pwd)/$pdf" \
+        "file://$(pwd)/$html" >/dev/null
+}
+
+print_pdf
+# Chromium 不支持 target-counter：先出一版拿到锚点页码，写进目录再打一次。
+if python3 export/toc-pagenums.py "$html" "$(pwd)/$pdf"; then
+    print_pdf
+fi
 
 # Chromium/Skia 写出的流几乎不压缩：CJK 子集和 SVG 公式路径会到二十多 MB。
 # mutool 只做 deflate / 对象流 / 再子集，不重渲染。

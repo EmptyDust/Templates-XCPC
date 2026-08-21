@@ -184,7 +184,26 @@ h1.doc-title { margin: 0 0 0.9em; }
   margin: 0.15em 0 0 0.85em;
 }
 #TOC > ul > li > ul > li { margin: 0.08em 0; }
-#TOC a { color: inherit; text-decoration: none; }
+#TOC a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+}
+#TOC a .toc-text { flex: none; max-width: 82%; }
+#TOC a .toc-dots {
+  flex: 1 1 auto;
+  border-bottom: 0.4pt dotted #999;
+  margin: 0 0.4em;
+  min-width: 0.6em;
+  transform: translateY(-0.28em);
+}
+#TOC a .toc-page {
+  flex: none;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
 h2 { font-size: 13pt; margin: 1.25em 0 0.45em; }
 h3 { font-size: 11.5pt; margin: 1.05em 0 0.35em; }
 h4 { font-size: 10.5pt; margin: 0.9em 0 0.3em; }
