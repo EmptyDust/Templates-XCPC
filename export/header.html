@@ -113,7 +113,16 @@ window.MathJax = {
   font-style: italic;
 }
 
-@page { size: A4; margin: 14mm 15mm; }
+@page {
+  size: A4;
+  margin: 14mm 15mm 18mm;
+  @bottom-center {
+    content: counter(page);
+    font-family: "Noto Serif", serif;
+    font-size: 9pt;
+    color: #444;
+  }
+}
 html {
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
