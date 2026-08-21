@@ -943,7 +943,9 @@ signed main() {
             int area = triangleAreaEx(in[0], in[1], in[2]);
             for (auto it : in_) {
                 if (it == in[0] || it == in[1] || it == in[2]) continue;
-                int Min = min({triangleAreaEx(it, in[0], in[1]), triangleAreaEx(it, in[0], in[2]), triangleAreaEx(it, in[1], in[2])});
+                int Min = min({triangleAreaEx(it, in[0], in[1]),
+                               triangleAreaEx(it, in[0], in[2]),
+                               triangleAreaEx(it, in[1], in[2])});
                 ans = max(ans, area - Min);
             }
         }
@@ -1559,7 +1561,8 @@ struct ACAutomaton {
         int u = 1;
         for (auto c : t) {
             u = ch[u][c - 'a'];
-            for (int v = u; v && ~cnt[v]; v = fail[v]) { // cnt[v] 置 -1 标记"该模式串已统计"，即每个模式串只计一次
+            // cnt[v] 置 -1 标记"该模式串已统计"，即每个模式串只计一次
+            for (int v = u; v && ~cnt[v]; v = fail[v]) {
                 ans += cnt[v];
                 cnt[v] = -1;
             }
@@ -2958,10 +2961,14 @@ struct P {
     }
 
 
-    db dot(P p) { return x * p.x + y * p.y; }//点积, |a|*|b|*cos(an) 结果 大于0,两个向量夹角小于90度;等于0,两个向量夹角等于90度;小于0,两个向量夹角大于90度
+    //点积, |a|*|b|*cos(an) 结果 大于0,两个向量夹角小于90度;等于0,两个向量夹角等于90度;
+    //小于0,两个向量夹角大于90度
+    db dot(P p) { return x * p.x + y * p.y; }
+    //叉积, |a|*|b|*sin(an) an为有向角, an为a逆时针旋转多少度到b, a x b = - (b x a).
+    //结果 大于0,b在a的逆时针方向;等于0,共线;小于0,b在a的顺时针方向
     db det(P p) {
         return x * p.y - y * p.x;
-    }//叉积, |a|*|b|*sin(an) an为有向角, an为a逆时针旋转多少度到b, a x b = - (b x a). 结果 大于0,b在a的逆时针方向;等于0,共线;小于0,b在a的顺时针方向
+    }
 
     db disTo(P p) { return (*this - p).abs(); }//两点距离
     db disTo2(P p) { return (*this - p).abs2(); }//两点距离的平方
@@ -3523,7 +3530,8 @@ int main(){
             int head = 0, tail = -1;
             for (int k = j; k <= W; k += w){
                 if ( head <= tail && k - s * w > q[head] ) head ++ ;//保证队列长度 <= s
-                while ( head <= tail && g[q[tail]] - (q[tail] - j) / w * v <= g[k] - (k - j) / w * v ) tail -- ;//保证队列单调递减
+                //保证队列单调递减
+                while ( head <= tail && g[q[tail]] - (q[tail] - j) / w * v <= g[k] - (k - j) / w * v ) tail -- ;
                 q[ ++ tail] = k;
                 f[k] = g[q[head]] + (k - q[head]) / w * v;
             }
@@ -3871,7 +3879,8 @@ int main(){
             if(i >> j & 1)//该状态存在j点
                 for (int k = 0; k < n; k ++ )//枚举从j倒数第二个点k
                     if(i >> k & 1)//倒数点k存在
-                        f[i][j]=min(f[i][j],f[i-(1<<j)][k]+w[k][j]);//状态转移方程，在f[i][j]和状态去掉j的点f[i-(1<<j)][k]+w[k][j]取最小值
+                        //状态转移方程，在f[i][j]和状态去掉j的点f[i-(1<<j)][k]+w[k][j]取最小值
+                        f[i][j]=min(f[i][j],f[i-(1<<j)][k]+w[k][j]);
     cout<<f[(1<<n)-1][n-1]<<endl;//输出状态全满也就是所有点都经过且到最后一个点的最短距离
     return 0;
 }
@@ -5758,7 +5767,8 @@ signed main() {
         edge[y][x] += w;
     }
 
-    if (dsu.Poi(1) != n || m < n - 1) { // 图不联通：Poi(x) 应为 x 所在连通块大小，本库 DSU 无此接口，需自行补充，或题目保证连通时整段删除
+    // 图不联通：Poi(x) 应为 x 所在连通块大小，本库 DSU 无此接口，需自行补充，或题目保证连通时整段删除
+    if (dsu.Poi(1) != n || m < n - 1) {
         cout << 0 << endl;
         return 0;
     }
@@ -6819,7 +6829,8 @@ void solve(int ql, int qr, int l, int r) {
 
 void solve() {
     // input
-    solve(ql, qr, 0, n); // TODO: 原骨架此处为 solve(ql, qr, 0, n, zf)，实参/形参数目不符，重构边界后需自行核对
+    // TODO: 原骨架此处为 solve(ql, qr, 0, n, zf)，实参/形参数目不符，重构边界后需自行核对
+    solve(ql, qr, 0, n);
     // todo
 }
 ```
@@ -10060,7 +10071,8 @@ signed main() {
                 del(w[modify[x][1]]);
                 add(modify[x][0]);
             }
-            swap(w[modify[x][1]], modify[x][0]); //直接交换修改数组的值与原始值，减少额外的数组开销，且方便复原
+            //直接交换修改数组的值与原始值，减少额外的数组开销，且方便复原
+            swap(w[modify[x][1]], modify[x][0]);
         };
         while (l > ql) add(w[--l]);
         while (r < qr) add(w[++r]);
@@ -13384,7 +13396,8 @@ struct Tree {
             }
         }
         radius = max(d1[center], up[center]); //距离最远点的距离的最小值
-        diam = d1[center] + up[center] + 1; //直径：仅在 center 位于直径中点时正确；一般应取 max(d1[i] + d2[i])
+        //直径：仅在 center 位于直径中点时正确；一般应取 max(d1[i] + d2[i])
+        diam = d1[center] + up[center] + 1;
     }
 
     int rem; //删除重心后剩余连通块体积的最小值
@@ -15667,7 +15680,8 @@ signed main() {
     cin >> n >> m;
 
     int S = n + m + 1, T = n + m + 2;
-    Flow_<long long> flow(T); // 跨部边容量用 1E18，int 装不下（原写 Flow 即 Flow_<int>，会溢出 UB），必须用 long long
+    // 跨部边容量用 1E18，int 装不下（原写 Flow 即 Flow_<int>，会溢出 UB），必须用 long long
+    Flow_<long long> flow(T);
     for (int i = 1; i <= n; i++) {
         int w;
         cin >> w;
@@ -15787,7 +15801,8 @@ struct MinCostFlow {
     vector<int> pre;
 
     MinCostFlow(int n) : n(n), g(n) {}
-    void add(int u, int v, int c, int f) { // c 流量, f 费用；f < 0 时打开注释分支（先沿反向流满 c，"平移"成正费用，注意残余网络含义变化）
+    // c 流量, f 费用；f < 0 时打开注释分支（先沿反向流满 c，"平移"成正费用，注意残余网络含义变化）
+    void add(int u, int v, int c, int f) {
         // if (f < 0) {
         //     g[u].push_back(e.size());
         //     e.emplace_back(v, 0, f);
