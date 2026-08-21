@@ -4110,7 +4110,7 @@ for (int i = 0; (1<<i)-1 <= n; i++) {
 >
 > 双方均采用最优策略，询问谁会获胜。
 
-**对奇数台阶做传统** $\pmb{\tt{}Nim}$ **博弈，当** $\pmb{Sum_N=0}$** 时先手必败，反之先手必胜。**
+对奇数台阶做传统 Nim：当 $Sum_N=0$ 时先手必败，否则先手必胜。
 
 ### SG 游戏（有向图游戏）
 
@@ -4204,7 +4204,7 @@ $$
 
 定义 $step$ 为某一局游戏至多需要经过的回合数。
 
-**以下局面先手必胜：**$\pmb{step}$ **为奇数** 。
+以下局面先手必胜：$step$ 为奇数。
 
 ### 威佐夫博弈
 
@@ -5344,7 +5344,7 @@ signed main() {
 
 > 匈牙利算法用于无权二分图最大匹配；KM 算法用于带权二分图最大权匹配（见下文相应小节），两者常被混称，实为不同算法。
 
-$\mathcal O (NM)$ 。
+从每个左点找增广路：未匹配边前进、已匹配边后退，找到未匹配右点则整条路反转。失败则匹配数无法再加。`match[右点]=左点`。下标 $1..n_1$、$1..n_2$。复杂度 $\mathcal O(NM)$。
 
 ```cpp
 signed main() {
@@ -6584,6 +6584,8 @@ signed main() {
     }
 }
 ```
+
+<div style="page-break-after:always">/END/</div>
 ## 基础算法
 
 > 本章代码中 `i64` / `LL` 为 `long long`,`ld` 为 `long double`,如无声明按此理解。
@@ -9750,6 +9752,8 @@ struct KDT {
     }
 };
 ```
+
+<div style="page-break-after:always">/END/</div>
 ## 数据结构 B
 
 ### 基于状压的线性 RMQ 算法
@@ -10071,6 +10075,8 @@ signed main() {
     }
 }
 ```
+
+<div style="page-break-after:always">/END/</div>
 ## 数论
 
 > 本章前半为定义与性质速查表，后半为板子；代码中 `LL` / `i64` 为 `long long`，`mod` / `MOD` / `p` 为模数，按题目替换。
@@ -11941,6 +11947,8 @@ void jos(){
     cout << a + 1 << '\n';
 }
 ```
+
+<div style="page-break-after:always">/END/</div>
 ## 杂项
 
 赛场零碎：头文件、取模、高精度、对拍、读写。`i64` 为 `long long`。`N` / `mod` / `MAXN` 按题目改。
