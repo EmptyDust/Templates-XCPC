@@ -143,6 +143,39 @@ h1, h2, h3, h4, h5 {
   color: #111;
 }
 h1 { font-size: 17pt; letter-spacing: 0.02em; margin: 0 0 0.7em; }
+h1.doc-title { margin: 0 0 0.9em; }
+.toc-title {
+  font-size: 13pt;
+  font-weight: 700;
+  margin: 0 0 0.7em;
+  column-span: all;
+}
+#TOC {
+  page-break-after: always;
+  break-after: page;
+  font-size: 9.6pt;
+  line-height: 1.38;
+  columns: 2;
+  column-gap: 2.2em;
+  margin: 0 0 1.2em;
+}
+#TOC ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#TOC > ul > li {
+  font-weight: 700;
+  break-inside: avoid;
+  margin: 0 0 0.55em;
+}
+#TOC > ul > li > ul {
+  font-weight: 400;
+  font-size: 9.2pt;
+  margin: 0.15em 0 0 0.85em;
+}
+#TOC > ul > li > ul > li { margin: 0.08em 0; }
+#TOC a { color: inherit; text-decoration: none; }
 h2 { font-size: 13pt; margin: 1.25em 0 0.45em; }
 h3 { font-size: 11.5pt; margin: 1.05em 0 0.35em; }
 h4 { font-size: 10.5pt; margin: 0.9em 0 0.3em; }

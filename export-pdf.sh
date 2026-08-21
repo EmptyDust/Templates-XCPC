@@ -94,16 +94,28 @@ fi
 
 cp export/vendor/tex-svg-full.js build/tex-svg-full.js
 
+md=$src
+cleanup=$(mktemp)
+trap 'rm -f "$cleanup"' EXIT
+# Typora 的 [TOC] 只是占位，真正的目录由 --toc 生成。
+# 总册标题走 metadata，避免正文 h1 再进目录。
+sed -e '/^\[TOC\]$/d' -e '/^# 风铃的模板库$/d' "$src" > "$cleanup"
+md=$cleanup
+
 # --mathjax：正文里的数学变成 \(...\)，公式由 SVG 输出。
 # tango：浅底高亮，覆盖 pandoc 默认的 Menlo/Consolas。
-pandoc "$src" \
+# --toc：章（##）+ 节（###）。[TOC] 不是 pandoc 语法。
+pandoc "$md" \
     --from markdown \
     --to html5 \
     --standalone \
     --template=export/template.html \
     --mathjax \
     --highlight-style=tango \
+    --toc \
+    --toc-depth=3 \
     --metadata title="$title" \
+    --metadata toc-title=目录 \
     --include-in-header=export/header.html \
     -o "$html"
 

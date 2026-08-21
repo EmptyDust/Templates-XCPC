@@ -25,7 +25,7 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 
 ## 导出 PDF
 
-不经过 Typora / XeLaTeX / Typst。过程是：`pandoc` 把 Markdown 收成 HTML（`$...$` 仍是 LaTeX，只改成 MathJax 的 `\(...\)`），Chromium 打开这份 HTML 打成 PDF。
+不经过 Typora / XeLaTeX / Typst。过程是：`pandoc` 把 Markdown 收成 HTML（`$...$` 仍是 LaTeX，只改成 MathJax 的 `\(...\)`），Chromium 打开这份 HTML 打成 PDF。分章标题由 `--toc` 生成目录（`[TOC]` 只是 Typora 占位，导出时丢掉）。
 
 ```sh
 ./export-pdf.sh           # build/total.pdf
