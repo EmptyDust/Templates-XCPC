@@ -304,7 +304,8 @@ signed main() {
                 del(w[modify[x][1]]);
                 add(modify[x][0]);
             }
-            swap(w[modify[x][1]], modify[x][0]); //直接交换修改数组的值与原始值，减少额外的数组开销，且方便复原
+            //直接交换修改数组的值与原始值，减少额外的数组开销，且方便复原
+            swap(w[modify[x][1]], modify[x][0]);
         };
         while (l > ql) add(w[--l]);
         while (r < qr) add(w[++r]);
