@@ -134,4 +134,15 @@ chromium --headless=new --disable-gpu --no-sandbox --disable-dev-shm-usage \
     --run-all-compositor-stages-before-draw \
     --print-to-pdf="$(pwd)/$pdf" \
     "file://$(pwd)/$html" >/dev/null
+
+# Chromium/Skia 写出的流几乎不压缩：CJK 子集和 SVG 公式路径会到二十多 MB。
+# mutool 只做 deflate / 对象流 / 再子集，不重渲染。
+if command -v mutool >/dev/null 2>&1; then
+    tmppdf=$(mktemp --suffix=.pdf)
+    if mutool clean -gg -z -f -i -t -Z -S "$(pwd)/$pdf" "$tmppdf"; then
+        mv "$tmppdf" "$(pwd)/$pdf"
+    else
+        rm -f "$tmppdf"
+    fi
+fi
 echo "$pdf"
