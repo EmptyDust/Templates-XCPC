@@ -55,6 +55,10 @@ def patch_html(html: str, dests: dict[str, int]) -> tuple[str, int, int]:
     if not sep2:
         return html, 0, 0
 
+    # 页脚页码从正文起算 1（封面/目录把计数器归零）：
+    # 正文首页物理页码 = 所有锚点里的最小页码，目录条目要减去这个偏移。
+    offset = min(dests.values()) - 1 if dests else 0
+
     hit = miss = 0
 
     def repl(m: re.Match[str]) -> str:
@@ -72,7 +76,7 @@ def patch_html(html: str, dests: dict[str, int]) -> tuple[str, int, int]:
             f'<a href="#{href}"{attrs}>'
             f'<span class="toc-text">{text}</span>'
             f'<span class="toc-dots"></span>'
-            f'<span class="toc-page">{pn}</span>'
+            f'<span class="toc-page">{pn - offset}</span>'
             f"</a>"
         )
 

@@ -97,6 +97,16 @@ window.MathJax = {
     color: #444;
   }
 }
+/* 封面（:first）和目录（toc 命名页）不印页脚，且页码计数器归零；
+   正文第一页递增为 1，即页码从正文起算。 */
+@page :first {
+  counter-reset: page 0;
+  @bottom-center { content: none; }
+}
+@page toc {
+  counter-reset: page 0;
+  @bottom-center { content: none; }
+}
 html {
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
@@ -134,6 +144,7 @@ h1.doc-title { margin: 0 0 0.9em; }
   column-span: all;
 }
 #TOC {
+  page: toc;
   page-break-after: always;
   break-after: page;
   font-size: 9.6pt;
