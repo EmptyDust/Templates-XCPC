@@ -135,13 +135,13 @@ struct DSU {
     bool same(int x, int y) {
         return get(x) == get(y);
     }
-    bool F(int x) { // 判断连通块内是否存在自环
+    bool F(int x) {  // 判断连通块内是否存在自环
         return f[get(x)];
     }
-    int size(int x) { // 输出连通块中点的数量
+    int size(int x) {  // 输出连通块中点的数量
         return p[get(x)];
     }
-    int E(int x) { // 输出连通块中边的数量
+    int E(int x) {  // 输出连通块中边的数量
         return e[get(x)];
     }
 };
@@ -171,7 +171,7 @@ struct sparse_table
             }
         }
     }
-    T query(int l, int r) {//[l,r)
+    T query(int l, int r) {  //[l,r)
         if (l == r) return T(0);
         int len = r - l;
         int x = std::__lg(len);
@@ -196,7 +196,7 @@ struct Info
 template<typename T> struct BIT {
     int n;
     vector<T> w;
-    BIT(int n, auto &in) : n(n), w(n + 1) { // 预处理填值
+    BIT(int n, auto &in) : n(n), w(n + 1) {  // 预处理填值
         for (int i = 1; i <= n; i++) {
             add(i, in[i]);
         }
@@ -206,14 +206,14 @@ template<typename T> struct BIT {
             w[x] += v;
         }
     }
-    T ask(int x) { // 前缀和查询
+    T ask(int x) {  // 前缀和查询
         T ans = 0;
         for (; x; x -= x & -x) {
             ans += w[x];
         }
         return ans;
     }
-    T ask(int l, int r) { // 差分实现区间和查询
+    T ask(int l, int r) {  // 差分实现区间和查询
         return ask(r) - ask(l - 1);
     }
 };
@@ -226,7 +226,7 @@ template<typename T> struct BIT {
 ```cpp
 struct BIT {
     int n;
-    vector<int> w, chk; // chk 为传入的待处理数组
+    vector<int> w, chk;  // chk 为传入的待处理数组
     BIT(int n, auto &in) : n(n), w(n + 1), chk(in) {}
     /* 需要全部常规封装 */
     int get() {
@@ -280,15 +280,15 @@ struct BIT {
     int pre(int x) { return kth(get(x) - 1); } // 查找 x 的前驱
     int suf(int x) { return kth(get(x + 1)); } // 查找 x 的后继
 };
-const int N = 10000000; // 可以用于在线处理平衡二叉树的全部要求
+const int N = 10000000;  // 可以用于在线处理平衡二叉树的全部要求
 signed main() {
-    BIT bit(N + 1); // 在线处理不能够离散化，一定要开到比最大值更大
+    BIT bit(N + 1);  // 在线处理不能够离散化，一定要开到比最大值更大
     int n;
     cin >> n;
     for (int i = 1; i <= n; i++) {
         int op, x;
         cin >> op >> x;
-        if (op == 1) bit.add(x, 1); // 插入 x
+        if (op == 1) bit.add(x, 1);  // 插入 x
         else if (op == 2) bit.add(x, -1); // 删除任意一个 x
         else if (op == 3) cout << bit.get(x) << "\n"; // 查询 x 的排名
         else if (op == 4) cout << bit.kth(x) << "\n"; // 查询排名为 x 的数
@@ -312,13 +312,13 @@ template<typename T> struct BIT {
             update(i, in[i]);
         }
     } /* 可以增加并使用常规封装中的几个函数 */
-    void update(int x, int v) { // 单点赋值
+    void update(int x, int v) {  // 单点赋值
         base[x] = max(base[x], v);
         for (; x <= n; x += low(x)) {
             w[x] = max(w[x], v);
         }
     }
-    T getMax(int l, int r) { // 最值查询
+    T getMax(int l, int r) {  // 最值查询
         T ans = T();
         while (r >= l) {
             ans = max(base[r], ans);
@@ -350,12 +350,12 @@ struct BIT_2D {
             }
         }
     }
-    void add(int x, int y, int X, int Y, int k) { // 区块修改：二维差分
+    void add(int x, int y, int X, int Y, int k) {  // 区块修改：二维差分
         X++, Y++;
         add(x, y, k), add(X, y, -k);
         add(X, Y, k), add(x, Y, -k);
     }
-    int ask(int x, int y) { // 单点查询
+    int ask(int x, int y) {  // 单点查询
         int ans = 0;
         for (int i = x; i; i -= i & -i) {
             for (int j = y; j; j -= j & -j) {
@@ -364,7 +364,7 @@ struct BIT_2D {
         }
         return ans;
     }
-    int ask(int x, int y, int X, int Y) { // 区块查询：二维前缀和
+    int ask(int x, int y, int X, int Y) {  // 区块查询：二维前缀和
         x--, y--;
         return ask(X, Y) - ask(x, Y) - ask(X, y) + ask(x, y);
     }
@@ -384,25 +384,25 @@ struct BIT_2D {
         b3.resize(n + 1, vector<int>(m + 1));
         b4.resize(n + 1, vector<int>(m + 1));
     }
-    void add(auto &w, int x, int y, int k) { // 单点修改
+    void add(auto &w, int x, int y, int k) {  // 单点修改
         for (int i = x; i <= n; i += i & -i) {
             for (int j = y; j <= m; j += j & -j) {
                 w[i][j] += k;
             }
         }
     }
-    void add(int x, int y, int k) { // 多了一步计算
+    void add(int x, int y, int k) {  // 多了一步计算
         add(b1, x, y, k);
         add(b2, x, y, k * (x - 1));
         add(b3, x, y, k * (y - 1));
         add(b4, x, y, k * (x - 1) * (y - 1));
     }
-    void add(int x, int y, int X, int Y, int k) { // 区块修改：二维差分
+    void add(int x, int y, int X, int Y, int k) {  // 区块修改：二维差分
         X++, Y++;
         add(x, y, k), add(X, y, -k);
         add(X, Y, k), add(x, Y, -k);
     }
-    int ask(auto &w, int x, int y) { // 单点查询
+    int ask(auto &w, int x, int y) {  // 单点查询
         int ans = 0;
         for (int i = x; i; i -= i & -i) {
             for (int j = y; j; j -= j & -j) {
@@ -411,7 +411,7 @@ struct BIT_2D {
         }
         return ans;
     }
-    int ask(int x, int y) { // 多了一步计算
+    int ask(int x, int y) {  // 多了一步计算
         int ans = 0;
         ans += x * y * ask(b1, x, y);
         ans -= y * ask(b2, x, y);
@@ -419,7 +419,7 @@ struct BIT_2D {
         ans += ask(b4, x, y);
         return ans;
     }
-    int ask(int x, int y, int X, int Y) { // 区块查询：二维前缀和
+    int ask(int x, int y, int X, int Y) {  // 区块查询：二维前缀和
         x--, y--;
         return ask(X, Y) - ask(x, Y) - ask(X, y) + ask(x, y);
     }
@@ -885,9 +885,9 @@ signed main() {
         query[i] = {l, r, i};
     }
 
-    int Knum = n / min<int>(n, sqrt(q)); // 计算块长
+    int Knum = n / min<int>(n, sqrt(q));  // 计算块长
     vector<int> K(n + 1);
-    for (int i = 1; i <= n; i++) { // 固定块长
+    for (int i = 1; i <= n; i++) {  // 固定块长
         K[i] = (i - 1) / Knum + 1;
     }
     sort(query.begin() + 1, query.end(), [&](auto x, auto y) {
@@ -941,7 +941,7 @@ void solve(){
         }
     }
 
-    int block = max(1, (int)pow(n, 2.0 / 3));   // n ^ (2 / 3)，原写死 2610 须按 n 改
+    int block = max(1, (int)pow(n, 2.0 / 3));  // n ^ (2 / 3)，原写死 2610 须按 n 改
     std::vector<int> b(n + 1);
     for (int i = 1;i <= n;i++) b[i] = (i - 1) / block + 1;
     std::sort(q.begin() + 1, q.end(), [&](auto x, auto y) {
@@ -975,7 +975,7 @@ void solve(){
         while (t < qt) time(++t, ql, qr);
         while (t > qt) time(t--, ql, qr);
 
-        ans[id] = val; // 原来写成 cnt（未定义变量）
+        ans[id] = val;  // 原来写成 cnt（未定义变量）
     }
     for (int i = 1;i <= n;i++)    std::cout << ans[i] << '\n';
 }

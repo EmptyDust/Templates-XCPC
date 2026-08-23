@@ -178,7 +178,7 @@ map<int, int> dic;
 int n; cin >> n;
 for (int i = 1, op, x; i <= n; i++) {
     cin >> op >> x;
-    if (op == 1) { // 插入一个元素x，允许重复
+    if (op == 1) {  // 插入一个元素x，允许重复
         ver.insert({x, ++dic[x]});
     } else if (op == 2) { // 删除元素x，若有重复，则任意删除一个
         ver.erase({x, dic[x]--});
@@ -187,7 +187,7 @@ for (int i = 1, op, x; i <= n; i++) {
     } else if (op == 4) { // 查询排名为x的元素
         cout << ver.find_by_order(--x)->first << endl;
     } else if (op == 5) { // 查询元素x的前驱
-        int idx = ver.order_of_key({x, 1}) - 1; // 无论x存不存在，idx都代表x的位置，需要-1
+        int idx = ver.order_of_key({x, 1}) - 1;  // 无论x存不存在，idx都代表x的位置，需要-1
         cout << ver.find_by_order(idx)->first << endl;
     } else if (op == 6) { // 查询元素x的后继
         int idx = ver.order_of_key( {x, dic[x]}); // 如果x不存在，那么idx就是x的后继
@@ -226,11 +226,11 @@ for (int i = 1, op, x; i <= n; i++) {
 
 ```cpp
 cin >> l >> r >> x;
-l--; // 坐标修改为 0 开始
+l--;  // 坐标修改为 0 开始
 r--;
-l = (l + shift) % n; // 偏移
+l = (l + shift) % n;  // 偏移
 r = (r + shift) % n;
-if (l > r) { // 区间分离则分别操作
+if (l > r) {  // 区间分离则分别操作
     segt.modify(l, n - 1, x);
     segt.modify(0, r, x);
 } else {
@@ -259,8 +259,8 @@ signed main() {
         cin >> w[i];
     }
 
-    vector<array<int, 4>> query = {{}}; // {左区间, 右区间, 累计修改次数, 下标}
-    vector<array<int, 2>> modify = {{}}; // {修改的值, 修改的元素下标}
+    vector<array<int, 4>> query = {{}};  // {左区间, 右区间, 累计修改次数, 下标}
+    vector<array<int, 2>> modify = {{}};  // {修改的值, 修改的元素下标}
     for (int i = 1; i <= q; i++) {
         char op;
         cin >> op;
@@ -275,9 +275,9 @@ signed main() {
         }
     }
 
-    int Knum = max(1, (int)pow(n, 2.0 / 3)); // 带修莫队块长取 n^(2/3) 最优（原来写死 2154，须按 n 改）
+    int Knum = max(1, (int)pow(n, 2.0 / 3));  // 带修莫队块长取 n^(2/3) 最优（原来写死 2154，须按 n 改）
     vector<int> K(n + 1);
-    for (int i = 1; i <= n; i++) { // 固定块长
+    for (int i = 1; i <= n; i++) {  // 固定块长
         K[i] = (i - 1) / Knum + 1;
     }
     sort(query.begin() + 1, query.end(), [&](auto x, auto y) {
@@ -287,7 +287,7 @@ signed main() {
     });
 
     int l = 1, r = 0, val = 0;
-    int t = 0; // 累计修改次数
+    int t = 0;  // 累计修改次数
     vector<int> ans(query.size()), cnt(N);
     for (int i = 1; i < query.size(); i++) {
         auto [ql, qr, qt, id] = query[i];
@@ -300,7 +300,7 @@ signed main() {
             if (cnt[x] == 0) -- val;
         };
         auto time = [&](int x, int l, int r) -> void {
-            if (l <= modify[x][1] && modify[x][1] <= r) { //当修改的位置在询问期间内部时才会改变num的值
+            if (l <= modify[x][1] && modify[x][1] <= r) {  //当修改的位置在询问期间内部时才会改变num的值
                 del(w[modify[x][1]]);
                 add(modify[x][0]);
             }

@@ -11,7 +11,7 @@
 均匀打乱。引擎用 `mt19937_64`，不要 `srand` + 已弃用的 `random_shuffle`。对拍造数据、随机化算法用。
 
 ```cpp
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); // 用系统时间做种子，防 hack
+mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());  // 用系统时间做种子，防 hack
 shuffle(ver.begin(), ver.end(), rng);
 ```
 
@@ -20,11 +20,11 @@ shuffle(ver.begin(), ver.end(), rng);
 GCC/Clang 内建，比手写循环快。`x=0` 时 `clz/ctz` 未定义。`long long` 后缀 `ll`。
 
 ```cpp
-__builtin_popcount(x) // 返回x二进制下含1的数量，例如x=15=(1111)时答案为4
+__builtin_popcount(x)  // 返回x二进制下含1的数量，例如x=15=(1111)时答案为4
 __builtin_ffs(x) // 返回x右数第一个1的位置(1-idx)，1(1) 返回 1，8(1000) 返回 4，26(11010) 返回 2
 __builtin_ctz(x) // 返回x二进制下后导0的个数，1(1) 返回 0，8(1000) 返回 3
 __builtin_clz(x) // 返回x二进制下前导0的个数，8(1000) 返回 28；x为0时未定义
-bit_width(x) // 返回x二进制下的位数，9(1001) 返回 4，26(11010) 返回 5
+bit_width(x)  // 返回x二进制下的位数，9(1001) 返回 4，26(11010) 返回 5
 ```
 
 注：以上函数为 GCC/Clang 内建，`long long` 版本只需在函数名后加 `ll`（如 `__builtin_popcountll(x)`），`unsigned long long` 加 `ull`；`bit_width` 为 C++20 标准库函数。
@@ -93,7 +93,7 @@ cin >> n;
 vector<int> a(n);
 // iota(a.begin(), a.end(), 1);
 for (auto &it : a) cin >> it;
-sort(a.begin(), a.end()); // 必须先排序，才能按字典序生成完整全排列
+sort(a.begin(), a.end());  // 必须先排序，才能按字典序生成完整全排列
 
 do {
     for (auto it : a) cout << it << " ";
@@ -155,8 +155,8 @@ cout << accumulate(a + start, a + end, x);
 //构建一个UUU容器的正向迭代器，名字叫it
 UUU::iterator it;
 
-vector<int>::iterator it; //创建一个正向迭代器，++ 操作时指向下一个
-vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时指向上一个
+vector<int>::iterator it;  //创建一个正向迭代器，++ 操作时指向下一个
+vector<int>::reverse_iterator it;  //创建一个反向迭代器，++ 操作时指向上一个
 ```
 
 ### 特殊函数 `next` 和 `prev` 详解：
@@ -164,15 +164,15 @@ vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时�
 不修改原迭代器，返回前进/后退 $n$ 步的副本。`list` 等没有 `+`，用这两个。
 
 ```cpp
-auto it = s.find(x); // 建立一个迭代器
+auto it = s.find(x);  // 建立一个迭代器
 prev(it); // 返回迭代器it的前一个迭代器
 next(it); // 返回迭代器it的后一个迭代器
 prev(it, 2); // 可选参数k：返回it前k个的迭代器
 next(it, 2); // 返回it后k个的迭代器
 
 /* 以下是一些应用 */
-auto pre = prev(s.lower_bound(x)); // 返回第一个<x的迭代器
-int ed = *prev(S.end(), 1); // 返回最后一个元素
+auto pre = prev(s.lower_bound(x));  // 返回第一个<x的迭代器
+int ed = *prev(S.end(), 1);  // 返回最后一个元素
 ```
 
 ### 其他函数
@@ -191,8 +191,8 @@ int ed = *prev(S.end(), 1); // 返回最后一个元素
 
 ```cpp
 //没有clear函数，可用 swap(p, priority_queue<int, vector<int>, greater<int>>()) 清空
-priority_queue<int, vector<int>, greater<int> > p; //重定义为小根堆（堆顶最小）
-push(x); //向栈顶插入x
+priority_queue<int, vector<int>, greater<int> > p;  //重定义为小根堆（堆顶最小）
+push(x);  //向栈顶插入x
 top(); //获取栈顶元素
 pop(); //弹出栈顶元素
 ```
@@ -202,7 +202,7 @@ pop(); //弹出栈顶元素
 struct Node {
     int x; string s;
     friend bool operator < (const Node &a, const Node &b) {
-        if (a.x != b.x) return a.x > b.x; // 大根堆语义下，这样写得到的是 x 小者优先的小根堆
+        if (a.x != b.x) return a.x > b.x;  // 大根堆语义下，这样写得到的是 x 小者优先的小根堆
         return a.s > b.s;
     }
 };
@@ -228,16 +228,16 @@ bitset<32> B2 = x;
 
 // 构造时，尖括号里的数字不能是变量
 int x; cin >> x;
-bitset<x> ans; // 错误构造
+bitset<x> ans;  // 错误构造
 
-[] //随机访问
+[]  //随机访问
 set(x) //将第x位置1，x省略时默认全部位置1
-reset(x) //将第x位置0，x省略时默认全部位置0
+reset(x)  //将第x位置0，x省略时默认全部位置0
 flip(x) //将第x位取反，x省略时默认全部位取反
 to_ullong() //整体转换为ULL类型
 to_string() //转换为"01..."字符串
 count() //返回1的个数
-any() //判断是否至少有一个1
+any()  //判断是否至少有一个1
 none() //判断是否全为0
 
 _Find_first() // 找到从低位到高位第一个1的位置（libstdc++ 内部函数）
@@ -248,7 +248,7 @@ cout << (B1 ^ B2) << "\n";  //按位异或
 cout << (B1 | B2) << "\n";  //按位或
 cout << (B1 & B2) << "\n";  //按位与
 cout << (B1 == B2) << "\n"; //比较是否相等
-cout << B1 << " " << B2 << "\n"; //你可以直接使用cout输出
+cout << B1 << " " << B2 << "\n";  //你可以直接使用cout输出
 ```
 
 #### 哈希系列 unordered
@@ -277,7 +277,7 @@ struct hash_tuple {
     template<typename... Ts>
     size_t operator()(const tuple<Ts...> &t) const {
         return apply([](const Ts &...xs) {
-            return (hash<Ts>()(xs) ^ ...); // 折叠表达式，C++17
+            return (hash<Ts>()(xs) ^ ...);  // 折叠表达式，C++17
         }, t);
     }
 };
@@ -293,7 +293,7 @@ struct fff {
     string x, y;
     int z;
     friend bool operator == (const fff &a, const fff &b) {
-        return a.x == b.x && a.y == b.y && a.z == b.z; // 必须全部相等才相等，注意是 && 不是 ||
+        return a.x == b.x && a.y == b.y && a.z == b.z;  // 必须全部相等才相等，注意是 && 不是 ||
     }
 };
 struct hash_fff {
@@ -359,7 +359,7 @@ struct Point3 {
     Point3 &operator-=(Point3 p) & {
         return x -= p.x, y -= p.y, z -= p.z, *this;
     }
-    Point3 &operator*=(Point3 p) & { // 按分量乘，不是叉积；linePlaneCross 靠这个凑点积
+    Point3 &operator*=(Point3 p) & {  // 按分量乘，不是叉积；linePlaneCross 靠这个凑点积
         return x *= p.x, y *= p.y, z *= p.z, *this;
     }
     Point3 &operator*=(ld t) & {
@@ -385,7 +385,7 @@ struct Line3 {
     Point3 a, b;
 };
 struct Plane {
-    Point3 u, v, w; // 三点定面；共线时 getVec 为零向量
+    Point3 u, v, w;  // 三点定面；共线时 getVec 为零向量
 };
 using P3 = Point3;
 using L3 = Line3;
@@ -396,7 +396,7 @@ using L3 = Line3;
 长度、单位化、混合积。混积 $[a,b,c]=a\cdot(b\times c)$ 是定向体积。
 
 ```cpp
-ld len(P3 p) { // 原点到当前点的距离计算
+ld len(P3 p) {  // 原点到当前点的距离计算
     return sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
 }
 P3 crossEx(P3 a, P3 b) { // 叉乘
@@ -433,7 +433,7 @@ P3 standardize(P3 vec) { // 将三维向量转换为单位向量
 叉积模长为 $0$ 则共线。其中第二个函数是专门用来判断给定的三个点能否构成平面的，因为不共线的三点才能构成平面。
 
 ```cpp
-bool onLine(P3 p1, P3 p2, P3 p3) { // 三点是否共线
+bool onLine(P3 p1, P3 p2, P3 p3) {  // 三点是否共线
     return sign(cross(p1 - p2, p3 - p2)) == 0;
 }
 bool onLine(Plane s) {
@@ -446,7 +446,7 @@ bool onLine(Plane s) {
 混积 $[AB,AC,AD]=0$。
 
 ```cpp
-bool onPlane(P3 p1, P3 p2, P3 p3, P3 p4) { // 四点是否共面
+bool onPlane(P3 p1, P3 p2, P3 p3, P3 p4) {  // 四点是否共面
     ld val = dot(getVec({p1, p2, p3}), p4 - p1);
     return sign(val) == 0;
 }
@@ -462,7 +462,7 @@ bool pointOnSegment(P3 p, L3 l) {
            p.x <= max(l.a.x, l.b.x) && min(l.a.y, l.b.y) <= p.y && p.y <= max(l.a.y, l.b.y) &&
            min(l.a.z, l.b.z) <= p.z && p.z <= max(l.a.z, l.b.z);
 }
-bool pointOnSegmentEx(P3 p, L3 l) { // pointOnSegment去除端点版
+bool pointOnSegmentEx(P3 p, L3 l) {  // pointOnSegment去除端点版
     return sign(cross(p - l.a, p - l.b)) == 0 && min(l.a.x, l.b.x) < p.x &&
            p.x < max(l.a.x, l.b.x) && min(l.a.y, l.b.y) < p.y && p.y < max(l.a.y, l.b.y) &&
            min(l.a.z, l.b.z) < p.z && p.z < max(l.a.z, l.b.z);
@@ -475,7 +475,7 @@ bool pointOnSegmentEx(P3 p, L3 l) { // pointOnSegment去除端点版
 
 ```cpp
 bool pointOnSegmentSide(P3 p1, P3 p2, L3 l) {
-    if (!onPlane(p1, p2, l.a, l.b)) { // 特判不共面
+    if (!onPlane(p1, p2, l.a, l.b)) {  // 特判不共面
         return 0;
     }
     ld val = dot(crossEx(l.a - l.b, p1 - l.b), crossEx(l.a - l.b, p2 - l.b));
@@ -559,17 +559,17 @@ bool linePlaneParallel(L3 l, Plane s) {
 先求两直线交点（须共面），再判交点落在两段内。
 
 ```cpp
-bool segmentIntersection(L3 l1, L3 l2) { // 重叠、相交于端点均视为相交
-    if (!onPlane(l1.a, l1.b, l2.a, l2.b)) { // 特判不共面
+bool segmentIntersection(L3 l1, L3 l2) {  // 重叠、相交于端点均视为相交
+    if (!onPlane(l1.a, l1.b, l2.a, l2.b)) {  // 特判不共面
         return 0;
     }
     if (!onLine(l1.a, l1.b, l2.a) || !onLine(l1.a, l1.b, l2.b)) {
         return !pointOnSegmentSide(l1.a, l1.b, l2) && !pointOnSegmentSide(l2.a, l2.b, l1);
     }
     return pointOnSegment(l1.a, l2) || pointOnSegment(l1.b, l2) || pointOnSegment(l2.a, l1) ||
-           pointOnSegment(l2.b, l1); // 原来写成 pointOnSegment(l2.b, l2)，点在自身线段上恒真
+           pointOnSegment(l2.b, l1);  // 原来写成 pointOnSegment(l2.b, l2)，点在自身线段上恒真
 }
-bool segmentIntersection1(L3 l1, L3 l2) { // 重叠、相交于端点不视为相交
+bool segmentIntersection1(L3 l1, L3 l2) {  // 重叠、相交于端点不视为相交
     return onPlane(l1.a, l1.b, l2.a, l2.b) && !pointOnSegmentSide(l1.a, l1.b, l2) &&
            !pointOnSegmentSide(l2.a, l2.b, l1);
 }
@@ -611,7 +611,7 @@ pair<bool, P3> linePlaneCross(L3 l, Plane s) {
         return {0, {}};
     }
     P3 vec = getVec(s);
-    P3 U = vec * (s.u - l.a), V = vec * (l.b - l.a); // 按分量乘，下一行求和即点积
+    P3 U = vec * (s.u - l.a), V = vec * (l.b - l.a);  // 按分量乘，下一行求和即点积
     ld val = (U.x + U.y + U.z) / (V.x + V.y + V.z);
     return {1, l.a + (l.b - l.a) * val};
 }
@@ -640,7 +640,7 @@ pair<bool, L3> planeIntersection(Plane s1, Plane s2) {
 
 ```cpp
 pair<ld, P3> pointToLine(P3 p, L3 l) {
-    ld val = cross(p - l.a, l.a - l.b) / dis(l.a, l.b); // 面积除以底边长
+    ld val = cross(p - l.a, l.a - l.b) / dis(l.a, l.b);  // 面积除以底边长
     ld val1 = dot(p - l.a, l.a - l.b) / dis(l.a, l.b);
     return {val, l.a + val1 * standardize(l.a - l.b)};
 }
@@ -653,9 +653,9 @@ pair<ld, P3> pointToLine(P3 p, L3 l) {
 ```cpp
 pair<ld, P3> pointToPlane(P3 p, Plane s) {
     P3 vec = getVec(s);
-    ld signed_d = dot(vec, p - s.u) / len(vec); // 有向距离
+    ld signed_d = dot(vec, p - s.u) / len(vec);  // 有向距离
     ld val = abs(signed_d);
-    return {val, p - signed_d * standardize(vec)}; // 原来用 abs 后再减，法向另一侧垂足会反
+    return {val, p - signed_d * standardize(vec)};  // 原来用 abs 后再减，法向另一侧垂足会反
 }
 ```
 
@@ -665,7 +665,7 @@ pair<ld, P3> pointToPlane(P3 p, Plane s) {
 
 ```cpp
 tuple<ld, P3, P3> lineToLine(L3 l1, L3 l2) {
-    P3 vec = crossEx(l1.a - l1.b, l2.a - l2.b); // 计算同时垂直于两直线的向量
+    P3 vec = crossEx(l1.a - l1.b, l2.a - l2.b);  // 计算同时垂直于两直线的向量
     ld val = abs(dot(l1.a - l2.a, vec)) / len(vec);
     P3 U = l1.b - l1.a, V = l2.b - l2.a;
     vec = crossEx(U, V);
@@ -721,7 +721,7 @@ ld linePlaneSin(L3 l, Plane s) {
 棱锥通用体积公式 $V=\dfrac{1}{3}Sh$ ，当其恰好是棱长为 $l$ 的正 $n$ 棱锥时，有公式 $\displaystyle V=\frac{l^3\cdot n}{12\tan \frac{\pi}{n}}\cdot\sqrt{1-\frac{1}{4\cdot \sin^2\frac{\pi}{n}}}$。
 
 ```cpp
-ld V(ld l, int n) { // 正n棱锥体积公式
+ld V(ld l, int n) {  // 正n棱锥体积公式
     return l * l * l * n / (12 * tan(PI / n)) * sqrt(1 - 1 / (4 * sin(PI / n) * sin(PI / n)));
 }
 ```
@@ -758,7 +758,7 @@ pair<bool, P3> segmentOnTriangle(P3 l, P3 r, P3 p1, P3 p2, P3 p3) {
         return {0, {}};
     }
     ld t = dot(x, p1 - l) / dot(x, r - l);
-    if (t < 0 || t - 1 > 0) { // 不在线段上
+    if (t < 0 || t - 1 > 0) {  // 不在线段上
         return {0, {}};
     }
     bool type = pointOnTriangle(l + (r - l) * t, p1, p2, p3);
@@ -830,7 +830,7 @@ signed main() {
     int a, b, d;
     cin >> a >> b >> d;
 
-    ld l = hypot(a, b); // 库函数，求直角三角形的斜边
+    ld l = hypot(a, b);  // 库函数，求直角三角形的斜边
     ld alpha = atan2(b, a) + toArc(d);
 
     cout << l * cos(alpha) << " " << l * sin(alpha) << endl;
@@ -856,13 +856,13 @@ signed main() {
         cin >> it;
     }
 
-    int dis = disEx(in[0], in[1]); // 设定阈值
+    int dis = disEx(in[0], in[1]);  // 设定阈值
     sort(in.begin(), in.end());
 
     set<V> S;
     for (int i = 0, h = 0; i < n; i++) {
         V now = {in[i].y, in[i].x};
-        while (dis && dis <= sqr(in[i].x - in[h].x)) { // 删除超过阈值的点
+        while (dis && dis <= sqr(in[i].x - in[h].x)) {  // 删除超过阈值的点
             S.erase({in[h].y, in[h].x});
             h++;
         }
@@ -908,7 +908,7 @@ signed main() {
                     r = max(r, triangleS(in[k], in[j], in[i]));
                 }
             }
-            if (l * r != 0) { // 确保构成的是四边形
+            if (l * r != 0) {  // 确保构成的是四边形
                 ans = max(ans, l + r);
             }
         }
@@ -1124,8 +1124,8 @@ template<typename T> T rotatingCalipers(vector<Point<T>> &p) {
 
 ```cpp
 std::vector<int> get_next(std::string& t) {
-    std::vector<int> next(t.size() + 1); // 多开一位：循环里 i 先自增到 size 再写 next[i]，否则越界
-    next[0] = -1; // 哨兵；next[i] 为前缀 t[0..i-1] 的最长 border 长度
+    std::vector<int> next(t.size() + 1);  // 多开一位：循环里 i 先自增到 size 再写 next[i]，否则越界
+    next[0] = -1;  // 哨兵；next[i] 为前缀 t[0..i-1] 的最长 border 长度
     for (int i = 0, j = -1; i < (int)t.size();) {
         if (j == -1 || t[i] == t[j]) {
             ++i, ++j;
@@ -1275,7 +1275,7 @@ struct String {
             hash2.push_back(hash2.back() * base2 + it);
         }
     }
-    pair<U, V> get() { // 输出整串的哈希值
+    pair<U, V> get() {  // 输出整串的哈希值
         return {hash1.back(), hash2.back()};
     }
     pair<U, V> substring(int l, int r) { // 输出子串的哈希值
@@ -1298,7 +1298,7 @@ struct String {
 `sample please ease` 去重后得到 `samplease`。
 
 ```cpp
-string compress(vector<string> in) { // 前后缀压缩
+string compress(vector<string> in) {  // 前后缀压缩
     vector<U> hash1{1};
     vector<V> hash2{1};
     string ans = "#";
@@ -1541,7 +1541,7 @@ struct ACAutomaton {
         cnt[u]++;
     }
     void build() {
-        fill(ch[0], ch[0] + 26, 1); // 0 号虚拟节点所有边指向根，便于 fail 转移
+        fill(ch[0], ch[0] + 26, 1);  // 0 号虚拟节点所有边指向根，便于 fail 转移
         queue<int> q;
         q.push(1);
         while (!q.empty()) {
@@ -2013,7 +2013,7 @@ cout << format("{:.2f}", 114514.1919810) << endl;
 上半用 `std::complex`，`Real = int` 只适于整点（叉积会溢出就改 `long long`）。下半按 `.x/.y` 写，与 `complex` 不是同一种类型，**两套 `cross/dot` 不能同时编译**（重定义），按题目留一套。
 
 ```cpp
-using Real = int; // 整点；需要更大范围改 long long
+using Real = int;  // 整点；需要更大范围改 long long
 using Point = complex<Real>;
 
 Real cross(const Point &a, const Point &b) {
@@ -2052,7 +2052,7 @@ int read(int k = Knum) {
         num = s.size() - it - 1; // 计算小数位数
         s.erase(s.begin() + it); // 删除小数点
     }
-    for (int i = 1; i <= k - num; i++) { // 补全小数位数
+    for (int i = 1; i <= k - num; i++) {  // 补全小数位数
         s += '0';
     }
     return stoi(s);
@@ -2066,11 +2066,11 @@ int read(int k = Knum) {
 ```cpp
 using ld = long double;
 const ld PI = acos(-1);
-const ld EPS = 1e-7; // 按坐标范围改；SMU_inch 板是 1e-9
+const ld EPS = 1e-7;  // 按坐标范围改；SMU_inch 板是 1e-9
 const ld INF = numeric_limits<ld>::max();
 #define cc(x) cout << fixed << setprecision(x);
 
-ld fgcd(ld x, ld y) { // 实数域gcd
+ld fgcd(ld x, ld y) {  // 实数域gcd
     return abs(y) < EPS ? abs(x) : fgcd(y, fmod(x, y));
 }
 template<typename T, typename S>
@@ -2181,7 +2181,7 @@ T dot(Point<T> p1, Point<T> p2, Point<T> p0) { return dot(p1 - p0, p2 - p0); }
 
 ```cpp
 template<typename T>
-T disEx(Point<T> a, Point<T> b) { // 平方距离，先不要开方
+T disEx(Point<T> a, Point<T> b) {  // 平方距离，先不要开方
     return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 }
 template<typename T>
@@ -2195,7 +2195,7 @@ ld dis(Point<T> a, Point<T> b) {
 $|x_1-x_2|+|y_1-y_2|$。转坐标 $(x+y,x-y)$ 后变切比雪夫。
 
 ```cpp
-template<typename T> T dis1(Point<T> p1, Point<T> p2) { // 曼哈顿距离公式
+template<typename T> T dis1(Point<T> p1, Point<T> p2) {  // 曼哈顿距离公式
     return abs(p1.x - p2.x) + abs(p1.y - p2.y);
 }
 ```
@@ -2205,7 +2205,7 @@ template<typename T> T dis1(Point<T> p1, Point<T> p2) { // 曼哈顿距离公式
 除以模长。零向量不要除。
 
 ```cpp
-Point<ld> standardize(Point<ld> vec) { // 转换为单位向量
+Point<ld> standardize(Point<ld> vec) {  // 转换为单位向量
     return vec / sqrt(vec.x * vec.x + vec.y * vec.y);
 }
 ```
@@ -2215,7 +2215,7 @@ Point<ld> standardize(Point<ld> vec) { // 转换为单位向量
 将当前向量移动至原点后顺时针旋转 $90^{\circ}$ ，即获取垂直于当前向量的、起点为原点的向量。在计算垂线时非常有用。例如，要想获取点 $a$ 绕点 $o$ 顺时针旋转 $90^{\circ}$ 后的点，可以这样书写代码：`auto ans = o + rotate(o, a);` ；如果是逆时针旋转，那么只需更改符号即可：`auto ans = o - rotate(o, a);` 。参数顺序是 `(原点, 被旋转点)`。
 
 ```cpp
-template<typename T> Point<T> rotate(Point<T> p1, Point<T> p2) { // 旋转
+template<typename T> Point<T> rotate(Point<T> p1, Point<T> p2) {  // 旋转
     Point<T> vec = p1 - p2;
     return {-vec.y, vec.x};
 }
@@ -2249,8 +2249,8 @@ $\cos C=\dfrac{a^2+b^2-c^2}{2ab},\cos B=\dfrac{a^2+c^2-b^2}{2ac},\cos A=\dfrac{b
 注意，计算格式是：由 $b,c,a$ 三边求 $\angle A$；由 $a, c, b$ 三边求 $\angle B$；由 $a, b, c$ 三边求 $\angle C$。
 
 ```cpp
-ld angle(ld a, ld b, ld c) { // 余弦定理
-    ld val = acos((a * a + b * b - c * c) / (2.0 * a * b)); // 计算弧度
+ld angle(ld a, ld b, ld c) {  // 余弦定理
+    ld val = acos((a * a + b * b - c * c) / (2.0 * a * b));  // 计算弧度
     return val;
 }
 ```
@@ -2381,7 +2381,7 @@ pair<Pd, ld> pointToLine(Pd p, Ld l) {
 ```cpp
 template<typename T> ld disPointToLine(Pt p, Lt l) {
     ld ans = cross(p, l.a, l.b);
-    return abs(ans) / dis(l.a, l.b); // 面积除以底边长
+    return abs(ans) / dis(l.a, l.b);  // 面积除以底边长
 }
 ```
 
@@ -2390,11 +2390,11 @@ template<typename T> ld disPointToLine(Pt p, Lt l) {
 共线且在两端点包围盒内（点积 $\le 0$ 或坐标夹在中间）。
 
 ```cpp
-template<typename T> bool pointOnSegment(Pt p, Lt l) { // 端点也算
+template<typename T> bool pointOnSegment(Pt p, Lt l) {  // 端点也算
     return sign(cross(p, l.a, l.b)) == 0 && min(l.a.x, l.b.x) <= p.x && p.x <= max(l.a.x, l.b.x) &&
            min(l.a.y, l.b.y) <= p.y && p.y <= max(l.a.y, l.b.y);
 }
-template<typename T> bool pointOnSegmentEx(Pt p, Lt l) { // 端点不算；原来与上一函数同名，无法重载
+template<typename T> bool pointOnSegmentEx(Pt p, Lt l) {  // 端点不算；原来与上一函数同名，无法重载
     return pointOnSegment(p, l) && min(l.a.x, l.b.x) < p.x && p.x < max(l.a.x, l.b.x) &&
            min(l.a.y, l.b.y) < p.y && p.y < max(l.a.y, l.b.y);
 }
@@ -2406,7 +2406,7 @@ template<typename T> bool pointOnSegmentEx(Pt p, Lt l) { // 端点不算；原�
 
 ```cpp
 pair<Pd, ld> pointToSegment(Pd p, Ld l) {
-    if (sign(dot(p, l.b, l.a)) == -1) { // 特判到两端点的距离
+    if (sign(dot(p, l.b, l.a)) == -1) {  // 特判到两端点的距离
         return {l.a, dis(p, l.a)};
     } else if (sign(dot(p, l.a, l.b)) == -1) {
         return {l.b, dis(p, l.b)};
@@ -2420,7 +2420,7 @@ pair<Pd, ld> pointToSegment(Pd p, Ld l) {
 $A+\mathrm{proj}_{AB}(AP)$。直线两端无线。
 
 ```cpp
-Pd project(Pd p, Ld l) { // 投影
+Pd project(Pd p, Ld l) {  // 投影
     Pd vec = l.b - l.a;
     ld r = dot(vec, p - l.a) / (vec.x * vec.x + vec.y * vec.y);
     return l.a + vec * r;
@@ -2433,7 +2433,7 @@ Pd project(Pd p, Ld l) { // 投影
 
 ```cpp
 template<typename T> Lt midSegment(Lt l) {
-    Pt mid = (l.a + l.b) / 2; // 线段中点
+    Pt mid = (l.a + l.b) / 2;  // 线段中点
     return {mid, mid + rotate(l.a, l.b)};
 }
 ```
@@ -2497,7 +2497,7 @@ template<typename T> bool segmentIntersection(Lt l1, Lt l2) {
     auto C = max(s2.x, e2.x), CC = min(s2.x, e2.x);
     auto D = max(s2.y, e2.y), DD = min(s2.y, e2.y);
     return A >= CC && B >= DD && C >= AA && D >= BB &&
-           sign(cross(s1, s2, e1) * cross(s1, e1, e2)) != 1 && // 原来 ==1，端点/重叠会判不相交
+           sign(cross(s1, s2, e1) * cross(s1, e1, e2)) != 1 &&  // 原来 ==1，端点/重叠会判不相交
            sign(cross(s2, s1, e2) * cross(s2, e2, e1)) != 1;
 }
 ```
@@ -2514,7 +2514,7 @@ template<typename T> bool segmentIntersection(Lt l1, Lt l2) {
 pair<Pd, ld> pointToCircle(Pd p, Pd o, ld r) {
     Pd U = o, V = o;
     ld d = dis(p, o);
-    if (sign(d) == 0) { // p 为圆心时返回圆心本身
+    if (sign(d) == 0) {  // p 为圆心时返回圆心本身
         return {o, 0};
     }
     ld val1 = r * abs(o.x - p.x) / d;
@@ -2610,7 +2610,7 @@ tuple<int, Pd, Pd> circleIntersection(Pd p1, ld r1, Pd p2, ld r2) {
         sinb = sqrt(1 - cosb * cosb);
         Pd ans1 = {x1 + r1 * cosa, y1 + r1 * sina};
         Pd ans2 = {x1 + r1 * cosb, y1 + r1 * sinb};
-        if (sign(dis(ans1, p2) - r2)) ans1.y = y1 - r1 * sina; // 原来写成 dis(ans1, p1)，点在圆1上恒为 r1
+        if (sign(dis(ans1, p2) - r2)) ans1.y = y1 - r1 * sina;  // 原来写成 dis(ans1, p1)，点在圆1上恒为 r1
         if (sign(dis(ans2, p2) - r2)) ans2.y = y1 - r1 * sinb;
         if (ans1 == ans2) ans1.y = y1 - r1 * sina;
         return {3, ans1, ans2};
@@ -2644,7 +2644,7 @@ ld circleIntersectionArea(Pd p1, ld r1, Pd p2, ld r2) {
 
 ```cpp
 tuple<int, Pd, ld> getCircle(Pd A, Pd B, Pd C) {
-    if (onLine(A, B, C)) { // 特判三点共线
+    if (onLine(A, B, C)) {  // 特判三点共线
         return {0, {}, 0};
     }
     Ld l1 = midSegment(Line{A, B});
@@ -2660,16 +2660,16 @@ tuple<int, Pd, ld> getCircle(Pd A, Pd B, Pd C) {
 
 ```cpp
 pair<int, vector<Point<ld>>> tangent(Point<ld> p, Point<ld> A, ld r) {
-    vector<Point<ld>> ans; // 储存切点
+    vector<Point<ld>> ans;  // 储存切点
     Point<ld> u = A - p;
     ld d = sqrt(dot(u, u));
     if (d < r) {
         return {0, {}};
-    } else if (sign(d - r) == 0) { // 点在圆上
+    } else if (sign(d - r) == 0) {  // 点在圆上
         ans.push_back(p);
         return {1, ans};
     } else {
-        ld base = atan2(p.y - A.y, p.x - A.x); // 圆心指向 p
+        ld base = atan2(p.y - A.y, p.x - A.x);  // 圆心指向 p
         ld ang = acos(r / d);
         // 原来 getPoint(A,r,±asin(r/d))，相对 +x 轴，与 p 的位置无关
         ans.push_back(getPoint(A, r, base - ang));
@@ -2685,18 +2685,18 @@ pair<int, vector<Point<ld>>> tangent(Point<ld> p, Point<ld> A, ld r) {
 
 ```cpp
 tuple<int, vector<Point<ld>>, vector<Point<ld>>> tangent(Point<ld> A, ld Ar, Point<ld> B, ld Br) {
-    vector<Point<ld>> a, b; // 储存切点
+    vector<Point<ld>> a, b;  // 储存切点
     if (Ar < Br) {
         swap(Ar, Br);
         swap(A, B);
         swap(a, b);
     }
-    ld d = disEx(A, B), dif = Ar - Br, sum = Ar + Br; // 原来 int d，大坐标平方会溢出；d 是距离平方
-    if (d < dif * dif) { // 内含，无
+    ld d = disEx(A, B), dif = Ar - Br, sum = Ar + Br;  // 原来 int d，大坐标平方会溢出；d 是距离平方
+    if (d < dif * dif) {  // 内含，无
         return {0, {}, {}};
     }
     ld base = atan2(B.y - A.y, B.x - A.x);
-    if (d == 0 && Ar == Br) { // 完全重合，无数条外公切线
+    if (d == 0 && Ar == Br) {  // 完全重合，无数条外公切线
         return {-1, {}, {}};
     }
     if (d == dif * dif) { // 内切，1条外公切线
@@ -2705,14 +2705,14 @@ tuple<int, vector<Point<ld>>, vector<Point<ld>>> tangent(Point<ld> A, ld Ar, Poi
         return {1, a, b};
     }
     ld ang = acos(dif / sqrt(d));
-    a.push_back(getPoint(A, Ar, base + ang)); // 保底2条外公切线
+    a.push_back(getPoint(A, Ar, base + ang));  // 保底2条外公切线
     a.push_back(getPoint(A, Ar, base - ang));
     b.push_back(getPoint(B, Br, base + ang));
     b.push_back(getPoint(B, Br, base - ang));
     if (d == sum * sum) { // 外切，多1条内公切线
         a.push_back(getPoint(A, Ar, base));
         b.push_back(getPoint(B, Br, base + PI));
-    } else if (d > sum * sum) { // 相离，多2条内公切线
+    } else if (d > sum * sum) {  // 相离，多2条内公切线
         ang = acos(sum / sqrt(d));
         a.push_back(getPoint(A, Ar, base + ang));
         a.push_back(getPoint(A, Ar, base - ang));
@@ -2742,7 +2742,7 @@ ld area(Point<ld> a, Point<ld> b, Point<ld> c) {
 三角形外接圆的圆心，即三角形三边垂直平分线的交点。
 
 ```cpp
-template<typename T> Pt center1(Pt p1, Pt p2, Pt p3) { // 外心
+template<typename T> Pt center1(Pt p1, Pt p2, Pt p3) {  // 外心
     return lineIntersection(midSegment({p1, p2}), midSegment({p2, p3}));
 }
 ```
@@ -2752,8 +2752,8 @@ template<typename T> Pt center1(Pt p1, Pt p2, Pt p3) { // 外心
 三角形内切圆的圆心，也是三角形三个内角的角平分线的交点。其到三角形三边的距离相等。`#define atan2(p)` 会污染库函数，用完注意作用域。两角平分线夹角可能跨过 $\pm\pi$ 接缝，极端数据优先用边权公式 $I=(aA+bB+cC)/(a+b+c)$。
 
 ```cpp
-Pd center2(Pd p1, Pd p2, Pd p3) { // 内心
-    #define atan2(p) atan2(p.y, p.x) // 注意先后顺序
+Pd center2(Pd p1, Pd p2, Pd p3) {  // 内心
+    #define atan2(p) atan2(p.y, p.x)  // 注意先后顺序
     Line<ld> U = {p1, {}}, V = {p2, {}};
     ld m, n, alpha;
     m = atan2((p2 - p1));
@@ -2773,8 +2773,8 @@ Pd center2(Pd p1, Pd p2, Pd p3) { // 内心
 三角形的三条高线所在直线的交点。锐角三角形的垂心在三角形内；直角三角形的垂心在直角顶点上；钝角三角形的垂心在三角形外。
 
 ```cpp
-Pd center3(Pd p1, Pd p2, Pd p3) { // 垂心
-    Ld U = {p1, p1 + rotate(p2, p3)}; // 垂线
+Pd center3(Pd p1, Pd p2, Pd p3) {  // 垂心
+    Ld U = {p1, p1 + rotate(p2, p3)};  // 垂线
     Ld V = {p2, p2 + rotate(p1, p3)};
     return lineIntersection(U, V);
 }
@@ -2789,7 +2789,7 @@ Pd center3(Pd p1, Pd p2, Pd p3) { // 垂心
 一般很少使用到这个函数，因为斜率的取值不可控（例如接近平行于 $x,y$ 轴时）。**需要注意**，当直线平行于 $y$ 轴时斜率为 `inf` 。
 
 ```cpp
-template<typename T> ld slope(Pt p1, Pt p2) { // 斜率，注意 inf 的情况
+template<typename T> ld slope(Pt p1, Pt p2) {  // 斜率，注意 inf 的情况
     return (p1.y - p2.y) / (p1.x - p2.x);
 }
 template<typename T> ld slope(Lt l) {
@@ -2805,7 +2805,7 @@ template<typename T> ld slope(Lt l) {
 template<typename T> Frac<T> slopeEx(Pt p1, Pt p2) {
     Frac<T> U = p1.y - p2.y;
     Frac<T> V = p1.x - p2.x;
-    return U / V; // 调用分数精确计算
+    return U / V;  // 调用分数精确计算
 }
 ```
 
@@ -2816,7 +2816,7 @@ template<typename T> Frac<T> slopeEx(Pt p1, Pt p2) {
 ```cpp
 template<typename T> tuple<int, int, int> getfun(Lt p) {
     T A = p.a.y - p.b.y, B = p.b.x - p.a.x, C = p.a.x * A + p.a.y * B;
-    if (A < 0) { // 符号调整
+    if (A < 0) {  // 符号调整
         A = -A, B = -B, C = -C;
     } else if (A == 0) {
         if (B < 0) {
@@ -2825,9 +2825,9 @@ template<typename T> tuple<int, int, int> getfun(Lt p) {
             C = -C;
         }
     }
-    if (A == 0) { // 数值计算
+    if (A == 0) {  // 数值计算
         if (B == 0) {
-            C = 0; // 共点特判
+            C = 0;  // 共点特判
         } else {
             T g = fgcd(abs(B), abs(C));
             B /= g, C /= g;
@@ -2839,7 +2839,7 @@ template<typename T> tuple<int, int, int> getfun(Lt p) {
         T g = fgcd(fgcd(abs(A), abs(B)), abs(C));
         A /= g, B /= g, C /= g;
     }
-    return tuple{A, B, C}; // Ax + By = C
+    return tuple{A, B, C};  // Ax + By = C
 }
 ```
 
@@ -2848,13 +2848,13 @@ template<typename T> tuple<int, int, int> getfun(Lt p) {
 由于整数点可能很大或者不存在，故直接采用浮点数；如果与 $x,y$ 轴有交点则取交点。可以处理平行于 $x,y$ 轴的情况。
 
 ```cpp
-Line<ld> getfun(int A, int B, int C) { // Ax + By = C
+Line<ld> getfun(int A, int B, int C) {  // Ax + By = C
     ld x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-    if (A && B) { // 正常
+    if (A && B) {  // 正常
         if (C) {
             x1 = 0, y1 = 1. * C / B;
             y2 = 0, x2 = 1. * C / A;
-        } else { // 过原点
+        } else {  // 过原点
             x1 = 1, y1 = 1. * -A / B;
             x2 = 0, y2 = 0;
         }
@@ -2874,7 +2874,7 @@ Line<ld> getfun(int A, int B, int C) { // Ax + By = C
             x1 = 1, y1 = 0;
             x2 = 0, y2 = 0;
         }
-    } else { // 不合法，请特判
+    } else {  // 不合法，请特判
         assert(false);
     }
     return {{x1, y1}, {x2, y2}};
@@ -2973,7 +2973,7 @@ struct P {
     }
 
     db disTo(P p) { return (*this - p).abs(); }//两点距离
-    db disTo2(P p) { return (*this - p).abs2(); }//两点距离的平方
+    db disTo2(P p) { return (*this - p).abs2(); }  //两点距离的平方
     db alpha() { return atan2(y, x); }//求极角
     void readint() {
         int x_, y_;
@@ -2982,11 +2982,11 @@ struct P {
     }//输入整数
     void readdb() { cin >> x >> y; }
 
-    void write() { cout << "(" << x << ", " << y << ")" << endl; }//输出
-    db abs() { return sqrt(abs2()); }//原点距离
-    db abs2() { return x * x + y * y; }//原点距离的平方
-    P rot90() { return P(-y, x); }//原点旋转90
-    int quad() const { return sign(y) == 1 || (sign(y) == 0 && sign(x) >= 0); }//判断点在上半边还是下半边
+    void write() { cout << "(" << x << ", " << y << ")" << endl; }  //输出
+    db abs() { return sqrt(abs2()); }  //原点距离
+    db abs2() { return x * x + y * y; }  //原点距离的平方
+    P rot90() { return P(-y, x); }  //原点旋转90
+    int quad() const { return sign(y) == 1 || (sign(y) == 0 && sign(x) >= 0); }  //判断点在上半边还是下半边
     P unit() { return *this / abs(); }//单位向量
 
     P rot(db an) {
@@ -3455,7 +3455,7 @@ for (int i = 1; i <= n; i++)  //当前装第 i 件物品
 ```cpp
 for (int i = 1; i <= n; i++)
     for (int j = 0; j <= W; j++)
-        for (int k = 0; k * w[i] <= j; k++)    //选取几个物品
+        for (int k = 0; k * w[i] <= j; k++)  //选取几个物品
             dp[i][j] = max(dp[i][j], dp[i - 1][j - k * w[i]] + k * v[i]);
 ```
 
@@ -3531,7 +3531,7 @@ int main(){
         for (int j = 0; j < w; j ++ ){
             int head = 0, tail = -1;
             for (int k = j; k <= W; k += w){
-                if ( head <= tail && k - s * w > q[head] ) head ++ ;//保证队列长度 <= s
+                if ( head <= tail && k - s * w > q[head] ) head ++ ;  //保证队列长度 <= s
                 //保证队列单调递减
                 while ( head <= tail && g[q[tail]] - (q[tail] - j) / w * v <= g[k] - (k - j) / w * v ) tail -- ;
                 q[ ++ tail] = k;
@@ -3817,9 +3817,9 @@ using namespace std;
 #define LL long long
 const int N = 15, M = 150, K = 1500;
 LL n, k;
-LL cnt[K];    //每个状态的二进制中 1 的数量
-LL tot;    //合法状态的数量
-LL st[K];    //合法的状态
+LL cnt[K];  //每个状态的二进制中 1 的数量
+LL tot;  //合法状态的数量
+LL st[K];  //合法的状态
 LL dp[N][M][K];    //第 i 行，放置了 j 个国王，状态为 k 的方案数
 int main(){
     ios::sync_with_stdio(false);cin.tie(0);
@@ -3837,7 +3837,7 @@ int main(){
     }
     dp[0][0][0] = 1;
     for (int i = 1; i <= n + 1; i ++ ){
-        for (int j1 = 1; j1 <= tot; j1 ++ ){    //当前的状态
+        for (int j1 = 1; j1 <= tot; j1 ++ ){  //当前的状态
             LL s1 = st[j1];
             for (int j2 = 1; j2 <= tot; j2 ++ ){    //上一行的状态
                 LL s2 = st[j2];
@@ -3866,7 +3866,7 @@ const int N = 20,M = 1 << N;
 
 int n;
 int w[N][N];
-int f[M][N];//第一维表示是否访问到该点的压缩状态，第二维是走到点j
+int f[M][N];  //第一维表示是否访问到该点的压缩状态，第二维是走到点j
             //f[i][j]表示状态为i并且到j的最短路径
 
 int main(){
@@ -3876,14 +3876,14 @@ int main(){
             cin>>w[i][j];
     memset(f, 0x3f, sizeof f);
     f[1][0]=0;
-    for (int i = 0; i < 1 << n; i ++ )//枚举压缩的状态
+    for (int i = 0; i < 1 << n; i ++ )  //枚举压缩的状态
         for (int j = 0; j < n; j ++ )//枚举到0~j的点
-            if(i >> j & 1)//该状态存在j点
-                for (int k = 0; k < n; k ++ )//枚举从j倒数第二个点k
-                    if(i >> k & 1)//倒数点k存在
+            if(i >> j & 1)  //该状态存在j点
+                for (int k = 0; k < n; k ++ )  //枚举从j倒数第二个点k
+                    if(i >> k & 1)  //倒数点k存在
                         //状态转移方程，在f[i][j]和状态去掉j的点f[i-(1<<j)][k]+w[k][j]取最小值
                         f[i][j]=min(f[i][j],f[i-(1<<j)][k]+w[k][j]);
-    cout<<f[(1<<n)-1][n-1]<<endl;//输出状态全满也就是所有点都经过且到最后一个点的最短距离
+    cout<<f[(1<<n)-1][n-1]<<endl;  //输出状态全满也就是所有点都经过且到最后一个点的最短距离
     return 0;
 }
 ```
@@ -3957,34 +3957,34 @@ int main(){
 题意：去掉区间内包含“4”和“62”的数字，输出剩余的数字个数
 
 ```cpp
-int T,n,m,len,a[20];//a数组用于判断每一位能取到的最大值
+int T,n,m,len,a[20];  //a数组用于判断每一位能取到的最大值
 ll l,r,dp[20][15];
-ll dfs(int pos,int pre,int limit){//记搜
+ll dfs(int pos,int pre,int limit){  //记搜
     //pos搜到的位置，pre前一位数
     //limit判断是否有最高位限制
-    if(pos>len) return 1;//剪枝
-    if(dp[pos][pre]!=-1 && !limit) return dp[pos][pre];//记录当前值
-    ll ret=0;//暂时记录当前方案数
-    int res=limit?a[len-pos+1]:9;//res当前位能取到的最大值
+    if(pos>len) return 1;  //剪枝
+    if(dp[pos][pre]!=-1 && !limit) return dp[pos][pre];  //记录当前值
+    ll ret=0;  //暂时记录当前方案数
+    int res=limit?a[len-pos+1]:9;  //res当前位能取到的最大值
     for(int i=0;i<=res;i++)
         if(!(i==4 || (pre==6 && i==2)))
             ret+=dfs(pos+1,i,i==res&&limit);
-    if(!limit) dp[pos][pre]=ret;//当前状态方案数记录
+    if(!limit) dp[pos][pre]=ret;  //当前状态方案数记录
     return ret;
 }
-ll part(ll x){//把数按位拆分
+ll part(ll x){  //把数按位拆分
     len=0;
     while(x) a[++len]=x%10,x/=10;
-    memset(dp,-1,sizeof dp);//初始化-1（因为有可能某些情况下的方案数是0）
-    return dfs(1,0,1);//进入记搜
+    memset(dp,-1,sizeof dp);  //初始化-1（因为有可能某些情况下的方案数是0）
+    return dfs(1,0,1);  //进入记搜
 }
 int main(){
     cin>>n;
     while(n--){
         cin>>l>>r;
         if(l==0 && r==0)break;
-        if(l) printf("%lld\n",part(r)-part(l-1));//[l,r](l!=0)
-        else printf("%lld\n",part(r)-part(l));//从0开始要特判
+        if(l) printf("%lld\n",part(r)-part(l-1));  //[l,r](l!=0)
+        else printf("%lld\n",part(r)-part(l));  //从0开始要特判
     }
 }
 ```
@@ -4006,7 +4006,7 @@ for(int j = 0; j < n; j++)
 ```cpp
 for(int j = 0; j < n; j++)
     for(int i = (1 << n) - 1; i >= 0 ; i--)
-        if(!(i >> j & 1)) f[i] += f[i ^ (1 << j)]; // 原来行尾缺分号，无法编译
+        if(!(i >> j & 1)) f[i] += f[i ^ (1 << j)];  // 原来行尾缺分号，无法编译
 ```
 
 ### 汉明权重
@@ -4138,25 +4138,25 @@ for (int i = 0; (1<<i)-1 <= n; i++) {
 使用哈希表，以 $\mathcal{O} (N + M)$ 的复杂度计算。
 
 ```cpp
-int n, m, a[N], num[N]; // n 堆数, m 种取法; N 按最大石子数改
+int n, m, a[N], num[N];  // n 堆数, m 种取法; N 按最大石子数改
 int sg(int x) {
-    if (num[x] != -1) return num[x]; // -1 未算，Solve 里 memset
+    if (num[x] != -1) return num[x];  // -1 未算，Solve 里 memset
 
-    unordered_set<int> S; // 后继局面的 SG 集合
+    unordered_set<int> S;  // 后继局面的 SG 集合
     for (int i = 1; i <= m; ++ i)
         if(x >= a[i])
-            S.insert(sg(x - a[i])); // 取走 a[i] 颗
+            S.insert(sg(x - a[i]));  // 取走 a[i] 颗
 
-    for (int i = 0; ; ++ i) // mex：最小未出现的非负整数
+    for (int i = 0; ; ++ i)  // mex：最小未出现的非负整数
         if (S.count(i) == 0)
             return num[x] = i;
 }
 void Solve() {
     cin >> m;
-    for (int i = 1; i <= m; ++ i) cin >> a[i]; // 每次可取的数量
+    for (int i = 1; i <= m; ++ i) cin >> a[i];  // 每次可取的数量
     cin >> n;
 
-    int ans = 0; memset(num, -1, sizeof num); // 多测须每组清空
+    int ans = 0; memset(num, -1, sizeof num);  // 多测须每组清空
     for (int i = 1; i <= n; ++ i) {
         int x; cin >> x;
         ans ^= sg(x); // 各堆独立，异或合并
@@ -4237,13 +4237,13 @@ $\pmb{ (1, 2), (3, 5), (4, 7), (6, 10), …}$ 具体而言，每一对的第一�
 其中，在两堆石子的数量均大于 $10^9$ 时，由于需要使用高精度计算，我们需要人为定义 $\frac{1+\sqrt 5}{2}$ 的取值为 $lorry = 1.618033988749894848204586834$ 。
 
 ```cpp
-const double lorry = (sqrt(5.0) + 1.0) / 2.0; // 黄金分割 (1+√5)/2
+const double lorry = (sqrt(5.0) + 1.0) / 2.0;  // 黄金分割 (1+√5)/2
 //const double lorry = 1.618033988749894848204586834; // 堆更大时换这段高精度常数
 void Solve() {
     int n, m; cin >> n >> m;
-    if (n < m) swap(n, m); // 约定 n >= m
-    double x = n - m; // 冷局面差为 k，小堆应等于 floor(k * φ)
-    if ((int)(lorry * x) == m) cout << "lose\n"; // 落在冷局面，先手必败
+    if (n < m) swap(n, m);  // 约定 n >= m
+    double x = n - m;  // 冷局面差为 k，小堆应等于 floor(k * φ)
+    if ((int)(lorry * x) == m) cout << "lose\n";  // 落在冷局面，先手必败
     else cout << "win\n";
 }
 ```
@@ -4261,15 +4261,15 @@ void Solve() {
 当且仅当 $N$ 为斐波那契数时先手必败。
 
 ```cpp
-long long fib[100] = {1, 2}; // 原来 int，fib[47] 已超 INT_MAX
-map<long long, bool> mp; // 是否斐波那契数
-void Force() { // 预处理，Solve 前调用一次
-  for (int i = 2; i <= 86; ++ i) fib[i] = fib[i - 1] + fib[i - 2]; // 86 项盖住约 9e17
+long long fib[100] = {1, 2};  // 原来 int，fib[47] 已超 INT_MAX
+map<long long, bool> mp;  // 是否斐波那契数
+void Force() {  // 预处理，Solve 前调用一次
+  for (int i = 2; i <= 86; ++ i) fib[i] = fib[i - 1] + fib[i - 2];  // 86 项盖住约 9e17
     for (int i = 0; i <= 86; ++ i) mp[fib[i]] = 1;
 }
 void Solve() {
-    int n; cin >> n; // n 超过 int 时改 long long
-    if (mp[n] == 1) cout << "lose\n"; // 斐波那契数先手必败
+    int n; cin >> n;  // n 超过 int 时改 long long
+    if (mp[n] == 1) cout << "lose\n";  // 斐波那契数先手必败
     else cout << "win\n";
 }
 ```
@@ -4292,15 +4292,15 @@ void Solve() {
 - 非叶子节点的 SG 值为其所有孩子节点 SG 值 $\pmb + 1$ 的异或和。
 
 ```cpp
-auto dfs = [&](auto self, int x, int fa) -> int { // 返回 R(x)=SG(x)+1
-    int res = 0; // 原来 int x = 0 与参数同名，无法编译；res 为孩子 R 的异或
-    for (auto y : ver[x]) { // ver 为邻接表，须先建图
+auto dfs = [&](auto self, int x, int fa) -> int {  // 返回 R(x)=SG(x)+1
+    int res = 0;  // 原来 int x = 0 与参数同名，无法编译；res 为孩子 R 的异或
+    for (auto y : ver[x]) {  // ver 为邻接表，须先建图
         if (y == fa) continue;
         res ^= self(self, y, x);
     }
-    return res + 1; // 叶子没有孩子，返回 1 ⇔ SG=0
+    return res + 1;  // 叶子没有孩子，返回 1 ⇔ SG=0
 };
-cout << (dfs(dfs, 1, 0) == 1 ? "Bob\n" : "Alice\n"); // ==1 即根 SG=0，先手必败
+cout << (dfs(dfs, 1, 0) == 1 ? "Bob\n" : "Alice\n");  // ==1 即根 SG=0，先手必败
 ```
 
 ### 无向图删边游戏 (Fusion Principle 定理)
@@ -4457,7 +4457,7 @@ int main() {
 以 $\mathcal{O}(KM)$ 的复杂度计算，最坏 $\mathcal O(NM)$，且可以被特殊构造卡掉，无负权时优先用堆优化 Dijkstra。
 
 ```cpp
-const int N = 1e5 + 7, M = 1e6 + 7, INF = 0x3f3f3f3f; // INF 与下面 memset 的值一致
+const int N = 1e5 + 7, M = 1e6 + 7, INF = 0x3f3f3f3f;  // INF 与下面 memset 的值一致
 int n, m;
 int ver[M], ne[M], h[N], edge[M], tot;
 int d[N], v[N];
@@ -4467,7 +4467,7 @@ void add(int x, int y, int w) {
     edge[tot] = w;
 }
 void spfa() {
-    memset(d, 0x3f, sizeof d); d[1] = 0; // 源点按题目改；原来写 ms(d, 0x3f) 但本段无此宏
+    memset(d, 0x3f, sizeof d); d[1] = 0;  // 源点按题目改；原来写 ms(d, 0x3f) 但本段无此宏
     queue<int> q; q.push(1);
     v[1] = 1;
     while(!q.empty()) {
@@ -4586,17 +4586,17 @@ const int N = 550, INF = 0x3f3f3f3f;
 int n, m, g[N][N];
 int d[N], v[N];
 int prim() {
-    ms(d, 0x3f); //这里的d表示到“最小生成树集合”的距离
+    ms(d, 0x3f);  //这里的d表示到“最小生成树集合”的距离
     int ans = 0;
-    for (int i = 0; i < n; ++ i) { //遍历 n 轮
+    for (int i = 0; i < n; ++ i) {  //遍历 n 轮
         int t = -1;
         for (int j = 1; j <= n; ++ j)
-            if (v[j] == 0 && (t == -1 || d[j] < d[t])) //如果这个点不在集合内且当前距离集合最近
+            if (v[j] == 0 && (t == -1 || d[j] < d[t]))  //如果这个点不在集合内且当前距离集合最近
                 t = j;
-        v[t] = 1; //将t加入“最小生成树集合”
-        if (i && d[t] == INF) return INF; //如果发现不连通，直接返回
+        v[t] = 1;  //将t加入“最小生成树集合”
+        if (i && d[t] == INF) return INF;  //如果发现不连通，直接返回
         if (i) ans += d[t];
-        for (int j = 1; j <= n; ++ j) d[j] = min(d[j], g[t][j]); //用t更新其他点到集合的距离
+        for (int j = 1; j <= n; ++ j) d[j] = min(d[j], g[t][j]);  //用t更新其他点到集合的距离
     }
     return ans;
 }
@@ -4609,7 +4609,7 @@ int main() {
     int t = prim();
     if (t == INF) cout << "impossible" << endl;
     else cout << t << endl;
-} //22.03.19已测试
+}  //22.03.19已测试
 ```
 
 #### （稀疏图）Kruskal 算法
@@ -4628,7 +4628,7 @@ struct DSU {
         }
         return x;
     }
-    bool merge(int x, int y) { // 设x是y的祖先
+    bool merge(int x, int y) {  // 设x是y的祖先
         x = get(x), y = get(y);
         if (x == y) return false;
         fa[y] = x;
@@ -4711,14 +4711,14 @@ struct SCC {
             } while (pre != x);
         }
     }
-    auto work() { // [cnt 新图的顶点数量]
-        for (int i = 1; i <= n; i++) { // 避免图不连通
+    auto work() {  // [cnt 新图的顶点数量]
+        for (int i = 1; i <= n; i++) {  // 避免图不连通
             if (dfn[i] == -1) {
                 tarjan(i);
             }
         }
 
-        vector<int> siz(cnt + 1); // siz 每个 scc 中点的数量
+        vector<int> siz(cnt + 1);  // siz 每个 scc 中点的数量
         vector<vector<int>> adj(cnt + 1);
         for (int i = 1; i <= n; i++) {
             siz[col[i]]++;
@@ -4754,7 +4754,7 @@ struct EDCC {
     EDCC(int n) : n(n), low(n + 1), ver(n + 1), dfn(n + 1), col(n + 1) {
         m = now = cnt = 0;
     }
-    void add(int x, int y) { // 和 scc 相比多了一条连边
+    void add(int x, int y) {  // 和 scc 相比多了一条连边
         ver[x].push_back({y, m});
         ver[y].push_back({x, m++});
     }
@@ -4827,7 +4827,7 @@ struct V_DCC {
     vector<vector<int>> ver, col;
     vector<int> dfn, low, S;
     int now, cnt;
-    vector<bool> point; // 记录是否为割点
+    vector<bool> point;  // 记录是否为割点
 
     V_DCC(int n) : n(n) {
         ver.resize(n + 1);
@@ -4839,14 +4839,14 @@ struct V_DCC {
         cnt = now = 0;
     }
     void add(int x, int y) {
-        if (x == y) return; // 手动去除重边
+        if (x == y) return;  // 手动去除重边
         ver[x].push_back(y);
         ver[y].push_back(x);
     }
     void tarjan(int x, int root) {
         low[x] = dfn[x] = ++now;
         S.push_back(x);
-        if (x == root && !ver[x].size()) { // 特判孤立点
+        if (x == root && !ver[x].size()) {  // 特判孤立点
             ++cnt;
             col[cnt].push_back(x);
             return;
@@ -4860,7 +4860,7 @@ struct V_DCC {
                 if (dfn[x] <= low[y]) {
                     flag++;
                     if (x != root || flag > 1) {
-                        point[x] = true; // 标记为割点
+                        point[x] = true;  // 标记为割点
                     }
                     int pre = 0;
                     cnt++;
@@ -4876,7 +4876,7 @@ struct V_DCC {
             }
         }
     }
-    pair<int, vector<vector<int>>> rebuild() { // [新图的顶点数量, 新图]：点双与割点构成的二分图
+    pair<int, vector<vector<int>>> rebuild() {  // [新图的顶点数量, 新图]：点双与割点构成的二分图
         work();
         vector<int> cutId(n + 1); // 割点在新图中的编号（原来把 point[j] 当编号推入，多个割点会全部指向 1）
         int tot = cnt;
@@ -4889,7 +4889,7 @@ struct V_DCC {
                 continue;
             }
             for (auto j : col[i]) {
-                if (point[j]) { // 如果 j 是割点
+                if (point[j]) {  // 如果 j 是割点
                     adj[i].push_back(cutId[j]);
                     adj[cutId[j]].push_back(i);
                 }
@@ -4898,7 +4898,7 @@ struct V_DCC {
         return {tot, adj};
     }
     void work() {
-        for (int i = 1; i <= n; ++i) { // 避免图不连通
+        for (int i = 1; i <= n; ++i) {  // 避免图不连通
             if (!dfn[i]) {
                 tarjan(i, i);
             }
@@ -4919,7 +4919,7 @@ namespace Graph {
     int deg[N], vis[M];
 
     void clear(int n) {
-        tot = 0; //多组样例清空
+        tot = 0;  //多组样例清空
         for (int i = 1; i <= n; ++i) {
             h[i] = 0;
             deg[i] = vis[i] = 0;
@@ -4930,7 +4930,7 @@ namespace Graph {
         ++deg[y];
     }
     void dfs(int x) {
-        a.push_back(x); // DFS序
+        a.push_back(x);  // DFS序
         siz[x] = vis[x] = 1;
         for (int i = h[x]; i; i = ne[i]) {
             int y = ver[i];
@@ -4971,9 +4971,9 @@ namespace Graph {
                 if (deg[y] == 0) q.push(y);
             }
         }
-        return ans.size() == n; //判断是否存在拓扑排序
+        return ans.size() == n;  //判断是否存在拓扑排序
     }
-} // namespace Graph
+}  // namespace Graph
 ```
 
 ### 一般图最大匹配 (带花树算法)
@@ -5103,8 +5103,8 @@ signed main() {
 
 ```cpp
 namespace Graph {
-    const int N = 403 * 2; //两倍点数
-    typedef int T; //权值大小
+    const int N = 403 * 2;  //两倍点数
+    typedef int T;  //权值大小
     const T inf = numeric_limits<int>::max() >> 1;
     struct Q { int u, v; T w; } e[N][N];
     T lab[N];
@@ -5187,7 +5187,7 @@ namespace Graph {
             ins(j);
         }
         reverse(1 + ALL(p[x]));
-        for (i = v; i != a; i = st[f[j]]) { // 复制，只需改循环
+        for (i = v; i != a; i = st[f[j]]) {  // 复制，只需改循环
             p[x].push_back(i);
             p[x].push_back(j = st[lk[i]]);
             ins(j);
@@ -5326,7 +5326,7 @@ namespace Graph {
         }
         return ans;
     }
-} // namespace Graph
+}  // namespace Graph
 using Graph::work, Graph::match;
 
 signed main() {
@@ -5366,7 +5366,7 @@ signed main() {
     for (int i = 1; i <= m; ++i) {
         int x, y;
         cin >> x >> y;
-        ver[x].push_back(y); //只需要建立单向边
+        ver[x].push_back(y);  //只需要建立单向边
     }
 
     int ans = 0;
@@ -5402,19 +5402,19 @@ struct HopcroftKarp {
     vector<array<int, 2>> ver;
     vector<int> l, r;
 
-    HopcroftKarp(int n, int m) : n(n), m(m) { // 左右半部
+    HopcroftKarp(int n, int m) : n(n), m(m) {  // 左右半部
         l.assign(n, -1);
         r.assign(m, -1);
     }
     void add(int x, int y) {
-        x--, y--; // 这个板子是 0-idx 的
+        x--, y--;  // 这个板子是 0-idx 的
         ver.push_back({x, y});
     }
     int work() {
         vector<int> adj(ver.size());
 
         mt19937 rgen(chrono::steady_clock::now().time_since_epoch().count());
-        shuffle(ver.begin(), ver.end(), rgen); // 随机化防卡
+        shuffle(ver.begin(), ver.end(), rgen);  // 随机化防卡
 
         vector<int> deg(n + 1);
         for (auto &[u, v] : ver) {
@@ -5590,7 +5590,7 @@ struct MaxCostMatch {
         }
         return res;
     }
-    void getMatch(int x, int y) { // 获取方案 (0代表无匹配)
+    void getMatch(int x, int y) {  // 获取方案 (0代表无匹配)
         for (int i = 1; i <= x; ++i) {
             cout << (ver[i][ansl[i]] ? ansl[i] : 0) << " ";
         }
@@ -5702,16 +5702,16 @@ namespace G {
         ver[x].push_back({y, w});
         edge[{x, y}] = edge[{y, x}] = w;
     }
-    void djikstra(int s) { // ！注意，该 djikstra 并非原版，多加了一个等于号
+    void djikstra(int s) {  // ！注意，该 djikstra 并非原版，多加了一个等于号
         priority_queue<PII, vector<PII>, greater<PII> > q; q.push({0, s});
         memset(d, 0x3f, sizeof d); d[s] = 0;
         while (!q.empty()) {
             int x = q.top().second; q.pop();
             if (v[x]) continue; v[x] = 1;
             for (auto [y, w] : ver[x]) {
-                if (d[y] >= d[x] + w) { // ！注意，SPT 这里修改为>=号
+                if (d[y] >= d[x] + w) {  // ！注意，SPT 这里修改为>=号
                     d[y] = d[x] + w;
-                    pre[y] = x; // 记录前驱结点
+                    pre[y] = x;  // 记录前驱结点
                     q.push({d[y], y});
                 }
             }
@@ -5722,16 +5722,16 @@ namespace G {
         for (auto [y, w] : ver[x]) {
             if (vis[y]) continue;
             if (pre[y] == x) {
-                cout << id[{x, y}] << " "; // 输出SPT所使用的边编号
+                cout << id[{x, y}] << " ";  // 输出SPT所使用的边编号
                 ans += edge[{x, y}];
                 dfs(y);
             }
         }
     }
     void solve(int n) {
-        djikstra(1); // 以 1 为根
-        dfs(1); // 以 1 为根
-        cout << endl << ans; // 输出SPT的边权和
+        djikstra(1);  // 以 1 为根
+        dfs(1);  // 以 1 为根
+        cout << endl << ans;  // 输出SPT的边权和
     }
 }
 bool Solve() {
@@ -5759,7 +5759,7 @@ signed main() {
     int n, m;
     cin >> n >> m;
 
-    DSU dsu(n); // 这里引入DSU判断图是否联通，如题目有保证，则不需要此步骤
+    DSU dsu(n);  // 这里引入DSU判断图是否联通，如题目有保证，则不需要此步骤
     vector<vector<int>> edge(n + 1, vector<int>(n + 1));
     for (int i = 1; i <= m; i++) {
         int x, y, w;
@@ -5775,9 +5775,9 @@ signed main() {
         return 0;
     }
 
-    int MinCut = INF, S = 1, T = 1; // 虚拟源汇点
+    int MinCut = INF, S = 1, T = 1;  // 虚拟源汇点
     vector<int> bin(n + 1);
-    auto contract = [&]() -> int { // 求解S到T的最小割，定义为 cut of phase
+    auto contract = [&]() -> int {  // 求解S到T的最小割，定义为 cut of phase
         vector<int> dis(n + 1), vis(n + 1);
         int Min = 0;
         for (int i = 1; i <= n; i++) {
@@ -5799,7 +5799,7 @@ signed main() {
         }
         return Min;
     };
-    for (int i = 1; i < n; i++) { // 这里取不到等号
+    for (int i = 1; i < n; i++) {  // 这里取不到等号
         int val = contract();
         bin[T] = 1;
         MinCut = min(MinCut, val);
@@ -5833,8 +5833,8 @@ signed main() {
     int n, m;
     cin >> n >> m;
 
-    DSU dsu(n + 1); // 如果保证连通，则不需要 DSU
-    vector<unordered_multiset<int>> ver(n + 1); // 如果对于字典序有要求，则不能使用 unordered
+    DSU dsu(n + 1);  // 如果保证连通，则不需要 DSU
+    vector<unordered_multiset<int>> ver(n + 1);  // 如果对于字典序有要求，则不能使用 unordered
     vector<int> degI(n + 1), degO(n + 1);
     for (int i = 1; i <= m; i++) {
         int x, y;
@@ -5842,7 +5842,7 @@ signed main() {
         ver[x].insert(y);
         degI[y]++;
         degO[x]++;
-        dsu.merge(x, y); // 直接当无向图
+        dsu.merge(x, y);  // 直接当无向图
     }
     int s = 1, t = 1, cnt = 0;
     for (int i = 1; i <= n; i++) {
@@ -5871,8 +5871,8 @@ signed main() {
     int n, m;
     cin >> n >> m;
 
-    DSU dsu(n + 1); // 如果保证连通，则不需要 DSU
-    vector<unordered_multiset<int>> ver(n + 1); // 如果对于字典序有要求，则不能使用 unordered
+    DSU dsu(n + 1);  // 如果保证连通，则不需要 DSU
+    vector<unordered_multiset<int>> ver(n + 1);  // 如果对于字典序有要求，则不能使用 unordered
     vector<int> deg(n + 1);
     for (int i = 1; i <= m; i++) {
         int x, y;
@@ -5881,7 +5881,7 @@ signed main() {
         ver[y].insert(x);
         deg[y]++;
         deg[x]++;
-        dsu.merge(x, y); // 直接当无向图
+        dsu.merge(x, y);  // 直接当无向图
     }
     int s = -1, t = -1, cnt = 0;
     for (int i = 1; i <= n; i++) {
@@ -6205,7 +6205,7 @@ $n\le 4$ 时的样例如上，通项公式为 $n^{n-2}$ 。
 
 ```c++
 const int N = 2e5 + 7, M = 1e6 + 7;
-int n, m, s, e; int d[N][2], v[N][2]; // 0 代表最短路， 1 代表次短路
+int n, m, s, e; int d[N][2], v[N][2];  // 0 代表最短路， 1 代表次短路
 Z num[N][2];
 
 void Clear() {
@@ -6247,7 +6247,7 @@ void dji() {
 }
 void Solve() {
     cin >> n >> m >> s >> e;
-    Clear(); //多组样例务必完全清空
+    Clear();  //多组样例务必完全清空
     for (int i = 1; i <= m; ++ i) {
         int x, y, w; cin >> x >> y; w = 1;
         add(x, y, w), add(y, x, w);
@@ -6255,7 +6255,7 @@ void Solve() {
     dji();
     Z ans = num[e][0];
     if (d[e][1] == d[e][0] + 1) {
-        ans += num[e][1]; // 只有在次短路满足条件时才计算（距离恰好比最短路大1）
+        ans += num[e][1];  // 只有在次短路满足条件时才计算（距离恰好比最短路大1）
     }
     cout << ans.val() << endl;
 }
@@ -6277,7 +6277,7 @@ void add(int x, int y, int w)  {
 }
 bool spfa() {
     queue<int> q;
-    for (int i = 1; i <= n; ++ i) q.push(i), v[i] = 1; //全部入队
+    for (int i = 1; i <= n; ++ i) q.push(i), v[i] = 1;  //全部入队
     while(!q.empty()) {
         int x = q.front(); q.pop();
         v[x] = 0;
@@ -6329,7 +6329,7 @@ function<void(int, int)> dfs = [&](int x, int fa) {
             cout << fa << " " << x << " " << y;
             exit(0);
         }
-        if (!vis[y]) dfs(y, x); // 这一步的if判断很关键
+        if (!vis[y]) dfs(y, x);  // 这一步的if判断很关键
     }
 };
 for (int i = 1; i <= n; ++i) {
@@ -6376,17 +6376,17 @@ for (int k = 1; k <= n; k++) {
 int floyd(int n) {
     for (int i = 1; i <= n; ++ i) {
         for (int j = 1; j <= n; ++ j) {
-            val[i][j] = dis[i][j]; // 记录最初的边权值
+            val[i][j] = dis[i][j];  // 记录最初的边权值
         }
     }
     int ans = 0x3f3f3f3f;
     for (int k = 1; k <= n; ++ k) {
-        for (int i = 1; i < k; ++ i) { // 注意这里是没有等于号的
+        for (int i = 1; i < k; ++ i) {  // 注意这里是没有等于号的
             for (int j = 1; j < i; ++ j) {
                 ans = min(ans, dis[i][j] + val[i][k] + val[k][j]);
             }
         }
-    for (int i = 1; i <= n; ++ i) { // 往下是标准的floyd
+    for (int i = 1; i <= n; ++ i) {  // 往下是标准的floyd
         for (int j = 1; j <= n; ++ j) {
                 dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
             }
@@ -6472,7 +6472,7 @@ cout << (ans - m) / 2 << "\n";
 vector<int> dis(n + 1, -1), fa(n + 1);
 auto dfs = [&](auto self, int x) -> void {
     for (auto y : ver[x]) {
-        if (y == fa[x]) continue; // 二元环需删去该行
+        if (y == fa[x]) continue;  // 二元环需删去该行
         if (dis[y] == -1) {
             dis[y] = dis[x] + 1;
             fa[y] = x;
@@ -6493,7 +6493,7 @@ auto dfs = [&](auto self, int x) -> void {
 for (int i = 1; i <= n; i++) {
     if (dis[i] == -1) {
         dis[i] = 0;
-        dfs(dfs, i); // 从每个未访问的连通块入口开始，原来是写死的 1
+        dfs(dfs, i);  // 从每个未访问的连通块入口开始，原来是写死的 1
     }
 }
 ```
@@ -6607,20 +6607,20 @@ signed main() {
 赛场常写的几件：二进制快速幂、整数平方根纠偏、先除后乘的 lcm、整数 $\log_2$、向 $\pm\infty$ 取整的除法。C++ 除法向零取整，负数区间二分必须用这里的 `floor`/`ceil`。
 
 ```cpp
-int mypow(int n, int k, int p = MOD) { // 快速幂，复杂度 O(log k)
+int mypow(int n, int k, int p = MOD) {  // 快速幂，复杂度 O(log k)
     int r = 1;
     for (; k; k >>= 1, n = n * n % p) {
         if (k & 1) r = r * n % p;
     }
     return r;
 }
-i64 mysqrt(i64 n) { // 针对 sqrt 无法精确计算 ll 型；n ≤ 1e18 时不溢出
+i64 mysqrt(i64 n) {  // 针对 sqrt 无法精确计算 ll 型；n ≤ 1e18 时不溢出
     i64 ans = sqrt(n);
     while ((ans + 1) * (ans + 1) <= n) ans++;
     while (ans * ans > n) ans--;
     return ans;
 }
-int mylcm(int x, int y) { // 先除后乘，防溢出
+int mylcm(int x, int y) {  // 先除后乘，防溢出
     return x / gcd(x, y) * y;
 }
 ```
@@ -6647,10 +6647,10 @@ template<typename T> int log2ceil(T n) {
     }
 }
 // __builtin 版：仅 int（ll 版各加一个 ll 后缀）
-int log2floor(int x) { // 向下取整；x > 0
+int log2floor(int x) {  // 向下取整；x > 0
     return 31 - __builtin_clz(x);
 }
-int log2ceil(int x) { // 向上取整；x > 0
+int log2ceil(int x) {  // 向上取整；x > 0
     return log2floor(x) + (__builtin_popcount(x) != 1);
 }
 ```
@@ -6683,7 +6683,7 @@ $\gcd(a,b)=\gcd(b,a\bmod b)$，辗转到 $0$。$\mathcal O(\log(a+b))$。日常�
 **速度不如内置函数！** 以 $\mathcal O(\log(a+b))$ 的复杂度求解最大公约数。与内置函数 `__gcd` 功能基本相同（支持 $a,b \leq 0$ ）。
 
 ```cpp
-inline int mygcd(int a, int b) { // 手写欧几里得，与 std::gcd 等价
+inline int mygcd(int a, int b) {  // 手写欧几里得，与 std::gcd 等价
     return b ? mygcd(b, a % b) : a;
 }
 ```
@@ -6693,7 +6693,7 @@ inline int mygcd(int a, int b) { // 手写欧几里得，与 std::gcd 等价
 Stein：提出公共的 $2$，奇数相减代替取模。**略快于内置，卡常用。** `tz` 是后导零个数。
 
 ```cpp
-LL gcd(LL a, LL b) { // 卡常 gcd！！（LL 为 long long）
+LL gcd(LL a, LL b) {  // 卡常 gcd！！（LL 为 long long）
     #define tz __builtin_ctzll
     if (!a || !b) return a | b;
     int t = tz(a | b);
@@ -6717,13 +6717,13 @@ LL gcd(LL a, LL b) { // 卡常 gcd！！（LL 为 long long）
 在**单调的 check** 上找"第一个满足条件的下标"。`check(mid)` 为 true 表示 mid 满足，此时答案在 `[l, mid]`，否则在 `[mid + 1, r]`。区间为左闭右闭，初始边界按题目放宽。
 
 ```cpp
-long long l = 0, r = n; // 按题目改边界，保证答案在 [l, r] 内
+long long l = 0, r = n;  // 按题目改边界，保证答案在 [l, r] 内
 auto check = [&](long long x) -> bool {
     // todo: x 是否满足条件（单调）
     return false;
 };
 while (l < r) {
-    auto mid = l + (r - l) / 2; // 防溢出的中点写法
+    auto mid = l + (r - l) / 2;  // 防溢出的中点写法
     if (check(mid)) r = mid;
     else l = mid + 1;
 }
@@ -6769,7 +6769,7 @@ return a[l];
 - $x$ 或 $x$ 的后继
 
 ```cpp
-int l = 0, r = 1E8, ans = r; // ans 初始化为无解时的值
+int l = 0, r = 1E8, ans = r;  // ans 初始化为无解时的值
 while (l <= r) {
     int mid = (l + r) / 2;
     if (judge(mid)) {
@@ -6785,7 +6785,7 @@ return ans;
 - $x$ 或 $x$ 的前驱
 
 ```cpp
-int l = 0, r = 1E8, ans = l; // ans 初始化为无解时的值
+int l = 0, r = 1E8, ans = l;  // ans 初始化为无解时的值
 while (l <= r) {
     int mid = (l + r) / 2;
     if (judge(mid)) {
@@ -6811,7 +6811,7 @@ return ans;
    ——许昊然《浅谈数据结构题几个非经典解法》
 
 ```cpp
-int cal(auto x) { // todo: 以 mid = x 为判定标准，计算当前区间内"答案落在右儿子"的询问数
+int cal(auto x) {  // todo: 以 mid = x 为判定标准，计算当前区间内"答案落在右儿子"的询问数
     return 0;
 }
 
@@ -6856,7 +6856,7 @@ cout << l << endl;
 
 ```cpp
 while (l < r) {
-    int mid = l + (r - l) / 2; // 防溢出中点
+    int mid = l + (r - l) / 2;  // 防溢出中点
     if (check(mid) <= check(mid + 1)) r = mid;
     else l = mid + 1;
 }
@@ -6870,7 +6870,7 @@ cout << check(l) << endl;
 限制次数实现，同样要求单峰：
 
 ```cpp
-ld l = -1E9, r = 1E9; // 初始边界要包住极值点
+ld l = -1E9, r = 1E9;  // 初始边界要包住极值点
 for (int t = 1; t <= 100; t++) {
     ld mid1 = (l * 2 + r) / 3;
     ld mid2 = (l + r * 2) / 3;
@@ -6898,7 +6898,7 @@ cout << l << endl;
 
 ```cpp
 template<typename T> T areaEx(Point<T> p1, Point<T> p2, Point<T> p3) {
-    return cross(p2, p3, p1); // 原来写 cross(b,c,a)，参数名对不上，无法编译
+    return cross(p2, p3, p1);  // 原来写 cross(b,c,a)，参数名对不上，无法编译
 }
 ```
 
@@ -7069,24 +7069,24 @@ int inPolygonGrid(vector<Point<int>> p) { // 多边形内
 ```cpp
 template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int flag = 1) {
     int n = A.size();
-    if (n <= 2) { // 特判
+    if (n <= 2) {  // 特判
         return A;
     }
     vector<Point<T>> ans(n * 2);
     sort(A.begin(), A.end());
     int now = -1;
-    auto bad = [&](Point<T> o, Point<T> a, Point<T> b) { // flag=1 弹出共线，flag=0 保留
+    auto bad = [&](Point<T> o, Point<T> a, Point<T> b) {  // flag=1 弹出共线，flag=0 保留
         auto cr = cross(o, a, b);
-        return flag ? cr <= 0 : cr < 0; // 原来写死 <=0，flag 参数没用上
+        return flag ? cr <= 0 : cr < 0;  // 原来写死 <=0，flag 参数没用上
     };
-    for (int i = 0; i < n; i++) { // 维护下凸包
+    for (int i = 0; i < n; i++) {  // 维护下凸包
         while (now > 0 && bad(A[i], ans[now], ans[now - 1])) {
             now--;
         }
         ans[++now] = A[i];
     }
     int pre = now;
-    for (int i = n - 2; i >= 0; i--) { // 维护上凸包
+    for (int i = n - 2; i >= 0; i--) {  // 维护上凸包
         while (now > pre && bad(A[i], ans[now], ans[now - 1])) {
             now--;
         }
@@ -7244,7 +7244,7 @@ template<typename T> vector<Point<T>> halfcut(vector<Line<T>> lines) {
     sort(lines.begin(), lines.end(), [&](auto l1, auto l2) {
         auto d1 = l1.b - l1.a;
         auto d2 = l2.b - l2.a;
-        if (sign(d1) != sign(d2)) { // TODO：sign 原只收标量；向量请改成 quad/极角半平面
+        if (sign(d1) != sign(d2)) {  // TODO：sign 原只收标量；向量请改成 quad/极角半平面
             return sign(d1) == 1;
         return cross(d1, d2) > 0;
     });
@@ -7348,7 +7348,7 @@ template<int P = 998244353> struct Poly : public vector<MInt<P>> {
     explicit constexpr Poly(InputIt first, InputIt last) : vector<Value>(first, last) {}
 
     template<typename F>
-    explicit constexpr Poly(int n, F f) : vector<Value>(n) { // 原来写成 F>plicit，无法编译
+    explicit constexpr Poly(int n, F f) : vector<Value>(n) {  // 原来写成 F>plicit，无法编译
         for (int i = 0; i < n; i++) {
             (*this)[i] = f(i);
         }
@@ -7588,7 +7588,7 @@ template<int P> constexpr MInt<P> findPrimitiveRoot() {
 template<int P> constexpr MInt<P> primitiveRoot = findPrimitiveRoot<P>();
 template<> constexpr MInt<998244353> primitiveRoot<998244353>{31};
 
-template<int P> constexpr void dft(vector<MInt<P>> &a) { // 离散傅里叶变换
+template<int P> constexpr void dft(vector<MInt<P>> &a) {  // 离散傅里叶变换
     int n = a.size();
 
     if (int(rev.size()) != n) {
@@ -7627,7 +7627,7 @@ template<int P> constexpr void dft(vector<MInt<P>> &a) { // 离散傅里叶变�
         }
     }
 }
-template<int P> constexpr void idft(vector<MInt<P>> &a) { // 逆变换
+template<int P> constexpr void idft(vector<MInt<P>> &a) {  // 逆变换
     int n = a.size();
     reverse(a.begin() + 1, a.end());
     dft(a);
@@ -7883,10 +7883,10 @@ std::vector<i64> mul(std::vector<i64> a, std::vector<i64> b) {
     int M = a.size() + b.size() - 1u, N = 1;
     while (N < M) N <<= 1;
     std::vector<int> r(N);
-    for (int i = 1; i < N; i++) // 原来 i <= N，r[N] 越界
+    for (int i = 1; i < N; i++)  // 原来 i <= N，r[N] 越界
         r[i] = r[i / 2] / 2 | (i % 2 ? N / 2 : 0);
 
-    auto ntt = [&](std::vector<i64> &a, bool inv) -> void { // 原来写成 Z ntt，类型不对
+    auto ntt = [&](std::vector<i64> &a, bool inv) -> void {  // 原来写成 Z ntt，类型不对
         a.resize(N);
         for(int i = 0;i < N;i++) if (i < r[i]) std::swap(a[i], a[r[i]]);
         for (int sz = 1; sz < N; sz <<= 1) {
@@ -7931,7 +7931,7 @@ struct Lagrange {
     void init(int n) {
         iota(x.begin(), x.end(), 0);
         for (int i = 1; i <= n + 2; i++) {
-            y[i] = y[i - 1] + mypow(Z(i), n); // 原来 Z t 未赋值再 t.power(i,n)
+            y[i] = y[i - 1] + mypow(Z(i), n);  // 原来 Z t 未赋值再 t.power(i,n)
         }
         fac[0] = 1;
         for (int i = 1; i <= n + 2; i++) {
@@ -8050,7 +8050,7 @@ $\mathcal O(N\log N)$。数组 $1$-index。`N` 按题目改。
 > 性质：交换序列的任意两元素，序列的逆序数的奇偶性必定发生改变。
 
 ```cpp
-LL a[N], tmp[N], n, ans = 0; // N 按题目改
+LL a[N], tmp[N], n, ans = 0;  // N 按题目改
 void mergeSort(LL l, LL r){
     if (l >= r) return;
     LL mid = (l + r) >> 1, i = l, j = mid + 1, cnt = 0;
@@ -8100,14 +8100,14 @@ signed main() {
     vector<pair<int, int>> ans;
     map<int, int> pre;
     int st = 1;
-    BIT bit(n); // 树状数组，见数据结构章
+    BIT bit(n);  // 树状数组，见数据结构章
     for (auto [r, l, id] : query) {
         for (int i = st; i <= r; i++, st++) {
-            if (pre.count(in[i])) { // 消除此前操作的影响
+            if (pre.count(in[i])) {  // 消除此前操作的影响
                 bit.add(pre[in[i]], -1);
             }
             bit.add(i, 1);
-            pre[in[i]] = i; // 更新操作
+            pre[in[i]] = i;  // 更新操作
         }
         ans.push_back({id, bit.ask(r) - bit.ask(l - 1)});
     }
@@ -8197,11 +8197,11 @@ struct card {
     }
     friend auto &operator>> (istream &it, card &C) {
         string S, T; it >> S;
-        T = "__23456789TJQKA"; //点数
+        T = "__23456789TJQKA";  //点数
         FOR (i, 0, T.sz - 1) {
             if (T[i] == S[0]) C.rank = i;
         }
-        T = "_SHCD"; //花色
+        T = "_SHCD";  //花色
         FOR (i, 0, T.sz - 1) {
             if (T[i] == S[1]) C.suit = i;
         }
@@ -8213,7 +8213,7 @@ struct game {
     vector<card> peo;
     int a, b, c, d, e;
     int u, v, w, x, y;
-    bool Rk10() { //Rk10: Royal Flush，五张牌同花色，且点数为AKQJT（14,13,12,11,10）
+    bool Rk10() {  //Rk10: Royal Flush，五张牌同花色，且点数为AKQJT（14,13,12,11,10）
         sort(ALL(peo));
         reverse(ALL(peo));
         a = peo[0].rank, b = peo[1].rank, c = peo[2].rank, d = peo[3].rank, e = peo[4].rank;
@@ -8223,12 +8223,12 @@ struct game {
         if (a == 14 && b == 13 && c == 12 && d == 11 && e == 10) return 1;
         return 0;
     }
-    bool Dif(vector<card> &peo) { //专门用于检查A2345这种顺子的情况（这是最小的顺子）
+    bool Dif(vector<card> &peo) {  //专门用于检查A2345这种顺子的情况（这是最小的顺子）
         a = peo[0].rank, b = peo[1].rank, c = peo[2].rank, d = peo[3].rank, e = peo[4].rank;
         u = peo[0].suit, v = peo[1].suit, w = peo[2].suit, x = peo[3].suit, y = peo[4].suit;
         
         if (a != 14 || b != 5 || c != 4 || d != 3 || e != 2) return 0;
-        vector<card> peo2 = {peo[1], peo[2], peo[3], peo[4], peo[0]}; //重新排序
+        vector<card> peo2 = {peo[1], peo[2], peo[3], peo[4], peo[0]};  //重新排序
         peo = peo2;
         return 1;
     }
@@ -8407,8 +8407,8 @@ $2$–$62$ 进制互转。输入：`原进制 目标进制 数字`。字符 $0$-
 ```cpp
 #include<bits/stdc++.h>
 using namespace std;
-map<char, int> mp; //将字符转化为数字
-map<int, char> mp2; //将数字转化为字符
+map<char, int> mp;  //将字符转化为数字
+map<int, char> mp2;  //将数字转化为字符
 int main(){
     for(int i = 0; i < 10; i++) mp[(char)i + 48] = i, mp2[i] = (char)i + 48;
     for(int i = 10; i < 36; i++) mp[(char)i + 55] = i, mp2[i] = (char)i + 55;
@@ -8421,15 +8421,15 @@ int main(){
         cin >> a >> b >> s;
         for(auto c : s) nums.push_back(mp[c]);
         reverse(nums.begin(), nums.end());
-        while(nums.size()){ //短除法，将整个大数一直除 b ，取余数
+        while(nums.size()){  //短除法，将整个大数一直除 b ，取余数
             int remainder = 0;
             for(int i = nums.size() - 1; ~i; i--){
                 nums[i] += remainder * a;
                 remainder = nums[i] % b;
                 nums[i] /= b;
             }
-            ans.push_back(remainder); //得到余数
-            while(nums.size() && nums.back() == 0) nums.pop_back(); //去掉前导 0
+            ans.push_back(remainder);  //得到余数
+            while(nums.size() && nums.back() == 0) nums.pop_back();  //去掉前导 0
         }
         reverse(ans.begin(), ans.end());
         for(int i : ans) sh += mp2[i];
@@ -8449,7 +8449,7 @@ int main(){
 每个箱子容量 $C$，物品按输入顺序装进**最靠前**还能放下的箱子。线段树维护剩余容量最大值。
 
 ```cpp
-const int N = 1e6 + 10; // 按题目改
+const int N = 1e6 + 10;  // 按题目改
 int T, n, a[N], c, tr[N << 2];
 void pushup(int u){
     tr[u] = max(tr[u << 1], tr[u << 1 | 1]);
@@ -8530,7 +8530,7 @@ vector<pair<ld, int>> val = {
     {log(z) * pow(y, x), 9}, {log(z) * x * y, 10},    {log(z) * y * x, 11}};
 
 sort(val.begin(), val.end(), [&](auto x, auto y) {
-    if (equal(x.first, y.first)) return x.second < y.second; // equal 见二维几何；原来写成 queal
+    if (equal(x.first, y.first)) return x.second < y.second;  // equal 见二维几何；原来写成 queal
     return x.first > y.first;
 });
 cout << ans[val.front().second] << endl;
@@ -8674,13 +8674,13 @@ struct DSU {
     bool same(int x, int y) {
         return get(x) == get(y);
     }
-    bool F(int x) { // 判断连通块内是否存在自环
+    bool F(int x) {  // 判断连通块内是否存在自环
         return f[get(x)];
     }
-    int size(int x) { // 输出连通块中点的数量
+    int size(int x) {  // 输出连通块中点的数量
         return p[get(x)];
     }
-    int E(int x) { // 输出连通块中边的数量
+    int E(int x) {  // 输出连通块中边的数量
         return e[get(x)];
     }
 };
@@ -8710,7 +8710,7 @@ struct sparse_table
             }
         }
     }
-    T query(int l, int r) {//[l,r)
+    T query(int l, int r) {  //[l,r)
         if (l == r) return T(0);
         int len = r - l;
         int x = std::__lg(len);
@@ -8735,7 +8735,7 @@ struct Info
 template<typename T> struct BIT {
     int n;
     vector<T> w;
-    BIT(int n, auto &in) : n(n), w(n + 1) { // 预处理填值
+    BIT(int n, auto &in) : n(n), w(n + 1) {  // 预处理填值
         for (int i = 1; i <= n; i++) {
             add(i, in[i]);
         }
@@ -8745,14 +8745,14 @@ template<typename T> struct BIT {
             w[x] += v;
         }
     }
-    T ask(int x) { // 前缀和查询
+    T ask(int x) {  // 前缀和查询
         T ans = 0;
         for (; x; x -= x & -x) {
             ans += w[x];
         }
         return ans;
     }
-    T ask(int l, int r) { // 差分实现区间和查询
+    T ask(int l, int r) {  // 差分实现区间和查询
         return ask(r) - ask(l - 1);
     }
 };
@@ -8765,7 +8765,7 @@ template<typename T> struct BIT {
 ```cpp
 struct BIT {
     int n;
-    vector<int> w, chk; // chk 为传入的待处理数组
+    vector<int> w, chk;  // chk 为传入的待处理数组
     BIT(int n, auto &in) : n(n), w(n + 1), chk(in) {}
     /* 需要全部常规封装 */
     int get() {
@@ -8819,15 +8819,15 @@ struct BIT {
     int pre(int x) { return kth(get(x) - 1); } // 查找 x 的前驱
     int suf(int x) { return kth(get(x + 1)); } // 查找 x 的后继
 };
-const int N = 10000000; // 可以用于在线处理平衡二叉树的全部要求
+const int N = 10000000;  // 可以用于在线处理平衡二叉树的全部要求
 signed main() {
-    BIT bit(N + 1); // 在线处理不能够离散化，一定要开到比最大值更大
+    BIT bit(N + 1);  // 在线处理不能够离散化，一定要开到比最大值更大
     int n;
     cin >> n;
     for (int i = 1; i <= n; i++) {
         int op, x;
         cin >> op >> x;
-        if (op == 1) bit.add(x, 1); // 插入 x
+        if (op == 1) bit.add(x, 1);  // 插入 x
         else if (op == 2) bit.add(x, -1); // 删除任意一个 x
         else if (op == 3) cout << bit.get(x) << "\n"; // 查询 x 的排名
         else if (op == 4) cout << bit.kth(x) << "\n"; // 查询排名为 x 的数
@@ -8851,13 +8851,13 @@ template<typename T> struct BIT {
             update(i, in[i]);
         }
     } /* 可以增加并使用常规封装中的几个函数 */
-    void update(int x, int v) { // 单点赋值
+    void update(int x, int v) {  // 单点赋值
         base[x] = max(base[x], v);
         for (; x <= n; x += low(x)) {
             w[x] = max(w[x], v);
         }
     }
-    T getMax(int l, int r) { // 最值查询
+    T getMax(int l, int r) {  // 最值查询
         T ans = T();
         while (r >= l) {
             ans = max(base[r], ans);
@@ -8889,12 +8889,12 @@ struct BIT_2D {
             }
         }
     }
-    void add(int x, int y, int X, int Y, int k) { // 区块修改：二维差分
+    void add(int x, int y, int X, int Y, int k) {  // 区块修改：二维差分
         X++, Y++;
         add(x, y, k), add(X, y, -k);
         add(X, Y, k), add(x, Y, -k);
     }
-    int ask(int x, int y) { // 单点查询
+    int ask(int x, int y) {  // 单点查询
         int ans = 0;
         for (int i = x; i; i -= i & -i) {
             for (int j = y; j; j -= j & -j) {
@@ -8903,7 +8903,7 @@ struct BIT_2D {
         }
         return ans;
     }
-    int ask(int x, int y, int X, int Y) { // 区块查询：二维前缀和
+    int ask(int x, int y, int X, int Y) {  // 区块查询：二维前缀和
         x--, y--;
         return ask(X, Y) - ask(x, Y) - ask(X, y) + ask(x, y);
     }
@@ -8923,25 +8923,25 @@ struct BIT_2D {
         b3.resize(n + 1, vector<int>(m + 1));
         b4.resize(n + 1, vector<int>(m + 1));
     }
-    void add(auto &w, int x, int y, int k) { // 单点修改
+    void add(auto &w, int x, int y, int k) {  // 单点修改
         for (int i = x; i <= n; i += i & -i) {
             for (int j = y; j <= m; j += j & -j) {
                 w[i][j] += k;
             }
         }
     }
-    void add(int x, int y, int k) { // 多了一步计算
+    void add(int x, int y, int k) {  // 多了一步计算
         add(b1, x, y, k);
         add(b2, x, y, k * (x - 1));
         add(b3, x, y, k * (y - 1));
         add(b4, x, y, k * (x - 1) * (y - 1));
     }
-    void add(int x, int y, int X, int Y, int k) { // 区块修改：二维差分
+    void add(int x, int y, int X, int Y, int k) {  // 区块修改：二维差分
         X++, Y++;
         add(x, y, k), add(X, y, -k);
         add(X, Y, k), add(x, Y, -k);
     }
-    int ask(auto &w, int x, int y) { // 单点查询
+    int ask(auto &w, int x, int y) {  // 单点查询
         int ans = 0;
         for (int i = x; i; i -= i & -i) {
             for (int j = y; j; j -= j & -j) {
@@ -8950,7 +8950,7 @@ struct BIT_2D {
         }
         return ans;
     }
-    int ask(int x, int y) { // 多了一步计算
+    int ask(int x, int y) {  // 多了一步计算
         int ans = 0;
         ans += x * y * ask(b1, x, y);
         ans -= y * ask(b2, x, y);
@@ -8958,7 +8958,7 @@ struct BIT_2D {
         ans += ask(b4, x, y);
         return ans;
     }
-    int ask(int x, int y, int X, int Y) { // 区块查询：二维前缀和
+    int ask(int x, int y, int X, int Y) {  // 区块查询：二维前缀和
         x--, y--;
         return ask(X, Y) - ask(x, Y) - ask(X, y) + ask(x, y);
     }
@@ -9424,9 +9424,9 @@ signed main() {
         query[i] = {l, r, i};
     }
 
-    int Knum = n / min<int>(n, sqrt(q)); // 计算块长
+    int Knum = n / min<int>(n, sqrt(q));  // 计算块长
     vector<int> K(n + 1);
-    for (int i = 1; i <= n; i++) { // 固定块长
+    for (int i = 1; i <= n; i++) {  // 固定块长
         K[i] = (i - 1) / Knum + 1;
     }
     sort(query.begin() + 1, query.end(), [&](auto x, auto y) {
@@ -9480,7 +9480,7 @@ void solve(){
         }
     }
 
-    int block = max(1, (int)pow(n, 2.0 / 3));   // n ^ (2 / 3)，原写死 2610 须按 n 改
+    int block = max(1, (int)pow(n, 2.0 / 3));  // n ^ (2 / 3)，原写死 2610 须按 n 改
     std::vector<int> b(n + 1);
     for (int i = 1;i <= n;i++) b[i] = (i - 1) / block + 1;
     std::sort(q.begin() + 1, q.end(), [&](auto x, auto y) {
@@ -9514,7 +9514,7 @@ void solve(){
         while (t < qt) time(++t, ql, qr);
         while (t > qt) time(t--, ql, qr);
 
-        ans[id] = val; // 原来写成 cnt（未定义变量）
+        ans[id] = val;  // 原来写成 cnt（未定义变量）
     }
     for (int i = 1;i <= n;i++)    std::cout << ans[i] << '\n';
 }
@@ -9948,7 +9948,7 @@ map<int, int> dic;
 int n; cin >> n;
 for (int i = 1, op, x; i <= n; i++) {
     cin >> op >> x;
-    if (op == 1) { // 插入一个元素x，允许重复
+    if (op == 1) {  // 插入一个元素x，允许重复
         ver.insert({x, ++dic[x]});
     } else if (op == 2) { // 删除元素x，若有重复，则任意删除一个
         ver.erase({x, dic[x]--});
@@ -9957,7 +9957,7 @@ for (int i = 1, op, x; i <= n; i++) {
     } else if (op == 4) { // 查询排名为x的元素
         cout << ver.find_by_order(--x)->first << endl;
     } else if (op == 5) { // 查询元素x的前驱
-        int idx = ver.order_of_key({x, 1}) - 1; // 无论x存不存在，idx都代表x的位置，需要-1
+        int idx = ver.order_of_key({x, 1}) - 1;  // 无论x存不存在，idx都代表x的位置，需要-1
         cout << ver.find_by_order(idx)->first << endl;
     } else if (op == 6) { // 查询元素x的后继
         int idx = ver.order_of_key( {x, dic[x]}); // 如果x不存在，那么idx就是x的后继
@@ -9996,11 +9996,11 @@ for (int i = 1, op, x; i <= n; i++) {
 
 ```cpp
 cin >> l >> r >> x;
-l--; // 坐标修改为 0 开始
+l--;  // 坐标修改为 0 开始
 r--;
-l = (l + shift) % n; // 偏移
+l = (l + shift) % n;  // 偏移
 r = (r + shift) % n;
-if (l > r) { // 区间分离则分别操作
+if (l > r) {  // 区间分离则分别操作
     segt.modify(l, n - 1, x);
     segt.modify(0, r, x);
 } else {
@@ -10029,8 +10029,8 @@ signed main() {
         cin >> w[i];
     }
 
-    vector<array<int, 4>> query = {{}}; // {左区间, 右区间, 累计修改次数, 下标}
-    vector<array<int, 2>> modify = {{}}; // {修改的值, 修改的元素下标}
+    vector<array<int, 4>> query = {{}};  // {左区间, 右区间, 累计修改次数, 下标}
+    vector<array<int, 2>> modify = {{}};  // {修改的值, 修改的元素下标}
     for (int i = 1; i <= q; i++) {
         char op;
         cin >> op;
@@ -10045,9 +10045,9 @@ signed main() {
         }
     }
 
-    int Knum = max(1, (int)pow(n, 2.0 / 3)); // 带修莫队块长取 n^(2/3) 最优（原来写死 2154，须按 n 改）
+    int Knum = max(1, (int)pow(n, 2.0 / 3));  // 带修莫队块长取 n^(2/3) 最优（原来写死 2154，须按 n 改）
     vector<int> K(n + 1);
-    for (int i = 1; i <= n; i++) { // 固定块长
+    for (int i = 1; i <= n; i++) {  // 固定块长
         K[i] = (i - 1) / Knum + 1;
     }
     sort(query.begin() + 1, query.end(), [&](auto x, auto y) {
@@ -10057,7 +10057,7 @@ signed main() {
     });
 
     int l = 1, r = 0, val = 0;
-    int t = 0; // 累计修改次数
+    int t = 0;  // 累计修改次数
     vector<int> ans(query.size()), cnt(N);
     for (int i = 1; i < query.size(); i++) {
         auto [ql, qr, qt, id] = query[i];
@@ -10070,7 +10070,7 @@ signed main() {
             if (cnt[x] == 0) -- val;
         };
         auto time = [&](int x, int l, int r) -> void {
-            if (l <= modify[x][1] && modify[x][1] <= r) { //当修改的位置在询问期间内部时才会改变num的值
+            if (l <= modify[x][1] && modify[x][1] <= r) {  //当修改的位置在询问期间内部时才会改变num的值
                 del(w[modify[x][1]]);
                 add(modify[x][0]);
             }
@@ -10648,7 +10648,7 @@ for (int i = 1; i <= N; i++) {
 每个合数只被它的**最小质因子**筛掉一次，因此复杂度为 $\mathcal O(N)$（埃氏筛是 $\mathcal O(N\log\log N)$，此处原写有误）。下面的写法同时把最小质因子记录在 `v`/`minp` 中，可用于分解质因数。
 
 ```cpp
-vector<int> prime; // 这里储存筛出来的全部质数
+vector<int> prime;  // 这里储存筛出来的全部质数
 auto euler_Prime = [&](int n) -> void {
     vector<int> v(n + 1);
     for (int i = 2; i <= n; ++i) {
@@ -10785,7 +10785,7 @@ LL inv(LL x) { return mypow(x, mod - 2, mod);}
 
 ```cpp
 int x, y;
-int exgcd(int a, int b, int &x, int &y) { //扩展欧几里得算法
+int exgcd(int a, int b, int &x, int &y) {  //扩展欧几里得算法
     if (b == 0) {
         x = 1, y = 0;
         return a; //到达递归边界开始向上一层返回
@@ -10794,9 +10794,9 @@ int exgcd(int a, int b, int &x, int &y) { //扩展欧几里得算法
     int temp = y; //把x y变成上一层的
     y = x - (a / b) * y;
     x = temp;
-    return r; //得到a b的最大公因数
+    return r;  //得到a b的最大公因数
 }
-LL getInv(int a, int mod) { //求a在mod下的逆元，不存在逆元返回-1
+LL getInv(int a, int mod) {  //求a在mod下的逆元，不存在逆元返回-1
     LL x, y, d = exgcd(a, mod, x, y);
     return d == 1 ? (x % mod + mod) % mod : -1;
 }
@@ -10834,7 +10834,7 @@ int exgcd(int a, int b, int &x, int &y) {
 auto calc = [&](int a, int b, int c) {
     // A*x + B*y = C，A、B 可为负
     int u = 1, v = 1;
-    if (a < 0) { // 负数先取绝对值，最后乘回符号
+    if (a < 0) {  // 负数先取绝对值，最后乘回符号
         a = -a;
         u = -1;
     }
@@ -10844,12 +10844,12 @@ auto calc = [&](int a, int b, int c) {
     }
 
     int x, y, d = exgcd(a, b, x, y), ans;
-    if (c % d != 0) { // 无整数解
+    if (c % d != 0) {  // 无整数解
         cout << -1 << "\n";
         return;
     }
     a /= d, b /= d, c /= d;
-    x *= c, y *= c; // 得到一组可行解
+    x *= c, y *= c;  // 得到一组可行解
 
     ans = (x % b + b - 1) % b + 1; // x 的最小正整数解
     auto [A, B] = pair{u * ans, v * (c - ans * a) / b};
@@ -10857,7 +10857,7 @@ auto calc = [&](int a, int b, int c) {
     ans = (y % a + a - 1) % a + 1; // y 的最小正整数解
     auto [C, D] = pair{u * (c - ans * b) / a, v * ans};
 
-    int num = (C - A) / b + 1; // x、y 均为正整数的解组数
+    int num = (C - A) / b + 1;  // x、y 均为正整数的解组数
 };
 ```
 
@@ -10945,7 +10945,7 @@ namespace BSGS {
         if (f == -1) return -1;
         return f + k;
     }
-} // namespace BSGS
+}  // namespace BSGS
 
 using namespace BSGS;
 
@@ -10969,7 +10969,7 @@ $\varphi(n)$：$1..n$ 中与 $n$ 互质的个数。$n=\prod p_i^{k_i}$ 则 $\var
 分解质因数后套公式，$\mathcal{O}(\sqrt{n})$。
 
 ```cpp
-int phi(int n) { //求解 phi(n)
+int phi(int n) {  //求解 phi(n)
     int ans = n;
     for(int i = 2; i <= n / i; i ++) { //注意，这里要写 n / i ，以防止 int 型溢出风险和 sqrt 超时风险
         if(n % i == 0) {
@@ -10994,10 +10994,10 @@ $$
 const int N = 1e5 + 7;
 int v[N], prime[N], phi[N];
 void euler(int n) {
-    ms(v, 0); //最小质因子
-    int m = 0; //质数数量
+    ms(v, 0);  //最小质因子
+    int m = 0;  //质数数量
     for (int i = 2; i <= n; ++ i) {
-        if (v[i] == 0) { // i 是质数
+        if (v[i] == 0) {  // i 是质数
             v[i] = i, prime[++ m] = i;
             phi[i] = i - 1;
         }
@@ -11094,8 +11094,8 @@ $$
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-bool large_enough = false; // 判断是否有 b >= phi(m)
-inline int read(int MOD = 1e9 + 7) // 快速读入稍加修改即可以边读入边取模；不用扩展欧拉定理时直接模一个大数即可
+bool large_enough = false;  // 判断是否有 b >= phi(m)
+inline int read(int MOD = 1e9 + 7)  // 快速读入稍加修改即可以边读入边取模；不用扩展欧拉定理时直接模一个大数即可
 {
     int ans = 0;
     char c = getchar();
@@ -11113,7 +11113,7 @@ inline int read(int MOD = 1e9 + 7) // 快速读入稍加修改即可以边读入
     }
     return ans;
 }
-int phi(int n) // 求欧拉函数
+int phi(int n)  // 求欧拉函数
 {
     int res = n;
     for (int i = 2; i * i <= n; i++)
@@ -11127,13 +11127,13 @@ int phi(int n) // 求欧拉函数
         res = res / n * (n - 1);
     return res;
 }
-int qpow(int a, int n, int MOD) // 快速幂
+int qpow(int a, int n, int MOD)  // 快速幂
 {
     int ans = 1;
     while (n)
     {
         if (n & 1)
-            ans = 1LL * ans * a % MOD; // 注意防止溢出
+            ans = 1LL * ans * a % MOD;  // 注意防止溢出
         n >>= 1;
         a = 1LL * a * a % MOD;
     }
@@ -11229,11 +11229,11 @@ LL exgcd(LL a, LL b, LL &x, LL &y) {
 LL excrt() {
     // 方程形式为 x ≡ ai[i] (mod bi[i])，模数不要求互质；互质时就是 CRT 的特例
     LL x, y, k;
-    LL M = bi[1], ans = ai[1]; // 当前合并后的模数与余数
+    LL M = bi[1], ans = ai[1];  // 当前合并后的模数与余数
     for (int i = 2; i <= n; ++ i) {
-        LL a = M, b = bi[i], c = (ai[i] - ans % b + b) % b; // 变成 exgcd 可解形式 ax ≡ c (mod b)
+        LL a = M, b = bi[i], c = (ai[i] - ans % b + b) % b;  // 变成 exgcd 可解形式 ax ≡ c (mod b)
         LL gcd = exgcd(a, b, x, y), bg = b / gcd;
-        if (c % gcd != 0) return -1; // 无解判定
+        if (c % gcd != 0) return -1;  // 无解判定
         x = mul(x, c / gcd, bg);
         ans += x * M;
         M *= bg;
@@ -11283,13 +11283,13 @@ LL gauss(){
     LL c, r;
     for (c = 0, r = 0; c < n; c ++ ){
         LL t = r;
-        for (int i = r; i < n; i ++ )    //找到绝对值最大的行
+        for (int i = r; i < n; i ++ )  //找到绝对值最大的行
             if (fabs(a[i][c]) > fabs(a[t][c]))
                 t = i;
         if (fabs(a[t][c]) < eps) continue;
-        for (int j = c; j < n + 1; j ++ ) swap(a[t][j], a[r][j]);    //将绝对值最大的一行换到最顶端
-        for (int j = n; j >= c; j -- ) a[r][j] /= a[r][c];    //将当前行首位变成 1
-        for (int i = r + 1; i < n; i ++ )    //将下面列消成 0
+        for (int j = c; j < n + 1; j ++ ) swap(a[t][j], a[r][j]);  //将绝对值最大的一行换到最顶端
+        for (int j = n; j >= c; j -- ) a[r][j] /= a[r][c];  //将当前行首位变成 1
+        for (int i = r + 1; i < n; i ++ )  //将下面列消成 0
             if (fabs(a[i][c]) > eps)
                 for (int j = n; j >= c; j -- )
                     a[i][j] -= a[r][j] * a[i][c];
@@ -11337,7 +11337,7 @@ namespace min25{
     LL n;
     LL mod;
     inline LL ps(LL n,LL k) {LL r=1;for(;k;k>>=1){if(k&1)r=r*n%mod;n=n*n%mod;}return r;}
-    void finit(){ // 最开始清0
+    void finit(){  // 最开始清0
         memset(g, 0, sizeof(g));
         memset(a, 0, sizeof(a));
         memset(sum, 0, sizeof(sum));
@@ -11408,7 +11408,7 @@ const int SIZE = 2;
 struct Matrix {
     ll M[SIZE + 5][SIZE + 5];
     void clear() { memset(M, 0, sizeof(M)); }
-    void reset() { //初始化
+    void reset() {  //初始化
         clear();
         for (int i = 1; i <= SIZE; ++i) M[i][i] = 1;
     }
@@ -11439,7 +11439,7 @@ inline int mypow(LL n, LL k, int p = MOD) {
     return r;
 }
 bool ok = 1;
-Matrix getinv(Matrix a) { //矩阵求逆
+Matrix getinv(Matrix a) {  //矩阵求逆
     int n = SIZE, m = SIZE * 2;
     for (int i = 1; i <= n; i++) a.M[i][i + n] = 1;
     for (int i = 1; i <= n; i++) {
@@ -11474,7 +11474,7 @@ Matrix getinv(Matrix a) { //矩阵求逆
 把转移写成矩阵乘法，指数倍增。`MatPow(A,b)` 得 $A^b$；`N` 为阶、`mod` 按题改，下标从 $1$。复杂度 $\mathcal O(N^3\log M)$。线性递推见下一节矩阵加速。
 
 ```cpp
-const int N = 40; // 按题目矩阵大小改
+const int N = 40;  // 按题目矩阵大小改
 using mat = std::array<std::array<i64, N + 1>, N + 1>;
 mat operator*(const mat& a, const mat& b) {
     mat ans{};
@@ -11563,10 +11563,10 @@ int main(){
 莫比乌斯反演定义：$F(n)$ 和 $f(n)$ 是定义在非负整数集合上的两个函数，并且满足 $\displaystyle F(n) = \sum_{d|n}f(d)$ ，可得 $\displaystyle f(n) = \sum_{d|n}\mu(d)F(\left \lfloor \frac{n}{d} \right \rfloor)$ 。用于"已知 $F$ 求 $f$"的莫反类题；也可以理解为 $F = f * 1 \iff f = F * \mu$。
 
 ```cpp
-const int N = 5e4 + 10; // 按题目改
+const int N = 5e4 + 10;  // 按题目改
 bool st[N];
 int mu[N], prime[N], cnt, sum[N];
-void getMu() { // 线性筛 mu，再前缀和，O(N)
+void getMu() {  // 线性筛 mu，再前缀和，O(N)
     mu[1] = 1;
     for (int i = 2; i <= N - 10; i++) {
         if (!st[i]) {
@@ -11933,7 +11933,7 @@ $n$ 个人编号 $0,1,2…,n-1$ ，每次数到 $k$ 出局，求最后剩下的�
 int jos(int n,int k){
     int res=0;
     repeat(i,1,n+1)res=(res+k)%i;
-    return res; // res+1，如果编号从1开始
+    return res;  // res+1，如果编号从1开始
 }
 ```
 
@@ -11942,11 +11942,11 @@ $\mathcal O(K\log N)$ ，适用于 $K$ 较小的情况。
 ```c++
 int jos(int n,int k){
     if(n==1 || k==1)return n-1;
-    if(k>n)return (jos(n-1,k)+k)%n; // 线性算法
+    if(k>n)return (jos(n-1,k)+k)%n;  // 线性算法
     int res=jos(n-n/k,k)-n%k;
-    if(res<0)res+=n; // mod n
-    else res+=res/(k-1); // 还原位置
-    return res; // res+1，如果编号从1开始
+    if(res<0)res+=n;  // mod n
+    else res+=res/(k-1);  // 还原位置
+    return res;  // res+1，如果编号从1开始
 }
 ```
 
@@ -11987,11 +11987,11 @@ using a2 = std::array<int, 2>;
 using a3 = std::array<int, 3>;
 using a4 = std::array<int, 4>;
 
-const int N = 1e6; // 按题目改
+const int N = 1e6;  // 按题目改
 const int MAXN = 1e6 + 10;
 const int inf = 1e9;
 // const int mod = 1e9 + 7;
-const int mod = 998244353; // 按题目改
+const int mod = 998244353;  // 按题目改
 
 std::mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
 
@@ -12002,7 +12002,7 @@ void solve() {
 signed main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(0), std::cout.tie(0);
-    int t = 1;//cin >> t;
+    int t = 1;  //cin >> t;
     while (t--) {
         solve();
         std::cout << '\n';
@@ -12142,8 +12142,8 @@ template<const int &MOD> struct Zmod {
     }
 };
 
-int MOD[] = {998244353, 1000000007}; // 模板参数要引用，所以用数组元素
-using Z = Zmod<MOD[1]>; // 现在是 1e9+7；要 998244353 改 MOD[0]
+int MOD[] = {998244353, 1000000007};  // 模板参数要引用，所以用数组元素
+using Z = Zmod<MOD[1]>;  // 现在是 1e9+7；要 998244353 改 MOD[0]
 ```
 
 ### 分数运算类
@@ -12165,7 +12165,7 @@ template<typename T> struct Frac {
     constexpr double val() const {
         return 1. * x / y;
     }
-    constexpr Frac norm() const { // 调整符号、转化为最简形式
+    constexpr Frac norm() const {  // 调整符号、转化为最简形式
         T p = gcd(x, y);
         return {x / p, y / p};
     }
@@ -12207,7 +12207,7 @@ template<typename T> struct Frac {
 
 ```cpp
 const int base = 1000000000;
-const int base_digits = 9; // 分解为九个数位一个数字
+const int base_digits = 9;  // 分解为九个数位一个数字
 struct bigint {
     vector<int> a;
     int sign;
@@ -12353,17 +12353,17 @@ struct bigint {
         res.sign *= res.sign;
         return res;
     }
-    void check(int v) { // 检查输入的是否为负数
+    void check(int v) {  // 检查输入的是否为负数
         if (v < 0) {
             sign = -sign;
             v = -v;
         }
     }
-    void trim() { // 去除前导零
+    void trim() {  // 去除前导零
         while (!a.empty() && !a.back()) a.pop_back();
         if (a.empty()) sign = 1;
     }
-    bool isZero() const { // 判断是否等于零
+    bool isZero() const {  // 判断是否等于零
         return a.empty() || (a.size() == 1 && !a[0]);
     }
     friend bigint gcd(const bigint &a, const bigint &b) {
@@ -12403,7 +12403,7 @@ struct bigint {
 
     /* 大整数乘除大整数部分 */
     typedef vector<long long> vll;
-    bigint operator*(const bigint &v) const { // 大整数乘大整数
+    bigint operator*(const bigint &v) const {  // 大整数乘大整数
         vector<int> a6 = convert_base(this->a, base_digits, 6);
         vector<int> b6 = convert_base(v.a, base_digits, 6);
         vll a(a6.begin(), a6.end());
@@ -12424,7 +12424,7 @@ struct bigint {
         return res;
     }
     friend pair<bigint, bigint> divmod(const bigint &a1,
-                                       const bigint &b1) { // 大整数除大整数，同时返回答案与余数
+                                       const bigint &b1) {  // 大整数除大整数，同时返回答案与余数
         int norm = base / (b1.a.back() + 1);
         bigint a = a1.abs() * norm;
         bigint b = b1.abs() * norm;
@@ -12592,13 +12592,13 @@ Dilworth：剖成最少单调不升子序列的个数 $=$ 最长上升子序列�
 > 将一个序列剖成若干个单调不升子序列的最小个数等于该序列最长上升子序列的个数
 
 ```cpp
-vector<int> val; // 堆数
+vector<int> val;  // 堆数
 for (int i = 1, x; i <= n; i++) {
     cin >> x;
-    int it = upper_bound(val.begin(), val.end(), x) - val.begin(); // low/upp: 严格/非严格递增
-    if (it >= val.size()) { // 新增一堆
+    int it = upper_bound(val.begin(), val.end(), x) - val.begin();  // low/upp: 严格/非严格递增
+    if (it >= val.size()) {  // 新增一堆
         val.push_back(x);
-    } else { // 更新对应位置元素
+    } else {  // 更新对应位置元素
         val[it] = x;
     }
 }
@@ -12623,12 +12623,12 @@ sort(in.begin() + 1, in.end(), [&](auto x, auto y) {
 vector<int> val{0}, idx{0}, pre(n + 1);
 for (int i = 1; i <= n; i++) {
     auto [x, y, z] = in[i];
-    int it = lower_bound(val.begin(), val.end(), y) - val.begin(); // low/upp: 严格/非严格递增
-    if (it >= val.size()) { // 新增一堆
+    int it = lower_bound(val.begin(), val.end(), y) - val.begin();  // low/upp: 严格/非严格递增
+    if (it >= val.size()) {  // 新增一堆
         pre[z] = idx.back();
         val.push_back(y);
         idx.push_back(z);
-    } else { // 更新对应位置元素
+    } else {  // 更新对应位置元素
         pre[z] = idx[it - 1];
         val[it] = y;
         idx[it] = z;
@@ -12707,7 +12707,7 @@ $\mathcal O(N)$ 。`repeat` 为赛场宏，没有就写成 `for (int i = 1; i <=
 int jos(int n,int k){
     int res=0;
     repeat(i,1,n+1)res=(res+k)%i;
-    return res; // res+1，如果编号从1开始
+    return res;  // res+1，如果编号从1开始
 }
 ```
 
@@ -12716,11 +12716,11 @@ $\mathcal O(K\log N)$ ，适用于 $K$ 较小的情况。
 ```cpp
 int jos(int n,int k){
     if(n==1 || k==1)return n-1;
-    if(k>n)return (jos(n-1,k)+k)%n; // 线性算法
+    if(k>n)return (jos(n-1,k)+k)%n;  // 线性算法
     int res=jos(n-n/k,k)-n%k;
-    if(res<0)res+=n; // mod n
-    else res+=res/(k-1); // 还原位置
-    return res; // res+1，如果编号从1开始
+    if(res<0)res+=n;  // mod n
+    else res+=res/(k-1);  // 还原位置
+    return res;  // res+1，如果编号从1开始
 }
 ```
 
@@ -12776,16 +12776,16 @@ signed main() {
     int p;
     cin >> n_ >> k_ >> p;
 
-    int n = 0; // 转化并计算 n % p
+    int n = 0;  // 转化并计算 n % p
     for (auto it : n_) {
         n = n * 10 + it - '0';
         n %= p;
     }
-    vector<int> k; // 转化 k
+    vector<int> k;  // 转化 k
     for (auto it : k_) {
         k.push_back(it - '0');
     }
-    cout << mypow10(n, k, p) << endl; // 暴力快速幂
+    cout << mypow10(n, k, p) << endl;  // 暴力快速幂
 }
 ```
 
@@ -12822,12 +12822,12 @@ signed main() {
     int p;
     cin >> n_ >> k_ >> p;
 
-    int n = 0; // 转化并计算 n % p
+    int n = 0;  // 转化并计算 n % p
     for (auto it : n_) {
         n = n * 10 + it - '0';
         n %= p;
     }
-    int mul = phi(p), type = 0, k = 0; // 转化 k
+    int mul = phi(p), type = 0, k = 0;  // 转化 k
     for (auto it : k_) {
         k = k * 10 + it - '0';
         type |= (k >= mul);
@@ -12864,7 +12864,7 @@ template<typename T> void Cin(T &a) {
 template<typename T, typename... Args> void Cin(T &a, Args &...args) {
     Cin(a), Cin(args...);
 }
-template<typename T> void Cout(T x) { // 注意，这里输出不带换行
+template<typename T> void Cout(T x) {  // 注意，这里输出不带换行
     if (x < 0) putchar('-'), x = -x;
     if (x > 9) Cout(x / 10);
     putchar(x % 10 + '0');
@@ -13017,33 +13017,33 @@ int r(int a, int b) {
 
 void graph(int n, int root = -1, int m = -1) {
     vector<pair<int, int>> t;
-    for (int i = 1; i < n; i++) { // 先建立一棵以0为根节点的树
+    for (int i = 1; i < n; i++) {  // 先建立一棵以0为根节点的树
         t.emplace_back(i, r(0, i - 1));
     }
 
     vector<pair<int, int>> edge;
     set<pair<int, int>> uni;
-    if (root == -1) root = r(0, n - 1); // 确定根节点
-    for (auto [x, y] : t) { // 偏移建树
+    if (root == -1) root = r(0, n - 1);  // 确定根节点
+    for (auto [x, y] : t) {  // 偏移建树
         x = (x + root) % n + 1;
         y = (y + root) % n + 1;
         edge.emplace_back(x, y);
         uni.emplace(x, y);
     }
 
-    if (m != -1) { // 如果是图，则在树的基础上继续加边
+    if (m != -1) {  // 如果是图，则在树的基础上继续加边
         for (int i = n; i <= m; i++) {
             while (true) {
                 int x = r(1, n), y = r(1, n);
-                if (x == y) continue; // 拒绝自环
-                if (uni.count({x, y})) continue; // 拒绝重边
+                if (x == y) continue;  // 拒绝自环
+                if (uni.count({x, y})) continue;  // 拒绝重边
                 edge.emplace_back(x, y);
                 uni.emplace(x, y);
             }
         }
     }
 
-    random_shuffle(edge.begin(), edge.end()); // 打乱节点
+    random_shuffle(edge.begin(), edge.end());  // 打乱节点
     for (auto [x, y] : edge) {
         cout << x << " " << y << endl;
     }
@@ -13154,27 +13154,27 @@ for i in w:
 用预定义宏看编译器版本，确认 `__int128`、pbds、gnu++20 能不能用。
 
 ```cpp
-for (int i : {1, 2}) {} // GNU C++11 支持范围表达式
+for (int i : {1, 2}) {}  // GNU C++11 支持范围表达式
 
-auto cc = [&](int x) { x++; }; // GNU C++11 支持 auto 与 lambda 表达式
+auto cc = [&](int x) { x++; };  // GNU C++11 支持 auto 与 lambda 表达式
 cc(2);
 
 tuple<string, int, int> V; // GNU C++11 引入
-array<int, 3> C; // GNU C++11 引入
+array<int, 3> C;  // GNU C++11 引入
 
-auto dfs = [&](auto self, int x) -> void { // GNU C++14 支持 auto 自递归
+auto dfs = [&](auto self, int x) -> void {  // GNU C++14 支持 auto 自递归
     if (x > 10) return;
     self(self, x + 1);
 };
 dfs(dfs, 1);
 
-vector in(1, vector<int>(1)); // GNU C++17 支持 vector 模板类型缺失
+vector in(1, vector<int>(1));  // GNU C++17 支持 vector 模板类型缺失
 
 map<int, int> dic;
 for (auto [u, v] : dic) {} // GNU C++17 支持 auto 解绑
-dic.contains(12); // GNU C++20 支持 contains 函数
+dic.contains(12);  // GNU C++20 支持 contains 函数
 
-constexpr double Pi = numbers::pi; // C++20 支持
+constexpr double Pi = numbers::pi;  // C++20 支持
 ```
 
 #### 编译器位数测试
@@ -13182,7 +13182,7 @@ constexpr double Pi = numbers::pi; // C++20 支持
 `sizeof` 指针或 `long` 判断 32/64 位。OJ 几乎都是 64 位。
 
 ```cpp
-using i64 = __int128; // 64 位 GNU C++11 支持
+using i64 = __int128;  // 64 位 GNU C++11 支持
 ```
 
 #### 评测器环境测试
@@ -13408,13 +13408,13 @@ struct Tree {
 
     int radius, center, diam;
     void getCenter() {
-        center = 1; //中心
+        center = 1;  //中心
         for (int i = 1; i <= n; i++) {
             if (max(d1[i], up[i]) < max(d1[center], up[center])) {
                 center = i;
             }
         }
-        radius = max(d1[center], up[center]); //距离最远点的距离的最小值
+        radius = max(d1[center], up[center]);  //距离最远点的距离的最小值
         //直径：仅在 center 位于直径中点时正确；一般应取 max(d1[i] + d2[i])
         diam = d1[center] + up[center] + 1;
     }
@@ -13456,9 +13456,9 @@ struct Tree {
 点分治的一般过程是：取重心为新树的根，随后使用 `dfs` 处理当前这棵树，灵活运用 `child` 和 `pre` 两个数组分别计算通过根节点、不通过根节点的路径信息，根据需要进行答案的更新；再对子树分治，寻找子树的重心，……。时间复杂度降至 $\mathcal O(N\log N)$ 。
 
 ```cpp
-int root = 0, MaxTree = 1e18; //分别代表重心下标、最大子树大小
+int root = 0, MaxTree = 1e18;  //分别代表重心下标、最大子树大小
 vector<int> vis(n + 1), siz(n + 1);
-auto get = [&](auto self, int x, int fa, int n) -> void { // 获取树的重心
+auto get = [&](auto self, int x, int fa, int n) -> void {  // 获取树的重心
     siz[x] = 1;
     int val = 0;
     for (auto [y, w] : ver[x]) {
@@ -13474,12 +13474,12 @@ auto get = [&](auto self, int x, int fa, int n) -> void { // 获取树的重心
     }
 };
 
-auto clac = [&](int x) -> void { // 以 x 为新的根，维护询问
-    set<int> pre = {0}; // 记录到根节点 x 距离为 i 的路径是否存在
+auto clac = [&](int x) -> void {  // 以 x 为新的根，维护询问
+    set<int> pre = {0};  // 记录到根节点 x 距离为 i 的路径是否存在
     vector<int> dis(n + 1);
     for (auto [y, w] : ver[x]) {
         if (vis[y]) continue;
-        vector<int> child; // 记录 x 的子树节点的深度信息
+        vector<int> child;  // 记录 x 的子树节点的深度信息
         auto dfs = [&](auto self, int x, int fa) -> void {
             child.push_back(dis[x]);
             for (auto [y, w] : ver[x]) {
@@ -13492,7 +13492,7 @@ auto clac = [&](int x) -> void { // 以 x 为新的根，维护询问
         dfs(dfs, y, x);
 
         for (auto it : child) {
-            for (int i = 1; i <= m; i++) { // 根据询问更新值
+            for (int i = 1; i <= m; i++) {  // 根据询问更新值
                 if (q[i] < it || !pre.count(q[i] - it)) continue;
                 ans[i] = 1;
             }
@@ -13501,8 +13501,8 @@ auto clac = [&](int x) -> void { // 以 x 为新的根，维护询问
     }
 };
 
-auto dfz = [&](auto self, int x, int fa) -> void { // 点分治
-    vis[x] = 1; // 标记已经被更新过的旧重心，确保只对子树分治
+auto dfz = [&](auto self, int x, int fa) -> void {  // 点分治
+    vis[x] = 1;  // 标记已经被更新过的旧重心，确保只对子树分治
     clac(x);
     for (auto [y, w] : ver[x]) {
         if (y == fa || vis[y]) continue;
@@ -13579,7 +13579,7 @@ struct HLD {
     int clac(int x, int y) { // 查询两点间距离
         return dep[x] + dep[y] - 2 * dep[lca(x, y)];
     }
-    void work(int root = 1) { // 在此初始化
+    void work(int root = 1) {  // 在此初始化
         dfs1(root);
         dfs2(root, root);
     }
@@ -13603,7 +13603,7 @@ struct Tree {
         val.resize(n + 1, vector<int>(30));
         lg.resize(n + 1);
         dep.resize(n + 1);
-        for (int i = 1; i <= n; i++) { //预处理 log
+        for (int i = 1; i <= n; i++) {  //预处理 log
             lg[i] = lg[i - 1] + (1 << lg[i - 1] == i);
         }
     }
@@ -13612,7 +13612,7 @@ struct Tree {
         ver[y].push_back(x);
     }
     void dfs(int x, int fa) {
-        val[x][0] = fa; // 储存 x 的父节点
+        val[x][0] = fa;  // 储存 x 的父节点
         dep[x] = dep[fa] + 1;
         for (int i = 1; i <= lg[dep[x]]; i++) {
             val[x][i] = val[val[x][i - 1]][i - 1];
@@ -13638,7 +13638,7 @@ struct Tree {
     int clac(int x, int y) { // 倍增查询两点间距离
         return dep[x] + dep[y] - 2 * dep[lca(x, y)];
     }
-    void work(int root = 1) { // 在此初始化
+    void work(int root = 1) {  // 在此初始化
         dfs(root, 0);
     }
 };
@@ -13659,11 +13659,11 @@ struct Tree {
         Max.resize(n + 1, vector<int>(30));
         lg.resize(n + 1);
         dep.resize(n + 1);
-        for (int i = 1; i <= n; i++) { //预处理 log
+        for (int i = 1; i <= n; i++) {  //预处理 log
             lg[i] = lg[i - 1] + (1 << lg[i - 1] == i);
         }
     }
-    void add(int x, int y, int w) { // 建立双向边
+    void add(int x, int y, int w) {  // 建立双向边
         ver[x].push_back({y, w});
         ver[y].push_back({x, w});
     }
@@ -13693,7 +13693,7 @@ struct Tree {
         }
         return val[x][0];
     }
-    int clac(int x, int y) { // 倍增查询两点间距离
+    int clac(int x, int y) {  // 倍增查询两点间距离
         return dep[x] + dep[y] - 2 * dep[lca(x, y)];
     }
     int query(int x, int y) { // 倍增查询两点路径上的最大边权（带权图）
@@ -13849,7 +13849,7 @@ struct HLD {
     void del(int c) {
     }
     void calc(int u, int fa, int f) {
-        if (f == 1) add(u); // 原来写 add() 缺参数，按规定应为对节点 u 的颜色操作
+        if (f == 1) add(u);  // 原来写 add() 缺参数，按规定应为对节点 u 的颜色操作
         else del(u);
         for (auto v : e[u]) {
             if (v == fa || v == hson) continue;
@@ -14076,7 +14076,7 @@ struct Segt {
         t.resize(n * 4 + 1);
         auto build = [&](auto self, int l, int r, int k = 1) {
             if (l == r) {
-                t[k] = {l, r, w[l], 0}; // 如果有赋值为 0 的操作，则懒标记必须要 -1
+                t[k] = {l, r, w[l], 0};  // 如果有赋值为 0 的操作，则懒标记必须要 -1
                 return;
             }
             t[k] = {l, r};
@@ -14091,13 +14091,13 @@ struct Segt {
         p.w += (p.r - p.l + 1) * lazy;
         p.lazy += lazy;
     }
-    void pushdown(int k) { // 不需要动
+    void pushdown(int k) {  // 不需要动
         if (t[k].lazy == 0) return;
         pushdown(t[GL], t[k].lazy);
         pushdown(t[GR], t[k].lazy);
         t[k].lazy = 0;
     }
-    void pushup(int k) { // 不需要动
+    void pushup(int k) {  // 不需要动
         auto pushup = [&](node &p, node &l, node &r) { /* 【在此更新上传函数】 */
             p.w = l.w + r.w;
         };
@@ -14150,7 +14150,7 @@ struct HLD {
         id.resize(n + 1);
         val.resize(n + 1);
     }
-    void add(int x, int y) { // 建立双向边
+    void add(int x, int y) {  // 建立双向边
         ver[x].push_back(y);
         ver[y].push_back(x);
     }
@@ -14169,7 +14169,7 @@ struct HLD {
     }
     void dfs2(int x, int up) {
         id[x] = ++idx;
-        val[idx] = in[x]; // 建立编号
+        val[idx] = in[x];  // 建立编号
         top[x] = up;
         if (son[x]) dfs2(son[x], up);
         for (auto y : ver[x]) {
@@ -14177,7 +14177,7 @@ struct HLD {
             dfs2(y, y);
         }
     }
-    void modify(int l, int r, int val) { // 链上修改
+    void modify(int l, int r, int val) {  // 链上修改
         while (top[l] != top[r]) {
             if (dep[top[l]] < dep[top[r]]) {
                 swap(l, r);
@@ -14190,10 +14190,10 @@ struct HLD {
         }
         segt.modify(id[l], id[r], val);
     }
-    void modify(int root, int val) { // 子树修改
+    void modify(int root, int val) {  // 子树修改
         segt.modify(id[root], id[root] + siz[root] - 1, val);
     }
-    int ask(int l, int r) { // 链上查询
+    int ask(int l, int r) {  // 链上查询
         int ans = 0;
         while (top[l] != top[r]) {
             if (dep[top[l]] < dep[top[r]]) {
@@ -14210,14 +14210,14 @@ struct HLD {
     int ask(int root) { // 子树查询
         return segt.ask(id[root], id[root] + siz[root] - 1);
     }
-    void work(auto in, int root = 1) { // 在此初始化
+    void work(auto in, int root = 1) {  // 在此初始化
         assert(in.size() == n + 1);
         this->in = in;
         dfs1(root);
         dfs2(root, root);
         segt.init(val); // 建立线段树
     }
-    void work(int root = 1) { // 在此初始化
+    void work(int root = 1) {  // 在此初始化
         dfs1(root);
         dfs2(root, root);
         segt.init(val); // 建立线段树
@@ -14236,7 +14236,7 @@ struct HLD {
 
 ```cpp
 using i64 = long long;
-std::vector<i64> get_linear_basis(std::vector<i64>& nums, int N = 63) { // N 按值域最高位改
+std::vector<i64> get_linear_basis(std::vector<i64>& nums, int N = 63) {  // N 按值域最高位改
     std::vector<i64> p(N + 1);
     auto insert = [&](i64 x) {
         for (int s = N;s >= 0;--s)if (x >> s & 1) {
@@ -14257,11 +14257,11 @@ signed main() {
     int n;std::cin >> n;
     std::vector<i64> nums(n);
     for (auto& x : nums)std::cin >> x;
-    const int N = 63; // 原来直接用 N，main 里未定义
+    const int N = 63;  // 原来直接用 N，main 里未定义
     auto p = get_linear_basis(nums, N);
     i64 ans = 0;
     for (int s = N;s >= 0;--s)
-        ans = std::max(ans, ans ^ p[s]); // 从高位贪心
+        ans = std::max(ans, ans ^ p[s]);  // 从高位贪心
     std::cout << ans;
     return 0;
 }
@@ -14272,9 +14272,9 @@ signed main() {
 线性基封装。设位长为 `BASE`（一般取 $63$，循环用到 $0..62$），插入 $M$ 个数复杂度 $\mathcal O(M\cdot \mathrm{BASE})$。`insert` 失败则能异或出 $0$（`flag=1`）。`kthquery` 前必须先 `rebuild()`。
 
 ```cpp
-struct LB { // Linear Basis
+struct LB {  // Linear Basis
     using i64 = long long;
-    const int BASE = 63; // 按值域改；这里用到 bit 0..62
+    const int BASE = 63;  // 按值域改；这里用到 bit 0..62
     std::vector<i64> d, p;
     int cnt, flag;
 
@@ -14315,13 +14315,13 @@ struct LB { // Linear Basis
         return res;
     }
     i64 ask_min() {
-        if (flag) return 0; // 特判 0
+        if (flag) return 0;  // 特判 0
         for (int i = 0; i <= BASE - 1; i++) {
             if (d[i]) return d[i];
         }
         return 0; // 空基；原来没有返回值
     }
-    void rebuild() { // 第k小值独立预处理，把 d 消成对角再压进 p[0..cnt)
+    void rebuild() {  // 第k小值独立预处理，把 d 消成对角再压进 p[0..cnt)
         cnt = 0;
         for (int i = BASE - 1; i >= 0; i--) {
             for (int j = i - 1; j >= 0; j--) {
@@ -14333,16 +14333,16 @@ struct LB { // Linear Basis
         }
     }
     i64 kthquery(i64 k) { // 查询能被异或得到的第 k 小值, 如不存在则返回 -1
-        if (flag) k--; // 特判 0, 如果不需要 0, 直接删去
+        if (flag) k--;  // 特判 0, 如果不需要 0, 直接删去
         if (!k) return 0;
         i64 res = 0;
         if (k >= (1ll << cnt)) return -1;
-        for (int i = 0; i < cnt; i++) { // 原来按下标 BASE 取 p[i]，p 只填了 [0,cnt)
+        for (int i = 0; i < cnt; i++) {  // 原来按下标 BASE 取 p[i]，p 只填了 [0,cnt)
             if (k & (1LL << i)) res ^= p[i];
         }
         return res;
     }
-    void Merge(const LB &b) { // 合并两个线性基
+    void Merge(const LB &b) {  // 合并两个线性基
         for (int i = BASE - 1; i >= 0; i--) {
             if (b.d[i]) {
                 insert(b.d[i]);
@@ -14370,7 +14370,7 @@ int main(){
     float sum = 0.0;
     sum = 0.5*(num[0]*num[3]+num[2]*num[5]+num[4]*num[1]-num[0]*num[5]-num[2]*num[1]-num[4]*num[3]);
     cout << "三角形的面积为: ";
-    sum == 0 ? cout << "Impossible" : cout <<sum; // 共线面积为 0；float 比较用 == 不稳，可改 sign
+    sum == 0 ? cout << "Impossible" : cout <<sum;  // 共线面积为 0；float 比较用 == 不稳，可改 sign
     return 0;
 }
 ```
@@ -14405,15 +14405,15 @@ $\mathcal O(N)$ 预处理阶乘及逆元后 $\mathcal O(1)$ 查询。模数必�
 
 ```cpp
 struct Comb {
-    int n; // 当前已预处理到的上限
-    vector<Z> _fac, _inv; // _inv[i] = (i!)^{-1}，不是 i^{-1}
+    int n;  // 当前已预处理到的上限
+    vector<Z> _fac, _inv;  // _inv[i] = (i!)^{-1}，不是 i^{-1}
 
     Comb() : _fac{1}, _inv{0} {} // 0! = 1；_inv[0] 占位不用
     Comb(int n) : Comb() {
         init(n);
     }
     void init(int m) {
-        if (m <= n) return; // 只扩展不缩小
+        if (m <= n) return;  // 只扩展不缩小
         _fac.resize(m + 1);
         _inv.resize(m + 1);
         for (int i = n + 1; i <= m; i++) {
@@ -14429,7 +14429,7 @@ struct Comb {
         if (x > n) init(x);
         return _fac[x];
     }
-    Z inv(int x) { // 返回 (x!)^{-1}
+    Z inv(int x) {  // 返回 (x!)^{-1}
         if (x > n) init(x);
         return _inv[x];
     }
@@ -14441,7 +14441,7 @@ struct Comb {
         if (x < 0 || y < 0 || x < y) return 0;
         return fac(x) * inv(x - y);
     }
-} comb(1 << 21); // 预处理范围按题目改；模数在 Z 里定
+} comb(1 << 21);  // 预处理范围按题目改；模数在 Z 里定
 ```
 
 #### 质因数分解
@@ -14449,8 +14449,8 @@ struct Comb {
 此法适用于：$1 \lt n, m, MOD \lt 10^7$ 的情况。数组按 $10^7$ 开，模数 `MOD` 须自行定义。`c()` 内部每次都跑欧拉筛，多测应把筛提出来只做一次。
 
 ```cpp
-int n,m,p,b[10000005],prime[1000005],t,min_prime[10000005]; // 上限按 1e7，按题目改
-void euler_Prime(int n){//用欧拉筛求出1~n中每个数的最小质因数的编号是多少，保存在min_prime中
+int n,m,p,b[10000005],prime[1000005],t,min_prime[10000005];  // 上限按 1e7，按题目改
+void euler_Prime(int n){  //用欧拉筛求出1~n中每个数的最小质因数的编号是多少，保存在min_prime中
     for(int i=2;i<=n;i++){
         if(b[i]==0){
             prime[++t]=i;
@@ -14463,10 +14463,10 @@ void euler_Prime(int n){//用欧拉筛求出1~n中每个数的最小质因数的
         }
     }
 }
-long long c(int n,int m,int p){//计算C(n,m)%p的值
+long long c(int n,int m,int p){  //计算C(n,m)%p的值
     euler_Prime(n);
-    int a[t+5];//t代表1~n中质数的个数 ，a[i]代表编号为i的质数在答案中出现的次数
-    for(int i=1;i<=t;i++) a[i]=0;//注意清0，一开始是随机数
+    int a[t+5];  //t代表1~n中质数的个数 ，a[i]代表编号为i的质数在答案中出现的次数
+    for(int i=1;i<=t;i++) a[i]=0;  //注意清0，一开始是随机数
     for(int i=n;i>=n-m+1;i--){//处理分子
         int x=i;
         while (x!=1){
@@ -14492,8 +14492,8 @@ long long c(int n,int m,int p){//计算C(n,m)%p的值
 }
 int main(){
     cin>>n>>m;
-    m=min(m,n-m);//小优化
-    cout<<c(n,m,MOD); // MOD 须自行定义
+    m=min(m,n-m);  //小优化
+    cout<<c(n,m,MOD);  // MOD 须自行定义
 }
 ```
 
@@ -14502,11 +14502,11 @@ int main(){
 $60$ 以内 `long long` 可解，$130$ 以内 `__int128` 可解。递推 $\mathcal O(n^2)$，不取模；要取模请改用上面的 `Comb`。
 
 ```cpp
-vector C(n + 1, vector<long long>(n + 1)); // 原来 vector<int>，C(34,17)≈2e9 就爆 int
+vector C(n + 1, vector<long long>(n + 1));  // 原来 vector<int>，C(34,17)≈2e9 就爆 int
 C[0][0] = 1;
 for (int i = 1; i <= n; i++) {
     C[i][0] = 1;
-    for (int j = 1; j <= n; j++) { // j>i 时加出来仍是 0，不单独截断
+    for (int j = 1; j <= n; j++) {  // j>i 时加出来仍是 0，不单独截断
         C[i][j] = C[i - 1][j] + C[i - 1][j - 1];
     }
 }
@@ -14542,8 +14542,8 @@ $$
 时间复杂度为 $O(f(p) + g(n)\log n)$，其中 $f(n)$ 为预处理组合数的复杂度，$g(n)$ 为单次求组合数的复杂度。
 
 ```cpp
-long long Lucas(long long n, long long m, long long p) { // 原来参数名 lm，函数体用 m，无法编译
-  if (m == 0) return 1; // C(n,0)=1；C 需预处理到 p
+long long Lucas(long long n, long long m, long long p) {  // 原来参数名 lm，函数体用 m，无法编译
+  if (m == 0) return 1;  // C(n,0)=1；C 需预处理到 p
   return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p;
 }
 ```
@@ -14784,8 +14784,8 @@ $$
 ```cpp
 #include <algorithm>
 #include <cstdio>
-int n, m, fac[400010], minv[400010]; // fac 阶乘，minv 阶乘逆元；上限按 n+m 改
-int const mod = 998244353, g = 3, gi = (mod + 1) / g; // NTT 模与原根，按题目改
+int n, m, fac[400010], minv[400010];  // fac 阶乘，minv 阶乘逆元；上限按 n+m 改
+int const mod = 998244353, g = 3, gi = (mod + 1) / g;  // NTT 模与原根，按题目改
 int C(int x, int y)
 {
     if (x < 0 || y < 0 || x < y)
@@ -14805,19 +14805,19 @@ int pow(int x, int y)
     return res;
 }
 struct NTT {
-    int r[800010], lim; // r 为位逆序置换，lim 为变换长度（2 的幂）
+    int r[800010], lim;  // r 为位逆序置换，lim 为变换长度（2 的幂）
     NTT()
         : r()
         , lim()
     {
     }
-    void getr(int lm) // 预处理位逆序，调用 NTT 前必须先 getr
+    void getr(int lm)  // 预处理位逆序，调用 NTT 前必须先 getr
     {
         lim = lm;
         for (int i = 0; i < lim; i++)
             r[i] = (r[i >> 1] >> 1) | ((i & 1) * (lim >> 1));
     }
-    void operator()(int* a, int type) // type=1 DFT，type=-1 IDFT
+    void operator()(int* a, int type)  // type=1 DFT，type=-1 IDFT
     {
         for (int i = 0; i < lim; i++)
             if (i < r[i])
@@ -14856,7 +14856,7 @@ void inv(int const* a, int* ans, int n) // 多项式求逆，n 须为 2 的幂
             ans[i] = 0;
     }
 }
-void inte(int const* a, int* ans, int n) // 多项式积分
+void inte(int const* a, int* ans, int n)  // 多项式积分
 {
     for (int i = n - 1; i; i--)
         ans[i] = 1ll * a[i - 1] * pow(i, mod - 2) % mod;
@@ -14868,7 +14868,7 @@ void der(int const* a, int* ans, int n) // 多项式求导
         ans[i - 1] = 1ll * i * a[i] % mod;
     ans[n - 1] = 0;
 }
-void ln(int const* a, int* ans, int n) // 多项式 ln，要求 a[0]=1
+void ln(int const* a, int* ans, int n)  // 多项式 ln，要求 a[0]=1
 {
     static int b[800010];
     for (int i = 0; i < n << 1; i++)
@@ -14906,7 +14906,7 @@ void exp(int const* a, int* ans, int n) // 多项式 exp，要求 a[0]=0
             ans[i] = 0;
     }
 }
-void solve1() { printf("%d\n", pow(m, n)); } // I 球异盒异：m^n
+void solve1() { printf("%d\n", pow(m, n)); }  // I 球异盒异：m^n
 void solve2() // II 球异盒异、每盒至多一个：A(m,n)
 {
     if (m < n)
@@ -14944,12 +14944,12 @@ void solve4() // IV 球异盒同：sum_{i<=m} {n,i}，NTT 卷积
         ans = (ans + s[i]) % mod;
     printf("%d\n", ans);
 }
-void solve5() { printf("%d\n", int(m >= n)); } // V 球异盒同、每盒至多一个
+void solve5() { printf("%d\n", int(m >= n)); }  // V 球异盒同、每盒至多一个
 void solve6() { printf("%d\n", s[m]); } // VI 球异盒同、每盒至少一个：{n,m}，依赖 solve4
-void solve7() { printf("%d\n", C(n + m - 1, m - 1)); } // VII 球同盒异：插板
-void solve8() { printf("%d\n", C(m, n)); } // VIII 球同盒异、每盒至多一个
-void solve9() { printf("%d\n", C(n - 1, m - 1)); } // IX 球同盒异、每盒至少一个
-int ans[800010]; // 分拆生成函数系数，solve10 写入、solve12 读 ans[n-m]
+void solve7() { printf("%d\n", C(n + m - 1, m - 1)); }  // VII 球同盒异：插板
+void solve8() { printf("%d\n", C(m, n)); }  // VIII 球同盒异、每盒至多一个
+void solve9() { printf("%d\n", C(n - 1, m - 1)); }  // IX 球同盒异、每盒至少一个
+int ans[800010];  // 分拆生成函数系数，solve10 写入、solve12 读 ans[n-m]
 void solve10() // X 球同盒同：1/∏(1-x^i) 的 [x^n]
 {
     static int tmp[800010];
@@ -14966,7 +14966,7 @@ void solve10() // X 球同盒同：1/∏(1-x^i) 的 [x^n]
     inv(tmp, ans, lim);
     printf("%d\n", ans[n]);
 }
-void solve11() { printf("%d\n", int(m >= n)); } // XI 同 V
+void solve11() { printf("%d\n", int(m >= n)); }  // XI 同 V
 void solve12() // XII 球同盒同、每盒至少一个：读 solve10 留下的 ans[n-m]
 {
     printf("%d\n", n - m >= 0 ? ans[n - m] : 0);
@@ -15017,20 +15017,20 @@ int main(){
     for (int i = 0; i < m; i ++ )
         cin >> p[i];
     LL ans = 0;
-    for (int i = 1; i < (1 << m); i ++ ){ // 枚举非空质因子子集
-        LL t = 1, cnt = 0; // t 为子集积，cnt 为子集大小
+    for (int i = 1; i < (1 << m); i ++ ){  // 枚举非空质因子子集
+        LL t = 1, cnt = 0;  // t 为子集积，cnt 为子集大小
         for (int j = 0; j < m; j ++ ){
             if (i >> j & 1){
                 cnt ++ ;
                 t *= p[j];
-                if (t > n){ // 积已 >n，n/t=0，再乘会爆 long long
+                if (t > n){  // 积已 >n，n/t=0，再乘会爆 long long
                     t = -1;
                     break;
                 }
             }
         }
         if (t != -1){
-            if (cnt & 1) ans += n / t; // 奇数个加，偶数个减
+            if (cnt & 1) ans += n / t;  // 奇数个加，偶数个减
             else ans -= n / t;
         }
     }
@@ -15052,16 +15052,16 @@ int main(){
     for (int i = 0; i < m; i ++ )
         cin >> p[i];
     LL ans = 0;
-    function<void(LL, LL, LL)> dfs = [&](LL x, LL s, LL odd){ // x 当前下标，s 已选积，odd 容斥符号
+    function<void(LL, LL, LL)> dfs = [&](LL x, LL s, LL odd){  // x 当前下标，s 已选积，odd 容斥符号
         if (x == m){
-            if (s == 1) return; // 空集不贡献
+            if (s == 1) return;  // 空集不贡献
             ans += odd * (n / s);
             return;
         }
-        dfs(x + 1, s, odd); // 不选 p[x]
-        if (s <= n / p[x]) dfs(x + 1, s * p[x], -odd); // 选；先除后乘防溢出
+        dfs(x + 1, s, odd);  // 不选 p[x]
+        if (s <= n / p[x]) dfs(x + 1, s * p[x], -odd);  // 选；先除后乘防溢出
     };
-    dfs(0, 1, -1); // odd 初值 -1，选第一个数后变成 +
+    dfs(0, 1, -1);  // odd 初值 -1，选第一个数后变成 +
     cout << ans << "\n";
     return 0;
 }
@@ -15170,13 +15170,13 @@ $$
 
 ```cpp
 int f[20];
-void jie_cheng(int n) { // 打出1-n的阶乘表
+void jie_cheng(int n) {  // 打出1-n的阶乘表
     f[0] = f[1] = 1; // 0的阶乘为1
     for (int i = 2; i <= n; i++) f[i] = f[i - 1] * i;
 }
-string str; // kangtuo 读这个全局串
+string str;  // kangtuo 读这个全局串
 int kangtuo() {
-    int ans = 1; // 注意，因为 12345 是算作0开始计算的，最后结果要把12345看作是第一个
+    int ans = 1;  // 注意，因为 12345 是算作0开始计算的，最后结果要把12345看作是第一个
     int len = str.length();
     for (int i = 0; i < len; i++) {
         int tmp = 0; // 用来计数的
@@ -15189,7 +15189,7 @@ int kangtuo() {
 }
 int main() {
     jie_cheng(10);
-    str = "52413"; // 原来又定义了局部 string str，kangtuo 读的是全局空串
+    str = "52413";  // 原来又定义了局部 string str，kangtuo 读的是全局空串
     cout << kangtuo() << endl;
 }
 ```
@@ -15204,13 +15204,13 @@ int main() {
 #include <bits/stdc++.h>
 using namespace std;
 #define LL long long
-const int mod = 998244353, N = 1e6 + 10; // 模数与数组上限按题目改
+const int mod = 998244353, N = 1e6 + 10;  // 模数与数组上限按题目改
 LL fact[N];
 struct fwt{
     LL n;
     vector <LL> a;
     fwt(LL n) : n(n), a(n + 1) {}
-    LL sum(LL x){ // 前缀和 [1,x]
+    LL sum(LL x){  // 前缀和 [1,x]
         LL res = 0;
         for (; x; x -= x & -x)
             res += a[x];
@@ -15232,16 +15232,16 @@ int main(){
     fact[0] = 1;
     for (int i = 1; i <= n; i ++ ){
         fact[i] = fact[i - 1] * i % mod;
-        a.add(i, 1); // 每个数还剩 1 次
+        a.add(i, 1);  // 每个数还剩 1 次
     }
     LL ans = 0;
     for (int i = 1; i <= n; i ++ ){
         LL x;
         cin >> x;
-        ans = (ans + a.query(1, x - 1) * fact[n - i] % mod ) % mod; // 左边未用且比 x 小的个数
-        a.add(x, -1); // 用掉 x
+        ans = (ans + a.query(1, x - 1) * fact[n - i] % mod ) % mod;  // 左边未用且比 x 小的个数
+        a.add(x, -1);  // 用掉 x
     }
-    cout << (ans + 1) % mod << "\n"; // +1 变成 1-indexed 排名
+    cout << (ans + 1) % mod << "\n";  // +1 变成 1-indexed 排名
     return 0;
 }
 ```
@@ -15252,9 +15252,9 @@ int main(){
 
 ```cpp
 string inv_kangtuo(int ans, int n) { // 原来本节误粘了正向展开
-    vector<int> used(n + 1, 0); // 1..n 是否已用
+    vector<int> used(n + 1, 0);  // 1..n 是否已用
     string s;
-    ans--; // 转 0-indexed
+    ans--;  // 转 0-indexed
     for (int i = 0; i < n; i++) {
         int rk = ans / f[n - i - 1]; // 剩余数字中第 rk 小（0-indexed）
         ans %= f[n - i - 1];
@@ -15263,7 +15263,7 @@ string inv_kangtuo(int ans, int n) { // 原来本节误粘了正向展开
             if (used[j]) continue;
             if (cnt == rk) {
                 used[j] = 1;
-                s += char('0' + j); // n>9 时改成 vector<int>
+                s += char('0' + j);  // n>9 时改成 vector<int>
                 break;
             }
             cnt++;
@@ -15580,7 +15580,7 @@ template<typename T> struct PushRelabel {
     };
     vector<vector<Edge>> e;
     vector<vector<int>> gap;
-    vector<T> ex; // 超额流
+    vector<T> ex;  // 超额流
     vector<bool> ingap;
     vector<int> h;
     int n, gobalcnt, maxH = 0;
@@ -15727,14 +15727,14 @@ signed main() {
 过程：分治 $n$ 轮，每一轮在图上随机选点，跑一轮最小割后连接树边；这一网络的残留网络会将剩余的点分为两组，根据分组分治。实现上每个连通分量用 `fa[x] == x` 的点作代表（初始全部归属 0），每轮取第一个非代表的点与其代表跑最小割，再按残留网络可达性（点集 `vis`）把另一侧的点改挂到新代表；**每轮 `work` 前必须先退流（`reset`）**，否则残留网络混着上一轮的流量、分组错误。
 
 ```cpp
-void reset() { // 原为独立函数，须移入 Flow 结构体作成员：把每条边的反向边流量退回正向边
+void reset() {  // 原为独立函数，须移入 Flow 结构体作成员：把每条边的反向边流量退回正向边
     for (int i = 0; i < ver.size(); i += 2) {
         ver[i].w += ver[i ^ 1].w;
         ver[i ^ 1].w = 0;
     }
 }
 
-signed main() { // Gomory-Hu Tree
+signed main() {  // Gomory-Hu Tree
     int n, m;
     cin >> n >> m;
 
@@ -15747,16 +15747,16 @@ signed main() { // Gomory-Hu Tree
     }
 
     vector<int> vis(n + 1), fa(n + 1);
-    vector ans(n + 1, vector<int>(n + 1, 1E9)); // N^2 枚举出全部答案
+    vector ans(n + 1, vector<int>(n + 1, 1E9));  // N^2 枚举出全部答案
     vector<vector<pair<int, int>>> adj(n + 1);
     for (int i = 1; i <= n; i++) { // 分治 n 轮
-        int s = 0; // 本质是在树上随机选点、跑最小割后连边
+        int s = 0;  // 本质是在树上随机选点、跑最小割后连边
         for (; s <= n; s++) {
             if (fa[s] != s) break;
         }
         int t = fa[s];
 
-        flow.reset(); // 每轮最小割前退流，否则残留网络不干净、分组错误
+        flow.reset();  // 每轮最小割前退流，否则残留网络不干净、分组错误
         int cut = flow.work(s, t); // 残留网络将点集分为两组，分治
         adj[s].push_back({t, cut});
         adj[t].push_back({s, cut});
@@ -15855,13 +15855,13 @@ struct MinCostFlow {
         }
         return dis[t] != INF;
     }
-    pair<int, LL> flow(int s, int t) { // 最大流可能超过 int 时把 int 改 long long
+    pair<int, LL> flow(int s, int t) {  // 最大流可能超过 int 时把 int 改 long long
         int flow = 0;
         LL cost = 0;
         h.assign(n, 0);
         while (dijkstra(s, t)) {
             for (int i = 0; i < n; ++i)
-                if (dis[i] != INF) h[i] += dis[i]; // 不可达点 dis = INF，直接加会溢出 long long，必须判掉
+                if (dis[i] != INF) h[i] += dis[i];  // 不可达点 dis = INF，直接加会溢出 long long，必须判掉
             int aug = numeric_limits<int>::max();
             for (int i = t; i != s; i = e[pre[i] ^ 1].v) aug = min(aug, e[pre[i]].c);
             for (int i = t; i != s; i = e[pre[i] ^ 1].v) {

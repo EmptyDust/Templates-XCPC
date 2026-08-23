@@ -5,7 +5,7 @@
 均匀打乱。引擎用 `mt19937_64`，不要 `srand` + 已弃用的 `random_shuffle`。对拍造数据、随机化算法用。
 
 ```cpp
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); // 用系统时间做种子，防 hack
+mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());  // 用系统时间做种子，防 hack
 shuffle(ver.begin(), ver.end(), rng);
 ```
 
@@ -14,11 +14,11 @@ shuffle(ver.begin(), ver.end(), rng);
 GCC/Clang 内建，比手写循环快。`x=0` 时 `clz/ctz` 未定义。`long long` 后缀 `ll`。
 
 ```cpp
-__builtin_popcount(x) // 返回x二进制下含1的数量，例如x=15=(1111)时答案为4
+__builtin_popcount(x)  // 返回x二进制下含1的数量，例如x=15=(1111)时答案为4
 __builtin_ffs(x) // 返回x右数第一个1的位置(1-idx)，1(1) 返回 1，8(1000) 返回 4，26(11010) 返回 2
 __builtin_ctz(x) // 返回x二进制下后导0的个数，1(1) 返回 0，8(1000) 返回 3
 __builtin_clz(x) // 返回x二进制下前导0的个数，8(1000) 返回 28；x为0时未定义
-bit_width(x) // 返回x二进制下的位数，9(1001) 返回 4，26(11010) 返回 5
+bit_width(x)  // 返回x二进制下的位数，9(1001) 返回 4，26(11010) 返回 5
 ```
 
 注：以上函数为 GCC/Clang 内建，`long long` 版本只需在函数名后加 `ll`（如 `__builtin_popcountll(x)`），`unsigned long long` 加 `ull`；`bit_width` 为 C++20 标准库函数。
@@ -87,7 +87,7 @@ cin >> n;
 vector<int> a(n);
 // iota(a.begin(), a.end(), 1);
 for (auto &it : a) cin >> it;
-sort(a.begin(), a.end()); // 必须先排序，才能按字典序生成完整全排列
+sort(a.begin(), a.end());  // 必须先排序，才能按字典序生成完整全排列
 
 do {
     for (auto it : a) cout << it << " ";
@@ -149,8 +149,8 @@ cout << accumulate(a + start, a + end, x);
 //构建一个UUU容器的正向迭代器，名字叫it
 UUU::iterator it;
 
-vector<int>::iterator it; //创建一个正向迭代器，++ 操作时指向下一个
-vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时指向上一个
+vector<int>::iterator it;  //创建一个正向迭代器，++ 操作时指向下一个
+vector<int>::reverse_iterator it;  //创建一个反向迭代器，++ 操作时指向上一个
 ```
 
 ### 特殊函数 `next` 和 `prev` 详解：
@@ -158,15 +158,15 @@ vector<int>::reverse_iterator it; //创建一个反向迭代器，++ 操作时�
 不修改原迭代器，返回前进/后退 $n$ 步的副本。`list` 等没有 `+`，用这两个。
 
 ```cpp
-auto it = s.find(x); // 建立一个迭代器
+auto it = s.find(x);  // 建立一个迭代器
 prev(it); // 返回迭代器it的前一个迭代器
 next(it); // 返回迭代器it的后一个迭代器
 prev(it, 2); // 可选参数k：返回it前k个的迭代器
 next(it, 2); // 返回it后k个的迭代器
 
 /* 以下是一些应用 */
-auto pre = prev(s.lower_bound(x)); // 返回第一个<x的迭代器
-int ed = *prev(S.end(), 1); // 返回最后一个元素
+auto pre = prev(s.lower_bound(x));  // 返回第一个<x的迭代器
+int ed = *prev(S.end(), 1);  // 返回最后一个元素
 ```
 
 ### 其他函数
@@ -185,8 +185,8 @@ int ed = *prev(S.end(), 1); // 返回最后一个元素
 
 ```cpp
 //没有clear函数，可用 swap(p, priority_queue<int, vector<int>, greater<int>>()) 清空
-priority_queue<int, vector<int>, greater<int> > p; //重定义为小根堆（堆顶最小）
-push(x); //向栈顶插入x
+priority_queue<int, vector<int>, greater<int> > p;  //重定义为小根堆（堆顶最小）
+push(x);  //向栈顶插入x
 top(); //获取栈顶元素
 pop(); //弹出栈顶元素
 ```
@@ -196,7 +196,7 @@ pop(); //弹出栈顶元素
 struct Node {
     int x; string s;
     friend bool operator < (const Node &a, const Node &b) {
-        if (a.x != b.x) return a.x > b.x; // 大根堆语义下，这样写得到的是 x 小者优先的小根堆
+        if (a.x != b.x) return a.x > b.x;  // 大根堆语义下，这样写得到的是 x 小者优先的小根堆
         return a.s > b.s;
     }
 };
@@ -222,16 +222,16 @@ bitset<32> B2 = x;
 
 // 构造时，尖括号里的数字不能是变量
 int x; cin >> x;
-bitset<x> ans; // 错误构造
+bitset<x> ans;  // 错误构造
 
-[] //随机访问
+[]  //随机访问
 set(x) //将第x位置1，x省略时默认全部位置1
-reset(x) //将第x位置0，x省略时默认全部位置0
+reset(x)  //将第x位置0，x省略时默认全部位置0
 flip(x) //将第x位取反，x省略时默认全部位取反
 to_ullong() //整体转换为ULL类型
 to_string() //转换为"01..."字符串
 count() //返回1的个数
-any() //判断是否至少有一个1
+any()  //判断是否至少有一个1
 none() //判断是否全为0
 
 _Find_first() // 找到从低位到高位第一个1的位置（libstdc++ 内部函数）
@@ -242,7 +242,7 @@ cout << (B1 ^ B2) << "\n";  //按位异或
 cout << (B1 | B2) << "\n";  //按位或
 cout << (B1 & B2) << "\n";  //按位与
 cout << (B1 == B2) << "\n"; //比较是否相等
-cout << B1 << " " << B2 << "\n"; //你可以直接使用cout输出
+cout << B1 << " " << B2 << "\n";  //你可以直接使用cout输出
 ```
 
 #### 哈希系列 unordered
@@ -271,7 +271,7 @@ struct hash_tuple {
     template<typename... Ts>
     size_t operator()(const tuple<Ts...> &t) const {
         return apply([](const Ts &...xs) {
-            return (hash<Ts>()(xs) ^ ...); // 折叠表达式，C++17
+            return (hash<Ts>()(xs) ^ ...);  // 折叠表达式，C++17
         }, t);
     }
 };
@@ -287,7 +287,7 @@ struct fff {
     string x, y;
     int z;
     friend bool operator == (const fff &a, const fff &b) {
-        return a.x == b.x && a.y == b.y && a.z == b.z; // 必须全部相等才相等，注意是 && 不是 ||
+        return a.x == b.x && a.y == b.y && a.z == b.z;  // 必须全部相等才相等，注意是 && 不是 ||
     }
 };
 struct hash_fff {
