@@ -1,8 +1,8 @@
 #!/bin/sh
 # md + LaTeX 数学 → HTML → PDF。
-# pandoc 只把 Markdown 收成 HTML、把 $...$ 收成 MathJax 能吃的 \(...\)；
-# 公式语言不换。打印就是 Chromium 打开这份 HTML。
-# 西文/代码用系统 TTF（CID TrueType）；CJK 由 CFF TTC 转成 TTF 再嵌入，
+# pandoc 把 Markdown 收成 HTML、$...$ 收成 MathML；公式语言不换。
+# 打印就是 Chromium 打开这份 HTML，原生 MathML 排版，真文本可选中。
+# 西文/代码/数学用 TTF（CID TrueType）；CJK 由 CFF TTC 转成 TTF 再嵌入，
 # 避免 Chromium 把 CFF 打成 Type 3 位图。
 # 用法：
 #   ./export-pdf.sh              # 先 build.sh，再导出 build/total.pdf
@@ -43,9 +43,9 @@ fetch() {
     fi
 }
 
-# MathJax SVG：公式是矢量路径，不依赖网页字体。
-fetch export/vendor/tex-svg-full.js \
-    https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js
+# 数学走 pandoc --mathml + Chromium 原生 MathML，不用 MathJax。
+# 数学字体 TeX Gyre Termes Math：Times 系，笔画与 Noto Serif 正文相配；
+# 系统是 CFF OTF，转成 TTF 后 Chromium 才能打成 CID TrueType。
 
 # CJK TTC 是 CFF，Chromium 会打成 Type 3。转成 TTF 后按 CID TrueType 嵌入。
 fontdir=export/vendor/fonts
@@ -68,10 +68,13 @@ ensure_cjk "$fontdir/NotoSerifCJKsc-Bold.ttf" \
     /usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc "Noto Serif CJK SC" PrintSerifCJK
 ensure_cjk "$fontdir/NotoSansMonoCJKsc-Regular.ttf" \
     /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc "Noto Sans Mono CJK SC" PrintMonoCJK
+ensure_cjk "$fontdir/TeXGyreTermesMath-Regular.ttf" \
+    /usr/share/texmf/fonts/opentype/public/tex-gyre-math/texgyretermes-math.otf "TeX Gyre Termes Math" PrintMath
 
 mkdir -p build/fonts
 cp "$fontdir/NotoSerifCJKsc-Regular.ttf" "$fontdir/NotoSerifCJKsc-Bold.ttf" \
-   "$fontdir/NotoSansMonoCJKsc-Regular.ttf" build/fonts/
+   "$fontdir/NotoSansMonoCJKsc-Regular.ttf" "$fontdir/TeXGyreTermesMath-Regular.ttf" \
+   build/fonts/
 cp /usr/share/fonts/truetype/noto/NotoSerif-Regular.ttf \
    /usr/share/fonts/truetype/noto/NotoSerif-Bold.ttf \
    /usr/share/fonts/truetype/noto/NotoSerif-Italic.ttf \
@@ -105,8 +108,6 @@ if [ "$base" = "total" ]; then
     title="风铃的模板库"
 fi
 
-cp export/vendor/tex-svg-full.js build/tex-svg-full.js
-
 md=$src
 cleanup=$(mktemp)
 trap 'rm -f "$cleanup"' EXIT
@@ -115,7 +116,7 @@ trap 'rm -f "$cleanup"' EXIT
 sed -e '/^\[TOC\]$/d' -e '/^# 风铃的模板库$/d' "$src" > "$cleanup"
 md=$cleanup
 
-# --mathjax：正文里的数学变成 \(...\)，公式由 SVG 输出。
+# --mathml：正文公式直接转 MathML，Chromium 原生排版，真文本可选中。
 # tango：浅底高亮，覆盖 pandoc 默认的 Menlo/Consolas。
 # --toc：章（##）+ 节（###）。[TOC] 不是 pandoc 语法。
 pandoc "$md" \
@@ -123,7 +124,7 @@ pandoc "$md" \
     --to html5 \
     --standalone \
     --template=export/template.html \
-    --mathjax \
+    --mathml \
     --highlight-style=tango \
     --toc \
     --toc-depth=3 \
