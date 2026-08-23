@@ -71,7 +71,7 @@ cout << atoi("abc12") << endl; /*0*/
 // 长整型函数名atoll，最高支持到long long型上限2^63。
 ```
 
-### 全排列 next_permutation 与 prev_permutation
+### 全排列 next/prev_permutation
 
 在提及 `next_permutation` 时，我们先补充几点字典序相关的知识。
 
