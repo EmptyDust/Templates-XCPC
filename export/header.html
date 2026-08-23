@@ -203,12 +203,8 @@ pre, code, pre code, code.sourceCode, pre.sourceCode, pre.sourceCode code {
   font-variant-ligatures: none;
   font-feature-settings: "kern" 0, "liga" 0;
 }
-code {
-  font-size: 0.88em;
-  background: #f3f2ee;
-  padding: 0.04em 0.28em;
-  border-radius: 2pt;
-}
+/* 行内代码只靠字体区分，不加底色块——书里 800+ 处，底色块是网页惯例，满页噪声 */
+code { font-size: 0.88em; }
 pre {
   font-size: 8.2pt;
   line-height: 1.32;
