@@ -113,7 +113,13 @@ do {
 
 - `stoi(字符串, 0, x进制)` ：将一串 $x$ 进制的字符串转换为 `int` 型数字。
 
-![](https://img2020.cnblogs.com/blog/2491503/202201/2491503-20220117162754548-696368550.png)
+```cpp
+cout << stoi("1010", 0, 2) << endl;          // 10
+cout << stoi("c", 0, 16) << endl;            // 12
+cout << stoi("0x3f3f3f3f", 0, 0) << endl;    // 1061109567
+cout << stoi("10", 0, 8) << endl;            // 8
+cout << stoll("aaaaaaaaaaa", 0, 16) << endl; // 11728124029610
+```
 
 - `stoll(字符串, 0, x进制)` ：将一串 $x$ 进制的字符串转换为 `long long` 型数字。
 - `stoull`、`stod`、`stold` 同理。
@@ -12519,7 +12525,7 @@ struct bigint {
 
 构造题用，其有一些性质：将 $0$ 看作 $-1$；$1$ 看作 $+1$，整个矩阵可以构成一个 $2^k$ 维向量组，任意两个行、列向量的点积均为 $0$ [See](https://codeforces.com/contest/610/problem/C)。例如，在 $k=2$ 时行向量 $\vec{2}$ 和行向量 $\vec{3}$ 的点积为 $1\cdot1+(-1)\cdot1+1\cdot(-1)+(-1)\cdot(-1)=0$ 。
 
-![image.png](https://s2.loli.net/2023/10/02/hZu2aCfNcivB6jw.png)
+$k=1$ 时行为 `11`、`10`；$k=2$ 时行为 `1111`、`1010`、`1100`、`1001`。
 
 ```cpp
 int n;
@@ -12553,7 +12559,13 @@ for (int t = 0; t < n; t++) {
 
 构造方式：将 $1$ 写在第一行的中间，随后不断向右上角位置填下一个数字，直到填满。
 
-<img src="https://s2.loli.net/2023/10/07/K79vJbTYShMj2GX.png" alt="image.png" style="zoom:70%;" />
+$N=3$ 时结果为：
+
+```text
+8 1 6
+3 5 7
+4 9 2
+```
 
 ```cpp
 int n;
@@ -12649,7 +12661,12 @@ bool Solve() {
 }
 ```
 
-![67dce9cb83b4b4ede4f7eb453a7033e0.png](https://s2.loli.net/2023/08/17/LgBUb5vzW2rHEP9.png)
+输出（第二行右对齐，前导 10 个空格）：
+
+```text
+12
+          12
+```
 
 设置填充字符：`setfill(x)` ，该函数可以设定补全类型，注意这里的 $x$ 只能为 `char` 类型。
 
@@ -12661,7 +12678,12 @@ bool Solve() {
 }
 ```
 
-![761488b7b2fd4871c5cfba7b112fcc6e.png](https://s2.loli.net/2023/08/17/agB6vjfNHwIiQAt.png)
+输出：
+
+```text
+12
+**********12
+```
 
 ### 读取一行数字，个数未知
 

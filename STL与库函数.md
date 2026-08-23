@@ -107,7 +107,13 @@ do {
 
 - `stoi(字符串, 0, x进制)` ：将一串 $x$ 进制的字符串转换为 `int` 型数字。
 
-![](https://img2020.cnblogs.com/blog/2491503/202201/2491503-20220117162754548-696368550.png)
+```cpp
+cout << stoi("1010", 0, 2) << endl;          // 10
+cout << stoi("c", 0, 16) << endl;            // 12
+cout << stoi("0x3f3f3f3f", 0, 0) << endl;    // 1061109567
+cout << stoi("10", 0, 8) << endl;            // 8
+cout << stoll("aaaaaaaaaaa", 0, 16) << endl; // 11728124029610
+```
 
 - `stoll(字符串, 0, x进制)` ：将一串 $x$ 进制的字符串转换为 `long long` 型数字。
 - `stoull`、`stod`、`stold` 同理。
