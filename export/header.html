@@ -203,12 +203,11 @@ pre, code, pre code, code.sourceCode, pre.sourceCode, pre.sourceCode code {
   font-variant-ligatures: none;
   font-feature-settings: "kern" 0, "liga" 0;
 }
-/* 行内代码：等宽字体 + 浅色下划线。padding+负 margin 让线向左右延伸而不撑开间距 */
+/* 行内代码：等宽字体 + 浅色下划线。纯 padding 延伸——负 margin 在行首会被行盒边界裁掉 */
 code {
   font-size: 0.88em;
   border-bottom: 1pt solid #cecece;
   padding: 0 0.12em;
-  margin: 0 -0.12em;
 }
 pre {
   font-size: 8.2pt;
