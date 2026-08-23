@@ -175,9 +175,9 @@ int ed = *prev(S.end(), 1); // 返回最后一个元素
 
 `gcd(x, y) / lcm(x, y)` ：C++17 标准库函数，$\mathcal O(\log \min(|x|,|y|))$ 返回 $\gcd(|x|, |y|)$ 与 $\mathrm{lcm}(|x|, |y|)$，返回值恒为正。注意 `lcm` 先除后乘不会溢出。
 
-## 容器与成员函数
+### 容器与成员函数
 
-### 优先队列 priority_queue
+#### 优先队列 priority_queue
 
 默认大根堆（堆顶最大），自定义排序需要重载 `<`（比较语义与 `sort` 相反，见下例）。
 
@@ -200,7 +200,7 @@ struct Node {
 };
 ```
 
-### bitset
+#### bitset
 
 将数据转换为二进制，从高位到低位排序，以 $0$ 为最低位。当位数相同时支持全部的位运算。
 
@@ -243,13 +243,13 @@ cout << (B1 == B2) << "\n"; //比较是否相等
 cout << B1 << " " << B2 << "\n"; //你可以直接使用cout输出
 ```
 
-### 哈希系列 unordered
+#### 哈希系列 unordered
 
 通常指代 unordered_map、unordered_set、unordered_multimap、unordered_multiset，与原版相比不进行排序。
 
 如果将不支持哈希的类型作为 `key` 值代入，编译器就无法正常运行，这时需要我们为其手写哈希函数。而我们写的这个哈希函数的正确性其实并不是特别重要（但是不可以没有），当发生冲突时编译器会调用 `key` 的 `operator ==` 函数进行进一步判断。[参考](https://finixlei.blog.csdn.net/article/details/110267430?spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-3-110267430-blog-101406104.topnsimilarv1&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-3-110267430-blog-101406104.topnsimilarv1&utm_relevant_index=4)
 
-#### 对 pair、tuple 定义哈希
+##### 对 pair、tuple 定义哈希
 
 `unordered_map` 默认不能以 `pair` 为键。把两维哈希异或/相乘混一下；自定义结构体同理。
 
@@ -276,7 +276,7 @@ struct hash_tuple {
 unordered_map<tuple<int, int, int>, int, hash_tuple> M;
 ```
 
-#### 对结构体定义哈希
+##### 对结构体定义哈希
 
 需要两个条件，一个是在结构体中重载等于号（区别于非哈希容器需要重载小于号，如上所述，当冲突时编译器需要根据重载的等于号判断），第二是写一个哈希函数。注意 `hash<>()` 的尖括号中的类型匹配。
 
@@ -296,7 +296,7 @@ struct hash_fff {
 unordered_map<fff, int, hash_fff> mp;
 ```
 
-#### 对 vector 定义哈希
+##### 对 vector 定义哈希
 
 以下两个方法均可。注意 `hash<>()` 的尖括号中的类型匹配。
 
