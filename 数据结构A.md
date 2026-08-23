@@ -618,7 +618,7 @@ struct Segt {
 
 原题需要进行“单点赋值+区间取模+区间求和” [See](https://codeforces.com/contest/438/problem/D) 。该操作不需要懒标记。
 
-需要额外维护一个区间最大值，当模数大于区间最大值时剪枝，否则进行单点取模。由于单点 ${\tt MOD}<x$ 时 $x \bmod {\tt MOD}<\frac{x}{2}$ ，故单点取模至 $0$ 最劣只需要 $\log x$ 次 。
+需要额外维护一个区间最大值，当模数大于区间最大值时剪枝，否则进行单点取模。由于单点 $\mathrm{MOD}<x$ 时 $x \bmod \mathrm{MOD}<\frac{x}{2}$ ，故单点取模至 $0$ 最劣只需要 $\log x$ 次 。
 
 #### 拆位运算
 
