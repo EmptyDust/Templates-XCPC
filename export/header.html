@@ -203,8 +203,13 @@ pre, code, pre code, code.sourceCode, pre.sourceCode, pre.sourceCode code {
   font-variant-ligatures: none;
   font-feature-settings: "kern" 0, "liga" 0;
 }
-/* 行内代码只靠字体区分，不加底色块——书里 800+ 处，底色块是网页惯例，满页噪声 */
-code { font-size: 0.88em; }
+/* 行内代码：等宽字体 + 浅色下划线。padding+负 margin 让线向左右延伸而不撑开间距 */
+code {
+  font-size: 0.88em;
+  border-bottom: 1pt solid #cecece;
+  padding: 0 0.12em;
+  margin: 0 -0.12em;
+}
 pre {
   font-size: 8.2pt;
   line-height: 1.32;
@@ -218,7 +223,7 @@ pre {
   padding: 0.6em 0.8em;
   margin: 0.6em 0 0.8em;
 }
-pre code { font-size: inherit; background: transparent; padding: 0; }
+pre code { font-size: inherit; background: transparent; padding: 0; margin: 0; border-bottom: none; }
 /* 语法高亮收敛为近单色：关键字靠字重，其余靠灰度。注释不斜体——
    斜体里的 CJK 是合成倾斜，发虚。 */
 .sourceCode .kw, .sourceCode .cf { color: #111; font-weight: 700; font-style: normal; }
