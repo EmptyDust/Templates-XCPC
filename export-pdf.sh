@@ -77,10 +77,23 @@ cp /usr/share/fonts/truetype/noto/NotoSerif-Regular.ttf \
    /usr/share/fonts/truetype/noto/NotoSerif-Italic.ttf \
    /usr/share/fonts/truetype/noto/NotoSerif-BoldItalic.ttf \
    build/fonts/
-cp /usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf \
-   /usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf \
-   /usr/share/fonts/truetype/dejavu/DejaVuSansMono-Oblique.ttf \
-   /usr/share/fonts/truetype/dejavu/DejaVuSansMono-BoldOblique.ttf \
+# JetBrains Mono：代码西文。取 Debian 包，apt 下载后本地解包（不安装、无需 root）。
+jbm=export/vendor/jetbrains-mono
+if [ ! -s "$jbm/JetBrainsMono-Regular.ttf" ]; then
+    need apt-get
+    need dpkg-deb
+    echo "抽取 fonts-jetbrains-mono → $jbm"
+    tmpd=$(mktemp -d)
+    (cd "$tmpd" && apt-get download fonts-jetbrains-mono >/dev/null 2>&1)
+    dpkg-deb -x "$tmpd"/fonts-jetbrains-mono_*_all.deb "$tmpd/x"
+    mkdir -p "$jbm"
+    for f in Regular Bold Italic BoldItalic; do
+        cp "$tmpd/x/usr/share/fonts/truetype/jetbrains-mono/JetBrainsMono-$f.ttf" "$jbm/"
+    done
+    rm -rf "$tmpd"
+fi
+cp "$jbm/JetBrainsMono-Regular.ttf" "$jbm/JetBrainsMono-Bold.ttf" \
+   "$jbm/JetBrainsMono-Italic.ttf" "$jbm/JetBrainsMono-BoldItalic.ttf" \
    build/fonts/
 
 mkdir -p build
