@@ -127,7 +127,8 @@ h1, h2, h3, h4, h5 {
   color: #111;
 }
 h1 { font-size: 17pt; letter-spacing: 0.02em; margin: 0 0 0.7em; }
-h1.doc-title { margin: 0 0 0.9em; }
+/* 书名并入目录命名页，与 #TOC 同页开头，不独占封面。 */
+h1.doc-title { page: toc; margin: 0 0 0.5em; }
 .toc-title {
   font-size: 13pt;
   font-weight: 700;
