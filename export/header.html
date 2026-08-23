@@ -139,9 +139,10 @@ h1.doc-title { margin: 0 0 0.9em; }
   page-break-after: always;
   break-after: page;
   font-size: 9.6pt;
-  line-height: 1.38;
+  line-height: 1.32;
   columns: 2;
   column-gap: 2.2em;
+  column-fill: balance-all;
   margin: 0 0 1.2em;
 }
 #TOC ul {
@@ -151,8 +152,11 @@ h1.doc-title { margin: 0 0 0.9em; }
 }
 #TOC > ul > li {
   font-weight: 700;
-  break-inside: avoid;
   margin: 0 0 0.55em;
+}
+/* 章块允许跨栏拆分（否则末页栏间失衡），但章题后不许立刻断。 */
+#TOC > ul > li > a {
+  break-after: avoid;
 }
 #TOC > ul > li > ul {
   font-weight: 400;
