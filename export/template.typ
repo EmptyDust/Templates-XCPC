@@ -85,6 +85,12 @@
 // 链接不染色，只保留继承色
 #show link: it => text(fill: luma(17), it)
 
+// 图片：比栏宽 80% 大的缩到 80%，小图保持原始尺寸（对应旧 zoom:80%）
+#show image: it => layout(size => {
+  let w = measure(it).width
+  if w > size.width * 0.8 { set image(width: 80%); it } else { it }
+})
+
 // ---- 封面并入目录页 ----
 // 目录条目：章（level 2）加粗，与 Chromium 管线一致
 #show outline.entry.where(level: 2): set text(weight: "bold")
