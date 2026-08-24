@@ -92,4 +92,35 @@ for name in sorted(missing): print(f'悬空脚注：[^{name}]')
 sys.exit(1 if missing else 0)
 PY
 
+# ---- 原生 Typst 结构（main.typ / chapters/ / code/）----
+
+# 9. 入口可编译：typst compile 本身就是闸门（语法、引用、文件读取全校验）
+if [ -f main.typ ]; then
+    mkdir -p build
+    if typst compile --root . --font-path export/vendor/jetbrains-mono main.typ build/.check-book.pdf 2>build/.check-typst.log; then
+        ok "main.typ 可编译"
+    else
+        bad "main.typ 编译失败（见 build/.check-typst.log）"
+    fi
+    rm -f build/.check-book.pdf
+fi
+
+# 10. 孤儿章：chapters/ 里每个 .typ 必须被 main.typ include
+if [ -d chapters ]; then
+    orphan=0
+    for f in chapters/*.typ; do
+        grep -qF "#include \"$f\"" main.typ || { bad "$f: 未被 main.typ include"; orphan=1; }
+    done
+    [ $orphan -eq 0 ] && ok "无孤儿章"
+fi
+
+# 11. 抽取的板子：code/ 里每个 .cpp 必须过 g++ 语法检查
+if [ -d code ]; then
+    cppbad=0
+    for f in $(find code -name '*.cpp'); do
+        g++ -std=gnu++20 -fsyntax-only "$f" 2>build/.check-gpp.log || { bad "$f: g++ 语法检查失败（见 build/.check-gpp.log）"; cppbad=1; }
+    done
+    [ $cppbad -eq 0 ] && ok "code/ 全部通过 g++ -fsyntax-only"
+fi
+
 exit $fail
