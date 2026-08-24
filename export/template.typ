@@ -59,7 +59,7 @@
   },
 )
 // 行内代码：等宽 + 浅色下划线，extent 原生延伸
-#show raw.where(block: false): set text(font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"), size: 0.88em)
+#show raw.where(block: false): set text(font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"), size: 0.95em)
 #show raw.where(block: false): it => underline(
   offset: 2.2pt,
   extent: 0.8pt,
