@@ -7,7 +7,7 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 - `*.md` — 按主题分章，每章末尾带分页标记，可用浏览器打印或转 PDF
 - `code-snippets/` — VS Code 代码片段（`.code-snippets`），按主题分组
 - `total.md` — 全部章节的合并单文件，由 `build.sh` 生成，**不要手改**
-- `achieve/` — 历次打印版 PDF 存档
+- `export/` — PDF 导出管线（技术细节见 `export/PIPELINE.md`）
 
 ## 使用
 
@@ -25,14 +25,14 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 
 ## 导出 PDF
 
-不经过 Typora / XeLaTeX / Typst。过程是：`pandoc` 把 Markdown 收成 HTML（`$...$` 仍是 LaTeX，只改成 MathJax 的 `\(...\)`），Chromium 打开这份 HTML 打成 PDF。分章标题由 `--toc` 生成目录（`[TOC]` 只是 Typora 占位，导出时丢掉）。
+默认走 Typst 链路：`pandoc` 把 Markdown（含 `$...$` LaTeX）转成 Typst 标记，`typst` 直接排版成 PDF。源文件不依赖任何渲染器特性。
 
 ```sh
 ./export-pdf.sh           # build/total.pdf
 ./export-pdf.sh 博弈论.md  # build/博弈论.pdf
 ```
 
-需要：`pandoc`、`chromium`、`curl`。有 `mutool` 时会再压一节 PDF 流（Chromium 自己几乎不压缩）。首次会拉 MathJax SVG 到 `export/vendor/`，并把 Noto Serif CJK 转成 TTF（Chromium 对 CFF 只会打出 Type 3 位图）。这些都不进 git。西文用 Noto Serif，代码用 DejaVu Sans Mono。
+需要：`pandoc`、`typst`。管线细节、已知坑、旧 Chromium 链路见 `export/PIPELINE.md`。
 
 ## 克隆与提交
 
