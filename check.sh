@@ -4,6 +4,7 @@
 set -u
 cd "$(dirname "$0")"
 fail=0
+TMP_TOTAL=$(mktemp)
 
 say() { printf '%s %s\n' "$1" "$2"; }
 bad() { say "FAIL" "$1"; fail=1; }
@@ -43,9 +44,11 @@ print('\n'.join(bad)) if bad else None
 sys.exit(1 if bad else 0)
 PY
 
-# 5. total.md 与分章同步（build.sh 是幂等生成器）
+# 5. total.md 与分章同步（重新生成后内容不变即同步）
+cp total.md "$TMP_TOTAL"
 ./build.sh >/dev/null 2>&1
-git diff --quiet -- total.md && ok "total.md 与分章同步" || bad "total.md 落后分章，跑 ./build.sh"
+cmp -s "$TMP_TOTAL" total.md && ok "total.md 与分章同步" || bad "total.md 落后分章，跑 ./build.sh"
+rm -f "$TMP_TOTAL"
 
 # 6. 若存在 PDF 产物，检查嵌入字体无 Type 3
 if [ -f build/total.pdf ]; then
@@ -70,6 +73,22 @@ for fn in glob.glob('*.md'):
             links.append((fn, i, m.group(1)))
 missing = [(fn, i, a) for fn, i, a in links if a not in anchors]
 for fn, i, a in missing: print(f'{fn}:{i}: 死锚 #{a}')
+sys.exit(1 if missing else 0)
+PY
+
+# 8. 悬空脚注：[^name] 引用必须有对应的 [^name]: 定义
+python3 - <<'PY' && ok "脚注引用有定义" || bad "悬空脚注（见上）"
+import re, glob, sys
+refs, defs = set(), set()
+for fn in glob.glob('*.md'):
+    if fn == 'total.md': continue
+    src = open(fn, encoding='utf-8').read()
+    src = re.sub(r'```.*?```', '', src, flags=re.S)   # 代码围栏
+    src = re.sub(r'\$\$.*?\$\$|\$[^$\n]+\$', '', src, flags=re.S)  # 数学区
+    refs.update(m.group(1) for m in re.finditer(r'\[\^([^\]]+)\](?!:)', src))
+    defs.update(m.group(1) for m in re.finditer(r'^\[\^([^\]]+)\]:', src, re.M))
+missing = refs - defs
+for name in sorted(missing): print(f'悬空脚注：[^{name}]')
 sys.exit(1 if missing else 0)
 PY
 
