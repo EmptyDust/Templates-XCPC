@@ -45,7 +45,8 @@
 #show raw: set text(ligatures: false, features: (liga: 0, clig: 0, calt: 0, dlig: 0))
 #show raw.where(block: true): set text(
   font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"),
-  size: 8.2pt,
+  // raw 默认自带 0.8em 缩小且相对值与之叠乘；0.9375 × 0.8 = 0.75
+  size: 0.9375em,
 )
 #show raw.where(block: true): it => block(
   fill: luma(245),
@@ -59,7 +60,8 @@
   },
 )
 // 行内代码：等宽 + 浅色下划线，extent 原生延伸
-#show raw.where(block: false): set text(font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"), size: 0.95em)
+// raw 默认自带 0.8em 缩小；1.25 × 0.8 = 1，与正文等大
+#show raw.where(block: false): set text(font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"), size: 1.25em)
 #show raw.where(block: false): it => underline(
   offset: 2.2pt,
   extent: 0.8pt,
