@@ -7064,7 +7064,7 @@ int inPolygonGrid(vector<Point<int>> p) { // 多边形内
 
 #### 获取二维静态凸包（Andrew 算法）
 
-`flag=0` 边上的点也加入（不严格）；`flag=1` 不加入（严格）。返回逆时针，起点最左下。
+按 $x$ 排序后两遍扫描、叉积弹栈分别构造下壳与上壳，$\mathcal O(N\log N)$（瓶颈在排序）。`flag=0` 边上的点也加入（不严格）；`flag=1` 不加入（严格）。返回逆时针，起点最左下。
 
 ```cpp
 template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int flag = 1) {
@@ -10804,7 +10804,7 @@ LL getInv(int a, int mod) {  //求a在mod下的逆元，不存在逆元返回-1
 
 #### 离线求解：线性递推解
 
-以 $\mathcal O(N)$ 的复杂度完成 $1-N$ 中全部逆元的计算。**仅当 $p$ 为素数时成立。**
+以 $\mathcal O(N)$ 的复杂度完成 $1-N$ 中全部逆元的计算。**仅当 $p$ 为素数时成立。**由 $p=\lfloor p/i\rfloor\cdot i+(p\bmod i)\equiv 0\pmod p$ 解出 $inv[i]=-\lfloor p/i\rfloor\cdot inv[p\bmod i]$，代码里的 $p-p/i$ 是保持非负的等价写法。
 
 ```cpp
 inv[1] = 1;
