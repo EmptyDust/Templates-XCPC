@@ -129,34 +129,7 @@
 
 使用哈希表，以 #O($N + M$) 的复杂度计算。
 
-```cpp
-int n, m, a[N], num[N];  // n 堆数, m 种取法; N 按最大石子数改
-int sg(int x) {
-    if (num[x] != -1) return num[x];  // -1 未算，Solve 里 memset
-    unordered_set<int> S;  // 后继局面的 SG 集合
-    for (int i = 1; i <= m; ++ i)
-        if(x >= a[i])
-            S.insert(sg(x - a[i]));  // 取走 a[i] 颗
-
-    for (int i = 0; ; ++ i)  // mex：最小未出现的非负整数
-        if (S.count(i) == 0)
-            return num[x] = i;
-}
-void Solve() {
-    cin >> m;
-    for (int i = 1; i <= m; ++ i) cin >> a[i];  // 每次可取的数量
-    cin >> n;
-
-    int ans = 0; memset(num, -1, sizeof num);  // 多测须每组清空
-    for (int i = 1; i <= n; ++ i) {
-        int x; cin >> x;
-        ans ^= sg(x); // 各堆独立，异或合并
-    }
-
-    if (ans == 0) no; // yes/no 为赛场宏，须自行定义
-    else yes;
-}
-```
+#include-code("code/博弈论/sg.cpp")
 
 == Anti-SG 游戏 (反 SG 游戏)
 
@@ -232,17 +205,7 @@ $bold(((1, 2), (3, 5), (4, 7), (6, 10), dots))$ 具体而言，每一对的第�
 
 其中，在两堆石子的数量均大于 $10^9$ 时，由于需要使用高精度计算，我们需要人为定义 $frac(1 + sqrt(5), 2)$ 的取值为 $l o r r y = 1.618033988749894848204586834$。
 
-```cpp
-const double lorry = (sqrt(5.0) + 1.0) / 2.0;  // 黄金分割 (1+√5)/2
-//const double lorry = 1.618033988749894848204586834; // 堆更大时换这段高精度常数
-void Solve() {
-    int n, m; cin >> n >> m;
-    if (n < m) swap(n, m);  // 约定 n >= m
-    double x = n - m;  // 冷局面差为 k，小堆应等于 floor(k * φ)
-    if ((int)(lorry * x) == m) cout << "lose\n";  // 落在冷局面，先手必败
-    else cout << "win\n";
-}
-```
+#include-code("code/博弈论/wythoff.cpp")
 
 == 斐波那契博弈
 
@@ -258,19 +221,7 @@ void Solve() {
 
 当且仅当 $N$ 为斐波那契数时先手必败。
 
-```cpp
-long long fib[100] = {1, 2};  // 原来 int，fib[47] 已超 INT_MAX
-map<long long, bool> mp;  // 是否斐波那契数
-void Force() {  // 预处理，Solve 前调用一次
-  for (int i = 2; i <= 86; ++ i) fib[i] = fib[i - 1] + fib[i - 2];  // 86 项盖住约 9e17
-    for (int i = 0; i <= 86; ++ i) mp[fib[i]] = 1;
-}
-void Solve() {
-    int n; cin >> n;  // n 超过 int 时改 long long
-    if (mp[n] == 1) cout << "lose\n";  // 斐波那契数先手必败
-    else cout << "win\n";
-}
-```
+#include-code("code/博弈论/fibonacci.cpp")
 
 == 树上删边游戏
 
@@ -291,17 +242,7 @@ void Solve() {
 - 叶子节点的 SG 值为 $bold(0)$。
 - 非叶子节点的 SG 值为其所有孩子节点 SG 值 $bold(+ 1)$ 的异或和。
 
-```cpp
-auto dfs = [&](auto self, int x, int fa) -> int {  // 返回 R(x)=SG(x)+1
-    int res = 0;  // 原来 int x = 0 与参数同名，无法编译；res 为孩子 R 的异或
-    for (auto y : ver[x]) {  // ver 为邻接表，须先建图
-        if (y == fa) continue;
-        res ^= self(self, y, x);
-    }
-    return res + 1;  // 叶子没有孩子，返回 1 ⇔ SG=0
-};
-cout << (dfs(dfs, 1, 0) == 1 ? "Bob\n" : "Alice\n");  // ==1 即根 SG=0，先手必败
-```
+#include-code("code/博弈论/tree-edge-game.cpp")
 
 == 无向图删边游戏 (Fusion Principle 定理)
 
