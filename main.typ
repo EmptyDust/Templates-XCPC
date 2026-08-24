@@ -26,4 +26,5 @@
   if n >= 1 { align(center, text(8.5pt)[#n]) }
 })
 
+#include "chapters/基础算法.typ"
 #include "chapters/博弈论.typ"
