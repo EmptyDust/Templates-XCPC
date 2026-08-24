@@ -11,8 +11,8 @@ mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());  // 用�
 shuffle(ver.begin(), ver.end(), rng);
 ```
 
-== bit 库与位运算函数 \_\_builtin\_
-<bit-库与位运算函数-__builtin_>
+== bit 库与位运算函数 \_\_builtin\_\_
+<bit-库与位运算函数-__builtin__>
 GCC/Clang 内建，比手写循环快。`x=0` 时 `clz/ctz` 未定义。`long long` 后缀 `ll`。
 
 ```cpp
