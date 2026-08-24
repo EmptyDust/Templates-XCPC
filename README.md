@@ -1,38 +1,31 @@
 # 风铃的模板库
 
-XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何……）+ VS Code 代码片段 + 合并单文件。
+XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何……），原生 Typst 编写，直接编译成 PDF。
 
 ## 目录结构
 
-- `*.md` — 按主题分章，每章末尾带分页标记，可用浏览器打印或转 PDF
+- `main.typ` — 入口：章清单（`#include`）、封面与目录、页码编排
+- `theme.typ` — 视觉层：字体、标题、代码块、页眉页脚等全部版式规则
+- `prelude.typ` — 宏层：复杂度记号 `#O(...)`、`include-code` 代码读取等
+- `chapters/` — 19 个分章，唯一内容源
+- `code/` — 按章分目录的独立 C++ 板子，可编译，经 `prelude.typ` 的 `include-code` 读入书中
+- `images/` — 书中图片（本地化）
 - `code-snippets/` — VS Code 代码片段（`.code-snippets`），按主题分组
-- `total.md` — 全部章节的合并单文件，由 `build.sh` 生成，**不要手改**
-- `export/` — PDF 导出管线（技术细节见 `export/PIPELINE.md`）
+- `export/` — 高亮主题、PowerShell 语法定义、字体（细节见 `export/PIPELINE.md`）
+- `check.sh` — 验证闸，改动后跑一遍
 
 ## 使用
 
-- 分章阅读：打开对应 `.md`；全文检索用 `total.md`
+- 分章阅读：打开 `chapters/` 里对应 `.typ`
 - VS Code 片段：把 `code-snippets/*.code-snippets` 复制到项目 `.vscode/` 目录，即可在 cpp 文件中用前缀触发
-- 打印：浏览器打开 `.md` 渲染结果后打印；各章末尾的分页标记保证章节另起一页
-
-## 重新生成 total.md
-
-修改分章后运行：
-
-```sh
-./build.sh
-```
 
 ## 导出 PDF
 
-默认走 Typst 链路：`pandoc` 把 Markdown（含 `$...$` LaTeX）转成 Typst 标记，`typst` 直接排版成 PDF。源文件不依赖任何渲染器特性。
-
 ```sh
-./export-pdf.sh           # build/total.pdf
-./export-pdf.sh 博弈论.md  # build/博弈论.pdf
+./export-pdf.sh   # build/total.pdf
 ```
 
-需要：`pandoc`、`typst`。管线细节、已知坑、旧 Chromium 链路见 `export/PIPELINE.md`。
+需要：`typst`。单章预览：`typst compile --root . --font-path export/vendor/jetbrains-mono chapters/博弈论.typ /tmp/x.pdf`（跨章引用会报未定义，属正常）。
 
 ## 克隆与提交
 

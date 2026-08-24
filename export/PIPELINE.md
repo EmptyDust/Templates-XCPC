@@ -1,60 +1,50 @@
 # Export Pipeline
 
-Rendering chains from Markdown + LaTeX sources to PDF. Typst is the default; the Chromium chain is kept for visual comparison.
+Native Typst structure. The book is written directly in Typst; there is no intermediate format and no conversion layer.
 
 ## Data flow
 
 ```
-19 chapter .md ──build.sh──▶ total.md ──pandoc -t typst──▶ .typ (intermediate)
-                                                              │
-                                    typst-fix.py (patch layer)◀┘
-                                                              │
-                                    template.typ (layout) + book-mono.tmTheme (highlight theme)
-                                                              │
-                                                              ▼
-                                                    typst compile ──▶ build/*.pdf
+main.typ ──#include──▶ chapters/*.typ ──include-code──▶ code/**/*.cpp
+    │                        │
+theme.typ (layout)     images/ (localized)
+prelude.typ (macros)         │
+    └──────── typst compile ─┴──▶ build/total.pdf
 ```
 
-- `export-pdf.sh` — default export (Typst chain). `./export-pdf.sh` builds the full book → `build/total.pdf`; `./export-pdf.sh 博弈论.md` builds a single chapter.
-- `export-pdf-chromium.sh` — legacy Chromium chain (pandoc → HTML + MathML → Chromium print → mutool deflate), kept for rendering comparison.
-- `typst-fix.py` — patch layer between pandoc's Typst output and the actual Typst version (see Known pitfalls).
-- `template.typ` — all layout: fonts, TOC, page numbers, code blocks, inline-code underline.
+- `main.typ` — entry: explicit chapter include list, cover merged into TOC page, page numbers counted from body.
+- `theme.typ` — all layout: fonts, headings, code blocks, inline-code underline, running head, TOC style.
+- `prelude.typ` — macros: `#O(...)` complexity notation, `include-code` (reads a `.cpp` file and renders the region between `// @book-begin` / `// @book-end` markers, dedented).
+- `export/book-mono.tmTheme` — near-monochrome syntax highlighting theme (keyword = bold, string/number = mid gray, comment = light gray).
+- `export/powershell.sublime-syntax` — minimal PowerShell syntax definition (Typst has none built in), vendored for the few powershell blocks in 杂项.
+- `export/vendor/jetbrains-mono/` — vendored code font (from the Debian package, unpacked locally); passed via `--font-path`.
 
-Dependencies: `pandoc`, `typst`, `curl` (image cache). No Chromium, no mutool, no font conversion.
+Dependency: `typst`. Build is a single `typst compile`; `export-pdf.sh` is a thin wrapper.
 
 ## Known pitfalls
 
-Read this section before touching the pipeline. Every entry is a bug that actually happened.
+Read this section before touching the theme. Every entry is a bug that actually happened.
 
-1. **`raw` carries a built-in 0.8em size reduction that multiplies with template em values.** Typst has an internal show-set rule shrinking raw text to 0.8em; `set text(size: 0.75em)` yields 0.75 × 0.8 × body size. To express "x times body size", write x/0.8 (see comments in template.typ). Absolute pt values override the default instead.
+1. **`raw` carries a built-in 0.8em size reduction that multiplies with template em values.** Typst has an internal show-set rule shrinking raw text to 0.8em; `set text(size: 0.75em)` yields 0.75 × 0.8 × body size. To express "x times body size", write x/0.8 (see comments in theme.typ). Absolute pt values override the default instead.
 
 2. **JetBrains Mono ligatures bypass syntect highlighting.** `ligatures: false` does not apply to highlighted fragments; `<=` renders as `≤`. The OpenType features themselves must be disabled (`features: (liga: 0, ...)`).
 
-3. **pandoc drops raw HTML.** `<img src=...>` tags never reach the Typst output; images vanish silently. Preprocessing rewrites HTML images into Markdown image syntax before conversion.
+3. **Typst 0.15 treats multi-letter math identifiers as variable references.** `Sum_N` is an error, not italic text; write space-separated letters (`S u m_N`) or `upright(...)`. The compiler itself suggests the fix.
 
-4. **The `/END/` page-break marker gets wrapped as `#block[/END/]` by pandoc.** A naive replacement produces `#block[#pagebreak()]`, which is an illegal container pagebreak. Replace the whole block and use a weak pagebreak to avoid a trailing blank page.
+4. **Extracted code must stay compilable.** Files under `code/` are checked by `g++ -std=gnu++20 -fsyntax-only` in check.sh. Book-only fragments (macros, undefined helpers) belong outside the `@book-begin`/`@book-end` region or stay inline in the chapter.
 
-5. **Image hotlinking and format lies.** zhimg requires a Referer header; one `.png` is actually WebP and must be converted by content sniffing. Images are cached in `build/images/`; the export never fetches them online at render time.
-
-6. **Symbol-table drift between pandoc's Typst writer and Typst itself.** pandoc emits the old symbol table; newer Typst renamed symbols: `sect`→`inter`, `angle.l`→`chevron.l`, `times.circle` is invalid, etc. Each rule in `typst-fix.py` covers one class. **After upgrading pandoc or typst, rebuild the whole book and check for new warnings.**
-
-7. **Never wrap code-block content in `par()`.** It swallows the entire raw block (all 373 code blocks disappeared once). Set paragraph properties inside the block with `set par(...)` instead.
+5. **pdfinfo (poppler) prints `Syntax Error: Suspects object is wrong type (boolean)` on Typst-produced PDFs.** The entry is `/MarkInfo/Suspects false`, which is spec-valid boolean for tagged PDF; poppler emits a spurious strictness warning. Ghostscript, mutool, pdftotext, pdffonts all read the file cleanly. Benign.
 
 ## Upgrade procedure
 
-After upgrading pandoc / typst:
+After upgrading typst, rebuild the whole book and run the gate:
 
 ```sh
-./export-pdf.sh            # full rebuild; compile warnings signal a broken patch rule
+./check.sh
 ```
 
-Then spot-compare pages against the previous PDF (formula-dense pages, code-dense pages, image pages, TOC). Add new drift fixes to `typst-fix.py`, one rule per class, with a comment stating what it patches.
+Then spot-compare pages against the previous PDF (formula-dense, code-dense, image pages, TOC).
 
 ## Archives
 
-- Tag `archive/chromium-final` — the last state where md+LaTeX content was final and the Chromium chain was the default export.
-- The final Chromium-chain PDF can be rebuilt anytime with `./export-pdf-chromium.sh`.
-
-## Known cosmetic quirks
-
-- `pdfinfo` (poppler) prints `Syntax Error: Suspects object is wrong type (boolean)` on Typst-produced PDFs. The entry is `/MarkInfo/Suspects false`, which is spec-valid boolean for tagged PDF; poppler emits a spurious strictness warning. Ghostscript, mutool, pdftotext, pdffonts all read the file cleanly. Benign.
+- Tag `archive/chromium-final` — the last state where md+LaTeX was the content source and the Chromium chain was the default export. The md era and both legacy pipelines (pandoc→Typst, pandoc→HTML→Chromium) live in git history before the native migration.
