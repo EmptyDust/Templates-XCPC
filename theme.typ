@@ -14,7 +14,7 @@
     lang: "zh",
     region: "cn",
   )
-  set par(justify: true, leading: 0.66em)
+  set par(justify: true, leading: 0.45em)
 
   // 公式：TeX Gyre Termes Math，笔画粗细与正文一致
   show math.equation: set text(font: "TeX Gyre Termes Math")
@@ -41,6 +41,8 @@
 
   // ---- 代码 ----
   set raw(theme: "export/book-mono.tmTheme")
+  // 内置语法集不含 powershell，vendor 一份极简定义
+  set raw(syntaxes: "export/powershell.sublime-syntax")
   // JetBrains Mono 有连字（<= → ≤）。syntect 高亮分段会绕过 ligatures: false，
   // 必须关 OpenType 特性本身
   show raw: set text(ligatures: false, features: (liga: 0, clig: 0, calt: 0, dlig: 0))
