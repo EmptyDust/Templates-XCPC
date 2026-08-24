@@ -11556,7 +11556,7 @@ int main(){
 
 ### 莫比乌斯函数/反演
 
-莫比乌斯函数定义：$\displaystyle {\mu(n) = \begin{cases} 1 &n = 1 \\ (-1)^k &n \text{ 为 } k \text{ 个互异素数之积} \\ 0 &else \end{cases}}$ 。（原文"$p_i$ 互质"意为 $p_i$ 两两不同）
+莫比乌斯函数定义：$\displaystyle {\mu(n) = \begin{cases} 1 &n = 1 \\ (-1)^k &n \text{ 为 } k \text{ 个互异素数之积} \\ 0 &\text{else} \end{cases}}$ 。（原文"$p_i$ 互质"意为 $p_i$ 两两不同）
 
 > 莫比乌斯函数性质：对于任意正整数 $n$ 满足 $\displaystyle {\sum_{d|n}\mu(d) = \begin{cases} 1 & n = 1 \\ 0 & n \neq 1\end{cases}}$ ；$\displaystyle {\sum_{d|n} \frac{\mu(d)}{d} = \frac{\varphi(n)}{n}}$ 。
 
