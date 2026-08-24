@@ -1,0 +1,26 @@
+%YAML 1.2
+---
+# 极简 PowerShell 语法：为 Book Mono 主题提供作用域
+# typst 内置语法集不含 powershell，raw 块回落为纯文本；
+# 只覆盖书里用到的构造：注释、字符串、变量、控制关键字、数字。
+name: PowerShell
+file_extensions:
+  - ps1
+  - psm1
+scope: source.powershell
+contexts:
+  main:
+    - match: '#.*$'
+      scope: comment.line.number-sign.powershell
+    - match: '"([^"`\\]|`.)*"'
+      scope: string.quoted.double.powershell
+    - match: '''[^'']*'''
+      scope: string.quoted.single.powershell
+    - match: '\$[\w:?^]+'
+      scope: variable.other.powershell
+    - match: '\b(if|else|elseif|switch|while|foreach|for|do|return|break|continue|default|param|function|try|catch|finally|begin|process|end|in)\b'
+      scope: keyword.control.powershell
+    - match: '-(not|eq|ne|gt|ge|lt|le|and|or)\b'
+      scope: keyword.operator.powershell
+    - match: '\b\d+(\.\d+)?\b'
+      scope: constant.numeric.powershell
