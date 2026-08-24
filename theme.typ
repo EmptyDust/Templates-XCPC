@@ -7,6 +7,17 @@
   set page(
     paper: "a4",
     margin: (x: 36pt, top: 40pt, bottom: 44pt),
+    // 页眉 running head：偶数页书名、奇数页当前章名；章标题页之前无页眉
+    header: context {
+      let past = query(heading.where(level: 1).before(here()))
+      if past.len() == 0 { return }
+      let even = calc.even(counter(page).get().first())
+      align(if even { left } else { right }, text(8.5pt, fill: luma(90), if even {
+        [风铃的模板库]
+      } else {
+        past.last().body
+      }))
+    },
   )
   set text(
     font: ("Noto Serif", "Noto Serif CJK SC"),
