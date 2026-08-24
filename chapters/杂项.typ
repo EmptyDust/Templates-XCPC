@@ -247,7 +247,7 @@ std::ostream& operator<<(std::ostream& os, i128 n) {
 
 == 对拍板子
 <对拍板子>
-同目录多题：`A.cpp` / `A-std.cpp` / `A-gen.cpp`。 一题多份源（`F.cpp` / `F-1.cpp` / `F-Brute.cpp`）共用该题一份暴力和生成器。 对拍器：Linux 做成函数追加到 `~/.bashrc`；Windows 存成 `stress.py`。 prefix：`stress A` 或 `stress F-1`。被测用完整参数，std/gen 只取第一段连字符前的题号。 manual：`stress a.cpp brute.cpp gen.cpp`，三个路径原样用。 其它个数直接返回。 编译产物与中间文件均在临时目录固定路径，下次覆盖，不 `rm`。 挂了去看临时目录里的输入输出。三个 `g++` 都成功才进入循环。
+同目录多题：`A.cpp` / `A-std.cpp` / `A-gen.cpp`。 一题多份源（`F.cpp` / `F-1.cpp` / `F-Brute.cpp`）共用该题一份暴力和生成器。 对拍器：Linux 做成函数追加到 `~/.bashrc`；Windows 首选 `stress.py`（可读），没有 Python 的机器用 PowerShell 函数版（零依赖，追加到 `$PROFILE`）。 prefix：`stress A` 或 `stress F-1`。被测用完整参数，std/gen 只取第一段连字符前的题号。 manual：`stress a.cpp brute.cpp gen.cpp`，三个路径原样用。 其它个数直接返回。 编译产物与中间文件均在临时目录固定路径，下次覆盖，不 `rm`。 挂了去看临时目录里的输入输出。三个 `g++` 都成功才进入循环。
 
 Linux（`~/.bashrc` 末尾）：
 
@@ -322,6 +322,45 @@ while True:
     if open(f'{T}x.out', 'rb').read() != open(f'{T}xstd.out', 'rb').read():
         break
     t += 1
+```
+
+没有 Python 的机器：PowerShell 函数版（`$PROFILE` 末尾），逻辑相同，输出用 `fc` 比对：
+
+```powershell
+# prefix: stress A / stress F-1 → F-1.cpp F-std.cpp F-gen.cpp
+# manual: stress a.cpp brute.cpp gen.cpp
+function stress {
+    switch ($args.Count) {
+        1 {
+            $sol = "$($args[0]).cpp"
+            $p = ($args[0] -split '-', 2)[0]
+            $std = "$p-std.cpp"
+            $gen = "$p-gen.cpp"
+        }
+        3 {
+            $sol = $args[0]
+            $std = $args[1]
+            $gen = $args[2]
+        }
+        default { return }
+    }
+    g++ -std=gnu++20 -O2 -pipe -o "$env:TEMP\gen.exe" $gen
+    if (-not $?) { return }
+    g++ -std=gnu++20 -O2 -pipe -o "$env:TEMP\x.exe" $sol
+    if (-not $?) { return }
+    g++ -std=gnu++20 -O2 -pipe -o "$env:TEMP\xstd.exe" $std
+    if (-not $?) { return }
+    $t = 1
+    while ($true) {
+        Write-Host $t
+        & "$env:TEMP\gen.exe" > "$env:TEMP\test.in"
+        & "$env:TEMP\x.exe" < "$env:TEMP\test.in" > "$env:TEMP\x.out"
+        & "$env:TEMP\xstd.exe" < "$env:TEMP\test.in" > "$env:TEMP\xstd.out"
+        fc.exe "$env:TEMP\x.out" "$env:TEMP\xstd.out"
+        if ($LASTEXITCODE -ne 0) { break }
+        $t++
+    }
+}
 ```
 
 生成器骨架（存成 `A-gen.cpp`）：
