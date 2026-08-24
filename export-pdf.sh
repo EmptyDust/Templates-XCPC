@@ -1,170 +1,71 @@
-#!/bin/sh
-# md + LaTeX 数学 → HTML → PDF。
-# pandoc 把 Markdown 收成 HTML、$...$ 收成 MathML；公式语言不换。
-# 打印就是 Chromium 打开这份 HTML，原生 MathML 排版，真文本可选中。
-# 西文/代码/数学用 TTF（CID TrueType）；CJK 由 CFF TTC 转成 TTF 再嵌入，
-# 避免 Chromium 把 CFF 打成 Type 3 位图。
-# 用法：
-#   ./export-pdf.sh              # 先 build.sh，再导出 build/total.pdf
-#   ./export-pdf.sh 博弈论.md    # 导出单章到 build/博弈论.pdf
-set -eu
+#!/usr/bin/env bash
+# Typst 导出管线：md+LaTeX → pandoc(texmath→typst) → 修正层 → typst compile
+# 与 export-pdf.sh（Chromium 管线）并行，产物 build/total.pdf
+set -euo pipefail
 cd "$(dirname "$0")"
 
-need() {
-    if ! command -v "$1" >/dev/null 2>&1; then
-        echo "需要 $1" >&2
-        exit 1
-    fi
-}
+BUILD=build
+mkdir -p "$BUILD/images"
+need() { command -v "$1" >/dev/null || { echo "缺工具: $1" >&2; exit 1; }; }
 need pandoc
-need chromium
-need curl
+need typst
 
-src=${1:-total.md}
-if [ "$src" = "total.md" ] || [ "$src" = "./total.md" ]; then
+# 单章模式：./export-pdf.sh 博弈论.md
+if [ $# -ge 1 ]; then
+    SRC="$BUILD/$(basename "$1" .md).typst.md"
+    sed -e 's/^\[TOC\]$//' "$1" > "$SRC"
+    OUT="$BUILD/$(basename "$1" .md)"
+else
     ./build.sh
-    src=total.md
-fi
-if [ ! -f "$src" ]; then
-    echo "找不到 $src" >&2
-    exit 1
+    SRC="$BUILD/total.typst.md"
+    sed -e 's/^# 风铃的模板库$//' -e 's/^\[TOC\]$//' total.md > "$SRC"
+    OUT="$BUILD/total"
 fi
 
-fetch() {
-    dest=$1
-    url=$2
-    if [ -s "$dest" ]; then
-        return 0
-    fi
-    mkdir -p "$(dirname "$dest")"
-    echo "拉取 → $dest"
-    if ! curl -fsSL --max-time 30 -o "$dest" "$url"; then
-        curl -fsSL --max-time 40 --proxy socks5h://192.168.50.213:1233 -o "$dest" "$url"
-    fi
-}
+# 外链图片缓存到 build/images/ 并改写为相对路径（typst 不抓 URL）
+python3 - "$SRC" << 'PY'
+import re, subprocess, sys, os
+path = sys.argv[1]
+t = open(path, encoding='utf-8').read()
+os.makedirs('build/images', exist_ok=True)
+urls = []
+def local(url):
+    if url not in urls:
+        urls.append(url)
+    return f'images/img-{urls.index(url)+1:02d}.png'
+# pandoc 的 typst writer 丢弃 raw HTML：<img> 标签先改写成 markdown 图片语法
+t = re.sub(r'<img\s+src="(https?://[^"]+)"[^>]*>', lambda m: f'![]({local(m.group(1))})', t)
+t = re.sub(r'src="(https?://[^"]+)"', lambda m: f'src="{local(m.group(1))}"', t)
+t = re.sub(r'(!\[[^\]]*\]\()(https?://[^)]+)(\))', lambda m: m.group(1) + local(m.group(2)) + m.group(3), t)
+open(path, 'w', encoding='utf-8').write(t)
+for i, u in enumerate(urls, 1):
+    dst = f'build/images/img-{i:02d}.png'
+    if os.path.exists(dst):
+        continue
+    print('下载', u)
+    # 防盗链 CDN（如 zhimg）需要 Referer/UA；Referer 按目标域名生成
+    from urllib.parse import urlparse
+    host = urlparse(u).netloc
+    base = ['curl', '-fsSL', '--retry', '2',
+            '-H', 'User-Agent: Mozilla/5.0', '-H', f'Referer: https://{host}/']
+    try:
+        subprocess.run(base + ['-o', dst, u], check=True)
+    except subprocess.CalledProcessError:
+        subprocess.run(base + ['--proxy', 'socks5h://192.168.50.213:1233', '-o', dst, u], check=True)
+    # 有些 URL 给的是 webp 但按 .png 存，typst 只认真实格式，统一转 PNG
+    with open(dst, 'rb') as f:
+        magic = f.read(12)
+    if not magic.startswith(b'\x89PNG'):
+        from PIL import Image
+        Image.open(dst).convert('RGB').save(dst)
+PY
 
-# 数学走 pandoc --mathml + Chromium 原生 MathML，不用 MathJax。
-# 数学字体 TeX Gyre Termes Math：Times 系，笔画与 Noto Serif 正文相配；
-# 系统是 CFF OTF，转成 TTF 后 Chromium 才能打成 CID TrueType。
+# pandoc → typst，修正层，拼模板
+pandoc -f markdown -t typst --wrap=none "$SRC" -o "$OUT.body.typ"
+python3 export/typst-fix.py "$OUT.body.typ" "$OUT.body.typ"
+cp export/book-mono.tmTheme "$BUILD/"
+sed 's|export/book-mono.tmTheme|book-mono.tmTheme|' export/template.typ > "$OUT.typ"
+cat "$OUT.body.typ" >> "$OUT.typ"
 
-# CJK TTC 是 CFF，Chromium 会打成 Type 3。转成 TTF 后按 CID TrueType 嵌入。
-fontdir=export/vendor/fonts
-mkdir -p "$fontdir"
-ensure_cjk() {
-    dest=$1
-    ttc=$2
-    family=$3
-    new_family=$4
-    if [ -s "$dest" ]; then
-        return 0
-    fi
-    need python3
-    echo "转换 $family → $dest"
-    python3 export/cff2ttf.py "$ttc" "$dest" "$family" "$new_family"
-}
-ensure_cjk "$fontdir/NotoSerifCJKsc-Regular.ttf" \
-    /usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc "Noto Serif CJK SC" PrintSerifCJK
-ensure_cjk "$fontdir/NotoSerifCJKsc-Bold.ttf" \
-    /usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc "Noto Serif CJK SC" PrintSerifCJK
-ensure_cjk "$fontdir/NotoSansMonoCJKsc-Regular.ttf" \
-    /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc "Noto Sans Mono CJK SC" PrintMonoCJK
-ensure_cjk "$fontdir/TeXGyreTermesMath-Regular.ttf" \
-    /usr/share/texmf/fonts/opentype/public/tex-gyre-math/texgyretermes-math.otf "TeX Gyre Termes Math" PrintMath
-
-mkdir -p build/fonts
-cp "$fontdir/NotoSerifCJKsc-Regular.ttf" "$fontdir/NotoSerifCJKsc-Bold.ttf" \
-   "$fontdir/NotoSansMonoCJKsc-Regular.ttf" "$fontdir/TeXGyreTermesMath-Regular.ttf" \
-   build/fonts/
-cp /usr/share/fonts/truetype/noto/NotoSerif-Regular.ttf \
-   /usr/share/fonts/truetype/noto/NotoSerif-Bold.ttf \
-   /usr/share/fonts/truetype/noto/NotoSerif-Italic.ttf \
-   /usr/share/fonts/truetype/noto/NotoSerif-BoldItalic.ttf \
-   build/fonts/
-# JetBrains Mono：代码西文。取 Debian 包，apt 下载后本地解包（不安装、无需 root）。
-jbm=export/vendor/jetbrains-mono
-if [ ! -s "$jbm/JetBrainsMono-Regular.ttf" ]; then
-    need apt-get
-    need dpkg-deb
-    echo "抽取 fonts-jetbrains-mono → $jbm"
-    tmpd=$(mktemp -d)
-    (cd "$tmpd" && apt-get download fonts-jetbrains-mono >/dev/null 2>&1)
-    dpkg-deb -x "$tmpd"/fonts-jetbrains-mono_*_all.deb "$tmpd/x"
-    mkdir -p "$jbm"
-    for f in Regular Bold Italic BoldItalic; do
-        cp "$tmpd/x/usr/share/fonts/truetype/jetbrains-mono/JetBrainsMono-$f.ttf" "$jbm/"
-    done
-    rm -rf "$tmpd"
-fi
-cp "$jbm/JetBrainsMono-Regular.ttf" "$jbm/JetBrainsMono-Bold.ttf" \
-   "$jbm/JetBrainsMono-Italic.ttf" "$jbm/JetBrainsMono-BoldItalic.ttf" \
-   build/fonts/
-
-mkdir -p build
-base=$(basename "$src" .md)
-html=build/${base}.html
-pdf=build/${base}.pdf
-title=$base
-if [ "$base" = "total" ]; then
-    title="风铃的模板库"
-fi
-
-md=$src
-cleanup=$(mktemp)
-trap 'rm -f "$cleanup"' EXIT
-# Typora 的 [TOC] 只是占位，真正的目录由 --toc 生成。
-# 总册标题走 metadata，避免正文 h1 再进目录。
-sed -e '/^\[TOC\]$/d' -e '/^# 风铃的模板库$/d' "$src" > "$cleanup"
-md=$cleanup
-
-# --mathml：正文公式直接转 MathML，Chromium 原生排版，真文本可选中。
-# tango：浅底高亮，覆盖 pandoc 默认的 Menlo/Consolas。
-# --toc：章（##）+ 节（###）。[TOC] 不是 pandoc 语法。
-pandoc "$md" \
-    --from markdown \
-    --to html5 \
-    --standalone \
-    --template=export/template.html \
-    --mathml \
-    --highlight-style=tango \
-    --toc \
-    --toc-depth=3 \
-    --metadata title="$title" \
-    --metadata toc-title=目录 \
-    --include-in-header=export/header.html \
-    -o "$html"
-
-budget=20000
-timeout=30000
-if [ "$base" = "total" ]; then
-    budget=180000
-    timeout=200000
-fi
-
-print_pdf() {
-    chromium --headless=new --disable-gpu --no-sandbox --disable-dev-shm-usage \
-        --no-pdf-header-footer \
-        --font-render-hinting=medium \
-        --virtual-time-budget="$budget" \
-        --timeout="$timeout" \
-        --run-all-compositor-stages-before-draw \
-        --print-to-pdf="$(pwd)/$pdf" \
-        "file://$(pwd)/$html" >/dev/null
-}
-
-print_pdf
-# Chromium 不支持 target-counter：先出一版拿到锚点页码，写进目录再打一次。
-if python3 export/toc-pagenums.py "$html" "$(pwd)/$pdf"; then
-    print_pdf
-fi
-
-# Chromium/Skia 写出的流几乎不压缩：CJK 子集和 SVG 公式路径会到二十多 MB。
-# mutool 只做 deflate / 对象流 / 再子集，不重渲染。
-if command -v mutool >/dev/null 2>&1; then
-    tmppdf=$(mktemp --suffix=.pdf)
-    if mutool clean -gg -z -f -i -t -Z -S "$(pwd)/$pdf" "$tmppdf"; then
-        mv "$tmppdf" "$(pwd)/$pdf"
-    else
-        rm -f "$tmppdf"
-    fi
-fi
-echo "$pdf"
+typst compile --root . --font-path export/vendor/jetbrains-mono "$OUT.typ" "$OUT.pdf"
+echo "$OUT.pdf"
