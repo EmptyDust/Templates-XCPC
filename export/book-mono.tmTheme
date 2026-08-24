@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 近单色代码高亮主题：与 MathML 管线的灰度方案一致。
+     关键字靠字重，字串/数字中灰，注释浅灰，预处理更浅。 -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>name</key><string>Book Mono</string>
+    <key>settings</key>
+    <array>
+        <dict>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key><string>#111111</string>
+                <key>background</key><string>#FFFFFF</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key><string>comment</string>
+            <key>settings</key>
+            <dict><key>foreground</key><string>#8A8A8A</string></dict>
+        </dict>
+        <dict>
+            <key>scope</key><string>keyword, storage, storage.type</string>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key><string>#111111</string>
+                <key>fontStyle</key><string>bold</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key><string>string, constant.numeric, constant.language</string>
+            <key>settings</key>
+            <dict><key>foreground</key><string>#4A4A4A</string></dict>
+        </dict>
+        <dict>
+            <key>scope</key><string>entity.name.type, support.type, entity.name.function, support.function</string>
+            <key>settings</key>
+            <dict><key>foreground</key><string>#1C1C1C</string></dict>
+        </dict>
+        <dict>
+            <key>scope</key><string>meta.preprocessor, keyword.control.import</string>
+            <key>settings</key>
+            <dict><key>foreground</key><string>#6A6A6A</string></dict>
+        </dict>
+    </array>
+</dict>
+</plist>
