@@ -8494,7 +8494,7 @@ int main() {
 
 #### 选择最优的箱子装（multiset 解）
 
-选择能放下物品且剩余容量最小的箱子放物品
+选择能放下物品且剩余容量最小的箱子放物品。`multiset` 内部有序，`lower_bound(物品体积)` 即最小可行箱，装入后删旧容量插新容量，每步 $\mathcal O(\log N)$。
 
 ```cpp
 void solve(){
