@@ -54,3 +54,7 @@ Then spot-compare pages against the previous PDF (formula-dense pages, code-dens
 
 - Tag `archive/chromium-final` — the last state where md+LaTeX content was final and the Chromium chain was the default export.
 - The final Chromium-chain PDF can be rebuilt anytime with `./export-pdf-chromium.sh`.
+
+## Known cosmetic quirks
+
+- `pdfinfo` (poppler) prints `Syntax Error: Suspects object is wrong type (boolean)` on Typst-produced PDFs. The entry is `/MarkInfo/Suspects false`, which is spec-valid boolean for tagged PDF; poppler emits a spurious strictness warning. Ghostscript, mutool, pdftotext, pdffonts all read the file cleanly. Benign.
