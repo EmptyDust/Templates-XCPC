@@ -93,8 +93,19 @@
     v(0.2em)
   }
 
-  // 表格
-  set table(stroke: 0.4pt + luma(204), inset: 0.45em)
+  // 表格：booktabs 三线（顶线、栏头线、底线），无竖线
+  set table(
+    stroke: (x, y) => (
+      top: if y == 0 { 0.7pt + luma(30) }
+           else if y == 1 { 0.4pt + luma(90) }
+           else { none },
+      left: none,
+      right: none,
+      bottom: none,
+    ),
+    inset: 0.45em,
+  )
+  show table: it => block(stroke: (bottom: 0.7pt + luma(30)), inset: 0pt, it)
   show table.cell.where(y: 0): strong
 
   // 链接不染色，只保留继承色
