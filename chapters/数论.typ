@@ -385,7 +385,7 @@ h (x) & = sum_(d divides x) f (d) g (x / d) $
 <例子-1>
 为方便叙述，令所有质数组成的集合为 $bold(P)$.
 
-- 素因数分解中 $p$ 的重数：$nu_p (n) = max { k in bold(N) : p^k divides n }$，其中，$p in bold(P)$。（完全加性）
+- 素因数分解中 $p$ 的重数：$nu_p (n) = "max" { k in bold(N) : p^k divides n }$，其中，$p in bold(P)$。（完全加性）
 - 所有质因子数目：$Omega (n) = sum_(p in bold(P)) nu_p (n)$。（完全加性）
 - 相异质因子数目：$omega (n) = sum_(p in bold(P)) [p divides n]$。
 - 所有质因子之和：$a_0 (n) = sum_(p in bold(P)) nu_p (n) dot.op p$。（完全加性）
@@ -395,7 +395,7 @@ h (x) & = sum_(d divides x) f (d) g (x / d) $
 <取整函数>
 对于实数 $x$，定义 #strong[下取整函数];（floor function）和 #strong[上取整函数];（ceiling function）分别为
 
-$ ⌊ x ⌋ = max { k in bold(Z) : k lt.eq x } , med ⌈ x ⌉ = min { k in bold(Z) : k gt.eq x } . $
+$ ⌊ x ⌋ = "max" { k in bold(Z) : k lt.eq x } , med ⌈ x ⌉ = "min" { k in bold(Z) : k gt.eq x } . $
 
 利用下取整函数，一个实数可以分解为整数部分和小数部分：$x = ⌊ x ⌋ + { x }$。其中，${ x }$ 表示 $x$ 的小数部分。
 
@@ -458,7 +458,7 @@ $ ⌊ f (x) ⌋ = ⌊ f (⌊ x ⌋) ⌋ , med ⌈ f (x) ⌉ = ⌈ f (⌈ x ⌉) 
 
 === 调和级数
 <调和级数>
-枚举 $1 . . N$ 的倍数（调和级数复杂度）：$sum_(k = 1)^N N / k approx N ln N$，误差量级在 $10 %$ 左右。常规评测机可以在 500ms 内完成 $10^8$ 量级的此类预处理计算。下表 N 的量级指 $10$ 的幂次数。
+枚举 $1 dots.c N$ 的倍数（调和级数复杂度）：$sum_(k = 1)^N N / k approx N "ln" N$，误差量级在 $10 %$ 左右。常规评测机可以在 500ms 内完成 $10^8$ 量级的此类预处理计算。下表 N 的量级指 $10$ 的幂次数。
 
 #figure(
 align(center)[#table(
@@ -535,13 +535,13 @@ align(center)[#table(
 
 == 欧拉筛 \(线性筛)
 <欧拉筛-线性筛>
-每个合数只被它的#strong[最小质因子];筛掉一次，因此复杂度为 $cal(O) (N)$（埃氏筛是 $cal(O) (N log log N)$，此处原写有误）。下面的写法同时把最小质因子记录在 `v`/`minp` 中，可用于分解质因数。
+每个合数只被它的#strong[最小质因子];筛掉一次，因此复杂度为 $cal(O)(N)$（埃氏筛是 $cal(O)(N "log" "log" N)$，此处原写有误）。下面的写法同时把最小质因子记录在 `v`/`minp` 中，可用于分解质因数。
 
 #include-code("code/数论/欧拉筛-线性筛.cpp")
 
 === 最小质因数
 <最小质因数>
-线性筛的副产品：`minp[x]` 为 $x$ 的最小质因子。分解 $x$ 只需反复除 `minp[x]`，单次 $cal(O) (log x)$。先 `sieve(n)`。
+线性筛的副产品：`minp[x]` 为 $x$ 的最小质因子。分解 $x$ 只需反复除 `minp[x]`，单次 $cal(O)("log" x)$。先 `sieve(n)`。
 
 #include-code("code/数论/最小质因数.cpp")
 
@@ -554,7 +554,7 @@ $10^18$ 量级的 `a * b % m` 直接乘会溢出，用二分拆开或 128 位中
 
 === 借助浮点数实现
 <借助浮点数实现>
-$cal(O) (1)$ 计算 $a dot.op b med mod med m$，常数比 int128 法小很多。其中 $1 lt.eq a , b , m lt.eq 10^18$。
+$cal(O)(1)$ 计算 $a dot.op b med mod med m$，常数比 int128 法小很多。其中 $1 lt.eq a , b , m lt.eq 10^18$。
 
 ```cpp
 LL mul(LL a, LL b, LL m) {
@@ -583,34 +583,34 @@ LL mul(LL a, LL b, LL m) {
 == 裴蜀定理
 <裴蜀定理>
 #quote(block: true)[
-$a x + b y = c med (x in Z^convolve , y in Z^convolve)$ 成立的充要条件是 $g c d ⁡ (a , b) divides c$（ $Z^(\*)$ 表示正整数集）。
+$a x + b y = c med (x in Z^convolve , y in Z^convolve)$ 成立的充要条件是 $"gcd" ⁡ (a , b) divides c$（ $Z^(\*)$ 表示正整数集）。
 ]
 
 === 逆定理
 <逆定理>
-设 $a , b$ 是不全为零的整数，若 $d > 0$ 是 $a , b$ 的公因数，且存在整数 $x , y$, 使得 $a x + b y = d$，则 $d = gcd (a , b)$。
+设 $a , b$ 是不全为零的整数，若 $d > 0$ 是 $a , b$ 的公因数，且存在整数 $x , y$, 使得 $a x + b y = d$，则 $d = "gcd" (a , b)$。
 
 特殊地，设 $a , b$ 是不全为零的整数，若存在整数 $x , y$, 使得 $a x + b y = 1$，则 $a , b$ 互质。
 
 === 多个整数
 <多个整数>
-裴蜀定理可以推广到 $n$ 个整数的情形：设 $a_1 , a_2 , dots.h , a_n$ 是不全为零的整数，则存在整数 $x_1 , x_2 , dots.h , x_n$, 使得 $a_1 x_1 + a_2 x_2 + dots.h.c + a_n x_n = gcd (a_1 , a_2 , dots.h , a_n)$。其逆定理也成立：设 $a_1 , a_2 , dots.h , a_n$ 是不全为零的整数，$d > 0$ 是 $a_1 , a_2 , dots.h , a_n$ 的公因数，若存在整数 $x_1 , x_2 , dots.h , x_n$, 使得 $a_1 x_1 + a_2 x_2 + dots.h.c + a_n x_n = d$，则 $d = gcd (a_1 , a_2 , dots.h , a_n)$。
+裴蜀定理可以推广到 $n$ 个整数的情形：设 $a_1 , a_2 , dots.h , a_n$ 是不全为零的整数，则存在整数 $x_1 , x_2 , dots.h , x_n$, 使得 $a_1 x_1 + a_2 x_2 + dots.h.c + a_n x_n = "gcd" (a_1 , a_2 , dots.h , a_n)$。其逆定理也成立：设 $a_1 , a_2 , dots.h , a_n$ 是不全为零的整数，$d > 0$ 是 $a_1 , a_2 , dots.h , a_n$ 的公因数，若存在整数 $x_1 , x_2 , dots.h , x_n$, 使得 $a_1 x_1 + a_2 x_2 + dots.h.c + a_n x_n = d$，则 $d = "gcd" (a_1 , a_2 , dots.h , a_n)$。
 
-例题：给定一个序列 $a$，找到整数序列 $x$，使得 $sum_(i = 1)^n a_i x_i$ 为最小的#strong[正数];。答案就是 $gcd (a_1 , dots.h , a_n)$（裴蜀定理可加出的最小正值）。
+例题：给定一个序列 $a$，找到整数序列 $x$，使得 $sum_(i = 1)^n a_i x_i$ 为最小的#strong[正数];。答案就是 $"gcd" (a_1 , dots.h , a_n)$（裴蜀定理可加出的最小正值）。
 
 #include-code("code/数论/多个整数.cpp")
 
 == 逆元
 <逆元>
-满足 $a x equiv 1 med \( mod med m \)$ 的 $x$，用来把除法变乘法。存在当且仅当 $gcd (a , m) = 1$。模质数用费马 $a^(p - 2)$；一般模用 exgcd；要 $1 . . n$ 全部逆元用线性递推。
+满足 $a x equiv 1 med \( mod med m \)$ 的 $x$，用来把除法变乘法。存在当且仅当 $"gcd" (a , m) = 1$。模质数用费马 $a^(p - 2)$；一般模用 exgcd；要 $1 dots.c n$ 全部逆元用线性递推。
 
 === 费马小定理解（借助快速幂）
 <费马小定理解借助快速幂>
-若 $p$ 为素数，$gcd (a , p) = 1$，则 $a^(p - 1) equiv 1 med \( mod med p \)$。
+若 $p$ 为素数，$"gcd" (a , p) = 1$，则 $a^(p - 1) equiv 1 med \( mod med p \)$。
 
 另一个形式：对于任意整数 $a$，有 $a^p equiv a med \( mod med p \)$。
 
-单次计算的复杂度即为快速幂的复杂度 $cal(O) (log X)$ 。限制：$M O D$ 必须是质数，且需要满足 $x$ 与 $M O D$ 互质。
+单次计算的复杂度即为快速幂的复杂度 $cal(O)("log" X)$ 。限制：$"MOD"$ 必须是质数，且需要满足 $x$ 与 $"MOD"$ 互质。
 
 ```cpp
 LL inv(LL x) { return mypow(x, mod - 2, mod);}
@@ -618,7 +618,7 @@ LL inv(LL x) { return mypow(x, mod - 2, mod);}
 
 === 扩展欧几里得解
 <扩展欧几里得解>
-此方法的 $M O D$ 没有限制，复杂度为 $cal(O) (log X)$ ，但是比快速幂法常数大一些。
+此方法的 $"MOD"$ 没有限制，复杂度为 $cal(O)("log" X)$ ，但是比快速幂法常数大一些。
 
 ```cpp
 int x, y;
@@ -641,7 +641,7 @@ LL getInv(int a, int mod) {  //求a在mod下的逆元，不存在逆元返回-1
 
 === 离线求解：线性递推解
 <离线求解线性递推解>
-以 $cal(O) (N)$ 的复杂度完成 $1 - N$ 中全部逆元的计算。#strong[仅当 $p$ 为素数时成立。];由 $p = ⌊ p \/ i ⌋ dot.op i + (p med mod med i) equiv 0 med \( mod med p \)$ 解出 $i n v [i] = - ⌊ p \/ i ⌋ dot.op i n v [p med mod med i]$，代码里的 $p - p \/ i$ 是保持非负的等价写法。
+以 $cal(O)(N)$ 的复杂度完成 $1 - N$ 中全部逆元的计算。#strong[仅当 $p$ 为素数时成立。];由 $p = ⌊ p \/ i ⌋ dot.op i + (p med mod med i) equiv 0 med \( mod med p \)$ 解出 $"inv" [i] = - ⌊ p \/ i ⌋ dot.op "inv" [p med mod med i]$，代码里的 $p - p \/ i$ 是保持非负的等价写法。
 
 ```cpp
 inv[1] = 1;
@@ -651,7 +651,7 @@ for (int i = 2; i <= n; i ++ )
 
 == 扩展欧几里得 exgcd
 <扩展欧几里得-exgcd>
-与欧几里得同一递归，回溯时 $x prime = y , #h(0em) y prime = x - (a \/ b) y$ 还原系数。返回 $gcd$；$a x + b y = c$ 有解当且仅当 $gcd divides c$，通解 $x plus.minus b \/ d$、$y minus.plus a \/ d$。
+与欧几里得同一递归，回溯时 $x prime = y , #h(0em) y prime = x - (a \/ b) y$ 还原系数。返回 $"gcd"$；$a x + b y = c$ 有解当且仅当 $"gcd" divides c$，通解 $x plus.minus b \/ d$、$y minus.plus a \/ d$。
 
 #include-code("code/数论/扩展欧几里得-exgcd.cpp")
 
@@ -661,7 +661,7 @@ for (int i = 2; i <= n; i ++ )
 
 == 类欧几里得
 <类欧几里得>
-计算 $sum_(i = 0)^n ⌊frac(a i + b, c)⌋$（可扩展求 $sum i^k ⌊ dot.op ⌋$ 的若干变体）。复杂度 $cal(O) (log max (a , c))$。
+计算 $sum_(i = 0)^n ⌊frac(a i + b, c)⌋$（可扩展求 $sum i^k ⌊ dot.op ⌋$ 的若干变体）。复杂度 $cal(O)("log" "max" (a , c))$。
 
 $ e u c l i d e a n (a , b , c , n) = sum_(i = 0)^n ⌊frac(a i + b, c)⌋ $
 
@@ -669,23 +669,23 @@ $ e u c l i d e a n (a , b , c , n) = sum_(i = 0)^n ⌊frac(a i + b, c)⌋ $
 
 == 离散对数 bsgs 与 exbsgs
 <离散对数-bsgs-与-exbsgs>
-以 $cal(O) (sqrt(P))$ 的复杂度求解 $a^x equiv b (med mod med P)$ 。其中标准 BSGS 算法不能计算 $a$ 与 $M O D$ 互质的情况，而 exbsgs 则可以。
+以 $cal(O)(sqrt(P))$ 的复杂度求解 $a^x equiv b (med mod med P)$ 。其中标准 BSGS 算法不能计算 $a$ 与 $"MOD"$ 互质的情况，而 exbsgs 则可以。
 
 #include-code("code/数论/离散对数-bsgs-与-exbsgs.cpp")
 
 == 欧拉函数
 <欧拉函数>
-$phi (n)$：$1 . . n$ 中与 $n$ 互质的个数。$n = product p_i^(k_i)$ 则 $phi (n) = n product (1 - 1 \/ p_i)$。欧拉定理：$a^(phi (n)) equiv 1 med \( mod med n \)$（$gcd (a , n) = 1$），用来降幂。
+$phi (n)$：$1 dots.c n$ 中与 $n$ 互质的个数。$n = product p_i^(k_i)$ 则 $phi (n) = n product (1 - 1 \/ p_i)$。欧拉定理：$a^(phi (n)) equiv 1 med \( mod med n \)$（$"gcd" (a , n) = 1$），用来降幂。
 
 === 直接求解单个数的欧拉函数
 <直接求解单个数的欧拉函数>
-分解质因数后套公式，$cal(O) (sqrt(n))$。
+分解质因数后套公式，$cal(O)(sqrt(n))$。
 
 #include-code("code/数论/直接求解单个数的欧拉函数.cpp")
 
 === 求解 1 到 N 所有数的欧拉函数
 <求解-1-到-n-所有数的欧拉函数>
-利用上述性质，我们可以快速递推出 $2 - N$ 中每个数的欧拉函数，复杂度 $cal(O) (N)$ ，而该算法#strong[即是线性筛的算法];。
+利用上述性质，我们可以快速递推出 $2 - N$ 中每个数的欧拉函数，复杂度 $cal(O)(N)$ ，而该算法#strong[即是线性筛的算法];。
 
 $ phi (n) = (1 - 1 \/ p_1) (1 - 1 \/ p_2) (1 - 1 \/ p_3) (1 - 1 \/ p_4) dots.h.c (1 - 1 \/ p_n) ; $
 
@@ -744,7 +744,7 @@ void init(int n) {
 
 === 使用莫比乌斯反演求解欧拉函数
 <使用莫比乌斯反演求解欧拉函数>
-由恒等式 $sum_(d divides n) phi (d) = n$ 对 $n$ 容斥递推：$phi (n) = n - sum_(d divides n , d < n) phi (d)$。先用倍数法预处理每个数的约数，再 $O (N log N)$ 递推。
+由恒等式 $sum_(d divides n) phi (d) = n$ 对 $n$ 容斥递推：$phi (n) = n - sum_(d divides n , d < n) phi (d)$。先用倍数法预处理每个数的约数，再 $O (N "log" N)$ 递推。
 
 ```cpp
 int phi[N];
@@ -842,7 +842,7 @@ int main()
 
 == 求解连续数字的正约数集合——倍数法
 <求解连续数字的正约数集合倍数法>
-使用规律递推优化，时间复杂度为 $cal(O) (N log N)$ ，如果不需要详细的输出集合，则直接将 `vector` 换为普通数组即可（时间更快） 。
+使用规律递推优化，时间复杂度为 $cal(O)(N "log" N)$ ，如果不需要详细的输出集合，则直接将 `vector` 换为普通数组即可（时间更快） 。
 
 #include-code("code/数论/求解连续数字的正约数集合——倍数法.cpp")
 
@@ -852,13 +852,13 @@ int main()
 
 === 标准解
 <标准解>
-$cal(O) (sqrt(N))$。循环写 `i <= n / i` 防溢出。
+$cal(O)(sqrt(N))$。循环写 `i <= n / i` 防溢出。
 
 #include-code("code/数论/标准解.cpp")
 
 === 常数优化法
 <常数优化法>
-常数优化，达到 $cal(O) (sqrt(N) / 3)$ 。
+常数优化，达到 $cal(O)(sqrt(N) / 3)$ 。
 
 ```cpp
 bool is_prime(int n) {
@@ -876,7 +876,7 @@ bool is_prime(int n) {
 
 == 同余方程组、拓展中国剩余定理 excrt
 <同余方程组拓展中国剩余定理-excrt>
-求解方程组 $x equiv a_i med \( mod med b_i \)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv a n s med \( mod med M \)$ 与新方程 $x equiv a_i med \( mod med b_i \)$ 消元成 $M dot.op k equiv a_i - a n s med \( mod med b_i \)$，用 exgcd 解出 $k$。复杂度 $cal(O) (n log)$。
+求解方程组 $x equiv a_i med \( mod med b_i \)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv a n s med \( mod med M \)$ 与新方程 $x equiv a_i med \( mod med b_i \)$ 消元成 $M dot.op k equiv a_i - a n s med \( mod med b_i \)$，用 exgcd 解出 $k$。复杂度 $cal(O)(n "log")$。
 
 ```cpp
 int n; LL ai[maxn], bi[maxn];
@@ -917,7 +917,7 @@ int main() {
 
 == 求解连续按位异或
 <求解连续按位异或>
-两段等价：$0 xor 1 xor dots.h xor n$ 按 $n med mod med 4$ 分类取 $n , 1 , n + 1 , 0$。复杂度 $cal(O) (1)$。第一版用位运算技巧，第二版直观。
+两段等价：$0 xor 1 xor dots.h xor n$ 按 $n med mod med 4$ 分类取 $n , 1 , n + 1 , 0$。复杂度 $cal(O)(1)$。第一版用位运算技巧，第二版直观。
 
 ```cpp
 unsigned xor_n(unsigned n) {
@@ -931,13 +931,13 @@ unsigned xor_n(unsigned n) {
 
 == 高斯消元求解线性方程组
 <高斯消元求解线性方程组>
-解 $N$ 元一次方程组（实数系数的板子；模意义下把除法换成逆元即可）。列主元选绝对值最大行防止除小数放大误差，复杂度 $cal(O) (N^3)$。返回值：$0$ \= 唯一解（解存在 `a[i][n]`），$1$ \= 无穷多解，$2$ \= 无解。
+解 $N$ 元一次方程组（实数系数的板子；模意义下把除法换成逆元即可）。列主元选绝对值最大行防止除小数放大误差，复杂度 $cal(O)(N^3)$。返回值：$0$ \= 唯一解（解存在 `a[i][n]`），$1$ \= 无穷多解，$2$ \= 无解。
 
 #include-code("code/数论/高斯消元求解线性方程组.cpp")
 
 == Min25 筛
 <min25-筛>
-求 $1 . . N$ 的质数和（$N lt.eq 10^10$），板子对结果按 `mod` 取模。复杂度 $cal(O) (N^(3 \/ 4) \/ log N)$，实测 $10^10$ 很快；`id1/id2` 是两个 $cal(O) (sqrt(N))$ 数组，把 $⌊ N \/ x ⌋$ 的取值线形编号。`init` 在筛质数后对数论分块的值做 $cal(O) (frac(N^(3 \/ 4), log N))$ 的质数贡献筛，`solve` 返回 $2 . . N$ 质数和。求一般的积性函数前缀和需按题目改写 `calc` 与转移，具体参 oi-wiki 的 Min\_25 筛一节。
+求 $1 dots.c N$ 的质数和（$N lt.eq 10^10$），板子对结果按 `mod` 取模。复杂度 $cal(O)(N^(3 \/ 4) \/ "log" N)$，实测 $10^10$ 很快；`id1/id2` 是两个 $cal(O)(sqrt(N))$ 数组，把 $⌊ N \/ x ⌋$ 的取值线形编号。`init` 在筛质数后对数论分块的值做 $cal(O)(frac(N^(3 \/ 4), "log" N))$ 的质数贡献筛，`solve` 返回 $2 dots.c N$ 质数和。求一般的积性函数前缀和需按题目改写 `calc` 与转移，具体参 oi-wiki 的 Min\_25 筛一节。
 
 ```cpp
 namespace min25{
@@ -1011,13 +1011,13 @@ int main() {
 
 == 矩阵四则运算
 <矩阵四则运算>
-#link("https://ac.nowcoder.com/acm/contest/view-submission?submissionId=48594258")[封装来自] 。矩阵乘法复杂度 $cal(O) (N^3)$ 。#strong[`SIZE` 按题目改];；`getinv` 用高斯-约当法在素模数下求逆（依赖 `mod` 为素数），失败时置全局 `ok = 0`。
+#link("https://ac.nowcoder.com/acm/contest/view-submission?submissionId=48594258")[封装来自] 。矩阵乘法复杂度 $cal(O)(N^3)$ 。#strong[`SIZE` 按题目改];；`getinv` 用高斯-约当法在素模数下求逆（依赖 `mod` 为素数），失败时置全局 `ok = 0`。
 
 #include-code("code/数论/矩阵四则运算.cpp")
 
 == 矩阵快速幂
 <矩阵快速幂>
-把转移写成矩阵乘法，指数倍增。`MatPow(A,b)` 得 $A^b$；`N` 为阶、`mod` 按题改，下标从 $1$。复杂度 $cal(O) (N^3 log M)$。线性递推见下一节矩阵加速。
+把转移写成矩阵乘法，指数倍增。`MatPow(A,b)` 得 $A^b$；`N` 为阶、`mod` 按题改，下标从 $1$。复杂度 $cal(O)(N^3 "log" M)$。线性递推见下一节矩阵加速。
 
 #include-code("code/数论/矩阵快速幂.cpp")
 
@@ -1027,7 +1027,7 @@ int main() {
 
 $ mat(delim: "(", 1, 0, 1; 1, 0, 0; 0, 1, 0) , #h(2em) vec(f (n), f (n - 1), f (n - 2)) = mat(delim: "(", 1, 0, 1; 1, 0, 0; 0, 1, 0)^(n - 3) vec(1, 1, 1) $
 
-复杂度 $cal(O) (k^3 log n)$，$k$ 为状态数（此处 3）。
+复杂度 $cal(O)(k^3 "log" n)$，$k$ 为状态数（此处 3）。
 
 #include-code("code/数论/矩阵加速.cpp")
 
@@ -1085,21 +1085,21 @@ int main() {
 
 == 整除 \(数论) 分块
 <整除-数论-分块>
-把 $⌊ n \/ i ⌋$ 相同的 $i$ 并为一块：$j = ⌊ n \/ ⌊ n \/ i ⌋ ⌋$ 是右端点，块内个数 $j - i + 1$，块数 $cal(O) (sqrt(n))$。莫反、杜教筛、前缀和题里”枚举 $⌊ n \/ i ⌋$“都用它。
+把 $⌊ n \/ i ⌋$ 相同的 $i$ 并为一块：$j = ⌊ n \/ ⌊ n \/ i ⌋ ⌋$ 是右端点，块内个数 $j - i + 1$，块数 $cal(O)(sqrt(n))$。莫反、杜教筛、前缀和题里”枚举 $⌊ n \/ i ⌋$“都用它。
 
-$⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = . . . = ⌊n / r⌋ arrow.l.r.double ⌊n / l⌋ lt.eq n / r < ⌊n / l⌋ + 1$ ，根据不等式左侧，得到 $r lt.eq ⌊frac(n, ⌊ n / l ⌋)⌋$ 。
+$⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c . = ⌊n / r⌋ arrow.l.r.double ⌊n / l⌋ lt.eq n / r < ⌊n / l⌋ + 1$ ，根据不等式左侧，得到 $r lt.eq ⌊frac(n, ⌊ n / l ⌋)⌋$ 。
 
 #include-code("code/数论/整除-数论-分块.cpp")
 
 == Miller - Rabin 素数测试
 <miller---rabin-素数测试>
-以平均 $cal(O) (4 dot.op log^3 X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本常数非常优秀，基本可以看作是 $cal(O) (1)$ 。#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 . .37$ 即确定覆盖。
+以平均 $cal(O)(4 dot.op "log"^3 X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本常数非常优秀，基本可以看作是 $cal(O)(1)$ 。#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 . .37$ 即确定覆盖。
 
 #include-code("code/数论/Miller---Rabin-素数测试.cpp")
 
 == Pollard - Rho 因式分解
 <pollard---rho-因式分解>
-以单个因子 $cal(O) (log X)$ 的复杂度输出数字 $X$ 的全部质因数，由于需要结合素数测试，总复杂度会略高一些。如果遇到超时的情况，可能需要考虑进一步优化，例如检查题目是否强制要求枚举全部质因数等等。此外，还有一个#link("https://www.luogu.com.cn/record/114757731")[较长的模板];可供参考，比这里记录的版本常数小约五倍。
+以单个因子 $cal(O)("log" X)$ 的复杂度输出数字 $X$ 的全部质因数，由于需要结合素数测试，总复杂度会略高一些。如果遇到超时的情况，可能需要考虑进一步优化，例如检查题目是否强制要求枚举全部质因数等等。此外，还有一个#link("https://www.luogu.com.cn/record/114757731")[较长的模板];可供参考，比这里记录的版本常数小约五倍。
 
 #include-code("code/数论/Pollard---Rho-因式分解.cpp")
 
@@ -1151,7 +1151,7 @@ align(center)[#table(
 
 === 调和级数近似公式
 <调和级数近似公式>
-$H_n approx ln n + gamma + 1 \/ (2 n)$，$gamma approx 0.5772156649$。估 $sum ⌊ n \/ i ⌋$ 的量级。
+$H_n approx "ln" n + gamma + 1 \/ (2 n)$，$gamma approx 0.5772156649$。估 $sum ⌊ n \/ i ⌋$ 的量级。
 
 ```cpp
 log(n) + 0.5772156649 + 1.0 / (2 * n)
@@ -1176,7 +1176,7 @@ log(n) + 0.5772156649 + 1.0 / (2 * n)
   如 $n = 10$ ，则 $d = 10 \/ 5 \/ 2 \/ 1$ ，那么 $10 = phi (10) + phi (5) + phi (2) + phi (1)$ 。
   ]
 
-- $sum_(i = 1)^n gcd (i , n) = sum_(d \| n) ⌊n / d⌋ phi (d)$ （欧拉反演）。
+- $sum_(i = 1)^n "gcd" (i , n) = sum_(d \| n) ⌊n / d⌋ phi (d)$ （欧拉反演）。
 
 === 狄利克雷卷积
 <狄利克雷卷积>
@@ -1191,22 +1191,22 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 - 卡西尼性质：$F_(n - 1) \* F_(n + 1) - F_n^2 = (- 1)^n$ ；
 - $F_n^2 + F_(n + 1)^2 = F_(2 n + 1)$ ；
 - $F_(n + 1)^2 - F_(n - 1)^2 = F_(2 n)$ （由上一条写两遍相减得到）；
-- 若存在序列 $a_0 = 1 , a_n = a_(n - 1) + a_(n - 3) + a_(n - 5) + . . . (n gt.eq 1)$ 则 $a_n = F_n (n gt.eq 1)$ ；
+- 若存在序列 $a_0 = 1 , a_n = a_(n - 1) + a_(n - 3) + a_(n - 5) + dots.c . (n gt.eq 1)$ 则 $a_n = F_n (n gt.eq 1)$ ；
 - 齐肯多夫定理：任何正整数都可以表示成若干个不连续的斐波那契数（ $F_2$ 开始）可以用贪心实现。
 
 求和公式结论：
 
-- 奇数项求和：$F_1 + F_3 + F_5 + . . . + F_(2 n - 1) = F_(2 n)$ ；
-- 偶数项求和：$F_2 + F_4 + F_6 + . . . + F_(2 n) = F_(2 n + 1) - 1$ ；
-- 平方和：$F_1^2 + F_2^2 + F_3^2 + . . . + F_n^2 = F_n \* F_(n + 1)$ ；
-- $F_1 + 2 F_2 + 3 F_3 + . . . + n F_n = n F_(n + 2) - F_(n + 3) + 2$ ；
-- $- F_1 + F_2 - F_3 + . . . + (- 1)^n F_n = (- 1)^n (F_(n + 1) - F_n) + 1$ ；
+- 奇数项求和：$F_1 + F_3 + F_5 + dots.c . + F_(2 n - 1) = F_(2 n)$ ；
+- 偶数项求和：$F_2 + F_4 + F_6 + dots.c . + F_(2 n) = F_(2 n + 1) - 1$ ；
+- 平方和：$F_1^2 + F_2^2 + F_3^2 + dots.c . + F_n^2 = F_n \* F_(n + 1)$ ；
+- $F_1 + 2 F_2 + 3 F_3 + dots.c . + n F_n = n F_(n + 2) - F_(n + 3) + 2$ ；
+- $- F_1 + F_2 - F_3 + dots.c . + (- 1)^n F_n = (- 1)^n (F_(n + 1) - F_n) + 1$ ；
 - $F_(2 n - 2 m - 2) (F_(2 n) + F_(2 n + 2)) = F_(2 m + 2) + F_(4 n - 2 m)$ 。
 
 数论结论：
 
 - $F_a divides F_b arrow.l.r.double a divides b$ ；
-- $gcd (F_a , F_b) = F_(gcd (a , b))$ ；
+- $"gcd" (F_a , F_b) = F_("gcd" (a , b))$ ；
 - 当 $p$ 为 $5 k plus.minus 1$ 型素数时，${F_(p - 1) equiv 0 med \( mod med p \)\
   F_p equiv 1 med \( mod med p \)\
   F_(p + 1) equiv 1 med \( mod med p \)$ ；
@@ -1220,16 +1220,16 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 <杂>
 - 负数取模得到的是负数，如果要用 $0 \/ 1$ 判断的话请取绝对值；
 
-- 辗转相除法原式为 $gcd (x , y) = gcd (x , y - x)$ ，推广到 $N$ 项为 $gcd (a_1 , a_2 , dots.h , a_N) = gcd (a_1 , a_2 - a_1 , dots.h , a_N - a_(N - 1))$ ，
+- 辗转相除法原式为 $"gcd" (x , y) = "gcd" (x , y - x)$ ，推广到 $N$ 项为 $"gcd" (a_1 , a_2 , dots.h , a_N) = "gcd" (a_1 , a_2 - a_1 , dots.h , a_N - a_(N - 1))$ ，
 
-  - 该推论在“四则运算后 $gcd$ ”这类题中有特殊意义，如求解 $gcd (a_1 + X , a_2 + X , dots.h , a_N + X)$ 时#link("https://codeforces.com/problemset/problem/1458/A")[See];；
+  - 该推论在“四则运算后 $"gcd"$ ”这类题中有特殊意义，如求解 $"gcd" (a_1 + X , a_2 + X , dots.h , a_N + X)$ 时#link("https://codeforces.com/problemset/problem/1458/A")[See];；
 
-- 以下式子成立： $gcd (a , m) = gcd (a + x , m) arrow.l.r.double gcd (a , m) = gcd (x , m)$ 。求解上式满足条件的 $x$ 的数量即为求比 $frac(m, gcd (a , m))$ 小且与其互质的数的个数，即用欧拉函数求解 $phi #scale(x: 180%, y: 180%)[\(] frac(m, gcd (a , m)) #scale(x: 180%, y: 180%)[\)]$ 。
+- 以下式子成立： $"gcd" (a , m) = "gcd" (a + x , m) arrow.l.r.double "gcd" (a , m) = "gcd" (x , m)$ 。求解上式满足条件的 $x$ 的数量即为求比 $frac(m, "gcd" (a , m))$ 小且与其互质的数的个数，即用欧拉函数求解 $phi #scale(x: 180%, y: 180%)[\(] frac(m, "gcd" (a , m)) #scale(x: 180%, y: 180%)[\)]$ 。
 
-- 已知序列 $a$ ，定义集合 $S = { a_i dot.op a_j med \| med i < j }$ ，现在要求解 $gcd (S)$ ，即为求解 $gcd (a_j , gcd (a_i med \| med i < j))$ ，换句话说，即为求解后缀 $gcd$ 。
+- 已知序列 $a$ ，定义集合 $S = { a_i dot.op a_j med \| med i < j }$ ，现在要求解 $"gcd" (S)$ ，即为求解 $"gcd" (a_j , "gcd" (a_i med \| med i < j))$ ，换句话说，即为求解后缀 $"gcd"$ 。
 
-- 连续四个数互质的情况如下，当 $n$ 为奇数时，$n , n - 1 , n - 2$ 一定互质；而当 $n$ 为偶数时，${n , n - 1 , n - 3 upright("互质") & gcd (n , n - 3) = 1 upright("时")\
-  n - 1 , n - 2 , n - 3 upright("互质") & gcd (n , n - 3) eq.not 1 upright("时")$ #link("https://codeforces.com/problemset/problem/235/A")[See];；
+- 连续四个数互质的情况如下，当 $n$ 为奇数时，$n , n - 1 , n - 2$ 一定互质；而当 $n$ 为偶数时，${n , n - 1 , n - 3 upright("互质") & "gcd" (n , n - 3) = 1 upright("时")\
+  n - 1 , n - 2 , n - 3 upright("互质") & "gcd" (n , n - 3) eq.not 1 upright("时")$ #link("https://codeforces.com/problemset/problem/235/A")[See];；
 
 - 由 $a #h(0em) mod med b = (b + a) #h(0em) mod med b = (2 dot.op b + a) #h(0em) mod med b = dots.h = (K dot.op b + a) #h(0em) mod med b$ 可以推广得到 $(a #h(0em) mod med b) #h(0em) mod med c = ((K dot.op b c + a) #h(0em) mod med b) #h(0em) mod med c$ ，由此可以得到一个 $b c$ 的答案周期#link("https://codeforces.com/problemset/problem/1342/C")[See];；
 
@@ -1301,7 +1301,7 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 
 == 约瑟夫问题
 <约瑟夫问题>
-$n$ 个人编号 $0 , 1 , 2 dots.h , n - 1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。三段分别适用：线性 $cal(O) (N)$ 任意 $k$；$cal(O) (K log N)$ 适合 $K$ 小；$cal(O) (sqrt(N))$ 适合单次大询问。`repeat(i,a,b)` 是 i 从 a 到 b-1 的宏，可等价写成 `for (int i = a; i < b; ++i)`。
+$n$ 个人编号 $0 , 1 , 2 dots.h , n - 1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。三段分别适用：线性 $cal(O)(N)$ 任意 $k$；$cal(O)(K "log" N)$ 适合 $K$ 小；$cal(O)(sqrt(N))$ 适合单次大询问。`repeat(i,a,b)` 是 i 从 a 到 b-1 的宏，可等价写成 `for (int i = a; i < b; ++i)`。
 
 ```cpp
 int jos(int n,int k){
@@ -1311,10 +1311,10 @@ int jos(int n,int k){
 }
 ```
 
-$cal(O) (K log N)$ ，适用于 $K$ 较小的情况。
+$cal(O)(K "log" N)$ ，适用于 $K$ 较小的情况。
 
 #include-code("code/数论/约瑟夫问题.cpp")
 
-$cal(O) (sqrt(N))$
+$cal(O)(sqrt(N))$
 
 #include-code("code/数论/约瑟夫问题-2.cpp")

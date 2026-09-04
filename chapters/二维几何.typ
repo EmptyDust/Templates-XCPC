@@ -61,7 +61,7 @@ Real dot(const Point &a, const Point &b) {
 
 === 叉乘
 <叉乘>
-定义公式 $a times b = lr(|a|) lr(|b|) sin theta$。
+定义公式 $a times b = lr(|a|) lr(|b|) "sin" theta$。
 
 ```cpp
 template<typename T>  // 叉乘
@@ -72,7 +72,7 @@ T cross(Point<T> p1, Point<T> p2, Point<T> p0) { return cross(p1 - p0, p2 - p0);
 
 === 点乘
 <点乘>
-定义公式 $a dot.op b = lr(|a|) lr(|b|) cos theta$。（原文写成了 $times$，与叉乘混淆）
+定义公式 $a dot.op b = lr(|a|) lr(|b|) "cos" theta$。（原文写成了 $times$，与叉乘混淆）
 
 ```cpp
 template<typename T>  // 点乘
@@ -130,11 +130,11 @@ $upright(d e g) = upright(r a d) dot.op 180 \/ pi$。
 
 === 正弦定理
 <正弦定理>
-$frac(a, sin A) = frac(b, sin B) = frac(c, sin C) = 2 R$ ，其中 $R$ 为三角形外接圆半径；
+$frac(a, "sin" A) = frac(b, "sin" B) = frac(c, "sin" C) = 2 R$ ，其中 $R$ 为三角形外接圆半径；
 
 === 余弦定理（已知三角形三边，求角）
 <余弦定理已知三角形三边求角>
-$cos C = frac(a^2 + b^2 - c^2, 2 a b) , cos B = frac(a^2 + c^2 - b^2, 2 a c) , cos A = frac(b^2 + c^2 - a^2, 2 b c)$。可以借此推导出三角形面积公式 $S_(triangle.stroked.t A B C) = frac(a b dot.op sin C, 2) = frac(b c dot.op sin A, 2) = frac(a c dot.op sin B, 2)$。
+$"cos" C = frac(a^2 + b^2 - c^2, 2 a b) , "cos" B = frac(a^2 + c^2 - b^2, 2 a c) , "cos" A = frac(b^2 + c^2 - a^2, 2 b c)$。可以借此推导出三角形面积公式 $S_(triangle.stroked.t A B C) = frac(a b dot.op "sin" C, 2) = frac(b c dot.op "sin" A, 2) = frac(a c dot.op "sin" B, 2)$。
 
 注意，计算格式是：由 $b , c , a$ 三边求 $angle A$；由 $a , c , b$ 三边求 $angle B$；由 $a , b , c$ 三边求 $angle C$。
 
@@ -158,8 +158,8 @@ ld angle(Point<ld> a, Point<ld> b) {
 
 === 向量旋转任意角度
 <向量旋转任意角度>
-逆时针旋转，转换公式：${x prime = x cos theta - y sin theta\
-y prime = x sin theta + y cos theta$
+逆时针旋转，转换公式：${x prime = x "cos" theta - y "sin" theta\
+y prime = x "sin" theta + y "cos" theta$
 
 ```cpp
 Point<ld> rotate(Point<ld> p, ld rad) {
@@ -169,8 +169,8 @@ Point<ld> rotate(Point<ld> p, ld rad) {
 
 === 点绕点旋转任意角度
 <点绕点旋转任意角度>
-点 $a$ 绕点 $b$ 逆时针转 `rad` 弧度。转换公式：${x prime = (x_0 - x_1) cos theta - (y_0 - y_1) sin theta + x_1\
-y prime = (x_0 - x_1) sin theta + (y_0 - y_1) cos theta + y_1$
+点 $a$ 绕点 $b$ 逆时针转 `rad` 弧度。转换公式：${x prime = (x_0 - x_1) "cos" theta - (y_0 - y_1) "sin" theta + x_1\
+y prime = (x_0 - x_1) "sin" theta + (y_0 - y_1) "cos" theta + y_1$
 
 #include-code("code/二维几何/点绕点旋转任意角度.cpp")
 

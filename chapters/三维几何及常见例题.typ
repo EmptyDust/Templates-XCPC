@@ -214,7 +214,7 @@ ld planeCos(Plane s1, Plane s2) {
 
 === 直线与平面夹角的 sin 值
 <直线与平面夹角的-sin-值>
-方向与法向夹角的余角。$sin theta = lr(|d dot.op n|) \/ (lr(|d|) lr(|n|))$。
+方向与法向夹角的余角。$"sin" theta = lr(|d dot.op n|) \/ (lr(|d|) lr(|n|))$。
 
 ```cpp
 ld linePlaneSin(L3 l, Plane s) {
@@ -229,7 +229,7 @@ ld linePlaneSin(L3 l, Plane s) {
 
 === 正 N 棱锥体积公式
 <正-n-棱锥体积公式>
-棱锥通用体积公式 $V = 1 / 3 S h$ ，当其恰好是棱长为 $l$ 的正 $n$ 棱锥时，有公式 $V = frac(l^3 dot.op n, 12 tan pi / n) dot.op sqrt(1 - frac(1, 4 dot.op sin^2 pi / n))$。
+棱锥通用体积公式 $V = 1 / 3 S h$ ，当其恰好是棱长为 $l$ 的正 $n$ 棱锥时，有公式 $V = frac(l^3 dot.op n, 12 tan pi / n) dot.op sqrt(1 - frac(1, 4 dot.op "sin"^2 pi / n))$。
 
 ```cpp
 ld V(ld l, int n) {  // 正n棱锥体积公式
@@ -290,9 +290,9 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 <平面几何结论归档>
 - `hypot` 函数可以直接计算直角三角形的斜边长；
 
-- #strong[边心距];是指正多边形的外接圆圆心到正多边形某一边的距离，边长为 $s$ 的正 $n$ 角形的边心距公式为 $a = frac(t, 2 dot.op tan pi / n)$ ，外接圆半径为 $R$ 的正 $n$ 角形的边心距公式为 $a = R dot.op cos pi / n$ ；
+- #strong[边心距];是指正多边形的外接圆圆心到正多边形某一边的距离，边长为 $s$ 的正 $n$ 角形的边心距公式为 $a = frac(t, 2 dot.op tan pi / n)$ ，外接圆半径为 $R$ 的正 $n$ 角形的边心距公式为 $a = R dot.op "cos" pi / n$ ；
 
-- #strong[三角形外接圆半径];为 $frac(a, 2 sin A) = frac(a b c, 4 S)$ ，其中 $S$ 为三角形面积，内切圆半径为 $frac(2 S, a + b + c)$；
+- #strong[三角形外接圆半径];为 $frac(a, 2 "sin" A) = frac(a b c, 4 S)$ ，其中 $S$ 为三角形面积，内切圆半径为 $frac(2 S, a + b + c)$；
 
 - 由小正三角形拼成的大正三角形，耗费的小三角形数量即为构成一条边的小三角形数量的平方。如下图，总数量即为 $4^2$ #link("https://codeforces.com/problemset/problem/559/A")[See];。
 
@@ -322,7 +322,7 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 
 === 立体几何结论归档
 <立体几何结论归档>
-- 已知向量 $arrow(r) = { x , y , z }$ ，则该向量的三个方向余弦为 $cos alpha = x / lr(|arrow(r)|) = x / sqrt(x^2 + y^2 + z^2) ; med cos beta = y / lr(|arrow(r)|) ; med cos gamma = z / lr(|arrow(r)|)$ 。其中 $alpha , beta , gamma in [0 , pi]$ ，$cos^2 alpha + cos^2 beta + cos^2 gamma = 1$ 。
+- 已知向量 $arrow(r) = { x , y , z }$ ，则该向量的三个方向余弦为 $"cos" alpha = x / lr(|arrow(r)|) = x / sqrt(x^2 + y^2 + z^2) ; med "cos" beta = y / lr(|arrow(r)|) ; med "cos" gamma = z / lr(|arrow(r)|)$ 。其中 $alpha , beta , gamma in [0 , pi]$ ，$"cos"^2 alpha + "cos"^2 beta + "cos"^2 gamma = 1$ 。
 
 == 常用例题
 <常用例题>
@@ -336,7 +336,7 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 
 === 平面最近点对（set 解）
 <平面最近点对set-解>
-借助 `set` ，在严格 $cal(O) (N log N)$ 复杂度内求解，比常见的分治法稍快。
+借助 `set` ，在严格 $cal(O)(N "log" N)$ 复杂度内求解，比常见的分治法稍快。
 
 ```cpp
 template<typename T> T sqr(T x) {
@@ -383,7 +383,7 @@ signed main() {
 <平面若干点能构成的最大四边形的面积简单版暴力枚举>
 题意：平面上存在若干个点，保证没有两点重合、没有三点共线，你需要从中选出四个点，使得它们构成的四边形面积是最大的，注意这里能组成的四边形可以不是凸四边形。
 
-暴力枚举其中一条对角线后枚举剩余两个点，$cal(O) (N^3)$ 。
+暴力枚举其中一条对角线后枚举剩余两个点，$cal(O)(N^3)$ 。
 
 ```cpp
 signed main() {
@@ -491,7 +491,7 @@ signed main() {
 <平面若干点能否构成凸包暴力枚举>
 题意：给定平面上若干个点，判断其是否构成凸包 #link("https://atcoder.jp/contests/abc266/tasks/abc266_c")[See] 。
 
-可以直接使用凸包模板，但是代码较长；在这里我们使用暴力枚举试点，也能以 $cal(O) (N)$ 的复杂度通过。当两个向量的叉乘 $lt.eq 0$ 时说明其夹角大于等于 $180^circle.stroked.tiny$ ，使用这一点即可判定。
+可以直接使用凸包模板，但是代码较长；在这里我们使用暴力枚举试点，也能以 $cal(O)(N)$ 的复杂度通过。当两个向量的叉乘 $lt.eq 0$ 时说明其夹角大于等于 $180^circle.stroked.tiny$ ，使用这一点即可判定。
 
 ```cpp
 signed main() {
@@ -518,7 +518,7 @@ signed main() {
 
 === 凸包上的点能构成的最大三角形（暴力枚举）
 <凸包上的点能构成的最大三角形暴力枚举>
-可以直接使用凸包模板，但是代码较长；在这里我们使用暴力枚举试点，也能以 $cal(O) (N)$ 的复杂度通过。
+可以直接使用凸包模板，但是代码较长；在这里我们使用暴力枚举试点，也能以 $cal(O)(N)$ 的复杂度通过。
 
 #quote(block: true)[
 另外补充一点性质：所求三角形的反互补三角形一定包含了凸包上的所有点（可以在边界）。通俗的说，构成的三角形是这个反互补三角形的中点三角形。如下图所示，点 $A$ 不在 $triangle.stroked.t B C E$ 的反互补三角形内部，故 $triangle.stroked.t B C E$ 不是最大三角形；$triangle.stroked.t A C E$ 才是。
@@ -565,7 +565,7 @@ signed main() {
 
 === 凸包上的点能构成的最大四角形的面积（旋转卡壳）
 <凸包上的点能构成的最大四角形的面积旋转卡壳>
-由于是凸包上的点，所以保证了四边形一定是凸四边形，时间复杂度 $cal(O) (N^2)$ 。
+由于是凸包上的点，所以保证了四边形一定是凸四边形，时间复杂度 $cal(O)(N^2)$ 。
 
 ```cpp
 template<typename T> T rotatingCalipers(vector<Point<T>> &p) {
@@ -599,4 +599,4 @@ template<typename T> T rotatingCalipers(vector<Point<T>> &p) {
 <判断一个凸包是否完全在另一个凸包内>
 题意：给定一个凸多边形 $A$ 和一个凸多边形 $B$ ，询问 $B$ 是否被 $A$ 包含，分别判断严格/不严格包含。#link("https://codeforces.com/contest/166/problem/B")[例题];。
 
-考虑严格包含，使用 $A$ 点集计算出凸包 $T_1$ ，使用 $A , B$ 两个点集计算出不严格凸包 $T_2$ ，如果包含，那么 $T_1$ 应该与 $T_2$ 完全相等；考虑不严格包含，在计算凸包 $T_2$ 时严格即可。最终以 $cal(O) (N)$ 复杂度求解，且代码不算很长。
+考虑严格包含，使用 $A$ 点集计算出凸包 $T_1$ ，使用 $A , B$ 两个点集计算出不严格凸包 $T_2$ ，如果包含，那么 $T_1$ 应该与 $T_2$ 完全相等；考虑不严格包含，在计算凸包 $T_2$ 时严格即可。最终以 $cal(O)(N)$ 复杂度求解，且代码不算很长。

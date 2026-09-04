@@ -6,7 +6,7 @@
 
 == 线性凸包
 <线性凸包>
-斜率优化 / 下凸壳维护直线 $y = a x + b$，查询 $min_i a x + b$。构造时按斜率排序并弹出不优直线；`min(x)` 二分交点。`i64`，除法向 $- oo$ 取整。不是几何凸包。
+斜率优化 / 下凸壳维护直线 $y = a x + b$，查询 $"min"_i a x + b$。构造时按斜率排序并弹出不优直线；`min(x)` 二分交点。`i64`，除法向 $- oo$ 取整。不是几何凸包。
 
 #include-code("code/多项式/线性凸包.cpp")
 
@@ -320,7 +320,7 @@ template<int P> constexpr void idft(vector<MInt<P>> &a) {  // 逆变换
 
 == Berlekamp-Massey 算法
 <berlekamp-massey-算法>
-求解数列的最短线性递推式（#strong[不是];杜教筛）。返回多项式 $c$，满足递推；最坏 $cal(O) (N M)$，$N$ 为数列长度，$M$ 为最短递推阶数。
+求解数列的最短线性递推式（#strong[不是];杜教筛）。返回多项式 $c$，满足递推；最坏 $cal(O)(N M)$，$N$ 为数列长度，$M$ 为最短递推阶数。
 
 ```cpp
 template<int P = 998244353> Poly<P> berlekampMassey(const Poly<P> &s) {
@@ -368,7 +368,7 @@ template<int P = 998244353> Poly<P> berlekampMassey(const Poly<P> &s) {
 
 == Linear-Recurrence 算法
 <linear-recurrence-算法>
-已知线性递推，求第 $n$ 项（$0$-index）。`q` 为特征多项式，$p$ 由初值决定。Bostan-Mori，$cal(O) (M^2 log n)$ 或配 NTT 更快。$n$ 用 `i64`。
+已知线性递推，求第 $n$ 项（$0$-index）。`q` 为特征多项式，$p$ 由初值决定。Bostan-Mori，$cal(O)(M^2 "log" n)$ 或配 NTT 更快。$n$ 用 `i64`。
 
 ```cpp
 template<int P = 998244353> MInt<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n) {
@@ -404,7 +404,7 @@ template<int P = 998244353> MInt<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n
 
 4.系数序列存储在 `solver.ret` 向量中
 
-$cal(O) (N log N)$ 。
+$cal(O)(N "log" N)$ 。
 
 #include-code("code/多项式/快速傅里叶变换-FFT.cpp")
 
@@ -421,9 +421,9 @@ $cal(O) (N log N)$ 。
 
 == 快速数论变换 NTT
 <快速数论变换-ntt>
-模意义卷积，$cal(O) (N log N)$。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。
+模意义卷积，$cal(O)(N "log" N)$。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。
 
-$cal(O) (N log N)$ 。
+$cal(O)(N "log" N)$ 。
 
 ```cpp
 struct Polynomial {
@@ -482,7 +482,7 @@ struct Polynomial {
 
 == 拉格朗日插值
 <拉格朗日插值>
-$n + 1$ 个点唯一确定最高 $n$ 次多项式。普通情况：$f (k) = sum_(i = 1)^(n + 1) y_i product_(i eq.not j) frac(k - x [j], x [i] - x [j])$ 。下面这块是连续点 $1 . . n + 2$ 上对 $i^n$ 前缀和插值（自然数方幂和），不是任意点；依赖 `Z`。
+$n + 1$ 个点唯一确定最高 $n$ 次多项式。普通情况：$f (k) = sum_(i = 1)^(n + 1) y_i product_(i eq.not j) frac(k - x [j], x [i] - x [j])$ 。下面这块是连续点 $1 dots.c n + 2$ 上对 $i^n$ 前缀和插值（自然数方幂和），不是任意点；依赖 `Z`。
 
 $n + 1$ 个点可以唯一确定一个最高为 $n$ 次的多项式。普通情况：$f (k) = sum_(i = 1)^(n + 1) y_i product_(i eq.not j) frac(k - x [j], x [i] - x [j])$ 。
 
@@ -581,14 +581,14 @@ struct Lagrange {
 
 === 普通生成函数 / OGF
 <普通生成函数-ogf>
-- 普通生成函数：$A (x) = a_0 + a_1 x + a_2 x^2 + . . . = chevron.l a_0 , a_1 , a_2 , . . . chevron.r$ ；
-- $1 + x^k + x^(2 k) + . . . = frac(1, 1 - x^k)$ ；
-- 取对数后 $= - ln (1 - x^k) = sum_(i = 1)^oo 1 / i x^(k i)$ 即 $sum_(i = 1)^oo 1 / i x^i ⊙ x^k$（polymul\_special）；
-- $x + x^2 / 2 + x^3 / 3 + . . . = - ln (1 - x)$ ；
-- $1 + x + x^2 + . . . + x^(m - 1) = frac(1 - x^m, 1 - x)$ ；
-- $1 + 2 x + 3 x^2 + . . . = 1 / (1 - x)^2$（借用导数，$n x^(n - 1) = (x^n) prime$）；
-- $C_m^0 + C_m^1 x + C_m^2 x^2 + . . . + C_m^m x^m = (1 + x)^m$（二项式定理）；
-- $C_m^0 + C_(m + 1)^1 x^1 + C_(m + 2)^2 x^2 + . . . = 1 / (1 - x)^(m + 1)$（归纳法证明）；
+- 普通生成函数：$A (x) = a_0 + a_1 x + a_2 x^2 + dots.c . = chevron.l a_0 , a_1 , a_2 , dots.c . chevron.r$ ；
+- $1 + x^k + x^(2 k) + dots.c . = frac(1, 1 - x^k)$ ；
+- 取对数后 $= - "ln" (1 - x^k) = sum_(i = 1)^oo 1 / i x^(k i)$ 即 $sum_(i = 1)^oo 1 / i x^i ⊙ x^k$（polymul\_special）；
+- $x + x^2 / 2 + x^3 / 3 + dots.c . = - "ln" (1 - x)$ ；
+- $1 + x + x^2 + dots.c . + x^(m - 1) = frac(1 - x^m, 1 - x)$ ；
+- $1 + 2 x + 3 x^2 + dots.c . = 1 / (1 - x)^2$（借用导数，$n x^(n - 1) = (x^n) prime$）；
+- $C_m^0 + C_m^1 x + C_m^2 x^2 + dots.c . + C_m^m x^m = (1 + x)^m$（二项式定理）；
+- $C_m^0 + C_(m + 1)^1 x^1 + C_(m + 2)^2 x^2 + dots.c . = 1 / (1 - x)^(m + 1)$（归纳法证明）；
 - $sum_(n = 0)^oo F_n x^n = frac((F_1 - F_0) x + F_0, 1 - x - x^2)$（F 为斐波那契数列，列方程 $G (x) = x G (x) + x^2 G (x) + (F_1 - F_0) x + F_0$）；
 - $sum_(n = 0)^oo H_n x^n = frac(1 - sqrt(1 - 4 x), 2 x)$（H 为卡特兰数；原来写成 $sqrt(n - 4 x)$）；
 - 前缀和 $sum_(n = 0)^oo s_n x^n = frac(1, 1 - x) f (x)$ ；
@@ -596,10 +596,10 @@ struct Lagrange {
 
 === 指数生成函数 / EGF
 <指数生成函数-egf>
-- 指数生成函数：$A (x) = a_0 + a_1 x + a_2 frac(x^2, 2 !) + a_3 frac(x^3, 3 !) + . . . = chevron.l a_0 , a_1 , a_2 , a_3 , . . . chevron.r$ ；
+- 指数生成函数：$A (x) = a_0 + a_1 x + a_2 frac(x^2, 2 !) + a_3 frac(x^3, 3 !) + dots.c . = chevron.l a_0 , a_1 , a_2 , a_3 , dots.c . chevron.r$ ；
 - 普通生成函数转换为指数生成函数：系数乘以 $n !$ ；
-- $1 + x + frac(x^2, 2 !) + frac(x^3, 3 !) + . . . = exp x$ ；
-- 长度为 $n$ 的循环置换数为 $P (x) = - ln (1 - x)$，长度为 n 的置换数为 $exp P (x) = frac(1, 1 - x)$（注意是#strong[指数];生成函数）
-  - $n$ 个点的生成树个数是 $P (x) = sum_(n = 1)^oo n^(n - 2) frac(x^n, n !)$，n 个点的生成森林个数是 $exp P (x)$ ；
-  - $n$ 个点的无向连通图个数是 $P (x)$，n 个点的无向图个数是 $exp P (x) = sum_(n = 0)^oo 2^(1 / 2 n (n - 1)) frac(x^n, n !)$ ；
-  - 长度为 $n (n gt.eq 2)$ 的循环置换数是 $P (x) = - ln (1 - x) - x$，长度为 n 的错排数是 $exp P (x)$ 。
+- $1 + x + frac(x^2, 2 !) + frac(x^3, 3 !) + dots.c . = "exp" x$ ；
+- 长度为 $n$ 的循环置换数为 $P (x) = - "ln" (1 - x)$，长度为 n 的置换数为 $"exp" P (x) = frac(1, 1 - x)$（注意是#strong[指数];生成函数）
+  - $n$ 个点的生成树个数是 $P (x) = sum_(n = 1)^oo n^(n - 2) frac(x^n, n !)$，n 个点的生成森林个数是 $"exp" P (x)$ ；
+  - $n$ 个点的无向连通图个数是 $P (x)$，n 个点的无向图个数是 $"exp" P (x) = sum_(n = 0)^oo 2^(1 / 2 n (n - 1)) frac(x^n, n !)$ ；
+  - 长度为 $n (n gt.eq 2)$ 的循环置换数是 $P (x) = - "ln" (1 - x) - x$，长度为 n 的错排数是 $"exp" P (x)$ 。

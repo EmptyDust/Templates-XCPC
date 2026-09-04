@@ -186,7 +186,7 @@ $
 
 == 威佐夫博弈
 
-两堆，可从单堆取或两堆同时取同样多。冷局面 $(a_k, a_k+k)$，$a_k = floor.l k phi.alt floor.r$，$phi.alt = (1+sqrt(5))\/2$。板子判 $(min, max)$ 是否落在冷局面：差为 $k$ 时检查 $floor.l k phi.alt floor.r$ 是否等于较小堆。`int` 到 $10^9$ 用 `double` 一般够；再大换下面注释里的高精度常数，或上 `__int128` / 高精度。
+两堆，可从单堆取或两堆同时取同样多。冷局面 $(a_k, a_k+k)$，$a_k = floor.l k phi.alt floor.r$，$phi.alt = (1+sqrt(5))\/2$。板子判 $("min", "max")$ 是否落在冷局面：差为 $k$ 时检查 $floor.l k phi.alt floor.r$ 是否等于较小堆。`int` 到 $10^9$ 用 `double` 一般够；再大换下面注释里的高精度常数，或上 `__int128` / 高精度。
 
 #quote(block: true)[
 有两堆石子，给出每一堆的石子数量，两名玩家轮流行动，每人每次任选以下规定的一种操作石子：

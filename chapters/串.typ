@@ -29,7 +29,7 @@ align(center)[#table(
 + 最小循环节：区别于周期，当字符串长度 $n med mod med (n - n x t [n]) = 0$ 时，等于最小周期，否则为 $n$ 。
 ]
 
-以最坏 $cal(O) (N + M)$ 的时间计算 $t$ 在 $s$ 中出现的全部位置。
+以最坏 $cal(O)(N + M)$ 的时间计算 $t$ 在 $s$ 中出现的全部位置。
 
 #include-code("code/串/kmp.cpp")
 
@@ -37,17 +37,17 @@ align(center)[#table(
 
 == zfunction
 <zfunction>
-$z [i]$ 为 $s$ 与后缀 $s [i . .]$ 的 LCP。维护已匹配窗口 $[l , r]$，窗口内可 $O (1)$ 抄 $z [i - l]$，出界再暴力延。整串 $cal(O) (N)$。匹配 $t$ 时对 $t + \# + s$ 跑 Z。
+$z [i]$ 为 $s$ 与后缀 $s [i . .]$ 的 LCP。维护已匹配窗口 $[l , r]$，窗口内可 $O (1)$ 抄 $z [i - l]$，出界再暴力延。整串 $cal(O)(N)$。匹配 $t$ 时对 $t + \# + s$ 跑 Z。
 
 #include-code("code/串/zfunction.cpp")
 
 == 最长公共子序列 LCS
 <最长公共子序列-lcs>
-两串公共子序列的最长长度（可不连续）。$f [i] [j] = max (f [i - 1] [j] , f [i] [j - 1] , f [i - 1] [j - 1] + [s_i = t_j])$。$n lt.eq 10^3$ 用二维 DP；$n$ 更大把一串 LIS 化（转成另一串出现位置）。
+两串公共子序列的最长长度（可不连续）。$f [i] [j] = "max" (f [i - 1] [j] , f [i] [j - 1] , f [i - 1] [j - 1] + [s_i = t_j])$。$n lt.eq 10^3$ 用二维 DP；$n$ 更大把一串 LIS 化（转成另一串出现位置）。
 
 === 小数据解
 <小数据解>
-$n , m lt.eq 10^3$，$cal(O) (n m)$。
+$n , m lt.eq 10^3$，$cal(O)(n m)$。
 
 ```cpp
 const int N = 1e3 + 10;
@@ -70,7 +70,7 @@ int main(){
 
 === 大数据解
 <大数据解>
-针对 $10^5$ 以内的数据。#strong[要求两个序列都是排列];（元素互不相同），否则 `p[a[i]] = i` 的映射会互相覆盖。把第二个序列映射到第一个序列中的位置后跑 LIS，复杂度 $cal(O) (N log N)$。`maxn` 需自行定义。
+针对 $10^5$ 以内的数据。#strong[要求两个序列都是排列];（元素互不相同），否则 `p[a[i]] = i` 的映射会互相覆盖。把第二个序列映射到第一个序列中的位置后跑 LIS，复杂度 $cal(O)(N "log" N)$。`maxn` 需自行定义。
 
 ```cpp
 const int INF = 0x7fffffff;
@@ -106,7 +106,7 @@ int main(){
 
 == 字符串哈希
 <字符串哈希>
-把串看成 $B$ 进制数对模取余，子串哈希用前缀差：$h [r + 1] - h [l] dot.op B^(r - l + 1)$。$cal(O) (N)$ 预处理，$cal(O) (1)$ 比相等。单模可能被卡，双模或随机底数更稳。
+把串看成 $B$ 进制数对模取余，子串哈希用前缀差：$h [r + 1] - h [l] dot.op B^(r - l + 1)$。$cal(O)(N)$ 预处理，$cal(O)(1)$ 比相等。单模可能被卡，双模或随机底数更稳。
 
 === 双哈希封装
 <双哈希封装>
@@ -191,7 +191,7 @@ string compress(vector<string> in) {  // 前后缀压缩
 
 == 马拉车
 <马拉车>
-$cal(O) (N)$ 求每个位置的回文半径：`d1[i]` 为以 $i$ 为中心的奇回文半径（#strong[含中心];），`d2[i]` 为以 $i$ 与 $i - 1$ 中间为中心的偶回文半径。以 $i$ 为中心的最长奇回文长度为 `2*d1[i]-1`，偶回文为 `2*d2[i]`。下方 `check(l, r)` 返回 `true` 表示区间 $[l , r]$ #strong[不是];回文（按原题语义，注意与直觉相反）。
+$cal(O)(N)$ 求每个位置的回文半径：`d1[i]` 为以 $i$ 为中心的奇回文半径（#strong[含中心];），`d2[i]` 为以 $i$ 与 $i - 1$ 中间为中心的偶回文半径。以 $i$ 为中心的最长奇回文长度为 `2*d1[i]-1`，偶回文为 `2*d2[i]`。下方 `check(l, r)` 返回 `true` 表示区间 $[l , r]$ #strong[不是];回文（按原题语义，注意与直觉相反）。
 
 #include-code("code/串/马拉车.cpp")
 
@@ -244,13 +244,13 @@ struct Trie {
 
 == 后缀数组 SA
 <后缀数组-sa>
-倍增法建后缀数组，复杂度为 $cal(O) (N log N)$（原标注 $cal(O) (N)$ 有误，线性需 SA-IS）。`sa[i]` 为排名 $i$ 的后缀起点，`rk[i]` 为后缀 $i$ 的排名，`lc[rk[i]-1]` 为后缀 $i$ 与排名前一后缀的 LCP（即 height 数组）。常用结论：任意两后缀的 LCP 为对应区间 height 的 RMQ。
+倍增法建后缀数组，复杂度为 $cal(O)(N "log" N)$（原标注 $cal(O)(N)$ 有误，线性需 SA-IS）。`sa[i]` 为排名 $i$ 的后缀起点，`rk[i]` 为后缀 $i$ 的排名，`lc[rk[i]-1]` 为后缀 $i$ 与排名前一后缀的 LCP（即 height 数组）。常用结论：任意两后缀的 LCP 为对应区间 height 的 RMQ。
 
 #include-code("code/串/后缀数组-SA.cpp")
 
 == AC 自动机
 <ac-自动机>
-多模式串同时在文本里匹配。先 `insert` 每个模式，`build()` 求 fail（失配跳到当前后缀里最长的已有前缀），再 `query(文本)`。fail 把 Trie 连成 KMP 自动机，匹配沿边走即可。第二份 `add` 返回模式终点，`work(文本)` 在 fail 树上汇总出现次数。复杂度 $cal(O) (sum lr(|s_i|) + lr(|S|))$，字符集默认 $26$。
+多模式串同时在文本里匹配。先 `insert` 每个模式，`build()` 求 fail（失配跳到当前后缀里最长的已有前缀），再 `query(文本)`。fail 把 Trie 连成 KMP 自动机，匹配沿边走即可。第二份 `add` 返回模式终点，`work(文本)` 在 fail 树上汇总出现次数。复杂度 $cal(O)(sum lr(|s_i|) + lr(|S|))$，字符集默认 $26$。
 
 #include-code("code/串/AC-自动机.cpp")
 
@@ -258,7 +258,7 @@ struct Trie {
 
 == 回文自动机 PAM \(回文树)
 <回文自动机-pam-回文树>
-$cal(O) (N)$ 在线维护所有#strong[本质不同];的回文子串，节点数 $lt.eq n + 2$（两个根长度 $0$ 与 $- 1$）。`len[v]` 为该节点回文长度，`fail[v]` 指向最长回文真后缀，`dep[v]` 为回文后缀链深度（即不同回文后缀个数），`cnt[v]` 需在建完后 `countAll()` 从大到小向 `fail` 累加才成为真实出现次数。插入按字符逐个 `insert(c, i)`。
+$cal(O)(N)$ 在线维护所有#strong[本质不同];的回文子串，节点数 $lt.eq n + 2$（两个根长度 $0$ 与 $- 1$）。`len[v]` 为该节点回文长度，`fail[v]` 指向最长回文真后缀，`dep[v]` 为回文后缀链深度（即不同回文后缀个数），`cnt[v]` 需在建完后 `countAll()` 从大到小向 `fail` 累加才成为真实出现次数。插入按字符逐个 `insert(c, i)`。
 
 #include-code("code/串/回文自动机-PAM-回文树.cpp")
 
@@ -266,17 +266,17 @@ $cal(O) (N)$ 在线维护所有#strong[本质不同];的回文子串，节点数
 
 == 后缀自动机 SAM
 <后缀自动机-sam>
-识别一个串的全部子串：每个状态对应 endpos 相同的一类子串。`len` 是该状态最长串的长度，`link` 指向更短的后缀状态。逐字符 `last = extend(last, c)`（第一份从节点 `p` 接字符 `c`，返回新 last；多串时 last 复位为 $0$ 即广义 SAM）。本质不同子串数 $sum (upright(l e n) [v] - upright(l e n) [upright(l i n k) [v]])$，复杂度 $cal(O) (N log lr(|Sigma|))$。
+识别一个串的全部子串：每个状态对应 endpos 相同的一类子串。`len` 是该状态最长串的长度，`link` 指向更短的后缀状态。逐字符 `last = extend(last, c)`（第一份从节点 `p` 接字符 `c`，返回新 last；多串时 last 复位为 $0$ 即广义 SAM）。本质不同子串数 $sum (upright(l e n) [v] - upright(l e n) [upright(l i n k) [v]])$，复杂度 $cal(O)(N "log" lr(|Sigma|))$。
 
 #include-code("code/串/后缀自动机-SAM.cpp")
 
-第二个 SAM 封装：`endpos` 为该状态最短出现位置记录（按需使用），`size` 为出现次数——按 `len` 降序（即节点编号倒序，clones 在前）把 `size` 累加到 `link` 上即可；以 `link` 为父边构成的后缀链接树可当后缀树用。复杂度 $cal(O) (N log lr(|Sigma|))$（`next` 用 `std::map`）。
+第二个 SAM 封装：`endpos` 为该状态最短出现位置记录（按需使用），`size` 为出现次数——按 `len` 降序（即节点编号倒序，clones 在前）把 `size` 累加到 `link` 上即可；以 `link` 为父边构成的后缀链接树可当后缀树用。复杂度 $cal(O)(N "log" lr(|Sigma|))$（`next` 用 `std::map`）。
 
 #include-code("code/串/后缀自动机-SAM-2.cpp")
 
 == 子序列自动机
 <子序列自动机>
-对于给定主串 $s$（长 $n$），以 $cal(O) (n)$（对每个字符开桶存出现位置）预处理、单次 $cal(O) (m log n)$ 判定长度为 $m$ 的询问串是否为 $s$ 的子序列。核心是 `next[i][c]`：位置 $i$ 之后（不含 $i$）字符 $c$ 第一次出现的位置，匹配时贪心跳转。常见用途：
+对于给定主串 $s$（长 $n$），以 $cal(O)(n)$（对每个字符开桶存出现位置）预处理、单次 $cal(O)(m "log" n)$ 判定长度为 $m$ 的询问串是否为 $s$ 的子序列。核心是 `next[i][c]`：位置 $i$ 之后（不含 $i$）字符 $c$ 第一次出现的位置，匹配时贪心跳转。常见用途：
 
 + 判断一个（或多个）串是否为主串的子序列
 + 多串各自建自动机后同步转移，求最短公共超序列等公共子序列变种

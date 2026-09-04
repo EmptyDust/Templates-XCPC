@@ -38,7 +38,7 @@ template<typename T> int isSquare(vector<Pt> x) {
 
 === 点是否在任意多边形内
 <点是否在任意多边形内>
-射线法判定，$t$ 为穿越次数，当其为奇数时即代表点在多边形内部；返回 $2$ 代表点在多边形边界上，返回 $1$ 在内、$0$ 在外。复杂度 $cal(O) (n)$。不要求凸。
+射线法判定，$t$ 为穿越次数，当其为奇数时即代表点在多边形内部；返回 $2$ 代表点在多边形边界上，返回 $1$ 在内、$0$ 在外。复杂度 $cal(O)(n)$。不要求凸。
 
 ```cpp
 template<typename T> int pointInPolygon(Point<T> a, vector<Point<T>> p) {
@@ -148,11 +148,11 @@ template<typename T> ld area(vector<Point<T>> P) {
 
 === 皮克定理
 <皮克定理>
-绘制在方格纸上的多边形面积公式可以表示为 $S = n + s / 2 - 1$ ，其中 $n$ 表示多边形内部的点数、$s$ 表示多边形边界上的点数。一条线段上的点数为 $gcd (lr(|x_1 - x_2|) , lr(|y_1 - y_2|)) + 1$。
+绘制在方格纸上的多边形面积公式可以表示为 $S = n + s / 2 - 1$ ，其中 $n$ 表示多边形内部的点数、$s$ 表示多边形边界上的点数。一条线段上的点数为 $"gcd" (lr(|x_1 - x_2|) , lr(|y_1 - y_2|)) + 1$。
 
 === 任意多边形上/内的网格点个数（仅能处理整数）
 <任意多边形上内的网格点个数仅能处理整数>
-皮克定理用。边上点数每条边计 $gcd (Delta x , Delta y)$（每顶点恰好计一次）。内部 $I = A - B \/ 2 + 1$。
+皮克定理用。边上点数每条边计 $"gcd" (Delta x , Delta y)$（每顶点恰好计一次）。内部 $I = A - B \/ 2 + 1$。
 
 ```cpp
 int onPolygonGrid(vector<Point<int>> p) { // 多边形上
@@ -176,11 +176,11 @@ int inPolygonGrid(vector<Point<int>> p) { // 多边形内
 
 == 二维凸包
 <二维凸包>
-包住所有点的最小凸多边形。Andrew：按坐标排序，左右各扫一遍，叉积 $lt.eq 0$ 则弹出（右转不凸）。$cal(O) (N log N)$，瓶颈在排序。
+包住所有点的最小凸多边形。Andrew：按坐标排序，左右各扫一遍，叉积 $lt.eq 0$ 则弹出（右转不凸）。$cal(O)(N "log" N)$，瓶颈在排序。
 
 === 获取二维静态凸包（Andrew 算法）
 <获取二维静态凸包andrew-算法>
-按 $x$ 排序后两遍扫描、叉积弹栈分别构造下壳与上壳，$cal(O) (N log N)$（瓶颈在排序）。`flag=0` 边上的点也加入（不严格）；`flag=1` 不加入（严格）。返回逆时针，起点最左下。
+按 $x$ 排序后两遍扫描、叉积弹栈分别构造下壳与上壳，$cal(O)(N "log" N)$（瓶颈在排序）。`flag=0` 边上的点也加入（不严格）；`flag=1` 不加入（严格）。返回逆时针，起点最左下。
 
 ```cpp
 template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int flag = 1) {
@@ -303,7 +303,7 @@ struct ConvexHull {
 
 === 点与凸包的位置关系
 <点与凸包的位置关系>
-$0$ 代表点在凸包外面；$1$ 代表在凸壳上；$2$ 代表在凸包内部。输入须按绕序。复杂度 $cal(O) (n)$；凸包上二分可以做到 $cal(O) (log n)$，本板未写。
+$0$ 代表点在凸包外面；$1$ 代表在凸壳上；$2$ 代表在凸包内部。输入须按绕序。复杂度 $cal(O)(n)$；凸包上二分可以做到 $cal(O)("log" n)$，本板未写。
 
 ```cpp
 template<typename T> int contains(Point<T> p, vector<Point<T>> A) {
@@ -327,7 +327,7 @@ template<typename T> int contains(Point<T> p, vector<Point<T>> A) {
 
 === 闵可夫斯基和
 <闵可夫斯基和>
-计算两个凸包的向量和 ${ p + q }$，结果仍是凸包。做法：各自从最低点起把边向量按极角归并依次相接。输入须已是有序凸包。复杂度 $cal(O) (n + m)$。
+计算两个凸包的向量和 ${ p + q }$，结果仍是凸包。做法：各自从最低点起把边向量按极角归并依次相接。输入须已是有序凸包。复杂度 $cal(O)(n + m)$。
 
 ```cpp
 template<typename T> vector<Point<T>> mincowski(vector<Point<T>> P1, vector<Point<T>> P2) {

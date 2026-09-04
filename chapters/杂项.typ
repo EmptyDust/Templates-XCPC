@@ -62,7 +62,7 @@ $N = 3$ 时结果为：
 
 == 最长严格/非严格递增子序列 \(LIS)
 <最长严格非严格递增子序列-lis>
-子序列可不连续。`val[i]` 表示长 $i + 1$ 的上升子序列的最小结尾；新数二分插入，能替换则换、否则追加。长度即 LIS。`upper_bound` 严格、`lower_bound` 非严格。$cal(O) (N log N)$。
+子序列可不连续。`val[i]` 表示长 $i + 1$ 的上升子序列的最小结尾；新数二分插入，能替换则换、否则追加。长度即 LIS。`upper_bound` 严格、`lower_bound` 非严格。$cal(O)(N "log" N)$。
 
 === 一维
 <一维>
@@ -126,7 +126,7 @@ bool Solve() {
 <约瑟夫问题>
 $n$ 个人编号 $0 , 1 , 2 dots.h , n - 1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。
 
-$cal(O) (N)$ 。`repeat` 为赛场宏，没有就写成 `for (int i = 1; i <= n; i++)`。
+$cal(O)(N)$ 。`repeat` 为赛场宏，没有就写成 `for (int i = 1; i <= n; i++)`。
 
 ```cpp
 int jos(int n,int k){
@@ -136,11 +136,11 @@ int jos(int n,int k){
 }
 ```
 
-$cal(O) (K log N)$ ，适用于 $K$ 较小的情况。
+$cal(O)(K "log" N)$ ，适用于 $K$ 较小的情况。
 
 #include-code("code/杂项/约瑟夫问题.cpp")
 
-$cal(O) (sqrt(N))$
+$cal(O)(sqrt(N))$
 
 #include-code("code/杂项/约瑟夫问题-2.cpp")
 
@@ -161,17 +161,17 @@ int week(int y,int m,int d){
 
 === 魔改十进制快速幂（暴力计算）
 <魔改十进制快速幂暴力计算>
-该算法复杂度 $cal(O) (upright(l e n) (k))$。
+该算法复杂度 $cal(O)(upright(l e n) (k))$。
 
 #include-code("code/杂项/魔改十进制快速幂暴力计算.cpp")
 
 === 扩展欧拉定理（欧拉降幂公式）
 <扩展欧拉定理欧拉降幂公式>
-$ n^k equiv {n^(k med mod med phi (p)) & gcd (n , p) = 1\
-n^(k med mod med phi (p) + phi (p)) & gcd (n , p) eq.not 1 and k gt.eq phi (p)\
-n^k & gcd (n , p) eq.not 1 and k < phi (p) $
+$ n^k equiv {n^(k med mod med phi (p)) & "gcd" (n , p) = 1\
+n^(k med mod med phi (p) + phi (p)) & "gcd" (n , p) eq.not 1 and k gt.eq phi (p)\
+n^k & "gcd" (n , p) eq.not 1 and k < phi (p) $
 
-最终我们可以将幂降到 $phi (p)$ 的级别，使得能够直接使用快速幂解题，复杂度瓶颈在求解欧拉函数 $cal(O) (sqrt(p))$ 。
+最终我们可以将幂降到 $phi (p)$ 的级别，使得能够直接使用快速幂解题，复杂度瓶颈在求解欧拉函数 $cal(O)(sqrt(p))$ 。
 
 ```cpp
 int phi(int n) { //求解 phi(n)

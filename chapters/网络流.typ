@@ -8,13 +8,13 @@
 
 === Dinic 解
 <dinic-解>
-理论最坏 $cal(O) (N^2 M)$，例题范围 $N = 1200 , med m = 5 times 10^3$。BFS 分层，当前弧 DFS 一次找完该层所有增广。`work(s, t)` 返回最大流。
+理论最坏 $cal(O)(N^2 M)$，例题范围 $N = 1200 , med m = 5 times 10^3$。BFS 分层，当前弧 DFS 一次找完该层所有增广。`work(s, t)` 返回最大流。
 
 #include-code("code/网络流/Dinic-解.cpp")
 
 === 预流推进 HLPP
 <预流推进-hlpp>
-预流推进（HLPP，最高标号预流推进）是实际运行速度最快的最大流实现之一，适合大数据量、边较多的场合；理论最坏复杂度为 $cal(O) (N^2 sqrt(M))$ ，例题范围：$N = 1200 , med m = 1.2 times 10^5$ 。用法与 Dinic 相同：`PushRelabel<long long> pr(n);`（模板参数须能容纳 `INF = 0x3f3f3f3f3f3f3f3f3f`）→ 反复 `addedge(u, v, w)` → `pr.work(s, t)`。实现要点：`init` 从汇点反向 BFS 赋高度标签（`f` 控制是否入 gap 桶），`PushPoint` 对虚流做推流/重贴标签，`gobalcnt` 累计入桶次数、超过 $10 n$ 时重新 `init` 防退化。注意 `work` 开头 `ex[s] = INF` 只是哨兵，结尾 `ex[s] -= INF` 扣回，`maxflow` 也由此而来；#strong[同一对象不能重复 `work`];（残留的虚流会污染结果），多组询问请每次新建对象。
+预流推进（HLPP，最高标号预流推进）是实际运行速度最快的最大流实现之一，适合大数据量、边较多的场合；理论最坏复杂度为 $cal(O)(N^2 sqrt(M))$ ，例题范围：$N = 1200 , med m = 1.2 times 10^5$ 。用法与 Dinic 相同：`PushRelabel<long long> pr(n);`（模板参数须能容纳 `INF = 0x3f3f3f3f3f3f3f3f3f`）→ 反复 `addedge(u, v, w)` → `pr.work(s, t)`。实现要点：`init` 从汇点反向 BFS 赋高度标签（`f` 控制是否入 gap 桶），`PushPoint` 对虚流做推流/重贴标签，`gobalcnt` 累计入桶次数、超过 $10 n$ 时重新 `init` 防退化。注意 `work` 开头 `ex[s] = INF` 只是哨兵，结尾 `ex[s] -= INF` 扣回，`maxflow` 也由此而来；#strong[同一对象不能重复 `work`];（残留的虚流会污染结果），多组询问请每次新建对象。
 
 #include-code("code/网络流/预流推进-HLPP.cpp")
 
@@ -30,7 +30,7 @@
 
 == 最小割树 Gomory-Hu Tree
 <最小割树-gomory-hu-tree>
-无向连通图抽象出的一棵树，满足任意两点间的距离是他们的最小割。一共需要跑 $n$ 轮最小割，总复杂度 $cal(O) (N^3 M)$ ，预处理最小割树上任意两点的距离 $cal(O) (N^2)$ 。
+无向连通图抽象出的一棵树，满足任意两点间的距离是他们的最小割。一共需要跑 $n$ 轮最小割，总复杂度 $cal(O)(N^3 M)$ ，预处理最小割树上任意两点的距离 $cal(O)(N^2)$ 。
 
 过程：分治 $n$ 轮，每一轮在图上随机选点，跑一轮最小割后连接树边；这一网络的残留网络会将剩余的点分为两组，根据分组分治。实现上每个连通分量用 `fa[x] == x` 的点作代表（初始全部归属 0），每轮取第一个非代表的点与其代表跑最小割，再按残留网络可达性（点集 `vis`）把另一侧的点改挂到新代表；#strong[每轮 `work` 前必须先退流（`reset`）];，否则残留网络混着上一轮的流量、分组错误。
 
@@ -110,6 +110,6 @@ signed main() {  // Gomory-Hu Tree
 
 == 费用流
 <费用流>
-给定一个带费用的网络，规定 $(u , v)$ 间的费用为 $f (u , v) times w (u , v)$ ，求解该网络中总花费最小的最大流称之为#strong[最小费用最大流];。用法：`MinCostFlow mcf(n);` → 反复 `mcf.add(u, v, 流量, 费用)`（负费用的处理见 `add` 的注释）→ `mcf.flow(s, t)` 返回 `{最大流, 最小费用}`。下方实现用 #strong[Dijkstra + 势能];（`h` 数组，Johnson 重赋权保证边权非负）代替 SPFA 找增广路，单次增广 $cal(O) (M log N)$，总复杂度 $cal(O) (f dot.op M log N)$（$f$ 为最大流的值）。
+给定一个带费用的网络，规定 $(u , v)$ 间的费用为 $f (u , v) times w (u , v)$ ，求解该网络中总花费最小的最大流称之为#strong[最小费用最大流];。用法：`MinCostFlow mcf(n);` → 反复 `mcf.add(u, v, 流量, 费用)`（负费用的处理见 `add` 的注释）→ `mcf.flow(s, t)` 返回 `{最大流, 最小费用}`。下方实现用 #strong[Dijkstra + 势能];（`h` 数组，Johnson 重赋权保证边权非负）代替 SPFA 找增广路，单次增广 $cal(O)(M "log" N)$，总复杂度 $cal(O)(f dot.op M "log" N)$（$f$ 为最大流的值）。
 
 #include-code("code/网络流/费用流.cpp")

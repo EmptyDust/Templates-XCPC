@@ -136,9 +136,9 @@ int ed = *prev(S.end(), 1);  // 返回最后一个元素
 <其他函数>
 `exp2(x)` ：返回 $2^x$
 
-`log2(x)` ：返回 $log_2 (x)$
+`log2(x)` ：返回 $"log"_2 (x)$
 
-`gcd(x, y) / lcm(x, y)` ：C++17 标准库函数，$cal(O) (log min (lr(|x|) , lr(|y|)))$ 返回 $gcd (lr(|x|) , lr(|y|))$ 与 $upright(l c m) (lr(|x|) , lr(|y|))$，返回值恒为正。注意 `lcm` 先除后乘不会溢出。
+`gcd(x, y) / lcm(x, y)` ：C++17 标准库函数，$cal(O)("log" "min" (lr(|x|) , lr(|y|)))$ 返回 $"gcd" (lr(|x|) , lr(|y|))$ 与 $upright("lcm") (lr(|x|) , lr(|y|))$，返回值恒为正。注意 `lcm` 先除后乘不会溢出。
 
 == 容器与成员函数
 <容器与成员函数>
