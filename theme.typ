@@ -31,22 +31,27 @@
   show math.equation: set text(font: "TeX Gyre Termes Math")
 
   // ---- 标题层级：章 level 1（另起一页），节 level 2，小节 level 3 ----
+  // 必须保留 `it`（heading 元素），只改 set text 的话目录/书签才能挂上 PDF 目的地。
+  // 写成 text(it.body) 会丢掉 heading，outline 点了跳不过去。
   show heading.where(level: 1): it => {
     pagebreak(weak: true)
     v(0.2em)
-    text(15pt, weight: "bold", it.body)
+    set text(15pt, weight: "bold")
+    it
     v(0.3em)
     line(length: 100%, stroke: 0.6pt + luma(213))
     v(0.6em)
   }
   show heading.where(level: 2): it => {
     v(0.9em)
-    text(11.8pt, weight: "bold", it.body)
+    set text(11.8pt, weight: "bold")
+    it
     v(0.25em)
   }
   show heading.where(level: 3): it => {
     v(0.7em)
-    text(10.6pt, weight: "bold", it.body)
+    set text(10.6pt, weight: "bold")
+    it
     v(0.2em)
   }
 
