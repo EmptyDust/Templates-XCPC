@@ -74,8 +74,8 @@
     },
   )
   // 行内代码：等宽 + 浅色下划线，extent 原生延伸
-  // raw 默认自带 0.8em 缩小；1.25 × 0.8 = 1，与正文等大
-  show raw.where(block: false): set text(font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"), size: 1.25em)
+  // raw 默认自带 0.8em 缩小；1.125 × 0.8 = 0.9，与旧版 wida `code { font-size: 0.9em }` 一致
+  show raw.where(block: false): set text(font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"), size: 1.125em)
   show raw.where(block: false): it => underline(
     offset: 2.2pt,
     extent: 0.8pt,
