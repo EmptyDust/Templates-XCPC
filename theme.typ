@@ -57,10 +57,9 @@
   // JetBrains Mono 有连字（<= → ≤）。syntect 高亮分段会绕过 ligatures: false，
   // 必须关 OpenType 特性本身
   show raw: set text(ligatures: false, features: (liga: 0, clig: 0, calt: 0, dlig: 0))
+  // 代码块：不写 size，沿用 raw 内置的 0.8em（相对正文）
   show raw.where(block: true): set text(
     font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"),
-    // raw 默认自带 0.8em 缩小且相对值与之叠乘；0.9375 × 0.8 = 0.75
-    size: 0.9375em,
   )
   show raw.where(block: true): it => block(
     fill: luma(245),
