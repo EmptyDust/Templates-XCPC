@@ -482,6 +482,8 @@ cout << x << endl;
 
 === 运算速度测试
 <运算速度测试>
+测下面第一段三重循环（`n = 4E3`），表中数字为毫秒。「手动加速」指打开 `#pragma GCC optimize("Ofast", "unroll-loops")`。第二段是另一档负载（$3.4 times 10^8$ 次 `mt19937`），不在表内。
+
 #figure(
 align(center)[#table(
   columns: 8,
