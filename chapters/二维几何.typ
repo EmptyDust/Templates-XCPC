@@ -124,7 +124,7 @@ C++ 三角函数吃弧度。$pi$ 用 `acos(-1)`。
 
 === 弧度角度相互转换
 <弧度角度相互转换>
-$upright(d e g) = upright(r a d) dot.op 180 \/ pi$。
+$"deg" = "rad" dot.op 180 \/ pi$。
 
 #include-code("code/二维几何/弧度角度相互转换.cpp")
 
@@ -289,7 +289,7 @@ pair<Pd, ld> pointToSegment(Pd p, Ld l) {
 
 === 点在直线上的投影点（垂足）
 <点在直线上的投影点垂足>
-$A + upright(p r o j)_(A B) (A P)$。直线两端无线。
+$A + "proj"_(A B) (A P)$。直线两端无线。
 
 ```cpp
 Pd project(Pd p, Ld l) {  // 投影

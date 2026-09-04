@@ -49,13 +49,13 @@ bool onPlane(P3 p1, P3 p2, P3 p3, P3 p4) {  // 四点是否共面
 
 === 空间两点是否在线段同侧
 <空间两点是否在线段同侧>
-当给定的两点与线段不共面、点在线段上时返回 $f a l s e$ 。
+当给定的两点与线段不共面、点在线段上时返回 $"false"$ 。
 
 #include-code("code/三维几何及常见例题/空间两点是否在线段同侧.cpp")
 
 === 两点是否在平面同侧
 <两点是否在平面同侧>
-点在平面上时返回 $f a l s e$ 。
+点在平面上时返回 $"false"$ 。
 
 ```cpp
 bool pointOnPlaneSide(P3 p1, P3 p2, Plane s) {
@@ -116,7 +116,7 @@ bool linePlaneParallel(L3 l, Plane s) {
 
 === 空间两直线是否相交及交点
 <空间两直线是否相交及交点>
-当两直线不共面、两直线平行时返回 $f a l s e$ 。
+当两直线不共面、两直线平行时返回 $"false"$ 。
 
 ```cpp
 pair<bool, P3> lineIntersection(L3 l1, L3 l2) {
@@ -142,13 +142,13 @@ pair<bool, P3> lineIntersection(L3 l1, L3 l2) {
 
 === 直线与平面是否相交及交点
 <直线与平面是否相交及交点>
-当直线与平面平行、给定的点构不成平面时返回 $f a l s e$ 。
+当直线与平面平行、给定的点构不成平面时返回 $"false"$ 。
 
 #include-code("code/三维几何及常见例题/直线与平面是否相交及交点.cpp")
 
 === 两平面是否相交及交线
 <两平面是否相交及交线>
-当两平面平行、两平面为同一个时返回 $f a l s e$ 。
+当两平面平行、两平面为同一个时返回 $"false"$ 。
 
 ```cpp
 pair<bool, L3> planeIntersection(Plane s1, Plane s2) {
@@ -249,7 +249,7 @@ ld V(P3 a, P3 b, P3 c, P3 d) {
 
 === 点是否在空间三角形上
 <点是否在空间三角形上>
-点位于边界上时返回 $f a l s e$ 。
+点位于边界上时返回 $"false"$ 。
 
 ```cpp
 bool pointOnTriangle(P3 p, P3 p1, P3 p2, P3 p3) {
@@ -304,7 +304,7 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 
 - `atan(y / x)` 函数仅用于计算第一、四象限的值，而 `atan2(y, x)` 则允许计算所有四个象限的正反切，在使用这个函数时，需要尽量保证 $x$ 和 $y$ 的类型为整数型，如果使用浮点数，实测会慢十倍。
 
-- 在平面上有奇数个点 $A_0 , A_1 , dots.h , A_n$ 以及一个点 $X_0$ ，构造 $X_1$ 使得 $X_0 , X_1$ 关于 $A_0$ 对称、构造 $X_2$ 使得 $X_1 , X_2$ 关于 $A_1$ 对称、……、构造 $X_j$ 使得 $X_(j - 1) , X_j$ 关于 $A_((j - 1) #h(0em) mod med n)$ 对称。那么周期为 $2 n$ ，即 $A_0$ 与 $A_(2 n)$ 共点、$A_1$ 与 $A_(2 n + 1)$ 共点 #link("https://codeforces.com/contest/24/problem/C")[See] 。
+- 在平面上有奇数个点 $A_0 , A_1 , dots.h , A_n$ 以及一个点 $X_0$ ，构造 $X_1$ 使得 $X_0 , X_1$ 关于 $A_0$ 对称、构造 $X_2$ 使得 $X_1 , X_2$ 关于 $A_1$ 对称、……、构造 $X_j$ 使得 $X_(j - 1) , X_j$ 关于 $A_((j - 1) mod med n)$ 对称。那么周期为 $2 n$ ，即 $A_0$ 与 $A_(2 n)$ 共点、$A_1$ 与 $A_(2 n + 1)$ 共点 #link("https://codeforces.com/contest/24/problem/C")[See] 。
 
 - 已知 $A med (x_A , y_A)$ 和 $X med (x_X , y_X)$ 两点及这两点的坐标，构造 $Y$ 使得 $X , Y$ 关于 $A$ 对称，那么 $Y$ 的坐标为 $(2 dot.op x_A - x_X , 2 dot.op y_A - y_X)$ 。
 

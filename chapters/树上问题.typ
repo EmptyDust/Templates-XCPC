@@ -183,7 +183,7 @@ dfz(dfz, root, 0);
 
 == 最近公共祖先 LCA
 <最近公共祖先-lca>
-树上两点路径的最高点。任意路径 $u arrow.r v$ 拆成 $u arrow.r upright(l c a)$ 与 $v arrow.r upright(l c a)$。剖分 $cal(O)("log" N)$、倍增 $cal(O)("log" N)$、欧拉序+ST $cal(O)(1)$。先 `work(root)` 再查。
+树上两点路径的最高点。任意路径 $u arrow.r v$ 拆成 $u arrow.r "lca"$ 与 $v arrow.r "lca"$。剖分 $cal(O)("log" N)$、倍增 $cal(O)("log" N)$、欧拉序+ST $cal(O)(1)$。先 `work(root)` 再查。
 
 === 树链剖分解法
 <树链剖分解法>

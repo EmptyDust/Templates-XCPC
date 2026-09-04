@@ -180,7 +180,7 @@ $ a = p_1^(alpha_1) p_2^(alpha_2) dots.h.c p_s^(alpha_s) , p_1 < p_2 < dots.h.c 
   - $a times c equiv b times d med \( mod med m \)$。
 - 设 $f (x) = sum_(i = 0)^n a_i x^i$ 和 $g (x) = sum_(i = 0)^n b_i x^i$ 是两个整系数多项式，$m in bold(N)^(\*)$，且 $a_i equiv b_i med \( mod med m \) , med 0 lt.eq i lt.eq n$，则对任意整数 $x$ 均有 $f (x) equiv g (x) med \( mod med m \)$。进而若 $s equiv t med \( mod med m \)$，则 $f (s) equiv g (t) med \( mod med m \)$。
 - 若 $a , b in bold(Z) , k , m in bold(N)^(\*) , a equiv b med \( mod med m \)$, 则 $a k equiv b k med \( mod med m k \)$。
-- 若 $a , b in bold(Z) , d , m in bold(N)^(\*) , d divides a , d divides b , d divides m$，则当 $a equiv b med \( mod med m \)$ 成立时，有 $a / d equiv b / d (med mod med #h(0em) m / d)$。
+- 若 $a , b in bold(Z) , d , m in bold(N)^(\*) , d divides a , d divides b , d divides m$，则当 $a equiv b med \( mod med m \)$ 成立时，有 $a / d equiv b / d (med mod med m / d)$。
 - 若 $a , b in bold(Z) , d , m in bold(N)^(\*) , d divides m$，则当 $a equiv b med \( mod med m \)$ 成立时，有 $a equiv b med \( mod med d \)$。
 - 若 $a , b in bold(Z) , d , m in bold(N)^(\*)$，则当 $a equiv b med \( mod med m \)$ 成立时，有 $(a , m) = (b , m)$。若 $d$ 能整除 $m$ 及 $a , b$ 中的一个，则 $d$ 必定能整除 $a , b$ 中的另一个。
 
@@ -575,15 +575,15 @@ LL mul(LL a, LL b, LL m) {
 
 == 威尔逊定理
 <威尔逊定理>
-+ 当且仅当 p 为素数时，$(p - 1) ! equiv - 1 (#h(0em) mod med p)$
-+ 当且仅当 p 为素数时，$(p - 1) ! equiv p - 1 (#h(0em) mod med p)$
++ 当且仅当 p 为素数时，$(p - 1) ! equiv - 1 (mod med p)$
++ 当且仅当 p 为素数时，$(p - 1) ! equiv p - 1 (mod med p)$
 + 若 p 为质数，则 p 能被$(p - 1) ! + 1$整除
 + 当且仅当 p 为素数时，$p divides (p - 1) ! + 1$
 
 == 裴蜀定理
 <裴蜀定理>
 #quote(block: true)[
-$a x + b y = c med (x in Z^convolve , y in Z^convolve)$ 成立的充要条件是 $"gcd" ⁡ (a , b) divides c$（ $Z^(\*)$ 表示正整数集）。
+$a x + b y = c med (x in Z^* , y in Z^*)$ 成立的充要条件是 $"gcd"(a , b) divides c$（ $Z^(\*)$ 表示正整数集）。
 ]
 
 === 逆定理
@@ -651,7 +651,7 @@ for (int i = 2; i <= n; i ++ )
 
 == 扩展欧几里得 exgcd
 <扩展欧几里得-exgcd>
-与欧几里得同一递归，回溯时 $x prime = y , #h(0em) y prime = x - (a \/ b) y$ 还原系数。返回 $"gcd"$；$a x + b y = c$ 有解当且仅当 $"gcd" divides c$，通解 $x plus.minus b \/ d$、$y minus.plus a \/ d$。
+与欧几里得同一递归，回溯时 $x prime = y , y prime = x - (a \/ b) y$ 还原系数。返回 $"gcd"$；$a x + b y = c$ 有解当且仅当 $"gcd" divides c$，通解 $x plus.minus b \/ d$、$y minus.plus a \/ d$。
 
 #include-code("code/数论/扩展欧几里得-exgcd.cpp")
 
@@ -770,15 +770,15 @@ void get_eulers() {
 <扩展欧拉定理>
 若正整数 $a$ 与 $m$ 互质，则
 
-$ a^(phi (m)) equiv 1 (upright(m o d) thin m) $
+$ a^(phi (m)) equiv 1 (mod thin m) $
 
 推论：
 
-$ a^b equiv a^(b thin upright(m o d) thin phi (m)) (upright(m o d) thin m) $
+$ a^b equiv a^(b thin mod thin phi (m)) (mod thin m) $
 
 当 $a , m$ 不互质时，扩展 Euler 定理表述如下：
 
-$ a^b equiv a^(b thin upright(m o d) thin phi (m) + phi (m)) (upright(m o d) thin m) $
+$ a^b equiv a^(b thin mod thin phi (m) + phi (m)) (mod thin m) $
 
 式子仅在 $phi (m) lt.eq b$ 时成立。
 
@@ -876,7 +876,7 @@ bool is_prime(int n) {
 
 == 同余方程组、拓展中国剩余定理 excrt
 <同余方程组拓展中国剩余定理-excrt>
-求解方程组 $x equiv a_i med \( mod med b_i \)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv a n s med \( mod med M \)$ 与新方程 $x equiv a_i med \( mod med b_i \)$ 消元成 $M dot.op k equiv a_i - a n s med \( mod med b_i \)$，用 exgcd 解出 $k$。复杂度 $cal(O)(n "log")$。
+求解方程组 $x equiv a_i med \( mod med b_i \)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv "ans" med \( mod med M \)$ 与新方程 $x equiv a_i med \( mod med b_i \)$ 消元成 $M dot.op k equiv a_i - "ans" med \( mod med b_i \)$，用 exgcd 解出 $k$。复杂度 $cal(O)(n "log")$。
 
 ```cpp
 int n; LL ai[maxn], bi[maxn];
@@ -1087,13 +1087,13 @@ int main() {
 <整除-数论-分块>
 把 $⌊ n \/ i ⌋$ 相同的 $i$ 并为一块：$j = ⌊ n \/ ⌊ n \/ i ⌋ ⌋$ 是右端点，块内个数 $j - i + 1$，块数 $cal(O)(sqrt(n))$。莫反、杜教筛、前缀和题里”枚举 $⌊ n \/ i ⌋$“都用它。
 
-$⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c . = ⌊n / r⌋ arrow.l.r.double ⌊n / l⌋ lt.eq n / r < ⌊n / l⌋ + 1$ ，根据不等式左侧，得到 $r lt.eq ⌊frac(n, ⌊ n / l ⌋)⌋$ 。
+$⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c = ⌊n / r⌋ arrow.l.r.double ⌊n / l⌋ lt.eq n / r < ⌊n / l⌋ + 1$ ，根据不等式左侧，得到 $r lt.eq ⌊frac(n, ⌊ n / l ⌋)⌋$ 。
 
 #include-code("code/数论/整除-数论-分块.cpp")
 
 == Miller - Rabin 素数测试
 <miller---rabin-素数测试>
-以平均 $cal(O)(4 dot.op "log"^3 X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本常数非常优秀，基本可以看作是 $cal(O)(1)$ 。#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 . .37$ 即确定覆盖。
+以平均 $cal(O)(4 dot.op "log"^3 X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本常数非常优秀，基本可以看作是 $cal(O)(1)$ 。#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 dots.c 37$ 即确定覆盖。
 
 #include-code("code/数论/Miller---Rabin-素数测试.cpp")
 
@@ -1121,7 +1121,7 @@ $⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c . = ⌊n / r⌋ arrow.l.r.double �
 
 === 除法、取模运算的本质
 <除法取模运算的本质>
-有公式：$x div i = ⌊x / i⌋ + x - i dot.op ⌊x / i⌋$ ，$x #h(0em) mod med i = x - i dot.op ⌊x / i⌋$ 。
+有公式：$x div i = ⌊x / i⌋ + x - i dot.op ⌊x / i⌋$ ，$x mod med i = x - i dot.op ⌊x / i⌋$ 。
 
 === 与、或、异或
 <与或异或>
@@ -1191,16 +1191,16 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 - 卡西尼性质：$F_(n - 1) \* F_(n + 1) - F_n^2 = (- 1)^n$ ；
 - $F_n^2 + F_(n + 1)^2 = F_(2 n + 1)$ ；
 - $F_(n + 1)^2 - F_(n - 1)^2 = F_(2 n)$ （由上一条写两遍相减得到）；
-- 若存在序列 $a_0 = 1 , a_n = a_(n - 1) + a_(n - 3) + a_(n - 5) + dots.c . (n gt.eq 1)$ 则 $a_n = F_n (n gt.eq 1)$ ；
+- 若存在序列 $a_0 = 1 , a_n = a_(n - 1) + a_(n - 3) + a_(n - 5) + dots.c (n gt.eq 1)$ 则 $a_n = F_n (n gt.eq 1)$ ；
 - 齐肯多夫定理：任何正整数都可以表示成若干个不连续的斐波那契数（ $F_2$ 开始）可以用贪心实现。
 
 求和公式结论：
 
-- 奇数项求和：$F_1 + F_3 + F_5 + dots.c . + F_(2 n - 1) = F_(2 n)$ ；
-- 偶数项求和：$F_2 + F_4 + F_6 + dots.c . + F_(2 n) = F_(2 n + 1) - 1$ ；
-- 平方和：$F_1^2 + F_2^2 + F_3^2 + dots.c . + F_n^2 = F_n \* F_(n + 1)$ ；
-- $F_1 + 2 F_2 + 3 F_3 + dots.c . + n F_n = n F_(n + 2) - F_(n + 3) + 2$ ；
-- $- F_1 + F_2 - F_3 + dots.c . + (- 1)^n F_n = (- 1)^n (F_(n + 1) - F_n) + 1$ ；
+- 奇数项求和：$F_1 + F_3 + F_5 + dots.c + F_(2 n - 1) = F_(2 n)$ ；
+- 偶数项求和：$F_2 + F_4 + F_6 + dots.c + F_(2 n) = F_(2 n + 1) - 1$ ；
+- 平方和：$F_1^2 + F_2^2 + F_3^2 + dots.c + F_n^2 = F_n \* F_(n + 1)$ ；
+- $F_1 + 2 F_2 + 3 F_3 + dots.c + n F_n = n F_(n + 2) - F_(n + 3) + 2$ ；
+- $- F_1 + F_2 - F_3 + dots.c + (- 1)^n F_n = (- 1)^n (F_(n + 1) - F_n) + 1$ ；
 - $F_(2 n - 2 m - 2) (F_(2 n) + F_(2 n + 2)) = F_(2 m + 2) + F_(4 n - 2 m)$ 。
 
 数论结论：
@@ -1231,7 +1231,7 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 - 连续四个数互质的情况如下，当 $n$ 为奇数时，$n , n - 1 , n - 2$ 一定互质；而当 $n$ 为偶数时，${n , n - 1 , n - 3 upright("互质") & "gcd" (n , n - 3) = 1 upright("时")\
   n - 1 , n - 2 , n - 3 upright("互质") & "gcd" (n , n - 3) eq.not 1 upright("时")$ #link("https://codeforces.com/problemset/problem/235/A")[See];；
 
-- 由 $a #h(0em) mod med b = (b + a) #h(0em) mod med b = (2 dot.op b + a) #h(0em) mod med b = dots.h = (K dot.op b + a) #h(0em) mod med b$ 可以推广得到 $(a #h(0em) mod med b) #h(0em) mod med c = ((K dot.op b c + a) #h(0em) mod med b) #h(0em) mod med c$ ，由此可以得到一个 $b c$ 的答案周期#link("https://codeforces.com/problemset/problem/1342/C")[See];；
+- 由 $a mod med b = (b + a) mod med b = (2 dot.op b + a) mod med b = dots.h = (K dot.op b + a) mod med b$ 可以推广得到 $(a mod med b) mod med c = ((K dot.op b c + a) mod med b) mod med c$ ，由此可以得到一个 $b c$ 的答案周期#link("https://codeforces.com/problemset/problem/1342/C")[See];；
 
 - 对于长度为 $2 dot.op N$ 的数列 $a$ ，将其任意均分为两个长度为 $N$ 的数列 $p , q$ ，随后对 $p$ 非递减排序、对 $q$ 非递增排序，定义 $f (p , q) = sum_(i = 1)^n lr(|p_i - q_i|)$ ，那么答案为 $a$ 数列前 $N$ 大的数之和减去前 $N$ 小的数之和#link("https://codeforces.com/problemset/problem/1444/B")[See];。
 

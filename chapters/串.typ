@@ -37,7 +37,7 @@ align(center)[#table(
 
 == zfunction
 <zfunction>
-$z [i]$ 为 $s$ 与后缀 $s [i . .]$ 的 LCP。维护已匹配窗口 $[l , r]$，窗口内可 $O (1)$ 抄 $z [i - l]$，出界再暴力延。整串 $cal(O)(N)$。匹配 $t$ 时对 $t + \# + s$ 跑 Z。
+$z [i]$ 为 $s$ 与后缀 $s [i dots.c ]$ 的 LCP。维护已匹配窗口 $[l , r]$，窗口内可 $O (1)$ 抄 $z [i - l]$，出界再暴力延。整串 $cal(O)(N)$。匹配 $t$ 时对 $t + \# + s$ 跑 Z。
 
 #include-code("code/串/zfunction.cpp")
 
@@ -266,7 +266,7 @@ $cal(O)(N)$ 在线维护所有#strong[本质不同];的回文子串，节点数 
 
 == 后缀自动机 SAM
 <后缀自动机-sam>
-识别一个串的全部子串：每个状态对应 endpos 相同的一类子串。`len` 是该状态最长串的长度，`link` 指向更短的后缀状态。逐字符 `last = extend(last, c)`（第一份从节点 `p` 接字符 `c`，返回新 last；多串时 last 复位为 $0$ 即广义 SAM）。本质不同子串数 $sum (upright(l e n) [v] - upright(l e n) [upright(l i n k) [v]])$，复杂度 $cal(O)(N "log" lr(|Sigma|))$。
+识别一个串的全部子串：每个状态对应 endpos 相同的一类子串。`len` 是该状态最长串的长度，`link` 指向更短的后缀状态。逐字符 `last = extend(last, c)`（第一份从节点 `p` 接字符 `c`，返回新 last；多串时 last 复位为 $0$ 即广义 SAM）。本质不同子串数 $sum ("len" [v] - "len" ["link" [v]])$，复杂度 $cal(O)(N "log" lr(|Sigma|))$。
 
 #include-code("code/串/后缀自动机-SAM.cpp")
 

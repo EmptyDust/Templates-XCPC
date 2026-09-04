@@ -142,7 +142,7 @@ void floyd() {
 强连通分量缩点后的图称为 SCC。$cal(O)(N + M)$。
 
 #quote(block: true)[
-性质：缩点后的图拥有拓扑序 $c o l o r_(c n t) , c o l o r_(c n t - 1) , dots.h , 1$ ，可以不需再另跑一遍 `topsort`；缩点后的图是一张有向无环图（DAG、拓扑图）。
+性质：缩点后的图拥有拓扑序 $"color"_("cnt") , "color"_("cnt" - 1) , dots.h , 1$ ，可以不需再另跑一遍 `topsort`；缩点后的图是一张有向无环图（DAG、拓扑图）。
 ]
 
 ```cpp
@@ -691,7 +691,7 @@ for (int i = 0; i < n; i++) {
 
 + 要求出连通图上的任意一棵生成树，只需要跑一遍 #strong[bfs] ；
 
-+ 给出一棵树，要求添加尽可能多的边，使得其是二分图：对树进行二分染色，显然，相同颜色的点之间连边不会破坏二分图的性质，故可添加的最多的边数即为 $c n t_(upright(B l a c k)) dot.op c n t_(upright(W h i t e)) - (n - 1)$ ；
++ 给出一棵树，要求添加尽可能多的边，使得其是二分图：对树进行二分染色，显然，相同颜色的点之间连边不会破坏二分图的性质，故可添加的最多的边数即为 $"cnt"_("Black") dot.op "cnt"_("White") - (n - 1)$ ；
 
 + 当一棵树可以被黑白染色时，所有染黑节点的度之和等于所有染白节点的度之和；
 
@@ -748,13 +748,13 @@ cout << ans << endl;
 
 题意：添加最少的边，使得有向图变成一个 SCC
 
-将原图的 SCC 缩点，统计缩点后的新图上入度为 $0$ 和出度为 $0$ 的点的数量 $c n t_(upright(i n))$、$c n t_(upright(o u t))$，答案即为 $"max" (c n t_(upright(i n)) , c n t_(upright(o u t)))$ 。过程大致是先将一个出度为 $0$ 的点和一个入度为 $0$ 的点相连，剩下的点随便连 #link("https://www.acwing.com/problem/content/369/")[See] 。
+将原图的 SCC 缩点，统计缩点后的新图上入度为 $0$ 和出度为 $0$ 的点的数量 $"cnt"_("in")$、$"cnt"_("out")$，答案即为 $"max" ("cnt"_("in") , "cnt"_("out"))$ 。过程大致是先将一个出度为 $0$ 的点和一个入度为 $0$ 的点相连，剩下的点随便连 #link("https://www.acwing.com/problem/content/369/")[See] 。
 
 #line(length: 100%)
 
 题意：添加最少的边，使得无向图变成一个 E-DCC
 
-将原图的 E-DCC 缩点，统计缩点后的新图上度为 $1$ 的点（叶子结点）的数量 $c n t$ ，答案即为 $⌈frac(c n t, 2)⌉$ 。过程大致是每次找两个叶子结点（但是还有一些条件限制）相连，若最后余下一个点随便连 #link("https://www.acwing.com/problem/content/397/")[See] 。
+将原图的 E-DCC 缩点，统计缩点后的新图上度为 $1$ 的点（叶子结点）的数量 $"cnt"$ ，答案即为 $⌈frac("cnt", 2)⌉$ 。过程大致是每次找两个叶子结点（但是还有一些条件限制）相连，若最后余下一个点随便连 #link("https://www.acwing.com/problem/content/397/")[See] 。
 
 #line(length: 100%)
 

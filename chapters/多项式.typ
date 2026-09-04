@@ -581,14 +581,14 @@ struct Lagrange {
 
 === 普通生成函数 / OGF
 <普通生成函数-ogf>
-- 普通生成函数：$A (x) = a_0 + a_1 x + a_2 x^2 + dots.c . = chevron.l a_0 , a_1 , a_2 , dots.c . chevron.r$ ；
-- $1 + x^k + x^(2 k) + dots.c . = frac(1, 1 - x^k)$ ；
+- 普通生成函数：$A (x) = a_0 + a_1 x + a_2 x^2 + dots.c = chevron.l a_0 , a_1 , a_2 , dots.c chevron.r$ ；
+- $1 + x^k + x^(2 k) + dots.c = frac(1, 1 - x^k)$ ；
 - 取对数后 $= - "ln" (1 - x^k) = sum_(i = 1)^oo 1 / i x^(k i)$ 即 $sum_(i = 1)^oo 1 / i x^i ⊙ x^k$（polymul\_special）；
-- $x + x^2 / 2 + x^3 / 3 + dots.c . = - "ln" (1 - x)$ ；
-- $1 + x + x^2 + dots.c . + x^(m - 1) = frac(1 - x^m, 1 - x)$ ；
-- $1 + 2 x + 3 x^2 + dots.c . = 1 / (1 - x)^2$（借用导数，$n x^(n - 1) = (x^n) prime$）；
-- $C_m^0 + C_m^1 x + C_m^2 x^2 + dots.c . + C_m^m x^m = (1 + x)^m$（二项式定理）；
-- $C_m^0 + C_(m + 1)^1 x^1 + C_(m + 2)^2 x^2 + dots.c . = 1 / (1 - x)^(m + 1)$（归纳法证明）；
+- $x + x^2 / 2 + x^3 / 3 + dots.c = - "ln" (1 - x)$ ；
+- $1 + x + x^2 + dots.c + x^(m - 1) = frac(1 - x^m, 1 - x)$ ；
+- $1 + 2 x + 3 x^2 + dots.c = 1 / (1 - x)^2$（借用导数，$n x^(n - 1) = (x^n) prime$）；
+- $C_m^0 + C_m^1 x + C_m^2 x^2 + dots.c + C_m^m x^m = (1 + x)^m$（二项式定理）；
+- $C_m^0 + C_(m + 1)^1 x^1 + C_(m + 2)^2 x^2 + dots.c = 1 / (1 - x)^(m + 1)$（归纳法证明）；
 - $sum_(n = 0)^oo F_n x^n = frac((F_1 - F_0) x + F_0, 1 - x - x^2)$（F 为斐波那契数列，列方程 $G (x) = x G (x) + x^2 G (x) + (F_1 - F_0) x + F_0$）；
 - $sum_(n = 0)^oo H_n x^n = frac(1 - sqrt(1 - 4 x), 2 x)$（H 为卡特兰数；原来写成 $sqrt(n - 4 x)$）；
 - 前缀和 $sum_(n = 0)^oo s_n x^n = frac(1, 1 - x) f (x)$ ；
@@ -596,9 +596,9 @@ struct Lagrange {
 
 === 指数生成函数 / EGF
 <指数生成函数-egf>
-- 指数生成函数：$A (x) = a_0 + a_1 x + a_2 frac(x^2, 2 !) + a_3 frac(x^3, 3 !) + dots.c . = chevron.l a_0 , a_1 , a_2 , a_3 , dots.c . chevron.r$ ；
+- 指数生成函数：$A (x) = a_0 + a_1 x + a_2 frac(x^2, 2 !) + a_3 frac(x^3, 3 !) + dots.c = chevron.l a_0 , a_1 , a_2 , a_3 , dots.c chevron.r$ ；
 - 普通生成函数转换为指数生成函数：系数乘以 $n !$ ；
-- $1 + x + frac(x^2, 2 !) + frac(x^3, 3 !) + dots.c . = "exp" x$ ；
+- $1 + x + frac(x^2, 2 !) + frac(x^3, 3 !) + dots.c = "exp" x$ ；
 - 长度为 $n$ 的循环置换数为 $P (x) = - "ln" (1 - x)$，长度为 n 的置换数为 $"exp" P (x) = frac(1, 1 - x)$（注意是#strong[指数];生成函数）
   - $n$ 个点的生成树个数是 $P (x) = sum_(n = 1)^oo n^(n - 2) frac(x^n, n !)$，n 个点的生成森林个数是 $"exp" P (x)$ ；
   - $n$ 个点的无向连通图个数是 $P (x)$，n 个点的无向图个数是 $"exp" P (x) = sum_(n = 0)^oo 2^(1 / 2 n (n - 1)) frac(x^n, n !)$ ；
