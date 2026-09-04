@@ -6,4 +6,5 @@ cd "$(dirname "$0")"
 
 mkdir -p build
 typst compile --root . --font-path export/vendor/jetbrains-mono main.typ build/total.pdf
+python3 export/flatten-pdf-dests.py build/total.pdf
 echo "build/total.pdf"

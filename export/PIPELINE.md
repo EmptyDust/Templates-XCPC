@@ -35,6 +35,8 @@ Read this section before touching the theme. Every entry is a bug that actually 
 
 5. **pdfinfo (poppler) prints `Syntax Error: Suspects object is wrong type (boolean)` on Typst-produced PDFs.** The entry is `/MarkInfo/Suspects false`, which is spec-valid boolean for tagged PDF; poppler emits a spurious strictness warning. Ghostscript, mutool, pdftotext, pdffonts all read the file cleanly. Benign.
 
+6. **TOC clicks fail on CJK entries.** Typst stores outline links as named destinations, mixing UTF-8 byte names and PDFDocEncoding strings. Viewers often resolve `bitset` and miss `判断非递减 is_sorted`. `export/flatten-pdf-dests.py` rewrites those `/Dest` names to explicit `[page /XYZ …]` arrays after compile. Sidebar bookmarks already use direct dests and do not need this.
+
 ## Upgrade procedure
 
 After upgrading typst, rebuild the whole book and run the gate:
