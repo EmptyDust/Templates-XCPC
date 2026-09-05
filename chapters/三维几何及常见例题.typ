@@ -16,7 +16,7 @@
 
 === 其他函数
 <其他函数>
-长度、单位化、混合积。混积 $[a , b , c] = a dot.op (b times c)$ 是定向体积。
+长度、单位化、混合积。混积 $[a , b , c] = a dot (b times c)$ 是定向体积。
 
 #include-code("code/三维几何及常见例题/其他函数.cpp")
 
@@ -214,7 +214,7 @@ ld planeCos(Plane s1, Plane s2) {
 
 === 直线与平面夹角的 sin 值
 <直线与平面夹角的-sin-值>
-方向与法向夹角的余角。$"sin" theta = lr(|d dot.op n|) \/ (lr(|d|) lr(|n|))$。
+方向与法向夹角的余角。$"sin" theta = lr(|d dot n|) \/ (lr(|d|) lr(|n|))$。
 
 ```cpp
 ld linePlaneSin(L3 l, Plane s) {
@@ -229,7 +229,7 @@ ld linePlaneSin(L3 l, Plane s) {
 
 === 正 N 棱锥体积公式
 <正-n-棱锥体积公式>
-棱锥通用体积公式 $V = 1 / 3 S h$ ，当其恰好是棱长为 $l$ 的正 $n$ 棱锥时，有公式 $V = frac(l^3 dot.op n, 12 tan pi / n) dot.op sqrt(1 - frac(1, 4 dot.op "sin"^2 pi / n))$。
+棱锥通用体积公式 $V = 1 / 3 S h$ ，当其恰好是棱长为 $l$ 的正 $n$ 棱锥时，有公式 $V = frac(l^3 dot n, 12 tan pi / n) dot sqrt(1 - frac(1, 4 dot "sin"^2 pi / n))$。
 
 ```cpp
 ld V(ld l, int n) {  // 正n棱锥体积公式
@@ -290,7 +290,7 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 <平面几何结论归档>
 - `hypot` 函数可以直接计算直角三角形的斜边长；
 
-- #strong[边心距];是指正多边形的外接圆圆心到正多边形某一边的距离，边长为 $s$ 的正 $n$ 角形的边心距公式为 $a = frac(t, 2 dot.op tan pi / n)$ ，外接圆半径为 $R$ 的正 $n$ 角形的边心距公式为 $a = R dot.op "cos" pi / n$ ；
+- #strong[边心距];是指正多边形的外接圆圆心到正多边形某一边的距离，边长为 $s$ 的正 $n$ 角形的边心距公式为 $a = frac(t, 2 dot tan pi / n)$ ，外接圆半径为 $R$ 的正 $n$ 角形的边心距公式为 $a = R dot "cos" pi / n$ ；
 
 - #strong[三角形外接圆半径];为 $frac(a, 2 "sin" A) = frac(a b c, 4 S)$ ，其中 $S$ 为三角形面积，内切圆半径为 $frac(2 S, a + b + c)$；
 
@@ -306,19 +306,19 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 
 - 在平面上有奇数个点 $A_0 , A_1 , dots.h , A_n$ 以及一个点 $X_0$ ，构造 $X_1$ 使得 $X_0 , X_1$ 关于 $A_0$ 对称、构造 $X_2$ 使得 $X_1 , X_2$ 关于 $A_1$ 对称、……、构造 $X_j$ 使得 $X_(j - 1) , X_j$ 关于 $A_((j - 1) mod med n)$ 对称。那么周期为 $2 n$ ，即 $A_0$ 与 $A_(2 n)$ 共点、$A_1$ 与 $A_(2 n + 1)$ 共点 #link("https://codeforces.com/contest/24/problem/C")[See] 。
 
-- 已知 $A med (x_A , y_A)$ 和 $X med (x_X , y_X)$ 两点及这两点的坐标，构造 $Y$ 使得 $X , Y$ 关于 $A$ 对称，那么 $Y$ 的坐标为 $(2 dot.op x_A - x_X , 2 dot.op y_A - y_X)$ 。
+- 已知 $A med (x_A , y_A)$ 和 $X med (x_X , y_X)$ 两点及这两点的坐标，构造 $Y$ 使得 $X , Y$ 关于 $A$ 对称，那么 $Y$ 的坐标为 $(2 dot x_A - x_X , 2 dot y_A - y_X)$ 。
 
 - #strong[海伦公式];：已知三角形三边长 $a , b$ 和 $c$ ，定义 $p = frac(a + b + c, 2)$ ，则 $S_triangle.stroked.t = sqrt(p (p - a) (p - b) (p - c))$ ，在使用时需要注意越界问题，本质是铅锤定理，一般多使用叉乘计算三角形面积而不使用该公式。
 
-- 棱台体积 $V = 1 / 3 (S_1 + S_2 + sqrt(S_1 S_2)) dot.op h$，其中 $S_1 , S_2$ 为上下底面积。
+- 棱台体积 $V = 1 / 3 (S_1 + S_2 + sqrt(S_1 S_2)) dot h$，其中 $S_1 , S_2$ 为上下底面积。
 
-- 正棱台侧面积 $1 / 2 (C_1 + C_2) dot.op L$，其中 $C_1 , C_2$ 为上下底周长，$L$ 为斜高（上下底对应的平行边的距离）。
+- 正棱台侧面积 $1 / 2 (C_1 + C_2) dot L$，其中 $C_1 , C_2$ 为上下底周长，$L$ 为斜高（上下底对应的平行边的距离）。
 
 - 球面积 $4 pi r^2$，体积 $4 / 3 pi r^3$。
 
 - 正三角形面积 $frac(sqrt(3) a^2, 4)$，正四面体面积 $frac(sqrt(2) a^3, 12)$。
 
-- 设扇形对应的圆心角弧度为 $theta$ ，则面积为 $S = theta / 2 dot.op R^2$ 。
+- 设扇形对应的圆心角弧度为 $theta$ ，则面积为 $S = theta / 2 dot R^2$ 。
 
 === 立体几何结论归档
 <立体几何结论归档>

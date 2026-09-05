@@ -38,7 +38,7 @@ auto operator<=>(const V &) const = default;
 
 == 阿达马矩阵 \(Hadamard matrix)
 <阿达马矩阵-hadamard-matrix>
-构造题用，其有一些性质：将 $0$ 看作 $- 1$；$1$ 看作 $+ 1$，整个矩阵可以构成一个 $2^k$ 维向量组，任意两个行、列向量的点积均为 $0$ #link("https://codeforces.com/contest/610/problem/C")[See];。例如，在 $k = 2$ 时行向量 $arrow(2)$ 和行向量 $arrow(3)$ 的点积为 $1 dot.op 1 + (- 1) dot.op 1 + 1 dot.op (- 1) + (- 1) dot.op (- 1) = 0$ 。
+构造题用，其有一些性质：将 $0$ 看作 $- 1$；$1$ 看作 $+ 1$，整个矩阵可以构成一个 $2^k$ 维向量组，任意两个行、列向量的点积均为 $0$ #link("https://codeforces.com/contest/610/problem/C")[See];。例如，在 $k = 2$ 时行向量 $arrow(2)$ 和行向量 $arrow(3)$ 的点积为 $1 dot 1 + (- 1) dot 1 + 1 dot (- 1) + (- 1) dot (- 1) = 0$ 。
 
 $k = 1$ 时行为 `11`、`10`；$k = 2$ 时行为 `1111`、`1010`、`1100`、`1001`。
 
@@ -157,7 +157,7 @@ int week(int y,int m,int d){
 
 == 高精度快速幂
 <高精度快速幂>
-求解 $n^k med mod med p$，其中 $0 lt.eq n , k lt.eq 10^1000000 , med 1 lt.eq p lt.eq 10^9$。容易发现 $n$ 可以直接取模，瓶颈在于 $k$ #link("https://codeforces.com/contest/17/problem/D")[See];。
+求解 $n^k mod p$，其中 $0 lt.eq n , k lt.eq 10^1000000 , med 1 lt.eq p lt.eq 10^9$。容易发现 $n$ 可以直接取模，瓶颈在于 $k$ #link("https://codeforces.com/contest/17/problem/D")[See];。
 
 === 魔改十进制快速幂（暴力计算）
 <魔改十进制快速幂暴力计算>
@@ -167,8 +167,8 @@ int week(int y,int m,int d){
 
 === 扩展欧拉定理（欧拉降幂公式）
 <扩展欧拉定理欧拉降幂公式>
-$ n^k equiv {n^(k med mod med phi (p)) & "gcd" (n , p) = 1\
-n^(k med mod med phi (p) + phi (p)) & "gcd" (n , p) eq.not 1 and k gt.eq phi (p)\
+$ n^k equiv {n^(k mod phi (p)) & "gcd" (n , p) = 1\
+n^(k mod phi (p) + phi (p)) & "gcd" (n , p) eq.not 1 and k gt.eq phi (p)\
 n^k & "gcd" (n , p) eq.not 1 and k < phi (p) $
 
 最终我们可以将幂降到 $phi (p)$ 的级别，使得能够直接使用快速幂解题，复杂度瓶颈在求解欧拉函数 $cal(O)(sqrt(p))$ 。

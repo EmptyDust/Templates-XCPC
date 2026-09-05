@@ -12,7 +12,7 @@
 
 === 高斯消元法
 <高斯消元法>
-线性基封装。设位长为 `BASE`（一般取 $63$，循环用到 $0 dots.c 62$），插入 $M$ 个数复杂度 $cal(O)(M dot.op "BASE")$。`insert` 失败则能异或出 $0$（`flag=1`）。`kthquery` 前必须先 `rebuild()`。
+线性基封装。设位长为 `BASE`（一般取 $63$，循环用到 $0 dots.c 62$），插入 $M$ 个数复杂度 $cal(O)(M dot "BASE")$。`insert` 失败则能异或出 $0$（`flag=1`）。`kthquery` 前必须先 `rebuild()`。
 
 #include-code("code/线性代数/高斯消元法.cpp")
 

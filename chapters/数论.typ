@@ -157,13 +157,13 @@ $ a = p_1^(alpha_1) p_2^(alpha_2) dots.h.c p_s^(alpha_s) , p_1 < p_2 < dots.h.c 
 
 == 同余
 <同余>
-#strong[定义] 设整数 $m eq.not 0$。若 $m divides (a - b)$，称 $m$ 为 #strong[模数];（#strong[模];），$a$ 同余于 $b$ 模 $m$，$b$ 是 $a$ 对模 $m$ 的 #strong[剩余];。记作 $a equiv b med \( mod med m \)$。
+#strong[定义] 设整数 $m eq.not 0$。若 $m divides (a - b)$，称 $m$ 为 #strong[模数];（#strong[模];），$a$ 同余于 $b$ 模 $m$，$b$ 是 $a$ 对模 $m$ 的 #strong[剩余];。记作 $a equiv b (mod m)$。
 
-否则，$a$ 不同余于 $b$ 模 $m$，$b$ 不是 $a$ 对模 $m$ 的剩余。记作 $a equiv.not b med \( mod med m \)$。
+否则，$a$ 不同余于 $b$ 模 $m$，$b$ 不是 $a$ 对模 $m$ 的剩余。记作 $a equiv.not b (mod m)$。
 
 这样的等式，称为模 $m$ 的同余式，简称 #strong[同余式];。
 
-根据整除的性质，上述同余式也等价于 $a equiv b med \( mod med (- m) \)$。
+根据整除的性质，上述同余式也等价于 $a equiv b (mod (- m) \)$。
 
 后文中，如果没有特别说明，模数总是 #strong[正整数];。
 
@@ -172,17 +172,17 @@ $ a = p_1^(alpha_1) p_2^(alpha_2) dots.h.c p_s^(alpha_s) , p_1 < p_2 < dots.h.c 
 同余的性质：
 
 - 同余是等价关系，即同余具有
-  - 自反性：$a equiv a med \( mod med m \)$。
-  - 对称性：若 $a equiv b med \( mod med m \)$，则 $b equiv a med \( mod med m \)$。
-  - 传递性：若 $a equiv b med \( mod med m \) , b equiv c med \( mod med m \)$，则 $a equiv c med \( mod med m \)$。
-- 线性运算：若 $a , b , c , d in bold(Z) , m in bold(N)^(\*) , a equiv b med \( mod med m \) , c equiv d med \( mod med m \)$ 则有：
-  - $a plus.minus c equiv b plus.minus d med \( mod med m \)$。
-  - $a times c equiv b times d med \( mod med m \)$。
-- 设 $f (x) = sum_(i = 0)^n a_i x^i$ 和 $g (x) = sum_(i = 0)^n b_i x^i$ 是两个整系数多项式，$m in bold(N)^(\*)$，且 $a_i equiv b_i med \( mod med m \) , med 0 lt.eq i lt.eq n$，则对任意整数 $x$ 均有 $f (x) equiv g (x) med \( mod med m \)$。进而若 $s equiv t med \( mod med m \)$，则 $f (s) equiv g (t) med \( mod med m \)$。
-- 若 $a , b in bold(Z) , k , m in bold(N)^(\*) , a equiv b med \( mod med m \)$, 则 $a k equiv b k med \( mod med m k \)$。
-- 若 $a , b in bold(Z) , d , m in bold(N)^(\*) , d divides a , d divides b , d divides m$，则当 $a equiv b med \( mod med m \)$ 成立时，有 $a / d equiv b / d (med mod med m / d)$。
-- 若 $a , b in bold(Z) , d , m in bold(N)^(\*) , d divides m$，则当 $a equiv b med \( mod med m \)$ 成立时，有 $a equiv b med \( mod med d \)$。
-- 若 $a , b in bold(Z) , d , m in bold(N)^(\*)$，则当 $a equiv b med \( mod med m \)$ 成立时，有 $(a , m) = (b , m)$。若 $d$ 能整除 $m$ 及 $a , b$ 中的一个，则 $d$ 必定能整除 $a , b$ 中的另一个。
+  - 自反性：$a equiv a (mod m)$。
+  - 对称性：若 $a equiv b (mod m)$，则 $b equiv a (mod m)$。
+  - 传递性：若 $a equiv b (mod m) , b equiv c (mod m)$，则 $a equiv c (mod m)$。
+- 线性运算：若 $a , b , c , d in bold(Z) , m in bold(N)^(\*) , a equiv b (mod m) , c equiv d (mod m)$ 则有：
+  - $a plus.minus c equiv b plus.minus d (mod m)$。
+  - $a times c equiv b times d (mod m)$。
+- 设 $f (x) = sum_(i = 0)^n a_i x^i$ 和 $g (x) = sum_(i = 0)^n b_i x^i$ 是两个整系数多项式，$m in bold(N)^(\*)$，且 $a_i equiv b_i (mod m) , med 0 lt.eq i lt.eq n$，则对任意整数 $x$ 均有 $f (x) equiv g (x) (mod m)$。进而若 $s equiv t (mod m)$，则 $f (s) equiv g (t) (mod m)$。
+- 若 $a , b in bold(Z) , k , m in bold(N)^(\*) , a equiv b (mod m)$, 则 $a k equiv b k (mod m k)$。
+- 若 $a , b in bold(Z) , d , m in bold(N)^(\*) , d divides a , d divides b , d divides m$，则当 $a equiv b (mod m)$ 成立时，有 $a / d equiv b / d (mod m / d)$。
+- 若 $a , b in bold(Z) , d , m in bold(N)^(\*) , d divides m$，则当 $a equiv b (mod m)$ 成立时，有 $a equiv b (mod d)$。
+- 若 $a , b in bold(Z) , d , m in bold(N)^(\*)$，则当 $a equiv b (mod m)$ 成立时，有 $(a , m) = (b , m)$。若 $d$ 能整除 $m$ 及 $a , b$ 中的一个，则 $d$ 必定能整除 $a , b$ 中的另一个。
 
 还有性质是乘法逆元，见 #link(<逆元>)[逆元];。
 
@@ -195,22 +195,22 @@ $ a = p_1^(alpha_1) p_2^(alpha_2) dots.h.c p_s^(alpha_s) , p_1 < p_2 < dots.h.c 
 - $A + B := { a + b : a in A , b in B }$；
 - $A B := { a b : a in A , b in B }$。
 
-#strong[同余类] 对非零整数 $m$，把全体整数分成 $lr(|m|)$ 个两两不交的集合，且同一个集合中的任意两个数模 $m$ 均同余，我们把这 $lr(|m|)$ 个集合均称为模 $m$ 的 #strong[同余类] 或 #strong[剩余类];。用 $r med mod med m$ 表示含有整数 $r$ 的模 $m$ 的同余类。
+#strong[同余类] 对非零整数 $m$，把全体整数分成 $lr(|m|)$ 个两两不交的集合，且同一个集合中的任意两个数模 $m$ 均同余，我们把这 $lr(|m|)$ 个集合均称为模 $m$ 的 #strong[同余类] 或 #strong[剩余类];。用 $r mod m$ 表示含有整数 $r$ 的模 $m$ 的同余类。
 
 不难证明对任意非零整数 $m$，上述划分方案一定存在且唯一。
 
 由同余类的定义可知：
 
-- $r med mod med m = { r + k m : k in bold(Z) }$；
-- $r med mod med m = s med mod med m arrow.l.r.double r equiv s med \( mod med m \)$；
-- 对任意 $r , s in bold(Z)$，要么 $r med mod med m = s med mod med m$，要么 $(r med mod med m) inter (s med mod med m) = diameter$；
+- $r mod m = { r + k m : k in bold(Z) }$；
+- $r mod m = s mod m arrow.l.r.double r equiv s (mod m)$；
+- 对任意 $r , s in bold(Z)$，要么 $r mod m = s mod m$，要么 $(r mod m) inter (s mod m) = diameter$；
 - 若 $m_1 divides m$，则对任意整数 $r$ 均有 $r + m bold(Z) subset.eq r + m_1 bold(Z)$。
 
 注意到同余是等价关系，所以同余类即为同余关系的等价类。
 
 我们把模 $m$ 的同余类全体构成的集合记为 $bold(Z)_m$，即
 
-$ bold(Z)_m := { r med mod med m : 0 lt.eq r < m } $
+$ bold(Z)_m := { r mod m : 0 lt.eq r < m } $
 
 不难发现：
 
@@ -242,15 +242,15 @@ $ bold(Z)_m := { r med mod med m : 0 lt.eq r < m } $
 
 - 在模 $m$ 的任意一个同余类中，任取两个整数 $a_1 , a_2$ 均有 $(a_1 , m) = (a_2 , m)$。
 
-考虑同余类 $r med mod med m$，若 $(r , m) = 1$，则该同余类的所有元素均与 $m$ 互质，这说明我们也许可以通过类似方式得知所有与 $m$ 互质的整数构成的集合的结构。
+考虑同余类 $r mod m$，若 $(r , m) = 1$，则该同余类的所有元素均与 $m$ 互质，这说明我们也许可以通过类似方式得知所有与 $m$ 互质的整数构成的集合的结构。
 
-#strong[既约同余类] 对同余类 $r med mod med m$，若 $(r , m) = 1$，则称该同余类为 #strong[既约同余类] 或 #strong[既约剩余类];。
+#strong[既约同余类] 对同余类 $r mod m$，若 $(r , m) = 1$，则称该同余类为 #strong[既约同余类] 或 #strong[既约剩余类];。
 
 我们把模 $m$ 既约剩余类的个数记作 $phi (m)$，称其为 Euler 函数（欧拉函数，见 #link(<欧拉函数>)[后节];）。
 
 我们把模 $m$ 的既约同余类全体构成的集合记为 $bold(Z)_m^(\*)$，即
 
-$ bold(Z)_m^(\*) := { r med mod med m : 0 lt.eq r < m , (r , m) = 1 } $
+$ bold(Z)_m^(\*) := { r mod m : 0 lt.eq r < m , (r , m) = 1 } $
 
 #strong[Warning] 对于任意的整数 $a$ 和与 $m$ 互质的整数 $b$，$b bold(Z)_m^(\*) = bold(Z)_m^(\*)$，但是 $a + bold(Z)_m^(\*)$ 不一定为 $bold(Z)_m^(\*)$。这一点与 $bold(Z)_m$ 不同。
 
@@ -281,13 +281,13 @@ $ Z_m = sum_(i = 1)^k (product_(j = 1)^(i - 1) m_j) Z_(m_i) . $
 
 为模 $m$ 的 #strong[完全] 剩余系。
 
-#strong[证明] 只需证明对任意满足 $a x + m_1 y equiv a x prime + m_1 y prime med \( mod med m_1 m_2 \)$ 的 $x , x prime in Z_(m_1)$，$y , y prime in Z_(m_2)$，都有：
+#strong[证明] 只需证明对任意满足 $a x + m_1 y equiv a x prime + m_1 y prime (mod m_1 m_2)$ 的 $x , x prime in Z_(m_1)$，$y , y prime in Z_(m_2)$，都有：
 
 $ a x + m_1 y = a x prime + m_1 y prime . $
 
-实际上，由 $m_1 divides m_1 m_2$，我们有 $a x + m_1 y equiv a x prime + m_1 y prime med \( mod med m_1 \)$，进而 $a x equiv a x prime med \( mod med m_1 \)$，由 $(a , m_1) = 1$ 可知 $x equiv x prime med \( mod med m_1 \)$，进而有 $x = x prime$。
+实际上，由 $m_1 divides m_1 m_2$，我们有 $a x + m_1 y equiv a x prime + m_1 y prime (mod m_1)$，进而 $a x equiv a x prime (mod m_1)$，由 $(a , m_1) = 1$ 可知 $x equiv x prime (mod m_1)$，进而有 $x = x prime$。
 
-进一步，$m_1 y equiv m_1 y prime med \( mod med m_1 m_2 \)$，则 $y equiv y prime med \( mod med m_2 \)$，即 $y = y prime$。
+进一步，$m_1 y equiv m_1 y prime (mod m_1 m_2)$，则 $y equiv y prime (mod m_2)$，即 $y = y prime$。
 
 因此，
 
@@ -363,7 +363,7 @@ h (x) & = sum_(d divides x) f (d) g (x / d) $
 - 常数函数：$1 (n) = 1$。（完全积性）
 - 除数函数：$sigma_k (n) = sum_(d divides n) d^k$。$sigma_0 (n)$ 通常简记作 $d (n)$ 或 $tau (n)$，$sigma_1 (n)$ 通常简记作 $sigma (n)$。
 - 欧拉函数：$phi (n) = sum_(i = 1)^n [(i , n) = 1]$。
-- 莫比乌斯函数：$mu (n) = cases(delim: "{", 1 & n = 1, 0 & exists d > 1 , d^2 divides n, (- 1)^(omega (n)) & upright("otherwise"))$，其中 $omega (n)$ 表示 $n$ 的本质不同质因子个数。
+- 莫比乌斯函数：$mu (n) = cases(1 & n = 1, 0 & exists d > 1 , d^2 divides n, (- 1)^(omega (n)) & upright("otherwise"))$，其中 $omega (n)$ 表示 $n$ 的本质不同质因子个数。
 
 === 加性函数
 <加性函数>
@@ -379,7 +379,7 @@ h (x) & = sum_(d divides x) f (d) g (x / d) $
 
 若 $F (x)$ 为加性函数，则有 $F (x) = sum F (p_i^(k_i))$。
 
-若 $F (x)$ 为完全加性函数，则有 $F (x) = sum F (p_i^(k_i)) = sum F (p_i) dot.op k_i$。
+若 $F (x)$ 为完全加性函数，则有 $F (x) = sum F (p_i^(k_i)) = sum F (p_i) dot k_i$。
 
 ==== 例子
 <例子-1>
@@ -388,8 +388,8 @@ h (x) & = sum_(d divides x) f (d) g (x / d) $
 - 素因数分解中 $p$ 的重数：$nu_p (n) = "max" { k in bold(N) : p^k divides n }$，其中，$p in bold(P)$。（完全加性）
 - 所有质因子数目：$Omega (n) = sum_(p in bold(P)) nu_p (n)$。（完全加性）
 - 相异质因子数目：$omega (n) = sum_(p in bold(P)) [p divides n]$。
-- 所有质因子之和：$a_0 (n) = sum_(p in bold(P)) nu_p (n) dot.op p$。（完全加性）
-- 相异质因子之和：$a_1 (n) = sum_(p in bold(P)) [p divides n] dot.op p$。
+- 所有质因子之和：$a_0 (n) = sum_(p in bold(P)) nu_p (n) dot p$。（完全加性）
+- 相异质因子之和：$a_1 (n) = sum_(p in bold(P)) [p divides n] dot p$。
 
 == 取整函数
 <取整函数>
@@ -554,7 +554,7 @@ $10^18$ 量级的 `a * b % m` 直接乘会溢出，用二分拆开或 128 位中
 
 === 借助浮点数实现
 <借助浮点数实现>
-$cal(O)(1)$ 计算 $a dot.op b med mod med m$，常数比 int128 法小很多。其中 $1 lt.eq a , b , m lt.eq 10^18$。
+$cal(O)(1)$ 计算 $a dot b mod m$，常数比 int128 法小很多。其中 $1 lt.eq a , b , m lt.eq 10^18$。
 
 ```cpp
 LL mul(LL a, LL b, LL m) {
@@ -602,13 +602,13 @@ $a x + b y = c med (x in Z^* , y in Z^*)$ 成立的充要条件是 $"gcd"(a , b)
 
 == 逆元
 <逆元>
-满足 $a x equiv 1 med \( mod med m \)$ 的 $x$，用来把除法变乘法。存在当且仅当 $"gcd" (a , m) = 1$。模质数用费马 $a^(p - 2)$；一般模用 exgcd；要 $1 dots.c n$ 全部逆元用线性递推。
+满足 $a x equiv 1 (mod m)$ 的 $x$，用来把除法变乘法。存在当且仅当 $"gcd" (a , m) = 1$。模质数用费马 $a^(p - 2)$；一般模用 exgcd；要 $1 dots.c n$ 全部逆元用线性递推。
 
 === 费马小定理解（借助快速幂）
 <费马小定理解借助快速幂>
-若 $p$ 为素数，$"gcd" (a , p) = 1$，则 $a^(p - 1) equiv 1 med \( mod med p \)$。
+若 $p$ 为素数，$"gcd" (a , p) = 1$，则 $a^(p - 1) equiv 1 (mod p)$。
 
-另一个形式：对于任意整数 $a$，有 $a^p equiv a med \( mod med p \)$。
+另一个形式：对于任意整数 $a$，有 $a^p equiv a (mod p)$。
 
 单次计算的复杂度即为快速幂的复杂度 $cal(O)("log" X)$ 。限制：$"MOD"$ 必须是质数，且需要满足 $x$ 与 $"MOD"$ 互质。
 
@@ -641,7 +641,7 @@ LL getInv(int a, int mod) {  //求a在mod下的逆元，不存在逆元返回-1
 
 === 离线求解：线性递推解
 <离线求解线性递推解>
-以 $cal(O)(N)$ 的复杂度完成 $1 - N$ 中全部逆元的计算。#strong[仅当 $p$ 为素数时成立。];由 $p = ⌊ p \/ i ⌋ dot.op i + (p med mod med i) equiv 0 med \( mod med p \)$ 解出 $"inv" [i] = - ⌊ p \/ i ⌋ dot.op "inv" [p med mod med i]$，代码里的 $p - p \/ i$ 是保持非负的等价写法。
+以 $cal(O)(N)$ 的复杂度完成 $1 - N$ 中全部逆元的计算。#strong[仅当 $p$ 为素数时成立。];由 $p = ⌊ p \/ i ⌋ dot i + (p mod i) equiv 0 (mod p)$ 解出 $"inv" [i] = - ⌊ p \/ i ⌋ dot "inv" [p mod i]$，代码里的 $p - p \/ i$ 是保持非负的等价写法。
 
 ```cpp
 inv[1] = 1;
@@ -655,13 +655,13 @@ for (int i = 2; i <= n; i ++ )
 
 #include-code("code/数论/扩展欧几里得-exgcd.cpp")
 
-例题：求解二元一次不定方程 $A dot.op x + B dot.op y = C$ 的正整数解个数。
+例题：求解二元一次不定方程 $A dot x + B dot y = C$ 的正整数解个数。
 
 #include-code("code/数论/扩展欧几里得-exgcd-2.cpp")
 
 == 类欧几里得
 <类欧几里得>
-计算 $sum_(i = 0)^n ⌊frac(a i + b, c)⌋$（可扩展求 $sum i^k ⌊ dot.op ⌋$ 的若干变体）。复杂度 $cal(O)("log" "max" (a , c))$。
+计算 $sum_(i = 0)^n ⌊frac(a i + b, c)⌋$（可扩展求 $sum i^k ⌊ dot ⌋$ 的若干变体）。复杂度 $cal(O)("log" "max" (a , c))$。
 
 $ e u c l i d e a n (a , b , c , n) = sum_(i = 0)^n ⌊frac(a i + b, c)⌋ $
 
@@ -669,13 +669,13 @@ $ e u c l i d e a n (a , b , c , n) = sum_(i = 0)^n ⌊frac(a i + b, c)⌋ $
 
 == 离散对数 bsgs 与 exbsgs
 <离散对数-bsgs-与-exbsgs>
-以 $cal(O)(sqrt(P))$ 的复杂度求解 $a^x equiv b (med mod med P)$ 。其中标准 BSGS 算法不能计算 $a$ 与 $"MOD"$ 互质的情况，而 exbsgs 则可以。
+以 $cal(O)(sqrt(P))$ 的复杂度求解 $a^x equiv b (mod P)$ 。其中标准 BSGS 算法不能计算 $a$ 与 $"MOD"$ 互质的情况，而 exbsgs 则可以。
 
 #include-code("code/数论/离散对数-bsgs-与-exbsgs.cpp")
 
 == 欧拉函数
 <欧拉函数>
-$phi (n)$：$1 dots.c n$ 中与 $n$ 互质的个数。$n = product p_i^(k_i)$ 则 $phi (n) = n product (1 - 1 \/ p_i)$。欧拉定理：$a^(phi (n)) equiv 1 med \( mod med n \)$（$"gcd" (a , n) = 1$），用来降幂。
+$phi (n)$：$1 dots.c n$ 中与 $n$ 互质的个数。$n = product p_i^(k_i)$ 则 $phi (n) = n product (1 - 1 \/ p_i)$。欧拉定理：$a^(phi (n)) equiv 1 (mod n)$（$"gcd" (a , n) = 1$），用来降幂。
 
 === 直接求解单个数的欧拉函数
 <直接求解单个数的欧拉函数>
@@ -782,7 +782,7 @@ $ a^b equiv a^(b thin mod thin phi (m) + phi (m)) (mod thin m) $
 
 式子仅在 $phi (m) lt.eq b$ 时成立。
 
-下面板子解决”指数 $b$ 以字符串给出（大到无法读入整数）“的场景：`read(MOD)` 边读边对 `MOD=φ(m)` 取模，同时用 `large_enough` 记录 $b gt.eq phi (m)$ 是否成立；最后按上式计算 $a^(b + phi (m)) med mod med m$。
+下面板子解决”指数 $b$ 以字符串给出（大到无法读入整数）“的场景：`read(MOD)` 边读边对 `MOD=φ(m)` 取模，同时用 `large_enough` 记录 $b gt.eq phi (m)$ 是否成立；最后按上式计算 $a^(b + phi (m)) mod m$。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -876,7 +876,7 @@ bool is_prime(int n) {
 
 == 同余方程组、拓展中国剩余定理 excrt
 <同余方程组拓展中国剩余定理-excrt>
-求解方程组 $x equiv a_i med \( mod med b_i \)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv "ans" med \( mod med M \)$ 与新方程 $x equiv a_i med \( mod med b_i \)$ 消元成 $M dot.op k equiv a_i - "ans" med \( mod med b_i \)$，用 exgcd 解出 $k$。复杂度 $cal(O)(n "log")$。
+求解方程组 $x equiv a_i (mod b_i)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv "ans" (mod M)$ 与新方程 $x equiv a_i (mod b_i)$ 消元成 $M dot k equiv a_i - "ans" (mod b_i)$，用 exgcd 解出 $k$。复杂度 $cal(O)(n "log")$。
 
 ```cpp
 int n; LL ai[maxn], bi[maxn];
@@ -917,7 +917,7 @@ int main() {
 
 == 求解连续按位异或
 <求解连续按位异或>
-两段等价：$0 xor 1 xor dots.h xor n$ 按 $n med mod med 4$ 分类取 $n , 1 , n + 1 , 0$。复杂度 $cal(O)(1)$。第一版用位运算技巧，第二版直观。
+两段等价：$0 xor 1 xor dots.h xor n$ 按 $n mod 4$ 分类取 $n , 1 , n + 1 , 0$。复杂度 $cal(O)(1)$。第一版用位运算技巧，第二版直观。
 
 ```cpp
 unsigned xor_n(unsigned n) {
@@ -1025,7 +1025,7 @@ int main() {
 <矩阵加速>
 矩阵快速幂优化线性递推的示例：递推式 $f (n) = f (n - 1) + f (n - 3)$（初值 $f (1) = f (2) = f (3) = 1$）。转移矩阵为
 
-$ mat(delim: "(", 1, 0, 1; 1, 0, 0; 0, 1, 0) , #h(2em) vec(f (n), f (n - 1), f (n - 2)) = mat(delim: "(", 1, 0, 1; 1, 0, 0; 0, 1, 0)^(n - 3) vec(1, 1, 1) $
+$ mat(1, 0, 1; 1, 0, 0; 0, 1, 0) , #h(2em) vec(f (n), f (n - 1), f (n - 2)) = mat(1, 0, 1; 1, 0, 0; 0, 1, 0)^(n - 3) vec(1, 1, 1) $
 
 复杂度 $cal(O)(k^3 "log" n)$，$k$ 为状态数（此处 3）。
 
@@ -1033,10 +1033,10 @@ $ mat(delim: "(", 1, 0, 1; 1, 0, 0; 0, 1, 0) , #h(2em) vec(f (n), f (n - 1), f (
 
 == 莫比乌斯函数/反演
 <莫比乌斯函数反演>
-莫比乌斯函数定义：$mu (n) = cases(delim: "{", 1 & n = 1, (- 1)^k & n upright(" 为 ") k upright(" 个互异素数之积"), 0 & upright("else"))$ 。（原文”$p_i$ 互质”意为 $p_i$ 两两不同）
+莫比乌斯函数定义：$mu (n) = cases(1 & n = 1, (- 1)^k & n upright(" 为 ") k upright(" 个互异素数之积"), 0 & upright("else"))$ 。（原文”$p_i$ 互质”意为 $p_i$ 两两不同）
 
 #quote(block: true)[
-莫比乌斯函数性质：对于任意正整数 $n$ 满足 $sum_(d \| n) mu (d) = cases(delim: "{", 1 & n = 1, 0 & n eq.not 1)$ ；$sum_(d \| n) frac(mu (d), d) = frac(phi (n), n)$ 。
+莫比乌斯函数性质：对于任意正整数 $n$ 满足 $sum_(d \| n) mu (d) = cases(1 & n = 1, 0 & n eq.not 1)$ ；$sum_(d \| n) frac(mu (d), d) = frac(phi (n), n)$ 。
 ]
 
 莫比乌斯反演定义：$F (n)$ 和 $f (n)$ 是定义在非负整数集合上的两个函数，并且满足 $F (n) = sum_(d \| n) f (d)$ ，可得 $f (n) = sum_(d \| n) mu (d) F (⌊n / d⌋)$ 。用于”已知 $F$ 求 $f$“的莫反类题；也可以理解为 $F = f \* 1 arrow.l.r.double f = F \* mu$。
@@ -1093,7 +1093,7 @@ $⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c = ⌊n / r⌋ arrow.l.r.double ⌊n
 
 == Miller - Rabin 素数测试
 <miller---rabin-素数测试>
-以平均 $cal(O)(4 dot.op "log"^3 X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本常数非常优秀，基本可以看作是 $cal(O)(1)$ 。#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 dots.c 37$ 即确定覆盖。
+以平均 $cal(O)(4 dot "log"^3 X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本常数非常优秀，基本可以看作是 $cal(O)(1)$ 。#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 dots.c 37$ 即确定覆盖。
 
 #include-code("code/数论/Miller---Rabin-素数测试.cpp")
 
@@ -1121,7 +1121,7 @@ $⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c = ⌊n / r⌋ arrow.l.r.double ⌊n
 
 === 除法、取模运算的本质
 <除法取模运算的本质>
-有公式：$x div i = ⌊x / i⌋ + x - i dot.op ⌊x / i⌋$ ，$x mod med i = x - i dot.op ⌊x / i⌋$ 。
+有公式：$x div i = ⌊x / i⌋ + x - i dot ⌊x / i⌋$ ，$x mod med i = x - i dot ⌊x / i⌋$ 。
 
 === 与、或、异或
 <与或异或>
@@ -1207,12 +1207,12 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 
 - $F_a divides F_b arrow.l.r.double a divides b$ ；
 - $"gcd" (F_a , F_b) = F_("gcd" (a , b))$ ；
-- 当 $p$ 为 $5 k plus.minus 1$ 型素数时，${F_(p - 1) equiv 0 med \( mod med p \)\
-  F_p equiv 1 med \( mod med p \)\
-  F_(p + 1) equiv 1 med \( mod med p \)$ ；
-- 当 $p$ 为 $5 k plus.minus 2$ 型素数时，${F_(p - 1) equiv 1 med \( mod med p \)\
-  F_p equiv - 1 med \( mod med p \)\
-  F_(p + 1) equiv 0 med \( mod med p \)$ ；
+- 当 $p$ 为 $5 k plus.minus 1$ 型素数时，${F_(p - 1) equiv 0 (mod p)\
+  F_p equiv 1 (mod p)\
+  F_(p + 1) equiv 1 (mod p)$ ；
+- 当 $p$ 为 $5 k plus.minus 2$ 型素数时，${F_(p - 1) equiv 1 (mod p)\
+  F_p equiv - 1 (mod p)\
+  F_(p + 1) equiv 0 (mod p)$ ；
 - $F (n) % m$ 的周期 $lt.eq 6 m$ （ $m = 2 times 5^k$ 时取到等号）；
 - 既是斐波那契数又是平方数的有且仅有 $1 , 144$ 。
 
@@ -1226,14 +1226,14 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 
 - 以下式子成立： $"gcd" (a , m) = "gcd" (a + x , m) arrow.l.r.double "gcd" (a , m) = "gcd" (x , m)$ 。求解上式满足条件的 $x$ 的数量即为求比 $frac(m, "gcd" (a , m))$ 小且与其互质的数的个数，即用欧拉函数求解 $phi #scale(x: 180%, y: 180%)[\(] frac(m, "gcd" (a , m)) #scale(x: 180%, y: 180%)[\)]$ 。
 
-- 已知序列 $a$ ，定义集合 $S = { a_i dot.op a_j med \| med i < j }$ ，现在要求解 $"gcd" (S)$ ，即为求解 $"gcd" (a_j , "gcd" (a_i med \| med i < j))$ ，换句话说，即为求解后缀 $"gcd"$ 。
+- 已知序列 $a$ ，定义集合 $S = { a_i dot a_j med \| med i < j }$ ，现在要求解 $"gcd" (S)$ ，即为求解 $"gcd" (a_j , "gcd" (a_i med \| med i < j))$ ，换句话说，即为求解后缀 $"gcd"$ 。
 
 - 连续四个数互质的情况如下，当 $n$ 为奇数时，$n , n - 1 , n - 2$ 一定互质；而当 $n$ 为偶数时，${n , n - 1 , n - 3 upright("互质") & "gcd" (n , n - 3) = 1 upright("时")\
   n - 1 , n - 2 , n - 3 upright("互质") & "gcd" (n , n - 3) eq.not 1 upright("时")$ #link("https://codeforces.com/problemset/problem/235/A")[See];；
 
-- 由 $a mod med b = (b + a) mod med b = (2 dot.op b + a) mod med b = dots.h = (K dot.op b + a) mod med b$ 可以推广得到 $(a mod med b) mod med c = ((K dot.op b c + a) mod med b) mod med c$ ，由此可以得到一个 $b c$ 的答案周期#link("https://codeforces.com/problemset/problem/1342/C")[See];；
+- 由 $a mod med b = (b + a) mod med b = (2 dot b + a) mod med b = dots.h = (K dot b + a) mod med b$ 可以推广得到 $(a mod med b) mod med c = ((K dot b c + a) mod med b) mod med c$ ，由此可以得到一个 $b c$ 的答案周期#link("https://codeforces.com/problemset/problem/1342/C")[See];；
 
-- 对于长度为 $2 dot.op N$ 的数列 $a$ ，将其任意均分为两个长度为 $N$ 的数列 $p , q$ ，随后对 $p$ 非递减排序、对 $q$ 非递增排序，定义 $f (p , q) = sum_(i = 1)^n lr(|p_i - q_i|)$ ，那么答案为 $a$ 数列前 $N$ 大的数之和减去前 $N$ 小的数之和#link("https://codeforces.com/problemset/problem/1444/B")[See];。
+- 对于长度为 $2 dot N$ 的数列 $a$ ，将其任意均分为两个长度为 $N$ 的数列 $p , q$ ，随后对 $p$ 非递减排序、对 $q$ 非递增排序，定义 $f (p , q) = sum_(i = 1)^n lr(|p_i - q_i|)$ ，那么答案为 $a$ 数列前 $N$ 大的数之和减去前 $N$ 小的数之和#link("https://codeforces.com/problemset/problem/1444/B")[See];。
 
 - 令 ${X = a + b\
   Y = a xor b$ ，#strong[如果];该式子#strong[有解];，那么存在前提条件 ${X gt.eq Y\
@@ -1246,7 +1246,7 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 
 - $x + y = x \| y + x & y$ ，对于两个数字 $x$ 和 $y$ ，如果将 $x$ 变为 $x \| y$ ，同时将 $y$ 变为 $x & y$ ，那么在本质上即将 $x$ 二进制模式下的全部 $1$ 移动到了 $y$ 的对应的位置上 #link("https://codeforces.com/contest/1368/problem/D")[See] 。
 
-- 一个正整数 $x$ 异或、加上另一个正整数 $y$ 后奇偶性不发生变化：$a + b equiv a xor b (med mod med 2)$ #link("https://codeforces.com/contest/1634/problem/B")[See] 。
+- 一个正整数 $x$ 异或、加上另一个正整数 $y$ 后奇偶性不发生变化：$a + b equiv a xor b (mod 2)$ #link("https://codeforces.com/contest/1634/problem/B")[See] 。
 
 == 常见例题
 <常见例题>
@@ -1269,7 +1269,7 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 
 题意：设当前有一个数字为 $x$ ，减去、加上最少的数字使得其能被 $k$ 整除。
 
-最少减去 $x med mod med k$ 这个很好想；最少加上 $(⌈x / k⌉ \* k) med mod med k$ 也比较好想，但是更简便的方法为加上 $k - x med mod med k$ ，这个式子等价于前面这一坨。
+最少减去 $x mod k$ 这个很好想；最少加上 $(⌈x / k⌉ \* k) mod k$ 也比较好想，但是更简便的方法为加上 $k - x mod k$ ，这个式子等价于前面这一坨。
 
 #line(length: 100%)
 
@@ -1277,7 +1277,7 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 
 结论 1：$k$ 合法当且仅当 `__builtin_popcountll(n) <= k && k <= n` ，显然。
 
-结论 2：$2^(k + 1) = 2 dot.op 2^k$ ，所以我们可以将二进制位看作是数组，然后从高位向低位推，一个高位等于两个低位，直到数组之和恰好等于 $k$ ，随后依次输出即可。举例说明，${ 1 , 0 , 0 , 1 } arrow.r { 0 , 2 , 0 , 1 } arrow.r { 0 , 1 , 2 , 1 }$ ，即答案为 $0$ 个 $2^3$ 、$1$ 个 $2^2$ 、……。
+结论 2：$2^(k + 1) = 2 dot 2^k$ ，所以我们可以将二进制位看作是数组，然后从高位向低位推，一个高位等于两个低位，直到数组之和恰好等于 $k$ ，随后依次输出即可。举例说明，${ 1 , 0 , 0 , 1 } arrow.r { 0 , 2 , 0 , 1 } arrow.r { 0 , 1 , 2 , 1 }$ ，即答案为 $0$ 个 $2^3$ 、$1$ 个 $2^2$ 、……。
 
 #include-code("code/数论/常见例题.cpp")
 
@@ -1285,7 +1285,7 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 
 题意：$n$ 个取值在 $\[ 0 , k \)$ 之间的数之和为 $m$ 的方案数
 
-答案为 $sum_(i = 0)^n - 1^i dot.op binom(n, i) dot.op binom(m - i dot.op k + n - 1, n - 1)$ #link("http://acm.hdu.edu.cn/showproblem.php?pid=6397")[See1] #link("https://codeforces.com/gym/103428/problem/M")[See2];。
+答案为 $sum_(i = 0)^n - 1^i dot binom(n, i) dot binom(m - i dot k + n - 1, n - 1)$ #link("http://acm.hdu.edu.cn/showproblem.php?pid=6397")[See1] #link("https://codeforces.com/gym/103428/problem/M")[See2];。
 
 ```cpp
  Z clac(int n, int k, int m) {

@@ -72,7 +72,7 @@ T cross(Point<T> p1, Point<T> p2, Point<T> p0) { return cross(p1 - p0, p2 - p0);
 
 === 点乘
 <点乘>
-定义公式 $a dot.op b = lr(|a|) lr(|b|) "cos" theta$。（原文写成了 $times$，与叉乘混淆）
+定义公式 $a dot b = lr(|a|) lr(|b|) "cos" theta$。（原文写成了 $times$，与叉乘混淆）
 
 ```cpp
 template<typename T>  // 点乘
@@ -124,7 +124,7 @@ C++ 三角函数吃弧度。$pi$ 用 `acos(-1)`。
 
 === 弧度角度相互转换
 <弧度角度相互转换>
-$"deg" = "rad" dot.op 180 \/ pi$。
+$"deg" = "rad" dot 180 \/ pi$。
 
 #include-code("code/二维几何/弧度角度相互转换.cpp")
 
@@ -134,7 +134,7 @@ $frac(a, "sin" A) = frac(b, "sin" B) = frac(c, "sin" C) = 2 R$ ，其中 $R$ 为
 
 === 余弦定理（已知三角形三边，求角）
 <余弦定理已知三角形三边求角>
-$"cos" C = frac(a^2 + b^2 - c^2, 2 a b) , "cos" B = frac(a^2 + c^2 - b^2, 2 a c) , "cos" A = frac(b^2 + c^2 - a^2, 2 b c)$。可以借此推导出三角形面积公式 $S_(triangle.stroked.t A B C) = frac(a b dot.op "sin" C, 2) = frac(b c dot.op "sin" A, 2) = frac(a c dot.op "sin" B, 2)$。
+$"cos" C = frac(a^2 + b^2 - c^2, 2 a b) , "cos" B = frac(a^2 + c^2 - b^2, 2 a c) , "cos" A = frac(b^2 + c^2 - a^2, 2 b c)$。可以借此推导出三角形面积公式 $S_(triangle.stroked.t A B C) = frac(a b dot "sin" C, 2) = frac(b c dot "sin" A, 2) = frac(a c dot "sin" B, 2)$。
 
 注意，计算格式是：由 $b , c , a$ 三边求 $angle A$；由 $a , c , b$ 三边求 $angle B$；由 $a , b , c$ 三边求 $angle C$。
 

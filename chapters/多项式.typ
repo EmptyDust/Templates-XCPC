@@ -574,7 +574,7 @@ struct Lagrange {
 
 === 杂
 <杂>
-- 求 $B_i = sum_(k = i)^n C_k^i A_k$，即 $B_i = frac(1, i !) sum_(k = i)^n frac(1, (k - i) !) dot.op k ! A_k$，反转后卷积。
+- 求 $B_i = sum_(k = i)^n C_k^i A_k$，即 $B_i = frac(1, i !) sum_(k = i)^n frac(1, (k - i) !) dot k ! A_k$，反转后卷积。
 - NTT 中，$omega_n =$ `qpow(G,(mod-1)/n))`。
 - 遇到 $sum_(i = 0)^n [i % k = 0] f (i)$ 可以转换为 $sum_(i = 0)^n 1 / k sum_(j = 0)^(k - 1) (omega_k^i)^j f (i)$ 。（单位根卷积）
 - 广义二项式定理 $(1 + x)^alpha = sum_(i = 0)^oo binom(alpha, i) x^i$ 。

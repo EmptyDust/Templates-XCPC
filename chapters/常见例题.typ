@@ -61,7 +61,7 @@ signed main() {
 
 == 选数 \(DFS 解)
 <选数-dfs-解>
-从 $N$ 个整数中任选 $K$ 个相加，枚举组合。$cal(O)(binom(N, K) dot.op K)$。
+从 $N$ 个整数中任选 $K$ 个相加，枚举组合。$cal(O)(binom(N, K) dot K)$。
 
 #include-code("code/常见例题/选数-DFS-解.cpp")
 
@@ -301,7 +301,7 @@ int clac(vector<card> Ali, vector<card> Bob) {
 
 #image("/images/img-01.png")
 
-公式：$(i , j)$ 格所填的内容为 $#scale(x: 120%, y: 120%)[\(] i med mod med 2^N xor ⌊j / 2^M⌋ #scale(x: 120%, y: 120%)[\)] dot.op 2^M + #scale(x: 120%, y: 120%)[\(] ⌊i / 2^N⌋ xor j med mod med 2^M #scale(x: 120%, y: 120%)[\)] + 1$ ，注意 $i , j$ 从 $0$ 开始。
+公式：$(i , j)$ 格所填的内容为 $#scale(x: 120%, y: 120%)[\(] i mod 2^N xor ⌊j / 2^M⌋ #scale(x: 120%, y: 120%)[\)] dot 2^M + #scale(x: 120%, y: 120%)[\(] ⌊i / 2^N⌋ xor j mod 2^M #scale(x: 120%, y: 120%)[\)] + 1$ ，注意 $i , j$ 从 $0$ 开始。
 
 == 高精度进制转换
 <高精度进制转换>
