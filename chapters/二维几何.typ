@@ -538,7 +538,7 @@ template<typename T> Frac<T> slopeEx(Pt p1, Pt p2) {
 返回由三个整数构成的方程，在输入较大时可能找不到较小的满足题意的一组整数解。可以处理平行于 $x , y$ 轴、两点共点的情况。
 
 ```cpp
-template<typename T> tuple<int, int, int> getfun(Lt p) {
+template<typename T> tuple<T, T, T> getfun(Lt p) {
     T A = p.a.y - p.b.y, B = p.b.x - p.a.x, C = p.a.x * A + p.a.y * B;
     if (A < 0) {  // 符号调整
         A = -A, B = -B, C = -C;

@@ -13,7 +13,7 @@
 #include-code("code/基础算法/快速幂与常用函数.cpp")
 
 #quote(block: true)[
-上述 `mypow` 中 `n * n` 在 `n ≥ 2^31` 时溢出：做大模数快速幂时改用 `__int128` 或数论章的防爆模乘。
+`mypow` 的参数与累乘器是 `i64`：模数 $p <= 3 times 10^9$ 时 `n * n` 不溢出；更大的模数改用 `__int128` 或数论章的防爆模乘。
 ]
 
 #include-code("code/基础算法/log2floor.cpp")
