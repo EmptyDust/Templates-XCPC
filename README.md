@@ -2,6 +2,14 @@
 
 XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何……），原生 Typst 编写，直接编译成 PDF。
 
+## 来源与致谢
+
+部分内容源自以下公开模板库，不逐条对应：
+
+- [hh2048/XCPC](https://github.com/hh2048/XCPC)（WIDA 打印稿）——早期 md 底本的主要来源；部分修补对齐其 v1.8.8
+- [fstqwq/Nemesis](https://github.com/fstqwq/Nemesis)（上海交大 2024 WF 打印稿）——虚树板子、网络流建图套路
+- SMU_inch 板——二维几何章的自包含板子
+
 ## 目录结构
 
 - `main.typ` — 入口：章清单（`#include`）、封面与目录、页码编排
