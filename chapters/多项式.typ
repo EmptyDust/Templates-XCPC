@@ -2,6 +2,8 @@
 
 = 多项式
 <多项式>
+多项式全家桶：`Poly` 封装（inv / log / exp / sqrt / pow / 多点求值）、FFT / NTT、Berlekamp-Massey、线性递推求第 $n$ 项、拉格朗日插值与生成函数速查。选型信号：模意义卷积 → NTT；实数卷积 → FFT；数列找最短递推 → BM；生成函数计数 → OGF/EGF 速查表。
+
 默认模数 $998244353$（NTT 模，原根 $3$）。`Poly` / `dft` 依赖 mint（`MInt` / `Z`，见杂项取模类）。`i64` 为 `long long`。
 
 == 线性凸包
@@ -12,7 +14,8 @@
 
 == 多项式封装
 <多项式封装>
-依赖本节后面的 `dft` / `idft` 与 mint `MInt<P>`。默认模 $998244353$。乘法长度够大时走 NTT，否则 $O (n^2)$。`inv/log/exp/sqrt` 的 `m` 是要的前 $m$ 项。`eval` 是多点求值。
+#specline([乘法 #O($n "log" n$)（NTT；长度小时自动退 #O($n^2$) 直接卷）])
+依赖本节后面的 `dft` / `idft` 与 mint `MInt<P>`。默认模 $998244353$。`inv/log/exp/sqrt` 的 `m` 是要的前 $m$ 项。`eval` 是多点求值。
 
 ```cpp
 template<int P = 998244353> struct Poly : public vector<MInt<P>> {
@@ -247,7 +250,9 @@ template<int P = 998244353> struct Poly : public vector<MInt<P>> {
 
 == 离散傅里叶变换 dft 与其逆变换 idft
 <离散傅里叶变换-dft-与其逆变换-idft>
-点值与系数互换：单位根上求值。卷积变成点值相乘再变回。长度必须是 $2$ 的幂。`idft` 里 `(1-P)/n` 在模 $P$ 下等于 $n^(- 1)$。`rev` / `roots` 是全局表，多模数同时用会串。
+点值与系数互换：单位根上求值。卷积变成点值相乘再变回。长度必须是 $2$ 的幂。`idft` 里 `(1-P)/n` 在模 $P$ 下等于 $n^(- 1)$。
+
+#pitfall[`rev` / `roots` 是按模数特化的全局表，多模数同时用会串。]
 
 ```cpp
 vector<int> rev;
@@ -320,7 +325,8 @@ template<int P> constexpr void idft(vector<MInt<P>> &a) {  // 逆变换
 
 == Berlekamp-Massey 算法
 <berlekamp-massey-算法>
-求解数列的最短线性递推式（#strong[不是];杜教筛）。返回多项式 $c$，满足递推；最坏 $cal(O)(N M)$，$N$ 为数列长度，$M$ 为最短递推阶数。
+#specline([最坏 #O($N M$)（$N$ 数列长，$M$ 最短递推阶数）])
+求解数列的最短线性递推式（#strong[不是];杜教筛）。返回多项式 $c$，满足递推。
 
 ```cpp
 template<int P = 998244353> Poly<P> berlekampMassey(const Poly<P> &s) {
@@ -368,7 +374,8 @@ template<int P = 998244353> Poly<P> berlekampMassey(const Poly<P> &s) {
 
 == Linear-Recurrence 算法
 <linear-recurrence-算法>
-已知线性递推，求第 $n$ 项（$0$-index）。`q` 为特征多项式，$p$ 由初值决定。Bostan-Mori，$cal(O)(M^2 "log" n)$ 或配 NTT 更快。$n$ 用 `i64`。
+#specline([#O($M^2 "log" n$)（配 NTT 更快）])
+已知线性递推，求第 $n$ 项（$0$-index）。`q` 为特征多项式，$p$ 由初值决定（Bostan-Mori）。$n$ 用 `i64`。
 
 ```cpp
 template<int P = 998244353> MInt<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n) {
@@ -404,13 +411,13 @@ template<int P = 998244353> MInt<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n
 
 4.系数序列存储在 `solver.ret` 向量中
 
-$cal(O)(N "log" N)$ 。
+#specline([#O($N "log" N$)])
 
 #include-code("code/多项式/快速傅里叶变换-FFT.cpp")
 
 #strong[系数顺序:] 输入系数必须严格按照#strong[升幂顺序];（从 $x^0$ 到 $x^(upright("max_deg"))$）。
 
-#strong[输入参数:] `count(x, y)` 传入的参数是多项式的#strong[最高次数];，而不是系数的数量。
+#pitfall[`count(x, y)` 传入的参数是多项式的#strong[最高次数];，不是系数的数量。]
 
 #strong[精度与范围:]
 
@@ -421,9 +428,8 @@ $cal(O)(N "log" N)$ 。
 
 == 快速数论变换 NTT
 <快速数论变换-ntt>
-模意义卷积，$cal(O)(N "log" N)$。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。
-
-$cal(O)(N "log" N)$ 。
+#specline([#O($N "log" N$)])
+模意义卷积。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。
 
 ```cpp
 struct Polynomial {
@@ -476,15 +482,15 @@ struct Polynomial {
 };
 ```
 
-需要注意的是，最后答案要除以做 DFT/IDFT 的长度，而且做 DFT/IDFT 的长度要一样且是 2 的整数次幂。还有就是做高精度乘法的时候要记得把数组反向。如果 TLE 了可以考虑一些常数优化。
+需要注意的是，如果 TLE 了可以考虑一些常数优化。
+
+#pitfall[最后答案要除以做 DFT/IDFT 的长度；做 DFT/IDFT 的长度要一样且是 $2$ 的整数次幂；做高精度乘法时要记得把数组反向。]
 
 #include-code("code/多项式/快速数论变换-NTT-2.cpp")
 
 == 拉格朗日插值
 <拉格朗日插值>
 $n + 1$ 个点唯一确定最高 $n$ 次多项式。普通情况：$f (k) = sum_(i = 1)^(n + 1) y_i product_(i eq.not j) frac(k - x [j], x [i] - x [j])$ 。下面这块是连续点 $1 dots.c n + 2$ 上对 $i^n$ 前缀和插值（自然数方幂和），不是任意点；依赖 `Z`。
-
-$n + 1$ 个点可以唯一确定一个最高为 $n$ 次的多项式。普通情况：$f (k) = sum_(i = 1)^(n + 1) y_i product_(i eq.not j) frac(k - x [j], x [i] - x [j])$ 。
 
 ```cpp
 struct Lagrange {
