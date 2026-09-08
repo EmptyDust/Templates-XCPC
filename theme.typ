@@ -7,8 +7,11 @@
   set page(
     paper: "a4",
     margin: (x: 36pt, top: 40pt, bottom: 44pt),
-    // 页眉 running head：偶数页书名、奇数页当前章名；章标题页之前无页眉
+    // 页眉 running head：偶数页书名、奇数页当前章名；起章页与首章之前无页眉。
+    // 起章页不放页眉——页眉取的是 here() 之前最后一个章标题，章首会顶着上一章的章名。
     header: context {
+      let heads = query(heading.where(level: 1))
+      if heads.any(h => h.location().page() == here().page()) { return }
       let past = query(heading.where(level: 1).before(here()))
       if past.len() == 0 { return }
       let even = calc.even(counter(page).get().first())
