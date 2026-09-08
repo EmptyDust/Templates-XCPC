@@ -2,15 +2,21 @@
 
 = 数据结构 B
 <数据结构-b>
+数据结构 A 之外的补充：线性 RMQ、珂朵莉树、pbds 平衡树、vector 暴力与若干结论/例题。选型信号：静态 RMQ 卡 log → 线性 RMQ；区间推平为主且数据随机 → 珂朵莉树；要有序集合的排名/前驱后继又不想手写平衡树 → pbds `tree`。
+
 == 基于状压的线性 RMQ 算法
 <基于状压的线性-rmq-算法>
-严格 $cal(O)(N)$ 预处理，$cal(O)(1)$ 查询。查询区间为#strong[左闭右开 $\[ l , r \)$];，仅支持静态数组；`T` 需可用 `cmp` 比较（默认 `less<T>`，取区间最大改为 `greater<T>`）。
+#specline([预处理 #O($N$)（严格）], [查询 #O($1$)])
+查询区间为#strong[左闭右开 $\[ l , r \)$];，仅支持静态数组；`T` 需可用 `cmp` 比较（默认 `less<T>`，取区间最大改为 `greater<T>`）。
 
 #include-code("code/数据结构B/基于状压的线性-RMQ-算法.cpp")
 
 == 珂朵莉树 \(OD Tree)
 <珂朵莉树-od-tree>
-核心是 `split(pos)` 把含 `pos` 的区间拆成两段并返回左端点为 `pos` 的段，`assign(l, r, x)` 把区间推平成一个值——只有大量区间覆盖/推平操作才有收益，#strong[仅在数据随机时复杂度有保证（约 $cal(O)(N "log" "log" N)$），否则可被卡回 $cal(O)(N^2)$];。常用：`add(l,r,x)` 区间加，`kth(l,r,k)` 区间第 $k$ 小，`powersum(l,r,x,mod)` 区间元素 $x$ 次方和模 `mod`。
+#specline([随机数据约 #O($N "log" "log" N$)])
+核心是 `split(pos)` 把含 `pos` 的区间拆成两段并返回左端点为 `pos` 的段，`assign(l, r, x)` 把区间推平成一个值——只有大量区间覆盖/推平操作才有收益。常用：`add(l,r,x)` 区间加，`kth(l,r,k)` 区间第 $k$ 小，`powersum(l,r,x,mod)` 区间元素 $x$ 次方和模 `mod`。
+
+#pitfall[复杂度保证只在数据随机时成立，否则可被构造卡回 #O($N^2$)。]
 
 #include-code("code/数据结构B/珂朵莉树-OD-Tree.cpp")
 
@@ -64,7 +70,8 @@ for (int i = 1, op, x; i <= n; i++) {
 
 == vector 模拟实现平衡二叉树
 <vector-模拟实现平衡二叉树>
-用 `lower_bound` 定位后在中间插入/删除，单次操作 $cal(O)(N)$、总复杂度 $cal(O)(N^2)$，#strong[只适合小数据或暴力骗分];；需要 $cal(O)("log" N)$ 维护有序序列请用 pbds `tree`。
+#specline([单次 #O($N$)], [总计 #O($N^2$)])
+用 `lower_bound` 定位后在中间插入/删除，#strong[只适合小数据或暴力骗分];；需要 $cal(O)("log" N)$ 维护有序序列请用 pbds `tree`。
 
 #include-code("code/数据结构B/vector-模拟实现平衡二叉树.cpp")
 
