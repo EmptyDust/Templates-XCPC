@@ -2,6 +2,8 @@
 
 = 数论
 <数论>
+整除、同余、素数、积性函数，前半是定义与性质速查表，后半是板子。选型信号：模意义除法 → 逆元；$10^18$ 级模乘 → 防爆模乘；大数判素/分解 → Miller-Rabin + Pollard-Rho；积性函数前缀和 → 筛法 / Min25；同余方程组 → excrt。
+
 #quote(block: true)[
 本章前半为定义与性质速查表，后半为板子；代码中 `LL` / `i64` 为 `long long`，`mod` / `MOD` / `p` 为模数，按题目替换。
 ]
@@ -535,7 +537,8 @@ align(center)[#table(
 
 == 欧拉筛 \(线性筛)
 <欧拉筛-线性筛>
-每个合数只被它的#strong[最小质因子];筛掉一次，因此复杂度为 $cal(O)(N)$（埃氏筛是 $cal(O)(N "log" "log" N)$，此处原写有误）。下面的写法同时把最小质因子记录在 `v`/`minp` 中，可用于分解质因数。
+#specline([#O($N$)（埃氏筛为 #O($N "log" "log" N$)，此处原写有误）])
+每个合数只被它的#strong[最小质因子];筛掉一次。下面的写法同时把最小质因子记录在 `v`/`minp` 中，可用于分解质因数。
 
 #include-code("code/数论/欧拉筛-线性筛.cpp")
 
@@ -547,10 +550,9 @@ align(center)[#table(
 
 == 防爆模乘
 <防爆模乘>
-$10^18$ 量级的 `a * b % m` 直接乘会溢出，用二分拆开或 128 位中转。#strong[首选 int128 版];（简单、可移植）；浮点版不依赖 `__int128` 且常数小，但依赖平台 `long double` 的精度：
+$10^18$ 量级的 `a * b % m` 直接乘会溢出，用二分拆开或 128 位中转。#strong[首选 int128 版];（简单、可移植）；浮点版不依赖 `__int128` 且常数小，但依赖平台 `long double` 的精度：x86 上 `long double` 为 80 位，`mul` 对 $< 10^18$ 正确。
 
-- x86 上 `long double` 为 80 位，`mul` 对 $< 10^18$ 正确；
-- ARM / MSVC 上 `long double` 退化为 64 位 double，#strong[会出错];，此时只能用 int128 版。
+#pitfall[ARM / MSVC 上 `long double` 退化为 64 位 double，浮点版#strong[会出错];——只能用 int128 版。]
 
 === 借助浮点数实现
 <借助浮点数实现>
@@ -602,6 +604,7 @@ $a x + b y = c med (x in Z^* , y in Z^*)$ 成立的充要条件是 $"gcd"(a , b)
 
 == 逆元
 <逆元>
+#specline([费马 #O($"log"$) 模质数], [exgcd #O($"log"$) 模数任意], [线性递推 #O($N$) 求全体])
 满足 $a x equiv 1 (mod m)$ 的 $x$，用来把除法变乘法。存在当且仅当 $"gcd" (a , m) = 1$。模质数用费马 $a^(p - 2)$；一般模用 exgcd；要 $1 dots.c n$ 全部逆元用线性递推。
 
 === 费马小定理解（借助快速幂）
@@ -661,7 +664,8 @@ for (int i = 2; i <= n; i ++ )
 
 == 类欧几里得
 <类欧几里得>
-计算 $sum_(i = 0)^n ⌊frac(a i + b, c)⌋$（可扩展求 $sum i^k ⌊ dot ⌋$ 的若干变体）。复杂度 $cal(O)("log" "max" (a , c))$。
+#specline([#O($"log" "max" (a , c)$)])
+计算 $sum_(i = 0)^n ⌊frac(a i + b, c)⌋$（可扩展求 $sum i^k ⌊ dot ⌋$ 的若干变体）。
 
 $ e u c l i d e a n (a , b , c , n) = sum_(i = 0)^n ⌊frac(a i + b, c)⌋ $
 
@@ -669,7 +673,10 @@ $ e u c l i d e a n (a , b , c , n) = sum_(i = 0)^n ⌊frac(a i + b, c)⌋ $
 
 == 离散对数 bsgs 与 exbsgs
 <离散对数-bsgs-与-exbsgs>
-以 $cal(O)(sqrt(P))$ 的复杂度求解 $a^x equiv b (mod P)$ 。其中标准 BSGS 算法不能计算 $a$ 与 $"MOD"$ 互质的情况，而 exbsgs 则可以。
+#specline([#O($sqrt(P)$)])
+求解 $a^x equiv b (mod P)$。
+
+#pitfall[标准 BSGS 要求 $a$ 与模数#strong[互质];（原文漏"不"字写反了）；$a$ 与 $"MOD"$ 不互质时须用 exbsgs。]
 
 #include-code("code/数论/离散对数-bsgs-与-exbsgs.cpp")
 
@@ -782,7 +789,7 @@ $ a^b equiv a^(b thin mod thin phi (m) + phi (m)) (mod thin m) $
 
 式子仅在 $phi (m) lt.eq b$ 时成立。
 
-下面板子解决”指数 $b$ 以字符串给出（大到无法读入整数）“的场景：`read(MOD)` 边读边对 `MOD=φ(m)` 取模，同时用 `large_enough` 记录 $b gt.eq phi (m)$ 是否成立；最后按上式计算 $a^(b + phi (m)) mod m$。
+下面板子解决“指数 $b$ 以字符串给出（大到无法读入整数）”的场景：`read(MOD)` 边读边对 `MOD=φ(m)` 取模，同时用 `large_enough` 记录 $b gt.eq phi (m)$ 是否成立；最后按上式计算 $a^(b + phi (m)) mod m$。
 
 ```cpp
 #include <bits/stdc++.h>
@@ -937,7 +944,8 @@ unsigned xor_n(unsigned n) {
 
 == Min25 筛
 <min25-筛>
-求 $1 dots.c N$ 的质数和（$N lt.eq 10^10$），板子对结果按 `mod` 取模。复杂度 $cal(O)(N^(3 \/ 4) \/ "log" N)$，实测 $10^10$ 很快；`id1/id2` 是两个 $cal(O)(sqrt(N))$ 数组，把 $⌊ N \/ x ⌋$ 的取值线形编号。`init` 在筛质数后对数论分块的值做 $cal(O)(frac(N^(3 \/ 4), "log" N))$ 的质数贡献筛，`solve` 返回 $2 dots.c N$ 质数和。求一般的积性函数前缀和需按题目改写 `calc` 与转移，具体参 oi-wiki 的 Min\_25 筛一节。
+#specline([#O($N^(3 \/ 4) \/ "log" N$)，实测 $10^10$ 很快])
+求 $1 dots.c N$ 的质数和（$N lt.eq 10^10$），板子对结果按 `mod` 取模。`id1/id2` 是两个 $cal(O)(sqrt(N))$ 数组，把 $⌊ N \/ x ⌋$ 的取值线形编号。`init` 在筛质数后对数论分块的值做 $cal(O)(frac(N^(3 \/ 4), "log" N))$ 的质数贡献筛，`solve` 返回 $2 dots.c N$ 质数和。求一般的积性函数前缀和需按题目改写 `calc` 与转移，具体参 oi-wiki 的 Min\_25 筛一节。
 
 ```cpp
 namespace min25{
@@ -1033,13 +1041,13 @@ $ mat(1, 0, 1; 1, 0, 0; 0, 1, 0) , #h(2em) vec(f (n), f (n - 1), f (n - 2)) = ma
 
 == 莫比乌斯函数/反演
 <莫比乌斯函数反演>
-莫比乌斯函数定义：$mu (n) = cases(1 & n = 1, (- 1)^k & n upright(" 为 ") k upright(" 个互异素数之积"), 0 & upright("else"))$ 。（原文”$p_i$ 互质”意为 $p_i$ 两两不同）
+莫比乌斯函数定义：$mu (n) = cases(1 & n = 1, (- 1)^k & n upright(" 为 ") k upright(" 个互异素数之积"), 0 & upright("else"))$ 。（原文“$p_i$ 互质”意为 $p_i$ 两两不同）
 
 #quote(block: true)[
 莫比乌斯函数性质：对于任意正整数 $n$ 满足 $sum_(d \| n) mu (d) = cases(1 & n = 1, 0 & n eq.not 1)$ ；$sum_(d \| n) frac(mu (d), d) = frac(phi (n), n)$ 。
 ]
 
-莫比乌斯反演定义：$F (n)$ 和 $f (n)$ 是定义在非负整数集合上的两个函数，并且满足 $F (n) = sum_(d \| n) f (d)$ ，可得 $f (n) = sum_(d \| n) mu (d) F (⌊n / d⌋)$ 。用于”已知 $F$ 求 $f$“的莫反类题；也可以理解为 $F = f \* 1 arrow.l.r.double f = F \* mu$。
+莫比乌斯反演定义：$F (n)$ 和 $f (n)$ 是定义在非负整数集合上的两个函数，并且满足 $F (n) = sum_(d \| n) f (d)$ ，可得 $f (n) = sum_(d \| n) mu (d) F (⌊n / d⌋)$ 。用于“已知 $F$ 求 $f$”的莫反类题；也可以理解为 $F = f \* 1 arrow.l.r.double f = F \* mu$。
 
 ```cpp
 const int N = 5e4 + 10;  // 按题目改
@@ -1093,7 +1101,8 @@ $⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c = ⌊n / r⌋ arrow.l.r.double ⌊n
 
 == Miller - Rabin 素数测试
 <miller---rabin-素数测试>
-以平均 $cal(O)(4 dot "log"^3 X)$ 的复杂度判定数字 $X$ 是否是素数，这里记录的版本常数非常优秀，基本可以看作是 $cal(O)(1)$ 。#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 dots.c 37$ 即确定覆盖。
+#specline([平均 #O($"log"^3 X$)（常数极小，可视作 #O($1$)）])
+#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 dots.c 37$ 即确定覆盖。
 
 #include-code("code/数论/Miller---Rabin-素数测试.cpp")
 
@@ -1301,7 +1310,8 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 
 == 约瑟夫问题
 <约瑟夫问题>
-$n$ 个人编号 $0 , 1 , 2 dots.h , n - 1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。三段分别适用：线性 $cal(O)(N)$ 任意 $k$；$cal(O)(K "log" N)$ 适合 $K$ 小；$cal(O)(sqrt(N))$ 适合单次大询问。`repeat(i,a,b)` 是 i 从 a 到 b-1 的宏，可等价写成 `for (int i = a; i < b; ++i)`。
+#specline([线性 #O($N$) 任意 $k$], [#O($K "log" N$) $K$ 小], [#O($sqrt(N)$) 单次大询问])
+$n$ 个人编号 $0 , 1 , 2 dots.h , n - 1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。`repeat(i,a,b)` 是 i 从 a 到 b-1 的宏，可等价写成 `for (int i = a; i < b; ++i)`。
 
 ```cpp
 int jos(int n,int k){
