@@ -313,13 +313,15 @@ namespace Graph {
 
 == 一般图最大匹配 \(带花树算法)
 <一般图最大匹配-带花树算法>
-与二分图匹配的差别在于图中可能存在奇环：算法在找增广路时把奇环缩成“花”（blossom）统一处理，时间复杂度与边的数量无关、与点数有关，为 $cal(O)(N^3)$ 。下方模板编号从 $0$ 开始，`work()` 返回 `{最大匹配数, match 数组}`，其中 `match[i]` 为 $i$ 的匹配点，$- 1$ 表示未匹配；例题为 #link("https://uoj.ac/problem/79")[UOJ \#79. 一般图最大匹配] 。
+#specline([#O($N^3$)（与点数相关、与边数无关）])
+与二分图匹配的差别在于图中可能存在奇环：算法在找增广路时把奇环缩成“花”（blossom）统一处理。下方模板编号从 $0$ 开始，`work()` 返回 `{最大匹配数, match 数组}`，其中 `match[i]` 为 $i$ 的匹配点，$- 1$ 表示未匹配；例题为 #link("https://uoj.ac/problem/79")[UOJ \#79. 一般图最大匹配] 。
 
 #include-code("code/图论/一般图最大匹配-带花树算法.cpp")
 
 == 一般图最大权匹配 \(带权带花树算法)
 <一般图最大权匹配-带权带花树算法>
-下方模板编号从 $1$ 开始，复杂度为 $cal(O)(N^3)$ 。调用 `work(n, edges)` 返回最大总权（`edges` 元素为 `{u, v, w}`，重边自动取权值最大者）；`match()` 返回其中一种方案的配对表（每点 $i$ 配 `lk[i]`，一个匹配边可能出现两次）。权值类型由 `typedef int T` 决定，需要时改为 `long long`。
+#specline([#O($N^3$)])
+下方模板编号从 $1$ 开始。调用 `work(n, edges)` 返回最大总权（`edges` 元素为 `{u, v, w}`，重边自动取权值最大者）；`match()` 返回其中一种方案的配对表（每点 $i$ 配 `lk[i]`，一个匹配边可能出现两次）。权值类型由 `typedef int T` 决定，需要时改为 `long long`。
 
 #include-code("code/图论/一般图最大权匹配-带权带花树算法.cpp")
 
@@ -337,11 +339,12 @@ namespace Graph {
 
 === 匈牙利算法解
 <匈牙利算法解>
+#specline([最坏 #O($N M$)])
 #quote(block: true)[
 匈牙利算法用于无权二分图最大匹配；KM 算法用于带权二分图最大权匹配（见下文相应小节），两者常被混称，实为不同算法。
 ]
 
-从每个左点找增广路：未匹配边前进、已匹配边后退，找到未匹配右点则整条路反转。失败则匹配数无法再加。`match[右点]=左点`。下标 $1 dots.c n_1$、$1 dots.c n_2$。复杂度 $cal(O)(N M)$。
+从每个左点找增广路：未匹配边前进、已匹配边后退，找到未匹配右点则整条路反转。失败则匹配数无法再加。`match[右点]=左点`。下标 $1 dots.c n_1$、$1 dots.c n_2$。
 
 #include-code("code/图论/匈牙利算法解.cpp")
 
@@ -360,7 +363,9 @@ namespace Graph {
 一般我们规定，左半部包含 $n_1$ 个点（编号 $1 - n_1$），右半部包含 $n_2$ 个点（编号 $1 - n_2$ ）。
 ]
 
-使用 KM（Kuhn–Munkres）算法解（与上一节的匈牙利算法常被混称），时间复杂度为 $cal(O)(N^3)$ ，要求存在完美匹配。下方模板用于求解最大权值、且可以输出其中一种可行方案：`work()` 返回最大权，`getMatch(n1, n2)` 输出方案；例题为 #link("https://uoj.ac/problem/80")[UOJ \#80. 二分图最大权匹配] 。
+使用 KM（Kuhn–Munkres）算法解（与上一节的匈牙利算法常被混称），要求存在完美匹配。
+
+#specline([#O($N^3$)])下方模板用于求解最大权值、且可以输出其中一种可行方案：`work()` 返回最大权，`getMatch(n1, n2)` 输出方案；例题为 #link("https://uoj.ac/problem/80")[UOJ \#80. 二分图最大权匹配] 。
 
 #include-code("code/图论/二分图最大权匹配-二分图完美匹配.cpp")
 
@@ -374,7 +379,8 @@ cout << n - flow.work(s, t) << endl;
 
 == 最长路 \(topsort+DP 算法)
 <最长路-topsortdp-算法>
-DAG 上按拓扑序松弛：入度 $0$ 入队，`dis[y]=\max(\mathrm{dis}[y],\mathrm{dis}[x]+w)`。有环先 Tarjan 缩点。`topsort(s,t)` 返回 $s$ 到 $t$，不可达为 $- 10^18$。复杂度 $cal(O)(N + M)$。
+#specline([#O($N + M$)])
+DAG 上按拓扑序松弛：入度 $0$ 入队，`dis[y]=\max(\mathrm{dis}[y],\mathrm{dis}[x]+w)`。有环先 Tarjan 缩点。`topsort(s,t)` 返回 $s$ 到 $t$，不可达为 $- 10^18$。
 
 #include-code("code/图论/最长路-topsort+DP-算法.cpp")
 
@@ -521,6 +527,7 @@ signed main() {
 
 == 欧拉路径/欧拉回路 Hierholzers
 <欧拉路径欧拉回路-hierholzers>
+#specline([#O($N + M)$)])
 一笔画完所有边。存在性看度数；求路径用 Hierholzer：DFS 把边删掉，回溯再写入答案（得到反序，最后 reverse）。必须连通（忽略孤立点）。
 
 #quote(block: true)[
@@ -652,6 +659,8 @@ $ x_(u_i) - x_(v_i) lt.eq w_i quad (i = 1 , 2 , dots.h , m) $
 
 求任意一组解。做法：把 $x_u - x_v lt.eq w$ 写成 $x_u lt.eq x_v + w$，从 $v$ 向 $u$ 连一条权值为 $w$ 的边跑最短路，最短路数组本身即为一组解；存在负环则无解。下方代码实际是 Bellman–Ford（每轮松弛全部 $m$ 条边、共 $n - 1$ 轮，复杂度 $cal(O)(n m)$，原文标注 SPFA 系误称），存边时 `e[i] = {v, u, w}` 正好实现 $v arrow.r u$ 这条边。#link("https://www.luogu.com.cn/problem/P5960")[参考]
 
+#specline([Bellman-Ford 形态 #O($n m$)])
+
 #pitfall[下方以 `d[1] = 0` 作单源；图不连通或存在从 1 不可达的点时需改为超级源点——向所有点连权 0 的边（即初始化全部 `d[i] = 0`）。]
 
 #include-code("code/图论/差分约束.cpp")
@@ -662,7 +671,8 @@ $ x_(u_i) - x_(v_i) lt.eq w_i quad (i = 1 , 2 , dots.h , m) $
 
 === 基础封装
 <基础封装>
-基于 tarjan 缩点，$cal(O)(N + M)$。下标从 $0$ 开始。`work()` 返回是否有解，`answer()` 给#strong[一组];可行解：`id[2i] > id[2i+1]` 时 `ans[i] = true`。#strong[不一定字典序最小];（最小需按变量顺序逐一 DFS）。`add(u, f, v, g)` 表示 $\( u$ 取 $f \) arrow.r.double \( v$ 取 $g \)$（`true` 编号 `2u+1`，`false` 编号 `2u`）。
+#specline([基于 tarjan 缩点 #O($N + M$)])
+下标从 $0$ 开始。`work()` 返回是否有解，`answer()` 给#strong[一组];可行解：`id[2i] > id[2i+1]` 时 `ans[i] = true`。#strong[不一定字典序最小];（最小需按变量顺序逐一 DFS）。`add(u, f, v, g)` 表示 $\( u$ 取 $f \) arrow.r.double \( v$ 取 $g \)$（`true` 编号 `2u+1`，`false` 编号 `2u`）。
 
 #include-code("code/图论/基础封装.cpp")
 

@@ -210,6 +210,7 @@ string compress(vector<string> in) {  // 前后缀压缩
 
 == 字典树 trie
 <字典树-trie>
+#specline([单串插入 / 查询 #O($lr(|s|)$)])
 按字符（或二进制位）从根往下开儿子。公共前缀共用一条路径。查前缀、统计出现、01 trie 贪心异或最值都靠它。
 
 === 基础封装

@@ -654,6 +654,7 @@ for (int i = 2; i <= n; i ++ )
 
 == 扩展欧几里得 exgcd
 <扩展欧几里得-exgcd>
+#specline([#O($"log" max(a, b)$)])
 与欧几里得同一递归，回溯时 $x prime = y , y prime = x - (a \/ b) y$ 还原系数。返回 $"gcd"$；$a x + b y = c$ 有解当且仅当 $"gcd" divides c$，通解 $x plus.minus b \/ d$、$y minus.plus a \/ d$。
 
 #include-code("code/数论/扩展欧几里得-exgcd.cpp")
