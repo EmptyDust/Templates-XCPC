@@ -3,11 +3,21 @@
 // 原生结构里章 = level 1（pandoc 管线里章 = level 2）。
 // 用法：#import "theme.typ": * 然后 #show: theme
 
+// 章序号（两位补零，Jost 字体）：章首巨号、目录、页眉三处共用同一计数。
+// counter(heading) 会被 ==/=== 一起步进，不可用；numbering("01", n) 的
+// "0" 是字面前缀不是补零（10→"010"），故按元素位置计数后手动补零。
+#let chapter-num(el) = context {
+  let i = query(heading.where(level: 1)).position(h => h.location() == el.location())
+  let s = str(i + 1)
+  if s.len() < 2 { s = "0" + s }
+  text(font: "Jost", s)
+}
+
 #let theme(doc) = {
   set page(
     paper: "a4",
     margin: (x: 36pt, top: 40pt, bottom: 44pt),
-    // 页眉 running head：偶数页书名、奇数页当前章名；起章页与首章之前无页眉。
+    // 页眉 running head：偶数页书名、奇数页当前章号+章名；起章页与首章之前无页眉。
     // 起章页不放页眉——页眉取的是 here() 之前最后一个章标题，章首会顶着上一章的章名。
     header: context {
       let heads = query(heading.where(level: 1))
@@ -15,10 +25,11 @@
       let past = query(heading.where(level: 1).before(here()))
       if past.len() == 0 { return }
       let even = calc.even(counter(page).get().first())
+      let cur = past.last()
       align(if even { left } else { right }, text(8.5pt, fill: luma(90), if even {
         [风铃的模板库]
       } else {
-        past.last().body
+        [#chapter-num(cur)#h(0.45em)#cur.body]
       }))
     },
   )
@@ -45,15 +56,9 @@
     // 字体 Jost 900（Futura 复刻，vendor 于 export/vendor/jost）：几何无衬线巨号
     // 是书籍 folio 正典；粗字重墨面积大，灰度提到 luma(230) 做光学补偿。
     // 勿换回 mono——代码字体（JBM）放大是平的，URW Gothic 只有 regular 一档。
-    // before(here()) 在标题自身的 show 规则里会把它自己也数进去，恰为章序，勿 +1；
-    // counter(heading) 则会被 ==/=== 一起步进，不可用。
     context {
-      let pri = query(heading.where(level: 1).before(here())).len()
-      // numbering("01", n) 的 "0" 是字面前缀不是补零（10→"010"），手动补零
-      let num = str(pri)
-      if num.len() < 2 { num = "0" + num }
       place(top + right, dy: -11pt,
-        text(font: "Jost", size: 64pt, weight: 900, fill: luma(230), num))
+        text(size: 64pt, weight: 900, fill: luma(230), chapter-num(it)))
     }
     // 间距显式接管（绝对 pt）：线的落位以 protoA/B 版为基准——纸顶 29.0mm。
     // block 的 above 在页首会塌缩，页首间距必须用强 v()。
@@ -145,8 +150,17 @@
     if w > size.width * 0.8 { set image(width: 80%); it } else { it }
   })
 
-  // 目录条目：章加粗
-  show outline.entry.where(level: 1): set text(weight: "bold")
+  // 目录条目：章条目带 Jost 章号（与章首巨号同计数）。entry 无 body/page 字段，
+  // 手工重建 编号+标题｜点线(it.fill)｜页码 三栏，标题挂链目标的地。
+  show outline.entry.where(level: 1): it => {
+    set text(weight: "bold")
+    grid(
+      columns: (auto, 1fr, auto),
+      link(it.element.location(), [#chapter-num(it.element)#h(0.5em)#it.element.body]),
+      box(it.fill),
+      [#str(counter(page).at(it.element.location()).first())],
+    )
+  }
 
   doc
 }
