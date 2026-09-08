@@ -2,6 +2,8 @@
 
 = STL 与库函数
 <stl-与库函数>
+语言与标准库层的速查：函数行为与陷阱、进制转换、位运算内建、容器用法与自定义哈希。赛时对某个库函数的语义、边界或写法拿不准，翻这章。
+
 == 数组打乱 shuffle
 <数组打乱-shuffle>
 均匀打乱。引擎用 `mt19937_64`，不要 `srand` + 已弃用的 `random_shuffle`。对拍造数据、随机化算法用。
@@ -13,7 +15,9 @@ shuffle(ver.begin(), ver.end(), rng);
 
 == bit 库与位运算函数 \_\_builtin\_\_
 <bit-库与位运算函数-__builtin__>
-GCC/Clang 内建，比手写循环快。`x=0` 时 `clz/ctz` 未定义。`long long` 后缀 `ll`。
+GCC/Clang 内建，比手写循环快。`long long` 后缀 `ll`。
+
+#pitfall[`x = 0` 时 `clz / ctz` 未定义，调用前先判零。]
 
 ```cpp
 __builtin_popcount(x)  // 返回x二进制下含1的数量，例如x=15=(1111)时答案为4
