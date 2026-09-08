@@ -2,6 +2,8 @@
 
 = 二维几何
 <二维几何>
+平面点、线、圆、三角形的浮点运算库：预置 `sign`/`EPS`、点线封装，到交点/距离/投影/旋转、圆与切线、三角形四心，文末另附 SMU\_inch 自包含板子。所有判定走 `sign` 不直接 `==`；几何题的错大多出在精度与退化（平行、共线、圆心重合），不在公式。
+
 本章默认 `ld = long double`，`EPS = 1e-7`（文末 SMU\_inch 板子改用 `double` + `1e-9`，两套不要混）。`T` 用 `int` / `long long` 做整点，用 `ld` 做浮点。`Pd` / `Ld` 为 `Point<ld>` / `Line<ld>`，`Pi` 为 `Point<int>`；模板里的 `Pt` / `Lt` 原文未 typedef，约定为 `Point<T>` / `Line<T>`，用前自行 `using`。`sign` 返回 $- 1 \/ 0 \/ 1$。
 
 == format 格式化输出小数点
@@ -15,7 +17,9 @@ cout << format("{:.2f}", 114514.1919810) << endl;
 
 == 库实数类实现 \(双精度)
 <库实数类实现-双精度>
-上半用 `std::complex`，`Real = int` 只适于整点（叉积会溢出就改 `long long`）。下半按 `.x/.y` 写，与 `complex` 不是同一种类型，#strong[两套 `cross/dot` 不能同时编译];（重定义），按题目留一套。
+上半用 `std::complex`，`Real = int` 只适于整点（叉积会溢出就改 `long long`）。下半按 `.x/.y` 写，与 `complex` 不是同一种类型。
+
+#pitfall[两套 `cross/dot` 不能同时编译（重定义），按题目留一套。]
 
 ```cpp
 using Real = int;  // 整点；需要更大范围改 long long
@@ -83,7 +87,9 @@ T dot(Point<T> p1, Point<T> p2, Point<T> p0) { return dot(p1 - p0, p2 - p0); }
 
 === 欧几里得距离公式
 <欧几里得距离公式>
-最常用的距离公式。#strong[需要注意];，开根号会丢失精度，如无强制要求，先不要开根号，留到最后一步一起开。
+最常用的距离公式。
+
+#pitfall[开根号会丢精度——如无强制要求先不开根，留到最后一步一起开；比较距离用平方比较。]
 
 #include-code("code/二维几何/欧几里得距离公式.cpp")
 
@@ -211,7 +217,9 @@ template<typename T> bool pointNotOnLineSide(Pt p1, Pt p2, Lt vec) {
 
 === 两直线相交交点
 <两直线相交交点>
-参数方程求交。在使用前需要先判断直线是否平行，否则分母为 $0$。必须用浮点类型。
+参数方程求交。必须用浮点类型。
+
+#pitfall[使用前先判平行，否则分母为 $0$。]
 
 ```cpp
 Pd lineIntersection(Ld l1, Ld l2) {
@@ -945,10 +953,10 @@ vector<P> convexHullnonstrict(vector<P> ps) {
     vector<P> qs(n * 2);
     int k = 0;
     for (int i = 0; i < n; qs[k++] = ps[i++]) {//求下凸壳
-        while (k > 1 && crossOp(qs[k - 2], qs[k - 1], ps[i]) <= 0)--k;
+        while (k > 1 && crossOp(qs[k - 2], qs[k - 1], ps[i]) < 0)--k;  // 原来与严格版相同（<= 0），不严格应保留共线点、只弹 < 0
     }
     for (int i = n - 2, t = k; i >= 0; qs[k++] = ps[i--]) {//求上凸壳
-        while (k > t && crossOp(qs[k - 2], qs[k - 1], ps[i]) <= 0)--k;
+        while (k > t && crossOp(qs[k - 2], qs[k - 1], ps[i]) < 0)--k;
     }
     qs.resize(k - 1);
     return qs;
