@@ -2,7 +2,9 @@
 
 = 多边形相关
 <多边形相关>
-依赖二维章的 `Point` / `Line` / `cross` / `sign` / `Pt` / `Lt`。多边形顶点按逆时针存时面积为正。
+多边形的判定与度量：面积（鞋带 / 皮克定理）、点与线段在形内、二维凸包（静态 Andrew / 动态set）、闵可夫斯基和与半平面交。全部依赖二维章的点线原语；顶点按逆时针存时面积为正。
+
+依赖二维章的 `Point` / `Line` / `cross` / `sign` / `Pt` / `Lt`。
 
 == 平面多边形
 <平面多边形>
@@ -180,7 +182,8 @@ int inPolygonGrid(vector<Point<int>> p) { // 多边形内
 
 === 获取二维静态凸包（Andrew 算法）
 <获取二维静态凸包andrew-算法>
-按 $x$ 排序后两遍扫描、叉积弹栈分别构造下壳与上壳，$cal(O)(N "log" N)$（瓶颈在排序）。`flag=0` 边上的点也加入（不严格）；`flag=1` 不加入（严格）。返回逆时针，起点最左下。
+#specline([#O($N "log" N$)（瓶颈在排序）])
+按 $x$ 排序后两遍扫描、叉积弹栈分别构造下壳与上壳。`flag=0` 边上的点也加入（不严格）；`flag=1` 不加入（严格）。返回逆时针，起点最左下。
 
 ```cpp
 template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int flag = 1) {
@@ -215,10 +218,12 @@ template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int f
 
 === 二维动态凸包
 <二维动态凸包>
-固定为 `int` 型，需要重新书写 `Line` 函数（与二维章的 `Line` 冲突，不要同时编译），`cmp` 用于判定边界情况。可以处理如下两个要求：
+固定为 `int` 型，`cmp` 用于判定边界情况。可以处理如下两个要求：
 
 - 动态插入点 $(x , y)$ 到当前凸包中；
 - 判断点 $(x , y)$ 是否在凸包上或是在内部（包括边界）。
+
+#pitfall[本段的 `Line` 与二维章的 `Line` 冲突，不要同时编译。]
 
 ```cpp
 template<typename T> bool turnRight(Pt a, Pt b) {
@@ -303,7 +308,8 @@ struct ConvexHull {
 
 === 点与凸包的位置关系
 <点与凸包的位置关系>
-$0$ 代表点在凸包外面；$1$ 代表在凸壳上；$2$ 代表在凸包内部。输入须按绕序。复杂度 $cal(O)(n)$；凸包上二分可以做到 $cal(O)("log" n)$，本板未写。
+#specline([线性扫描 #O($n$)（凸包上二分可 #O($"log" n$)，本板未写）])
+$0$ 代表点在凸包外面；$1$ 代表在凸壳上；$2$ 代表在凸包内部。输入须按绕序。
 
 ```cpp
 template<typename T> int contains(Point<T> p, vector<Point<T>> A) {
@@ -327,7 +333,8 @@ template<typename T> int contains(Point<T> p, vector<Point<T>> A) {
 
 === 闵可夫斯基和
 <闵可夫斯基和>
-计算两个凸包的向量和 ${ p + q }$，结果仍是凸包。做法：各自从最低点起把边向量按极角归并依次相接。输入须已是有序凸包。复杂度 $cal(O)(n + m)$。
+#specline([#O($n + m$)])
+计算两个凸包的向量和 ${ p + q }$，结果仍是凸包。做法：各自从最低点起把边向量按极角归并依次相接。输入须已是有序凸包。
 
 ```cpp
 template<typename T> vector<Point<T>> mincowski(vector<Point<T>> P1, vector<Point<T>> P2) {
