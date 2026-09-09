@@ -33,7 +33,7 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 ./export-pdf.sh   # build/total.pdf
 ```
 
-需要：`typst`。单章预览：`typst compile --root . --font-path export/vendor/jetbrains-mono --font-path export/vendor/jost chapters/博弈论.typ /tmp/x.pdf`（跨章引用会报未定义，属正常）。
+需要：`typst`、章号字体 Montserrat（Debian 包 `fonts-montserrat`）。单章预览：`typst compile --root . --font-path export/vendor/jetbrains-mono chapters/博弈论.typ /tmp/x.pdf`（跨章引用会报未定义，属正常）。
 
 ## 克隆与提交
 

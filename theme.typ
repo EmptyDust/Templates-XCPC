@@ -3,14 +3,14 @@
 // 原生结构里章 = level 1（pandoc 管线里章 = level 2）。
 // 用法：#import "theme.typ": * 然后 #show: theme
 
-// 章序号（两位补零，Jost 字体）：章首巨号、目录、页眉三处共用同一计数。
+// 章序号（两位补零，Montserrat）：章首巨号、目录、页眉三处共用同一计数。
 // counter(heading) 会被 ==/=== 一起步进，不可用；numbering("01", n) 的
 // "0" 是字面前缀不是补零（10→"010"），故按元素位置计数后手动补零。
 #let chapter-num(el) = context {
   let i = query(heading.where(level: 1)).position(h => h.location() == el.location())
   let s = str(i + 1)
   if s.len() < 2 { s = "0" + s }
-  text(font: "Jost", s)
+  text(font: "Montserrat", s)
 }
 
 #let theme(doc) = {
@@ -53,9 +53,7 @@
     // 章号：place 到页面右上角，不占流式高度——行盒自带下降部空隙，进流排版
     // 会让数字底边悬在细线上方、顶边也够不高。底边压到标题细线附近，
     // 顶边伸进起章页空置的页眉带（页眉规则见上）。dy 按渲染实测微调。
-    // 字体 Jost 900（Futura 复刻，vendor 于 export/vendor/jost）：几何无衬线巨号
-    // 是书籍 folio 正典；粗字重墨面积大，灰度提到 luma(230) 做光学补偿。
-    // 勿换回 mono——代码字体（JBM）放大是平的，URW Gothic 只有 regular 一档。
+    // 字体 Montserrat Black：海报几何无衬线。灰度 luma(230) 做光学补偿。勿换回 mono。
     context {
       place(top + right, dy: -11pt,
         text(size: 64pt, weight: 900, fill: luma(230), chapter-num(it)))
@@ -150,7 +148,7 @@
     if w > size.width * 0.8 { set image(width: 80%); it } else { it }
   })
 
-  // 目录条目：章条目带 Jost 章号（与章首巨号同计数）。entry 无 body/page 字段，
+  // 目录条目：章条目带 Montserrat 章号（与章首巨号同计数）。entry 无 body/page 字段，
   // 手工重建 编号+标题｜点线(it.fill)｜页码 三栏，标题挂链目标的地。
   show outline.entry.where(level: 1): it => {
     set text(weight: "bold")
