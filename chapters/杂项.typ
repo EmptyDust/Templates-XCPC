@@ -125,28 +125,6 @@ bool Solve() {
 
 #include-code("code/杂项/读取一行数字，个数未知.cpp")
 
-== 约瑟夫问题
-<约瑟夫问题>
-$n$ 个人编号 $0 , 1 , 2 dots.h , n - 1$ ，每次数到 $k$ 出局，求最后剩下的人的编号。
-
-$cal(O)(N)$ 。`repeat` 为赛场宏，没有就写成 `for (int i = 1; i <= n; i++)`。
-
-```cpp
-int jos(int n,int k){
-    int res=0;
-    repeat(i,1,n+1)res=(res+k)%i;
-    return res;  // res+1，如果编号从1开始
-}
-```
-
-$cal(O)(K "log" N)$ ，适用于 $K$ 较小的情况。
-
-#include-code("code/杂项/约瑟夫问题.cpp")
-
-$cal(O)(sqrt(N))$
-
-#include-code("code/杂项/约瑟夫问题-2.cpp")
-
 == 日期换算 \(基姆拉尔森公式)
 <日期换算-基姆拉尔森公式>
 已知年月日，求星期。返回 $1 dots.c 7$（周一到周日，看 `%7+1` 约定）。格里高利历。
