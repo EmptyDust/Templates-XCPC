@@ -12,9 +12,11 @@
 #[
   #set page(footer: none)
   #text(17pt, weight: "bold")[风铃的模板库]
-  #v(0.35em)
-  #text(8.5pt, fill: luma(90), [#stamp#if rev != "" [　#rev]])
-  #v(1.0em)
+  #h(1fr)
+  // 11pt 拉丁相对 17pt 思源宋基线偏低，上移对齐字身中线。
+  #box(baseline: 1.8pt, text(font: "Montserrat", size: 11pt, fill: luma(90),
+    [#stamp#if rev != "" [#h(0.5em)#rev]]))
+  #v(1.2em)
   #text(13pt, weight: "bold")[目录]
   #v(0.6em)
   #columns(2, gutter: 18pt)[
