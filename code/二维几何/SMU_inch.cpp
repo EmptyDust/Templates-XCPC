@@ -1,6 +1,5 @@
 // SMU_inch —— 二维几何自包含板子（double + EPS=1e-9，点类型 P）
 // 与二维章上文模板相互独立，勿混用；#define pop/list 会污染标准名。
-// @book-begin
 #include <bits/stdc++.h>
 
 #define endl '\n'
@@ -17,6 +16,7 @@ typedef pair<ll, ll> pll;
 const int N = 2e5 + 5, inf = 0x3f3f3f3f, MOD = 998244353, mod = 1e9 + 7;
 const ll llinf = 0x3f3f3f3f3f3f3f3f;
 //const double PI=acos(-1);
+// @book-begin
 typedef double db;
 const db EPS = 1e-9;
 
@@ -488,6 +488,7 @@ bool containPs(const vector<P> &ts, P q) {
     int ps = upper_bound(ts.begin(), ts.end(), q, cmp2) - ts.begin() - 1;
     return (crossOp(ts[ps], ts[(ps + 1) % ts.size()], q) >= 0);
 }
+// @book-end
 
 
 void solve() {
@@ -506,4 +507,3 @@ int main() {
     while (cases--)
         solve();
 }
-// @book-end
