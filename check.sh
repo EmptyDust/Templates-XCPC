@@ -11,8 +11,13 @@ bad() { say "FAIL" "$1"; fail=1; }
 ok()  { say " ok " "$1"; }
 
 # 1. 入口可编译：typst compile 本身就是闸门（语法、引用、文件读取全校验）
+# 有本地 vendor 就加上；没有则走系统字体（CI / 裸 clone）。
 mkdir -p build
-if typst compile --root . --font-path export/vendor/jetbrains-mono main.typ build/.check-book.pdf 2>build/.check-typst.log; then
+font_path=
+if [ -d export/vendor/jetbrains-mono ]; then
+    font_path="--font-path export/vendor/jetbrains-mono"
+fi
+if typst compile --root . $font_path main.typ build/.check-book.pdf 2>build/.check-typst.log; then
     ok "main.typ 可编译"
 else
     bad "main.typ 编译失败（见 build/.check-typst.log）"

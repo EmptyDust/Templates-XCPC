@@ -20,7 +20,7 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 - `images/` — 书中图片（本地化）
 - `code-snippets/` — VS Code 代码片段（`.code-snippets`），按主题分组
 - `export/` — 高亮主题、PowerShell 语法定义、字体（细节见 `export/PIPELINE.md`）
-- `check.sh` — 验证闸，改动后跑一遍
+- `check.sh` — 验证闸，改动后跑一遍；推 `main` / 开 PR 时 GitHub Actions 也会跑它
 
 ## 使用
 
