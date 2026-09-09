@@ -70,10 +70,18 @@ PY
 junk=$(grep -rn '/END/\|\[TOC\]\|image("http' chapters/ 2>/dev/null | wc -l)
 [ "$junk" -eq 0 ] && ok "无 md 时代残渣" || { grep -rn '/END/\|\[TOC\]\|image("http' chapters/ | head -5; bad "md 时代残渣 $junk 处"; }
 
-# 7. 若存在 PDF 产物，检查嵌入字体无 Type 3
-if [ -f build/total.pdf ]; then
-    t3=$(pdffonts build/total.pdf 2>/dev/null | awk 'NR>2 && $2 ~ /Type 3/' | wc -l)
-    [ "$t3" -eq 0 ] && ok "PDF 无 Type 3 字体" || bad "PDF 含 $t3 个 Type 3 字体"
-fi
+# 7. 若存在导出 PDF，检查嵌入字体无 Type 3
+t3fail=0
+for f in build/*.pdf; do
+    [ -f "$f" ] || continue
+    case "$f" in *check-book*) continue ;; esac
+    t3=$(pdffonts "$f" 2>/dev/null | awk 'NR>2 && $2 ~ /Type 3/' | wc -l)
+    if [ "$t3" -ne 0 ]; then
+        bad "$f: 含 $t3 个 Type 3 字体"
+        t3fail=1
+    fi
+done
+[ $t3fail -eq 0 ] && [ -n "$(ls build/*.pdf 2>/dev/null)" ] && ok "PDF 无 Type 3 字体"
+
 
 exit $fail

@@ -4,13 +4,17 @@
 #import "prelude.typ": *
 
 #show: theme
-#set document(title: "风铃的模板库")
+#let stamp = sys.inputs.at("stamp", default: datetime.today().display("[year]-[month]-[day]"))
+#let rev = sys.inputs.at("rev", default: "")
+#set document(title: "风铃的模板库", date: datetime.today())
 
 // ---- 封面并入目录页，无页脚 ----
 #[
   #set page(footer: none)
   #text(17pt, weight: "bold")[风铃的模板库]
-  #v(1.2em)
+  #v(0.35em)
+  #text(8.5pt, fill: luma(90), [#stamp#if rev != "" [　#rev]])
+  #v(1.0em)
   #text(13pt, weight: "bold")[目录]
   #v(0.6em)
   #columns(2, gutter: 18pt)[
