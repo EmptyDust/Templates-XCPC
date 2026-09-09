@@ -65,7 +65,7 @@
       set text(17pt, weight: "bold")
       it
     })
-    line(length: 100%, stroke: 0.6pt + luma(213))
+    line(length: 100%, stroke: 0.4pt + black)
     v(0.6em)
   }
   show heading.where(level: 2): it => {
@@ -94,7 +94,6 @@
   )
   show raw.where(block: true): it => block(
     fill: luma(245),
-    radius: 2pt,
     inset: (x: 8pt, y: 7pt),
     width: 100%,
     breakable: true,
@@ -127,8 +126,8 @@
   // 表格：booktabs 三线（顶线、栏头线、底线），无竖线
   set table(
     stroke: (x, y) => (
-      top: if y == 0 { 0.7pt + luma(30) }
-           else if y == 1 { 0.4pt + luma(90) }
+      top: if y == 0 { 0.7pt + black }
+           else if y == 1 { 0.4pt + black }
            else { none },
       left: none,
       right: none,
@@ -136,7 +135,7 @@
     ),
     inset: 0.45em,
   )
-  show table: it => block(stroke: (bottom: 0.7pt + luma(30)), inset: 0pt, it)
+  show table: it => block(stroke: (bottom: 0.7pt + black), inset: 0pt, it)
   show table.cell.where(y: 0): strong
 
   // 链接不染色，只保留继承色
