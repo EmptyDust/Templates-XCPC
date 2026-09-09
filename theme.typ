@@ -108,7 +108,7 @@
   show raw.where(block: false): it => underline(
     offset: 2.2pt,
     extent: 0.8pt,
-    stroke: 0.8pt + luma(206),
+    stroke: 0.8pt + luma(180),
     it,
   )
 
