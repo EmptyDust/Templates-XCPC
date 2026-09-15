@@ -10,6 +10,7 @@ main.typ ──#include──▶ chapters/*.typ ──include-code──▶ code
 theme.typ (layout)     images/ (localized)
 prelude.typ (macros)         │
     └──────── typst compile ─┴──▶ build/风铃的模板库-YYYY-MM-DD-<hash>.pdf
+                                 build/封面-YYYY-MM-DD-<hash>.pdf
 ```
 
 - `main.typ` — entry: explicit chapter include list, cover merged into TOC page, page numbers counted from body.
@@ -17,9 +18,10 @@ prelude.typ (macros)         │
 - `prelude.typ` — macros: `#O(...)` complexity notation, `include-code` (reads a `.cpp` file and renders the region between `// @book-begin` / `// @book-end` markers, dedented).
 - `export/book-mono.tmTheme` — near-monochrome syntax highlighting theme (keyword = bold, string/number = mid gray, comment = light gray).
 - `export/powershell.sublime-syntax` — minimal PowerShell syntax definition (Typst has none built in), vendored for the few powershell blocks in 杂项.
+- `export/cover.typ` — standalone print cover (title + stamp); not part of the book page count.
 - `export/vendor/jetbrains-mono/` — vendored code font (from the Debian package, unpacked locally); passed via `--font-path`.
 
-Dependency: `typst`. `export-pdf.sh` compiles, flattens TOC dests, and names the file with the date and git short hash (plus `-dirty` if the tree is unclean). The same stamp is passed into `main.typ` for the cover line and PDF metadata.
+Dependency: `typst`. `export-pdf.sh` compiles the book, flattens TOC dests, and compiles `export/cover.typ` with the same date and git short hash (plus `-dirty` if the tree is unclean). The stamp is also passed into `main.typ` for the TOC-page line and PDF metadata.
 
 ## Known pitfalls
 
