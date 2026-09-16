@@ -83,7 +83,7 @@ template<class... A> int q_pow(A&&...);
 // @book-begin
 const int SIZE = 2;
 struct Matrix {
-    ll M[SIZE + 5][SIZE + 5];
+    i64 M[SIZE + 5][SIZE + 5];
     void clear() { memset(M, 0, sizeof(M)); }
     void reset() {  //初始化
         clear();
@@ -108,8 +108,8 @@ struct Matrix {
     }
 };
 
-inline int mypow(LL n, LL k, int p = MOD) {
-    LL r = 1;
+inline int mypow(i64 n, i64 k, int p = MOD) {
+    i64 r = 1;
     for (; k; k >>= 1, n = n * n % p) {
         if (k & 1) r = r * n % p;
     }
@@ -128,10 +128,10 @@ Matrix getinv(Matrix a) {  //矩阵求逆
             puts("No Solution");
             ok = 0;
         }
-        ll inv = q_pow(a.M[i][i], mod - 2);
+        i64 inv = q_pow(a.M[i][i], mod - 2);
         for (int j = 1; j <= n; j++)
             if (j != i) {
-                ll mul = a.M[j][i] * inv % mod;
+                i64 mul = a.M[j][i] * inv % mod;
                 for (int k = i; k <= m; k++)
                     a.M[j][k] = ((a.M[j][k] - a.M[i][k] * mul) % mod + mod) % mod;
             }

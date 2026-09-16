@@ -37,8 +37,8 @@ void sieve(int n) {
 }
 
 // @book-begin
-LL n, a, ans;
-LL gcd(LL a, LL b){
+i64 n, a, ans;
+i64 gcd(i64 a, i64 b){
     return b ? gcd(b, a % b) : a;
 }
 int main(){

@@ -5,7 +5,7 @@
 整除、同余、素数、积性函数，前半是定义与性质速查表，后半是板子。选型信号：模意义除法 → 逆元；$10^18$ 级模乘 → 防爆模乘；大数判素/分解 → Miller-Rabin + Pollard-Rho；积性函数前缀和 → 筛法 / Min25；同余方程组 → excrt。
 
 #quote(block: true)[
-本章前半为定义与性质速查表，后半为板子；代码中 `LL` / `i64` 为 `long long`，`mod` / `MOD` / `p` 为模数，按题目替换。
+本章前半为定义与性质速查表，后半为板子；整数用 `i64`，`mod` / `MOD` / `p` 为模数，按题目替换。
 ]
 
 == 整除
@@ -559,8 +559,8 @@ $10^18$ 量级的 `a * b % m` 直接乘会溢出，用二分拆开或 128 位中
 $cal(O)(1)$ 计算 $a dot b mod m$，常数比 int128 法小很多。其中 $1 lt.eq a , b , m lt.eq 10^18$。
 
 ```cpp
-LL mul(LL a, LL b, LL m) {
-    LL r = a * b - m * (LL)(1.L / m * a * b);
+i64 mul(i64 a, i64 b, i64 m) {
+    i64 r = a * b - m * (i64)(1.L / m * a * b);
     return r - m * (r >= m) + m * (r < 0);
 }
 ```
@@ -570,8 +570,8 @@ LL mul(LL a, LL b, LL m) {
 `(__int128)a * b % m`，语义就是普通模乘。Linux / gcc 有 `__int128`，MSVC 没有。优先用这个。
 
 ```cpp
-LL mul(LL a, LL b, LL m) {
-    return (LL)((__int128)a * b % m);
+i64 mul(i64 a, i64 b, i64 m) {
+    return (i64)((__int128)a * b % m);
 }
 ```
 
@@ -616,7 +616,7 @@ $a x + b y = c med (x in Z^* , y in Z^*)$ 成立的充要条件是 $"gcd"(a , b)
 单次计算的复杂度即为快速幂的复杂度 $cal(O)("log" X)$ 。限制：$"MOD"$ 必须是质数，且需要满足 $x$ 与 $"MOD"$ 互质。
 
 ```cpp
-LL inv(LL x) { return mypow(x, mod - 2, mod);}
+i64 inv(i64 x) { return mypow(x, mod - 2, mod);}
 ```
 
 === 扩展欧几里得解
@@ -636,8 +636,8 @@ int exgcd(int a, int b, int &x, int &y) {  //扩展欧几里得算法
     x = temp;
     return r;  //得到a b的最大公因数
 }
-LL getInv(int a, int mod) {  //求a在mod下的逆元，不存在逆元返回-1
-    LL x, y, d = exgcd(a, mod, x, y);
+i64 getInv(int a, int mod) {  //求a在mod下的逆元，不存在逆元返回-1
+    i64 x, y, d = exgcd(a, mod, x, y);
     return d == 1 ? (x % mod + mod) % mod : -1;
 }
 ```
@@ -887,26 +887,26 @@ bool is_prime(int n) {
 求解方程组 $x equiv a_i (mod b_i)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv "ans" (mod M)$ 与新方程 $x equiv a_i (mod b_i)$ 消元成 $M dot k equiv a_i - "ans" (mod b_i)$，用 exgcd 解出 $k$。复杂度 $cal(O)(n "log")$。
 
 ```cpp
-int n; LL ai[maxn], bi[maxn];
+int n; i64 ai[maxn], bi[maxn];
 inline int mypow(int n, int k, int p) {
     int r = 1;
     for (; k; k >>= 1, n = n * n % p)
         if (k & 1) r = r * n % p;
     return r;
 }
-LL exgcd(LL a, LL b, LL &x, LL &y) {
+i64 exgcd(i64 a, i64 b, i64 &x, i64 &y) {
     if (b == 0) { x = 1, y = 0; return a; }
-    LL gcd = exgcd(b, a % b, x, y), tp = x;
+    i64 gcd = exgcd(b, a % b, x, y), tp = x;
     x = y, y = tp - a / b * y;
     return gcd;
 }
-LL excrt() {
+i64 excrt() {
     // 方程形式为 x ≡ ai[i] (mod bi[i])，模数不要求互质；互质时就是 CRT 的特例
-    LL x, y, k;
-    LL M = bi[1], ans = ai[1];  // 当前合并后的模数与余数
+    i64 x, y, k;
+    i64 M = bi[1], ans = ai[1];  // 当前合并后的模数与余数
     for (int i = 2; i <= n; ++ i) {
-        LL a = M, b = bi[i], c = (ai[i] - ans % b + b) % b;  // 变成 exgcd 可解形式 ax ≡ c (mod b)
-        LL gcd = exgcd(a, b, x, y), bg = b / gcd;
+        i64 a = M, b = bi[i], c = (ai[i] - ans % b + b) % b;  // 变成 exgcd 可解形式 ax ≡ c (mod b)
+        i64 gcd = exgcd(a, b, x, y), bg = b / gcd;
         if (c % gcd != 0) return -1;  // 无解判定
         x = mul(x, c / gcd, bg);
         ans += x * M;
@@ -952,10 +952,10 @@ unsigned xor_n(unsigned n) {
 namespace min25{
     const int N = 1000000 + 10;
     int prime[N], id1[N], id2[N], flag[N], ncnt, m;
-    LL g[N], sum[N], a[N], T;
-    LL n;
-    LL mod;
-    inline LL ps(LL n,LL k) {LL r=1;for(;k;k>>=1){if(k&1)r=r*n%mod;n=n*n%mod;}return r;}
+    i64 g[N], sum[N], a[N], T;
+    i64 n;
+    i64 mod;
+    inline i64 ps(i64 n,i64 k) {i64 r=1;for(;k;k>>=1){if(k&1)r=r*n%mod;n=n*n%mod;}return r;}
     void finit(){  // 最开始清0
         memset(g, 0, sizeof(g));
         memset(a, 0, sizeof(a));
@@ -966,15 +966,15 @@ namespace min25{
         memset(flag, 0, sizeof(flag));
         ncnt = m = 0;
     }
-    int ID(LL x) {
+    int ID(i64 x) {
         return x <= T ? id1[x] : id2[n / x];
     }
 
-    LL calc(LL x) {
+    i64 calc(i64 x) {
         return x * (x + 1) / 2 - 1;
     }
 
-    LL init(LL x) {
+    i64 init(i64 x) {
         T = sqrt(x + 0.5);
         for (int i = 2; i <= T; i++) {
             if (!flag[i]) prime[++ncnt] = i, sum[ncnt] = sum[ncnt - 1] + i;
@@ -983,16 +983,16 @@ namespace min25{
                 if (i % prime[j] == 0) break;
             }
         }
-        for (LL l = 1; l <= x; l = x / (x / l) + 1) {
+        for (i64 l = 1; l <= x; l = x / (x / l) + 1) {
             a[++m] = x / l;
             if (a[m] <= T) id1[a[m]] = m; else id2[x / a[m]] = m;
             g[m] = calc(a[m]);
         }
         for (int i = 1; i <= ncnt; i++)
-            for (int j = 1; j <= m && (LL) prime[i] * prime[i] <= a[j]; j++)
-                g[j] = g[j] - (LL) prime[i] * (g[ID(a[j] / prime[i])] - sum[i - 1]);
+            for (int j = 1; j <= m && (i64) prime[i] * prime[i] <= a[j]; j++)
+                g[j] = g[j] - (i64) prime[i] * (g[ID(a[j] / prime[i])] - sum[i - 1]);
     }
-    LL solve(LL x) {
+    i64 solve(i64 x) {
         if (x <= 1) return x;
         return n = x, init(n), g[ID(n)];
     }
@@ -1007,7 +1007,7 @@ int main() {
     while(tt--){
         finit();
         scanf("%lld%lld", &n, &mod);
-        LL ans = (n + 3) % mod * n % mod  * ps(2 , mod - 2) % mod + solve(n + 1) - 4;
+        i64 ans = (n + 3) % mod * n % mod  * ps(2 , mod - 2) % mod + solve(n + 1) - 4;
         // cout << solve(n) << endl;
         // ans = (ans + mod) % mod;
         ans = (ans + mod) % mod;
@@ -1078,10 +1078,10 @@ void solve() {
     int n, m, k; cin >> n >> m >> k;
     n = n / k, m = m / k;
     if (n < m) swap(n, m);
-    LL ans = 0;
+    i64 ans = 0;
     for (int i = 1, j = 0; i <= m; i = j + 1) {
         j = min(n / (n / i), m / (m / i));
-        ans += (LL)(sum[j] - sum[i - 1]) * (n / i) * (m / i);
+        ans += (i64)(sum[j] - sum[i - 1]) * (n / i) * (m / i);
     }
     cout << ans << "\n";
 }
@@ -1103,7 +1103,7 @@ $⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c = ⌊n / r⌋ arrow.l.r.double ⌊n
 == Miller - Rabin 素数测试
 <miller---rabin-素数测试>
 #specline([平均 #O($"log"^3 X$)（常数极小，可视作 #O($1$)）])
-#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 long long 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 dots.c 37$ 即确定覆盖。
+#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 i64 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 dots.c 37$ 即确定覆盖。
 
 #include-code("code/数论/Miller---Rabin-素数测试.cpp")
 

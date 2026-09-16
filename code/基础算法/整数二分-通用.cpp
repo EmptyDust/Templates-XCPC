@@ -15,8 +15,8 @@ int n;
 
 // @book-begin
 int main() {
-    long long l = 0, r = n;  // 按题目改边界，保证答案在 [l, r] 内
-    auto check = [&](long long x) -> bool {
+    i64 l = 0, r = n;  // 按题目改边界，保证答案在 [l, r] 内
+    auto check = [&](i64 x) -> bool {
         // todo: x 是否满足条件（单调）
         return false;
     };

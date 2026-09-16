@@ -102,11 +102,11 @@ mat MatPow(mat a, i64 b) {
 
 // @book-begin
 void solve() {
-    LL n; cin >> n;
-    LL ans = 0;
-    for (LL i = 1, j; i <= n; i = j + 1) {
+    i64 n; cin >> n;
+    i64 ans = 0;
+    for (i64 i = 1, j; i <= n; i = j + 1) {
         j = n / (n / i);
-        ans += (LL)(j - i + 1) * (n / i);
+        ans += (i64)(j - i + 1) * (n / i);
     }
     cout << ans << "\n";
 }

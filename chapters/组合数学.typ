@@ -66,7 +66,7 @@ struct Comb {
 
 === 杨辉三角（精确计算）
 <杨辉三角精确计算>
-$60$ 以内 `long long` 可解，$130$ 以内 `__int128` 可解。递推 $cal(O)(n^2)$，不取模；要取模请改用上面的 `Comb`。
+$60$ 以内 `i64` 可解，$130$ 以内 `__int128` 可解。递推 $cal(O)(n^2)$，不取模；要取模请改用上面的 `Comb`。
 
 #include-code("code/组合数学/杨辉三角精确计算.cpp")
 
@@ -98,7 +98,7 @@ $ binom(n, m) mod p = binom(⌊n \/ p⌋, ⌊m \/ p⌋) dot binom(n mod p, m mod
 时间复杂度为 $O (f (p) + g (n) "log" n)$，其中 $f (n)$ 为预处理组合数的复杂度，$g (n)$ 为单次求组合数的复杂度。
 
 ```cpp
-long long Lucas(long long n, long long m, long long p) {  // 原来参数名 lm，函数体用 m，无法编译
+i64 Lucas(i64 n, i64 m, i64 p) {  // 原来参数名 lm，函数体用 m，无法编译
   if (m == 0) return 1;  // C(n,0)=1；C 需预处理到 p
   return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p;
 }
@@ -291,7 +291,7 @@ $ d p [n] [m] = {d p [n - m] [m] & n gt.eq m\
 
 == 容斥原理
 <容斥原理>
-下面例题用二进制或 dfs 枚举质因子子集。乘积可能爆 `long long`，板子里用 `t > n` / `s <= n / p[x]` 提前剪枝。
+下面例题用二进制或 dfs 枚举质因子子集。乘积可能爆 `i64`，板子里用 `t > n` / `s <= n / p[x]` 提前剪枝。
 
 #quote(block: true)[
 定义：$#scale(x: 120%, y: 120%)[\|] S_1 union S_2 union S_3 union dots.h union S_n #scale(x: 120%, y: 120%)[\|] = sum_(i = 1)^N lr(|S_i|) - sum_(i , j = 1)^N #scale(x: 120%, y: 120%)[\|] S_i inter S_j #scale(x: 120%, y: 120%)[\|] + sum_(i , j , k = 1)^N #scale(x: 120%, y: 120%)[\|] S_i inter S_j inter S_k #scale(x: 120%, y: 120%)[\|] - dots.h$
@@ -301,7 +301,7 @@ $ d p [n] [m] = {d p [n - m] [m] & n gt.eq m\
 
 === 二进制枚举解
 <二进制枚举解>
-$cal(O)(2^m dot m)$。`LL` 为 `long long`。子集积超过 $n$ 对答案无贡献，用 `t > n` 剪掉以免溢出。
+$cal(O)(2^m dot m)$。子集积超过 $n$ 对答案无贡献，用 `t > n` 剪掉以免溢出。
 
 #include-code("code/组合数学/二进制枚举解.cpp")
 

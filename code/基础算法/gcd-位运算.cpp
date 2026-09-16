@@ -13,7 +13,7 @@ const double eps = 1e-8;
 const double PI = acos(-1.0);
 
 // @book-begin
-LL gcd(LL a, LL b) {  // 卡常 gcd！！（LL 为 long long）
+i64 gcd(i64 a, i64 b) {  // 卡常 gcd！！
     #define tz __builtin_ctzll
     if (!a || !b) return a | b;
     int t = tz(a | b);

@@ -27,11 +27,11 @@ __builtin_clz(x) // 返回x二进制下前导0的个数，8(1000) 返回 28；x�
 bit_width(x)  // 返回x二进制下的位数，9(1001) 返回 4，26(11010) 返回 5
 ```
 
-注：以上函数为 GCC/Clang 内建，`long long` 版本只需在函数名后加 `ll`（如 `__builtin_popcountll(x)`），`unsigned long long` 加 `ull`；`bit_width` 为 C++20 标准库函数。
+注：以上函数为 GCC/Clang 内建，`i64` 版本只需在函数名后加 `ll`（如 `__builtin_popcountll(x)`），`unsigned long long` 加 `ull`；`bit_width` 为 C++20 标准库函数。
 
 == 数字转字符串函数
 <数字转字符串函数>
-`itoa` 虽然能将整数转换成任意进制的字符串，但是其不是标准的 C 函数，且为 Windows 独有，且不支持 `long long` ，建议手写。
+`itoa` 虽然能将整数转换成任意进制的字符串，但是其不是标准的 C 函数，且为 Windows 独有，且不支持 `i64` ，建议手写。
 
 ```cpp
 // to_string函数会直接将你的各种类型的数字转换为字符串。
@@ -78,7 +78,7 @@ cout << stoi("10", 0, 8) << endl;            // 8
 cout << stoll("aaaaaaaaaaa", 0, 16) << endl; // 11728124029610
 ```
 
-- `stoll(字符串, 0, x进制)` ：将一串 $x$ 进制的字符串转换为 `long long` 型数字。
+- `stoll(字符串, 0, x进制)` ：将一串 $x$ 进制的字符串转换为 `i64` 型数字。
 - `stoull`、`stod`、`stold` 同理。
 
 == 数值转换为字符串函数 to\_string

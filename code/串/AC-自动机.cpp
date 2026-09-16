@@ -222,8 +222,8 @@ struct ACAutomaton {
             }
         }
     }
-    LL query(string t) {
-        LL ans = 0;
+    i64 query(string t) {
+        i64 ans = 0;
         int u = 1;
         for (auto c : t) {
             u = ch[u][c - 'a'];

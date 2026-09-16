@@ -321,7 +321,7 @@ namespace Graph {
 == 一般图最大权匹配 \(带权带花树算法)
 <一般图最大权匹配-带权带花树算法>
 #specline([#O($N^3$)])
-下方模板编号从 $1$ 开始。调用 `work(n, edges)` 返回最大总权（`edges` 元素为 `{u, v, w}`，重边自动取权值最大者）；`match()` 返回其中一种方案的配对表（每点 $i$ 配 `lk[i]`，一个匹配边可能出现两次）。权值类型由 `typedef int T` 决定，需要时改为 `long long`。
+下方模板编号从 $1$ 开始。调用 `work(n, edges)` 返回最大总权（`edges` 元素为 `{u, v, w}`，重边自动取权值最大者）；`match()` 返回其中一种方案的配对表（每点 $i$ 配 `lk[i]`，一个匹配边可能出现两次）。权值类型由 `typedef int T` 决定，需要时改为 `i64`。
 
 #include-code("code/图论/一般图最大权匹配-带权带花树算法.cpp")
 
@@ -790,18 +790,18 @@ cout << ans << endl;
 使用 dfs 即可解决。
 
 ```cpp
-LL n, point[N];
-LL ver[N], head[N], nex[N], tot; bool v[N];
-map<pair<LL, LL>, LL> edge;
-// void add(LL x, LL y) {}
-void dfs(LL x) {
-    for (LL i = head[x]; i; i = nex[i]) {
-        LL y = ver[i];
+i64 n, point[N];
+i64 ver[N], head[N], nex[N], tot; bool v[N];
+map<pair<i64, i64>, i64> edge;
+// void add(i64 x, i64 y) {}
+void dfs(i64 x) {
+    for (i64 i = head[x]; i; i = nex[i]) {
+        i64 y = ver[i];
         if (v[y]) continue;
         v[y] = true; dfs(y); v[y] = false;
     }
-    for (LL i = head[x]; i; i = nex[i]) {
-        LL y = ver[i];
+    for (i64 i = head[x]; i; i = nex[i]) {
+        i64 y = ver[i];
         if (v[y]) continue;
         point[x] += max(point[y] + edge[{x, y}], 0LL);
     }
@@ -810,11 +810,11 @@ void Solve() {
     cin >> n;
     FOR(i, 1, n) cin >> point[i];
     FOR(i, 2, n) {
-        LL x, y, w; cin >> x >> y >> w;
+        i64 x, y, w; cin >> x >> y >> w;
         edge[{x, y}] = edge[{y, x}] = w;
         add(x, y), add(y, x);
     }
-    v[1] = true; dfs(1); LL ans = -MAX18;
+    v[1] = true; dfs(1); i64 ans = -MAX18;
     FOR(i, 1, n) ans = max(ans, point[i]);
     cout << ans << endl;
 }
@@ -915,7 +915,7 @@ SPFA：某点入队超过 $n$ 次（或某点松弛次数 $gt.eq n$）则存在�
 原题：给出一张有向带权图，求解图上最小环的长度、有多少个这样的最小环 #link("https://acm.hdu.edu.cn/contest/problem?cid=1097&pid=1011")[See] 。使用 floyd，复杂度为 $cal(O)(N^3)$ ，可以扩展到无向图。
 
 ```cpp
-LL Min = 1e18, ans = 0;
+i64 Min = 1e18, ans = 0;
 for (int k = 1; k <= n; k++) {
     for (int i = 1; i <= n; i++) {
         for (int j = 1; j <= n; j++) {

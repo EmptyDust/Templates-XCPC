@@ -4,7 +4,7 @@
 <多项式>
 多项式全家桶：`Poly` 封装（inv / log / exp / sqrt / pow / 多点求值）、FFT / NTT、Berlekamp-Massey、线性递推求第 $n$ 项、拉格朗日插值与生成函数速查。选型信号：模意义卷积 → NTT；实数卷积 → FFT；数列找最短递推 → BM；生成函数计数 → OGF/EGF 速查表。
 
-默认模数 $998244353$（NTT 模，原根 $3$）。`Poly` / `dft` 依赖 mint（`MInt` / `Z`，见杂项取模类）。`i64` 为 `long long`。
+默认模数 $998244353$（NTT 模，原根 $3$）。`Poly` / `dft` 依赖 mint（`MInt` / `Z`，见杂项取模类）。整数用 `i64`。
 
 == 线性凸包
 <线性凸包>
@@ -445,8 +445,8 @@ struct Polynomial {
         }
         ntt(z, n, 1);
     }
-    LL power(LL a, int b) {
-        LL res = 1;
+    i64 power(i64 a, int b) {
+        i64 res = 1;
         for (; b; b /= 2, a = a * a % mod) {
             if (b % 2) {
                 res = res * a % mod;
@@ -518,7 +518,7 @@ struct Lagrange {
             invfac[i] = invfac[i + 1] * (i + 1);
         }
     }
-    Z solve(LL k) {
+    Z solve(i64 k) {
         if (k <= n + 2) {
             return y[k];
         }

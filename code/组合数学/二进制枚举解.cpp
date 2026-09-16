@@ -15,19 +15,19 @@ const double PI = acos(-1.0);
 // @book-begin
 int main(){
     ios::sync_with_stdio(false);cin.tie(0);
-    LL n, m;
+    i64 n, m;
     cin >> n >> m;
-    vector <LL> p(m);
+    vector <i64> p(m);
     for (int i = 0; i < m; i ++ )
         cin >> p[i];
-    LL ans = 0;
+    i64 ans = 0;
     for (int i = 1; i < (1 << m); i ++ ){  // 枚举非空质因子子集
-        LL t = 1, cnt = 0;  // t 为子集积，cnt 为子集大小
+        i64 t = 1, cnt = 0;  // t 为子集积，cnt 为子集大小
         for (int j = 0; j < m; j ++ ){
             if (i >> j & 1){
                 cnt ++ ;
                 t *= p[j];
-                if (t > n){  // 积已 >n，n/t=0，再乘会爆 long long
+                if (t > n){  // 积已 >n，n/t=0，再乘会爆 i64
                     t = -1;
                     break;
                 }

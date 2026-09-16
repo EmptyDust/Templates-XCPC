@@ -218,18 +218,18 @@ signed main() {
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-#define LL long long
+using i64 = long long;
 const int N = 15, M = 150, K = 1500;
-LL n, k;
-LL cnt[K];  //每个状态的二进制中 1 的数量
-LL tot;  //合法状态的数量
-LL st[K];  //合法的状态
-LL dp[N][M][K];    //第 i 行，放置了 j 个国王，状态为 k 的方案数
+i64 n, k;
+i64 cnt[K];  //每个状态的二进制中 1 的数量
+i64 tot;  //合法状态的数量
+i64 st[K];  //合法的状态
+i64 dp[N][M][K];    //第 i 行，放置了 j 个国王，状态为 k 的方案数
 int main(){
     ios::sync_with_stdio(false);cin.tie(0);
     cin >> n >> k;
     for (int s = 0; s < (1 << n); s ++ ){  //找出合法状态
-        LL sum = 0, t = s;
+        i64 sum = 0, t = s;
         while(t){  //计算 1 的数量
             sum += (t & 1);
             t >>= 1;
@@ -242,9 +242,9 @@ int main(){
     dp[0][0][0] = 1;
     for (int i = 1; i <= n + 1; i ++ ){
         for (int j1 = 1; j1 <= tot; j1 ++ ){  //当前的状态
-            LL s1 = st[j1];
+            i64 s1 = st[j1];
             for (int j2 = 1; j2 <= tot; j2 ++ ){    //上一行的状态
-                LL s2 = st[j2];
+                i64 s2 = st[j2];
                 if ( ( (s2 | (s2 << 1) | (s2 >> 1)) & s1 ) == 0 ){
                     for (int j = 0; j <= k; j ++ ){
                         if (j - cnt[s1] >= 0)
@@ -341,10 +341,10 @@ for (int i = 0; (1<<i)-1 <= n; i++) {
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-#define LL long long
+using i64 = long long;
 const int mod = 1e9 + 7;
 char c, s[20] = "!helloworld";
-LL dp[20];
+i64 dp[20];
 int main(){
     dp[0] = 1;
     while ((c = getchar()) != EOF)
@@ -396,13 +396,13 @@ int main(){
 
 ```cpp
 int T,n,m,len,a[20];  //a数组用于判断每一位能取到的最大值
-ll l,r,dp[20][15];
-ll dfs(int pos,int pre,int limit){  //记搜
+i64 l,r,dp[20][15];
+i64 dfs(int pos,int pre,int limit){  //记搜
     //pos搜到的位置，pre前一位数
     //limit判断是否有最高位限制
     if(pos>len) return 1;  //剪枝
     if(dp[pos][pre]!=-1 && !limit) return dp[pos][pre];  //记录当前值
-    ll ret=0;  //暂时记录当前方案数
+    i64 ret=0;  //暂时记录当前方案数
     int res=limit?a[len-pos+1]:9;  //res当前位能取到的最大值
     for(int i=0;i<=res;i++)
         if(!(i==4 || (pre==6 && i==2)))
@@ -410,7 +410,7 @@ ll dfs(int pos,int pre,int limit){  //记搜
     if(!limit) dp[pos][pre]=ret;  //当前状态方案数记录
     return ret;
 }
-ll part(ll x){  //把数按位拆分
+i64 part(i64 x){  //把数按位拆分
     len=0;
     while(x) a[++len]=x%10,x/=10;
     memset(dp,-1,sizeof dp);  //初始化-1（因为有可能某些情况下的方案数是0）

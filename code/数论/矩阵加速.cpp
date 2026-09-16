@@ -101,8 +101,8 @@ mat MatPow(mat a, i64 b) {
 }
 
 // @book-begin
-LL T, n, t[5][5], a[5][5], b[5][5];
-void matrixQp(LL y){
+i64 T, n, t[5][5], a[5][5], b[5][5];
+void matrixQp(i64 y){
     while (y){
         if (y & 1){
             memset(t, 0, sizeof t);

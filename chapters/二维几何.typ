@@ -4,7 +4,7 @@
 <二维几何>
 平面点、线、圆、三角形的浮点运算库：预置 `sign`/`EPS`、点线封装，到交点/距离/投影/旋转、圆与切线、三角形四心，文末另附 SMU\_inch 自包含板子。所有判定走 `sign` 不直接 `==`；几何题的错大多出在精度与退化（平行、共线、圆心重合），不在公式。
 
-本章默认 `ld = long double`，`EPS = 1e-7`（文末 SMU\_inch 板子改用 `double` + `1e-9`，两套不要混）。`T` 用 `int` / `long long` 做整点，用 `ld` 做浮点。`Pd` / `Ld` 为 `Point<ld>` / `Line<ld>`，`Pi` 为 `Point<int>`；模板里的 `Pt` / `Lt` 原文未 typedef，约定为 `Point<T>` / `Line<T>`，用前自行 `using`。`sign` 返回 $- 1 \/ 0 \/ 1$。
+本章默认 `ld = long double`，`EPS = 1e-7`（文末 SMU\_inch 板子改用 `double` + `1e-9`，两套不要混）。`T` 用 `int` / `i64` 做整点，用 `ld` 做浮点。`Pd` / `Ld` 为 `Point<ld>` / `Line<ld>`，`Pi` 为 `Point<int>`；模板里的 `Pt` / `Lt` 原文未 typedef，约定为 `Point<T>` / `Line<T>`，用前自行 `using`。`sign` 返回 $- 1 \/ 0 \/ 1$。
 
 == format 格式化输出小数点
 <format-格式化输出小数点>
@@ -17,12 +17,12 @@ cout << format("{:.2f}", 114514.1919810) << endl;
 
 == 库实数类实现 \(双精度)
 <库实数类实现-双精度>
-上半用 `std::complex`，`Real = int` 只适于整点（叉积会溢出就改 `long long`）。下半按 `.x/.y` 写，与 `complex` 不是同一种类型。
+上半用 `std::complex`，`Real = int` 只适于整点（叉积会溢出就改 `i64`）。下半按 `.x/.y` 写，与 `complex` 不是同一种类型。
 
 #pitfall[两套 `cross/dot` 不能同时编译（重定义），按题目留一套。]
 
 ```cpp
-using Real = int;  // 整点；需要更大范围改 long long
+using Real = int;  // 整点；需要更大范围改 i64
 using Point = complex<Real>;
 
 Real cross(const Point &a, const Point &b) {

@@ -192,9 +192,9 @@ template<typename T> struct PushRelabel {
 
 // @book-begin
 struct MinCostFlow {
-    using LL = long long;
-    using PII = pair<LL, int>;
-    const LL INF = numeric_limits<LL>::max();
+    using i64 = long long;
+    using PII = pair<i64, int>;
+    const i64 INF = numeric_limits<i64>::max();
     struct Edge {
         int v, c, f;
         Edge(int v, int c, int f) : v(v), c(c), f(f) {}
@@ -202,7 +202,7 @@ struct MinCostFlow {
     const int n;
     vector<Edge> e;
     vector<vector<int>> g;
-    vector<LL> h, dis;
+    vector<i64> h, dis;
     vector<int> pre;
 
     MinCostFlow(int n) : n(n), g(n) {}
@@ -241,13 +241,13 @@ struct MinCostFlow {
         }
         return dis[t] != INF;
     }
-    pair<int, LL> flow(int s, int t) {  // 最大流可能超过 int 时把 int 改 long long
+    pair<int, i64> flow(int s, int t) {  // 最大流可能超过 int 时把 int 改 i64
         int flow = 0;
-        LL cost = 0;
+        i64 cost = 0;
         h.assign(n, 0);
         while (dijkstra(s, t)) {
             for (int i = 0; i < n; ++i)
-                if (dis[i] != INF) h[i] += dis[i];  // 不可达点 dis = INF，直接加会溢出 long long，必须判掉
+                if (dis[i] != INF) h[i] += dis[i];  // 不可达点 dis = INF，直接加会溢出 i64，必须判掉
             int aug = numeric_limits<int>::max();
             for (int i = t; i != s; i = e[pre[i] ^ 1].v) aug = min(aug, e[pre[i]].c);
             for (int i = t; i != s; i = e[pre[i] ^ 1].v) {
@@ -255,7 +255,7 @@ struct MinCostFlow {
                 e[pre[i] ^ 1].c += aug;
             }
             flow += aug;
-            cost += LL(aug) * h[t];
+            cost += i64(aug) * h[t];
         }
         return {flow, cost};
     }

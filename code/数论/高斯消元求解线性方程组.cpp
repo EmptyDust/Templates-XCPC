@@ -79,12 +79,12 @@ i64 xor_n(i64 n) {
 // @book-begin
 const int N = 110;
 const double eps = 1e-8;
-LL n;
+i64 n;
 double a[N][N];
-LL gauss(){
-    LL c, r;
+i64 gauss(){
+    i64 c, r;
     for (c = 0, r = 0; c < n; c ++ ){
-        LL t = r;
+        i64 t = r;
         for (int i = r; i < n; i ++ )  //找到绝对值最大的行
             if (fabs(a[i][c]) > fabs(a[t][c]))
                 t = i;
@@ -113,7 +113,7 @@ int main(){
     for (int i = 0; i < n; i ++ )
         for (int j = 0; j < n + 1; j ++ )
             cin >> a[i][j];
-    LL t = gauss();
+    i64 t = gauss();
     if (t == 0){
         for (int i = 0; i < n; i ++ ){
             if (fabs(a[i][n]) < eps) a[i][n] = abs(a[i][n]);

@@ -15,13 +15,13 @@ const double PI = acos(-1.0);
 // @book-begin
 int main(){
     ios::sync_with_stdio(false);cin.tie(0);
-    LL n, m;
+    i64 n, m;
     cin >> n >> m;
-    vector <LL> p(m);
+    vector <i64> p(m);
     for (int i = 0; i < m; i ++ )
         cin >> p[i];
-    LL ans = 0;
-    function<void(LL, LL, LL)> dfs = [&](LL x, LL s, LL odd){  // x 当前下标，s 已选积，odd 容斥符号
+    i64 ans = 0;
+    function<void(i64, i64, i64)> dfs = [&](i64 x, i64 s, i64 odd){  // x 当前下标，s 已选积，odd 容斥符号
         if (x == m){
             if (s == 1) return;  // 空集不贡献
             ans += odd * (n / s);

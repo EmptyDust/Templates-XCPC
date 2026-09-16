@@ -268,9 +268,9 @@ int main() {
         G[u].push_back(v);
         G[v].push_back(u);
     }
-    vector<vector<LL>> dp(1 << n, vector<LL>(n));
+    vector<vector<i64>> dp(1 << n, vector<i64>(n));
     for (int i = 0; i < n; i++) dp[1 << i][i] = 1;
-    LL ans = 0;
+    i64 ans = 0;
     for (int st = 1; st < (1 << n); st++) {
         for (int u = 0; u < n; u++) {
             if (!dp[st][u]) continue;

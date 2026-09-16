@@ -58,33 +58,33 @@ int IOS;
 
 // @book-begin
 namespace BSGS {
-    LL a, b, p;
-    map<LL, LL> f;
-    inline LL gcd(LL a, LL b) { return b > 0 ? gcd(b, a % b) : a; }
-    inline LL ps(LL n, LL k, int p) {
-        LL r = 1;
+    i64 a, b, p;
+    map<i64, i64> f;
+    inline i64 gcd(i64 a, i64 b) { return b > 0 ? gcd(b, a % b) : a; }
+    inline i64 ps(i64 n, i64 k, int p) {
+        i64 r = 1;
         for (; k; k >>= 1) {
             if (k & 1) r = r * n % p;
             n = n * n % p;
         }
         return r;
     }
-    void exgcd(LL a, LL b, LL &x, LL &y) {
+    void exgcd(i64 a, i64 b, i64 &x, i64 &y) {
         if (!b) {
             x = 1, y = 0;
         } else {
             exgcd(b, a % b, x, y);
-            LL t = x;
+            i64 t = x;
             x = y;
             y = t - a / b * y;
         }
     }
-    LL inv(LL a, LL b) {
-        LL x, y;
+    i64 inv(i64 a, i64 b) {
+        i64 x, y;
         exgcd(a, b, x, y);
         return (x % b + b) % b;
     }
-    LL bsgs(LL a, LL b, LL p) {
+    i64 bsgs(i64 a, i64 b, i64 p) {
         f.clear();
         int m = ceil(sqrt(p));
         b %= p;
@@ -92,7 +92,7 @@ namespace BSGS {
             b = b * a % p;
             f[b] = i;
         }
-        LL tmp = ps(a, m, p);
+        i64 tmp = ps(a, m, p);
         b = 1;
         for (int i = 1; i <= m; i++) {
             b = b * tmp % p;
@@ -100,9 +100,9 @@ namespace BSGS {
         }
         return -1;
     }
-    LL exbsgs(LL a, LL b, LL p) {
+    i64 exbsgs(i64 a, i64 b, i64 p) {
         if (b == 1 || p == 1) return 0;
-        LL g = gcd(a, p), k = 0, na = 1;
+        i64 g = gcd(a, p), k = 0, na = 1;
         while (g > 1) {
             if (b % g != 0) return -1;
             k++;
@@ -112,7 +112,7 @@ namespace BSGS {
             if (na == b) return k;
             g = gcd(a, p);
         }
-        LL f = bsgs(a, b * inv(na, p) % p, p);
+        i64 f = bsgs(a, b * inv(na, p) % p, p);
         if (f == -1) return -1;
         return f + k;
     }
@@ -124,7 +124,7 @@ int main() {
     IOS;
     cin >> p >> a >> b;
     a %= p, b %= p;
-    LL ans = exbsgs(a, b, p);
+    i64 ans = exbsgs(a, b, p);
     if (ans == -1) cout << "no solution\n";
     else cout << ans << "\n";
     return 0;

@@ -27,7 +27,7 @@ void euler_Prime(int n){  //用欧拉筛求出1~n中每个数的最小质因数�
         }
     }
 }
-long long c(int n,int m,int p){  //计算C(n,m)%p的值
+i64 c(int n,int m,int p){  //计算C(n,m)%p的值
     euler_Prime(n);
     int a[t+5];  //t代表1~n中质数的个数 ，a[i]代表编号为i的质数在答案中出现的次数
     for(int i=1;i<=t;i++) a[i]=0;  //注意清0，一开始是随机数
@@ -45,7 +45,7 @@ long long c(int n,int m,int p){  //计算C(n,m)%p的值
             x/=prime[min_prime[x]];
         }
     }
-    long long ans=1;
+    i64 ans=1;
     for(int i=1;i<=t;i++){//枚举质数的编号，看它出现了几次
         while(a[i]>0){
             ans=ans*prime[i]%p;

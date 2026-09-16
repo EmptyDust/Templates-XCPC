@@ -17,7 +17,7 @@ int n;
 
 // @book-begin
 int main() {
-    vector C(n + 1, vector<long long>(n + 1));  // 原来 vector<int>，C(34,17)≈2e9 就爆 int
+    vector C(n + 1, vector<i64>(n + 1));  // 原来 vector<int>，C(34,17)≈2e9 就爆 int
     C[0][0] = 1;
     for (int i = 1; i <= n; i++) {
         C[i][0] = 1;

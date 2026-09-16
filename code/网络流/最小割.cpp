@@ -196,8 +196,8 @@ signed main() {
     cin >> n >> m;
 
     int S = n + m + 1, T = n + m + 2;
-    // 跨部边容量用 1E18，int 装不下（原写 Flow 即 Flow_<int>，会溢出 UB），必须用 long long
-    Flow_<long long> flow(T);
+    // 跨部边容量用 1E18，int 装不下（原写 Flow 即 Flow_<int>，会溢出 UB），必须用 i64
+    Flow_<i64> flow(T);
     for (int i = 1; i <= n; i++) {
         int w;
         cin >> w;

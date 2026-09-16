@@ -14,7 +14,7 @@ struct bigint {
         res.sign = -sign;
         return res;
     }
-    bigint(long long v) {
+    bigint(i64 v) {
         *this = v;
     }
     bigint(const string &s) {
@@ -24,7 +24,7 @@ struct bigint {
         sign = v.sign;
         a = v.a;
     }
-    void operator=(long long v) {
+    void operator=(i64 v) {
         a.clear();
         sign = 1;
         if (v < 0) sign = -1, v = -v;
@@ -75,7 +75,7 @@ struct bigint {
             if (i == (int)a.size()) {
                 a.push_back(0);
             }
-            long long cur = a[i] * (long long)v + carry;
+            i64 cur = a[i] * (i64)v + carry;
             carry = (int)(cur / base);
             a[i] = (int)(cur % base);
         }
@@ -84,7 +84,7 @@ struct bigint {
     void operator/=(int v) {
         check(v);
         for (int i = (int)a.size() - 1, rem = 0; i >= 0; --i) {
-            long long cur = a[i] + rem * (long long)base;
+            i64 cur = a[i] + rem * (i64)base;
             a[i] = (int)(cur / v);
             rem = (int)(cur % v);
         }
@@ -96,7 +96,7 @@ struct bigint {
         }
         int m = 0;
         for (int i = a.size() - 1; i >= 0; --i) {
-            m = (a[i] + m * (long long)base) % v;
+            m = (a[i] + m * (i64)base) % v;
         }
         return m * sign;
     }
@@ -198,7 +198,7 @@ struct bigint {
     }
 
     /* 大整数乘除大整数部分 */
-    typedef vector<long long> vll;
+    using vll = vector<i64>;
     bigint operator*(const bigint &v) const {  // 大整数乘大整数
         vector<int> a6 = convert_base(this->a, base_digits, 6);
         vector<int> b6 = convert_base(v.a, base_digits, 6);
@@ -211,7 +211,7 @@ struct bigint {
         bigint res;
         res.sign = sign * v.sign;
         for (int i = 0, carry = 0; i < (int)c.size(); i++) {
-            long long cur = c[i] + carry;
+            i64 cur = c[i] + carry;
             res.a.push_back((int)(cur % 1000000));
             carry = (int)(cur / 1000000);
         }
@@ -231,7 +231,7 @@ struct bigint {
             r += a.a[i];
             int s1 = r.a.size() <= b.a.size() ? 0 : r.a[b.a.size()];
             int s2 = r.a.size() <= b.a.size() - 1 ? 0 : r.a[b.a.size() - 1];
-            int d = ((long long)base * s1 + s2) / b.a.back();
+            int d = ((i64)base * s1 + s2) / b.a.back();
             r -= b * d;
             while (r < 0) r += b, --d;
             q.a[i] = d;
@@ -243,11 +243,11 @@ struct bigint {
         return make_pair(q, r / norm);
     }
     static vector<int> convert_base(const vector<int> &a, int old_digits, int new_digits) {
-        vector<long long> p(max(old_digits, new_digits) + 1);
+        vector<i64> p(max(old_digits, new_digits) + 1);
         p[0] = 1;
         for (int i = 1; i < (int)p.size(); i++) p[i] = p[i - 1] * 10;
         vector<int> res;
-        long long cur = 0;
+        i64 cur = 0;
         int cur_digits = 0;
         for (int i = 0; i < (int)a.size(); i++) {
             cur += a[i] * p[cur_digits];

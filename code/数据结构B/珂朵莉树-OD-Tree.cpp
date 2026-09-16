@@ -89,8 +89,8 @@ template<typename T, typename Cmp = less<T>> struct RMQ {
 struct ODT {
     struct node {
         int l, r;
-        mutable LL v;
-        node(int l, int r = -1, LL v = 0) : l(l), r(r), v(v) {}
+        mutable i64 v;
+        node(int l, int r = -1, i64 v = 0) : l(l), r(r), v(v) {}
         bool operator<(const node &o) const {
             return l < o.l;
         }
@@ -104,27 +104,27 @@ struct ODT {
         if (it != s.end() && it->l == pos) return it;
         it--;
         int l = it->l, r = it->r;
-        LL v = it->v;
+        i64 v = it->v;
         s.erase(it);
         s.insert(node(l, pos - 1, v));
         return s.insert(node(pos, r, v)).first;
     }
-    void assign(int l, int r, LL x) {
+    void assign(int l, int r, i64 x) {
         auto itr = split(r + 1), itl = split(l);
         s.erase(itl, itr);
         s.insert(node(l, r, x));
     }
-    void add(int l, int r, LL x) {
+    void add(int l, int r, i64 x) {
         auto itr = split(r + 1), itl = split(l);
         for (auto it = itl; it != itr; it++) {
             it->v += x;
         }
     }
-    LL kth(int l, int r, int k) {
-        vector<pair<LL, int>> a;
+    i64 kth(int l, int r, int k) {
+        vector<pair<i64, int>> a;
         auto itr = split(r + 1), itl = split(l);
         for (auto it = itl; it != itr; it++) {
-            a.push_back(pair<LL, int>(it->v, it->r - it->l + 1));
+            a.push_back(pair<i64, int>(it->v, it->r - it->l + 1));
         }
         sort(a.begin(), a.end());
         for (auto [val, len] : a) {
@@ -132,9 +132,9 @@ struct ODT {
             if (k <= 0) return val;
         }
     }
-    LL power(LL a, int b, int mod) {
+    i64 power(i64 a, int b, int mod) {
         a %= mod;
-        LL res = 1;
+        i64 res = 1;
         for (; b; b /= 2, a = a * a % mod) {
             if (b % 2) {
                 res = res * a % mod;
@@ -142,9 +142,9 @@ struct ODT {
         }
         return res;
     }
-    LL powersum(int l, int r, int x, int mod) {
+    i64 powersum(int l, int r, int x, int mod) {
         auto itr = split(r + 1), itl = split(l);
-        LL ans = 0;
+        i64 ans = 0;
         for (auto it = itl; it != itr; it++) {
             ans = (ans + power(it->v, x, mod) * (it->r - it->l + 1) % mod) % mod;
         }

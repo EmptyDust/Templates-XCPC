@@ -13,9 +13,9 @@ const double PI = acos(-1.0);
 // @book-begin
 #include <bits/stdc++.h>
 using namespace std;
-#define LL long long
+using i64 = long long;
 const int mod = 1e9 + 7, N = 1010;
-LL n, W, cnt[N], f[N], w, v;
+i64 n, W, cnt[N], f[N], w, v;
 int main(){
     cin >> n >> W;
     for (int i = 0; i <= W; i ++ )

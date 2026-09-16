@@ -13,10 +13,10 @@ const double eps = 1e-8;
 const double PI = acos(-1.0);
 
 // @book-begin
-LL a[N], tmp[N], n, ans = 0;  // N 按题目改
-void mergeSort(LL l, LL r){
+i64 a[N], tmp[N], n, ans = 0;  // N 按题目改
+void mergeSort(i64 l, i64 r){
     if (l >= r) return;
-    LL mid = (l + r) >> 1, i = l, j = mid + 1, cnt = 0;
+    i64 mid = (l + r) >> 1, i = l, j = mid + 1, cnt = 0;
     mergeSort(l, mid);
     mergeSort(mid + 1, r);
     while (i <= mid || j <= r)
@@ -24,7 +24,7 @@ void mergeSort(LL l, LL r){
             tmp[cnt++] = a[i++];
         else
             tmp[cnt++] = a[j++], ans += mid - i + 1;
-    for (LL k = 0; k < r - l + 1; k++)
+    for (i64 k = 0; k < r - l + 1; k++)
         a[l + k] = tmp[k];
 }
 int main(){

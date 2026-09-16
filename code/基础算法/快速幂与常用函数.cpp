@@ -20,7 +20,7 @@ int mypow(i64 n, i64 k, int p = MOD) {  // 快速幂，复杂度 O(log k)；参�
     }
     return r;
 }
-i64 mysqrt(i64 n) {  // 针对 sqrt 无法精确计算 ll 型；n ≤ 1e18 时不溢出
+i64 mysqrt(i64 n) {  // 针对 sqrt 无法精确计算 i64 型；n ≤ 1e18 时不溢出
     i64 ans = sqrt(n);
     while ((ans + 1) * (ans + 1) <= n) ans++;
     while (ans * ans > n) ans--;
