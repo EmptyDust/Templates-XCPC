@@ -228,3 +228,81 @@ cout << B1 << " " << B2 << "\n";  //你可以直接使用cout输出
 #include-code("code/STL与库函数/对-vector-定义哈希.cpp")
 
 #include-code("code/STL与库函数/对-vector-定义哈希-2.cpp")
+
+== 参数传递与形
+<参数传递与形>
+板子是零件：普通数据进、普通数据出，外加一个回调。整数用 `i64`。别名写 `using`，不要 `typedef`。类型用 `struct` 全公开。
+
+#specline([16B 走寄存器], [4MB × $10^5$：按值 8.2s，`const&` ≈ 0])
+g++ 14 `-O2`，x86-64 SysV，Ryzen 7 5800H（表内 ns 按约 4.4 GHz）。被测函数编成单独的 `.o` 再链接——写在同一个文件里，按值拷贝会被优化掉。函数只读对象头尾各一字节，量的是传参本身。
+
+按值是给函数一份复制。整数类结构体不超过 16 字节时，整颗进寄存器。再大，调用方先拷到自己的栈上，被调方从栈读；17 字节和 128 字节同一条路，只是量变大。`const T&` 寄存器里只传 8 字节地址，不先拷一份。`const` 是不许改，指令和 `T&` 一样。左值按值是拷贝，不是 move。表上 16B 两栏都是 1.14 ns，是两边都停在 5 拍，机器码不是同一段。
+
+4MB 的 `vector` 传 $10^5$ 次，按值约 8.2s。`-O3` 也消不掉：拷的是堆上那坨数据，不是壳。
+
+#figure(
+align(center)[#table(
+  columns: 4,
+  align: (right, right, right, right),
+  [$N$ (B)], [按值 (ns)], [`const&` (ns)], [按值 / 引用],
+  [8], [1.14], [1.37], [0.83],
+  [16], [1.14], [1.14], [1.00],
+  [17], [1.37], [1.37], [1.00],
+  [64], [1.36], [1.14], [1.20],
+  [128], [2.27], [1.13], [2.00],
+  [512], [13.98], [1.13], [12.4],
+  [65536], [960], [1.13], [850],
+)]
+)
+
+#figure(
+align(center)[#table(
+  columns: 2,
+  align: (left, left),
+  [场景], [写法],
+  [只读容器 / `string` / 大 struct], [`const T&`],
+  [有意改副本（`sort` / `shuffle` / `resize`）], [按值，加注释],
+  [$lt.eq$ 16B 的 `int` / `pair` / 坐标], [按值],
+  [返回值], [按值],
+  [回调], [`F&&`，调用处 `[&]`],
+  [`std::move`], [只在所有权交接处],
+)]
+)
+
+`T` 接任意表达式，函数内是独立副本。`const T&` 接左值、const 对象、临时值。`T&` 只接可修改左值：`f({1, 2, 3})`、`T = string` 时的 `f("abc")`、`f(const 对象)` 三处都编不过。
+
+#pitfall[`vector` 重分配后，指向元素的引用、指针、迭代器全部失效。`reserve` 到足够容量之后的 `push_back` 不触发重分配。]
+
+range-for 进门把 `begin()`、`end()` 各求一次，之后只 `!=` 和 `++`。循环里对 `vector` `push_back`：扩容则迭代器失效。`list` 上无条件 `push_back` 会走成死循环。BFS / 拓扑用下标：
+
+```cpp
+vector<int> q = {s};
+for (int i = 0; i < (int)q.size(); i++) {
+    int u = q[i];
+    q.push_back(v);
+}
+```
+
+具体类型 `T&&` 只接右值。模板里 `F&&` 按实参折叠：左值变成 `T&`，右值变成 `T&&`。板子回调写 `F&&`。
+
+```cpp
+i64 query(int u, const vector<int> &a);
+vector<int> sorted(vector<int> a) {  // 按值：sort 自己的副本
+    sort(a.begin(), a.end());
+    return a;
+}
+template<class F>
+void path(int u, int v, F &&op) {
+    op(l, r);
+}
+path(u, v, [&](int l, int r) { ans += bit.ask(l, r); });
+```
+
+```cpp
+i64 query(int u, vector<int> a);                       // 每次整份拷贝
+void path(int u, int v, function<void(int, int)> op);  // 类型擦除
+void subtree(int u, int &l, int &r);                   // 出参，写不成 g(f(x))
+for (int u : q) q.push_back(v);                        // 扩容则迭代器失效
+```
+
+`void sort_inplace(vector<int> &a)` 与 `std::sort` 同类：改原件。
