@@ -75,11 +75,12 @@ int main(){
 === 大数据解
 <大数据解>
 #specline([#O($N "log" N$)（$10^5$ 以内）])
-把第二个序列映射到第一个序列中的位置后跑 LIS。`maxn` 需自行定义。
+把第二个序列映射到第一个序列中的位置后跑 LIS。
 
 #pitfall[要求两个序列都是排列（元素互不相同），否则 `p[a[i]] = i` 的映射会互相覆盖。]
 
 ```cpp
+const int maxn = 1e5 + 10;  // 按题目改
 const int INF = 0x7fffffff;
 int n, a[maxn], b[maxn], f[maxn], p[maxn];
 int main(){

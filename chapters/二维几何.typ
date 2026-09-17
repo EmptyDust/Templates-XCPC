@@ -4,7 +4,7 @@
 <二维几何>
 平面点、线、圆、三角形的浮点运算库：预置 `sign`/`EPS`、点线封装，到交点/距离/投影/旋转、圆与切线、三角形四心，文末另附 SMU\_inch 自包含板子。所有判定走 `sign` 不直接 `==`；几何题的错大多出在精度与退化（平行、共线、圆心重合），不在公式。
 
-本章默认 `ld = long double`，`EPS = 1e-7`（文末 SMU\_inch 板子改用 `double` + `1e-9`，两套不要混）。`T` 用 `int` / `i64` 做整点，用 `ld` 做浮点。`Pd` / `Ld` 为 `Point<ld>` / `Line<ld>`，`Pi` 为 `Point<int>`；模板里的 `Pt` / `Lt` 原文未 typedef，约定为 `Point<T>` / `Line<T>`，用前自行 `using`。`sign` 返回 $- 1 \/ 0 \/ 1$。
+本章默认 `ld = long double`，`EPS = 1e-7`（文末 SMU\_inch 板子改用 `double` + `1e-9`，两套不要混）。`T` 用 `int` / `i64` 做整点，用 `ld` 做浮点。`Pd` / `Ld` 为 `Point<ld>` / `Line<ld>`，`Pi` 为 `Point<int>`；`Pt` / `Lt` 是模板别名，随模板一起印：`template<typename T> using Pt = Point<T>;`（`Lt` 同）。`sign` 返回 $- 1 \/ 0 \/ 1$。
 
 == format 格式化输出小数点
 <format-格式化输出小数点>

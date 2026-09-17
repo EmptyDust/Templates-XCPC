@@ -12,14 +12,11 @@ const int M = 2000005;
 const double eps = 1e-8;
 const double PI = acos(-1.0);
 
-int W;
-int dp[M];
-int n;
-int s[M];
-int v[M];
-int w[M];
 
 // @book-begin
+int n, W;  // 物品种数、容量
+int s[M], w[M], v[M], dp[M];  // 数量、体积、价值；M 见 contest.hpp
+
 int main() {
     for (int i = 1; i <= n; i++)
         for (int j = W; j >= 0; j--)

@@ -853,7 +853,7 @@ bool is_prime(int n) {
 
 == 同余方程组、拓展中国剩余定理 excrt
 <同余方程组拓展中国剩余定理-excrt>
-求解方程组 $x equiv a_i (mod b_i)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv "ans" (mod M)$ 与新方程 $x equiv a_i (mod b_i)$ 消元成 $M dot k equiv a_i - "ans" (mod b_i)$，用 exgcd 解出 $k$。复杂度 $cal(O)(n "log")$。
+求解方程组 $x equiv a_i (mod b_i)$（代码变量：余数存 `ai[]`、模数存 `bi[]`，与洛谷 P4777 的读入命名相反，注意别抄混）。#strong[模数不要求两两互质];（互质时退化为普通 CRT）。做法是逐对合并：把已合并的方程 $x equiv "ans" (mod M)$ 与新方程 $x equiv a_i (mod b_i)$ 消元成 $M dot k equiv a_i - "ans" (mod b_i)$，用 exgcd 解出 $k$。`mul` 为本章防爆模乘那一份。复杂度 $cal(O)(n "log")$。
 
 ```cpp
 int n; i64 ai[maxn], bi[maxn];

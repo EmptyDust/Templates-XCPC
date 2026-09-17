@@ -12,7 +12,6 @@ const int M = 2000005;
 const double eps = 1e-8;
 const double PI = acos(-1.0);
 
-template<class... A> int Hash(A&&...);
 template<class... A> int add(A&&...);
 int n;
 int net;
@@ -21,6 +20,8 @@ int s;
 int t;
 
 // @book-begin
+int Hash(int x, int y) { return x * (n + 1) + y; }  // 格点 → 对偶图节点编号
+
 int main() {
     for (int i = 1; i <= n + 1; i++) {
         for (int j = 1, w; j <= n; j++) {

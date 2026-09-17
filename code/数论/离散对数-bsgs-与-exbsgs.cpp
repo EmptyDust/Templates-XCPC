@@ -54,8 +54,6 @@ i64 euclidean(i64 a, i64 b, i64 c, i64 n) {
     return m * n - euclidean(c, c - b - 1, a, m - 1);
 }
 
-int IOS;
-
 // @book-begin
 namespace BSGS {
     i64 a, b, p;
@@ -121,7 +119,7 @@ namespace BSGS {
 using namespace BSGS;
 
 int main() {
-    IOS;
+    ios::sync_with_stdio(false); cin.tie(0);
     cin >> p >> a >> b;
     a %= p, b %= p;
     i64 ans = exbsgs(a, b, p);

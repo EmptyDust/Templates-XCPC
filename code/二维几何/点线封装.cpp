@@ -106,10 +106,11 @@ struct Line {
         return os << '<' << l.a << ',' << l.b << '>';
     }
 };
+template<typename T> using Pt = Point<T>;
+template<typename T> using Lt = Line<T>;
 using Pd = Point<ld>;
 using Ld = Line<ld>;
 using Pi = Point<int>;
-// 模板里的 Pt/Lt 约定为 Point<T>/Line<T>，用前 using Pt = Point<T>; using Lt = Line<T>;
 // @book-end
 
 int main() { return 0; }

@@ -12,14 +12,10 @@ const int M = 2000005;
 const double eps = 1e-8;
 const double PI = acos(-1.0);
 
-int ls[M];
-int n;
-int nums[M];
-int rs[M];
-int stk[M];
-int top;
-
 // @book-begin
+int n, top;
+int nums[M], ls[M], rs[M], stk[M];  // M 见 contest.hpp（按题目改）
+
 int main() {
     cin >> n;
     for (int i = 0;i < n;++i)cin >> nums[i];

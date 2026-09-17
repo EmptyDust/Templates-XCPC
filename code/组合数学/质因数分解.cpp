@@ -5,7 +5,6 @@ typedef long long ll;
 typedef long long LL;
 typedef long double ld;
 typedef unsigned long long u64;
-const int MOD = 998244353;
 const int mod = 1000000007;
 const int N = 1000005;
 const int M = 2000005;
@@ -13,6 +12,7 @@ const double eps = 1e-8;
 const double PI = acos(-1.0);
 
 // @book-begin
+const int MOD = 998244353;  // 模数按题目改
 int n,m,p,b[10000005],prime[1000005],t,min_prime[10000005];  // 上限按 1e7，按题目改
 void euler_Prime(int n){  //用欧拉筛求出1~n中每个数的最小质因数的编号是多少，保存在min_prime中
     for(int i=2;i<=n;i++){
@@ -57,6 +57,6 @@ i64 c(int n,int m,int p){  //计算C(n,m)%p的值
 int main(){
     cin>>n>>m;
     m=min(m,n-m);  //小优化
-    cout<<c(n,m,MOD);  // MOD 须自行定义
+    cout<<c(n,m,MOD);
 }
 // @book-end

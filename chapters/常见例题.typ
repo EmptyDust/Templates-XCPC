@@ -87,6 +87,9 @@ Gosper：按字典序枚举恰好 $k$ 个 $1$ 的位集。$n$ 须能压进 `int`
 读入牌型，比较两手牌。依赖赛场宏 `FOR` / `ALL` / `sz`。`clac` 是比较入口（拼写未改，避免和旧代码对不上）。
 
 ```cpp
+#define FOR(i, a, b) for (int i = (a); i <= (b); i++)  // 本题解私用宏，页内自洽
+#define ALL(x) x.begin(), x.end()
+
 struct card {
       int suit, rank;
       friend bool operator < (const card &a, const card &b) {
@@ -101,11 +104,11 @@ struct card {
     friend auto &operator>> (istream &it, card &C) {
         string S, T; it >> S;
         T = "__23456789TJQKA";  //点数
-        FOR (i, 0, T.sz - 1) {
+        FOR (i, 0, (int)T.size() - 1) {
             if (T[i] == S[0]) C.rank = i;
         }
         T = "_SHCD";  //花色
-        FOR (i, 0, T.sz - 1) {
+        FOR (i, 0, (int)T.size() - 1) {
             if (T[i] == S[1]) C.suit = i;
         }
         return it;

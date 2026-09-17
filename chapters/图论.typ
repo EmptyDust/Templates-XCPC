@@ -252,6 +252,8 @@ namespace Graph {
     const int M = 1e6 + 7;
     int tot, h[N], ver[M], ne[M];
     int deg[N], vis[M];
+    int n, siz[N], dis[N];  // 点数、子树大小、深度（dfs 填）
+    vector<int> a;  // DFS 序
 
     void clear(int n) {
         tot = 0;  //多组样例清空
@@ -808,14 +810,14 @@ void dfs(i64 x) {
 }
 void Solve() {
     cin >> n;
-    FOR(i, 1, n) cin >> point[i];
-    FOR(i, 2, n) {
+    for (int i = 1; i <= n; i++) cin >> point[i];
+    for (int i = 2; i <= n; i++) {
         i64 x, y, w; cin >> x >> y >> w;
         edge[{x, y}] = edge[{y, x}] = w;
         add(x, y), add(y, x);
     }
-    v[1] = true; dfs(1); i64 ans = -MAX18;
-    FOR(i, 1, n) ans = max(ans, point[i]);
+    v[1] = true; dfs(1); i64 ans = -1e18;  // 点权可为负
+    for (int i = 1; i <= n; i++) ans = max(ans, point[i]);
     cout << ans << endl;
 }
 ```
@@ -838,10 +840,10 @@ $n lt.eq 4$ 时的样例如上，通项公式为 $n^(n - 2)$ 。
 
 === 单源最短/次短路计数
 <单源最短次短路计数>
-依赖链式前向星段的 `h / tot / ver / ne / edge / add`；`Z` 为取模类（见杂项章），`INF` 需自行定义。下方 `Solve` 把边权固定为 $1$（`w = 1`），统计起点到每个点的#strong[最短路条数，以及长度恰好为最短路 $+ 1$ 的次短路条数];，按题目修改边权读入即可。
+依赖链式前向星段的 `h / tot / ver / ne / edge / add`；`Z` 为取模类（见杂项章）。下方 `Solve` 把边权固定为 $1$（`w = 1`），统计起点到每个点的#strong[最短路条数，以及长度恰好为最短路 $+ 1$ 的次短路条数];，按题目修改边权读入即可。
 
 ```cpp
-const int N = 2e5 + 7, M = 1e6 + 7;
+const int N = 2e5 + 7, M = 1e6 + 7, INF = 0x3f3f3f3f;
 int n, m, s, e; int d[N][2], v[N][2];  // 0 代表最短路， 1 代表次短路
 Z num[N][2];
 
