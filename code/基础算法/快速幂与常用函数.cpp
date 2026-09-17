@@ -13,7 +13,9 @@ const double eps = 1e-8;
 const double PI = acos(-1.0);
 
 // @book-begin
-int mypow(i64 n, i64 k, int p = MOD) {  // 快速幂，复杂度 O(log k)；参数与累乘器 i64，n*n 不溢出 int
+using i64 = long long;
+
+int mypow(i64 n, i64 k, int p) {  // 快速幂，复杂度 O(log k)；参数与累乘器 i64，n*n 不溢出 int
     i64 r = 1;
     for (; k; k >>= 1, n = n * n % p) {
         if (k & 1) r = r * n % p;

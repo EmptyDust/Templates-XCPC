@@ -4,7 +4,7 @@
 <多项式>
 多项式全家桶：`Poly` 封装（inv / log / exp / sqrt / pow / 多点求值）、FFT / NTT、Berlekamp-Massey、线性递推求第 $n$ 项、拉格朗日插值与生成函数速查。选型信号：模意义卷积 → NTT；实数卷积 → FFT；数列找最短递推 → BM；生成函数计数 → OGF/EGF 速查表。
 
-默认模数 $998244353$（NTT 模，原根 $3$）。`Poly` / `dft` 依赖 mint（`MInt` / `Z`，见杂项取模类）。整数用 `i64`。
+默认模数 $998244353$（NTT 模，原根 $3$）。`Poly` / `dft` 依赖取模类 `Zmod<P>`（见杂项章），用 `using Z = Zmod<998244353>;` 这样的别名。整数用 `i64`。
 
 == 线性凸包
 <线性凸包>
@@ -15,11 +15,11 @@
 == 多项式封装
 <多项式封装>
 #specline([乘法 #O($n "log" n$)（NTT；长度小时自动退 #O($n^2$) 直接卷）])
-依赖本节后面的 `dft` / `idft` 与 mint `MInt<P>`。默认模 $998244353$。`inv/log/exp/sqrt` 的 `m` 是要的前 $m$ 项。`eval` 是多点求值。
+依赖本节后面的 `dft` / `idft` 与取模类 `Zmod<P>`。默认模 $998244353$。`inv/log/exp/sqrt` 的 `m` 是要的前 $m$ 项。`eval` 是多点求值。
 
 ```cpp
-template<int P = 998244353> struct Poly : public vector<MInt<P>> {
-    using Value = MInt<P>;
+template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
+    using Value = Zmod<P>;
 
     Poly() : vector<Value>() {}
     explicit constexpr Poly(int n) : vector<Value>(n) {}
@@ -192,14 +192,14 @@ template<int P = 998244353> struct Poly : public vector<MInt<P>> {
         }
         Value v = (*this)[i];
         auto f = shift(-i) * v.inv();
-        return (f.log(m - i * k) * k).exp(m - i * k).shift(i * k) * power(v, k);
+        return (f.log(m - i * k) * k).exp(m - i * k).shift(i * k) * mypow(v, k);
     }
     constexpr Poly sqrt(int m) const {
         Poly x{1};
         int k = 1;
         while (k < m) {
             k *= 2;
-            x = (x + (trunc(k) * x.inv(k)).trunc(k)) * CInv<2, P>;
+            x = (x + (trunc(k) * x.inv(k)).trunc(k)) * ((P + 1) / 2);  // 2 的逆元：P 为奇素数
         }
         return x.trunc(m);
     }
@@ -255,24 +255,24 @@ template<int P = 998244353> struct Poly : public vector<MInt<P>> {
 
 ```cpp
 vector<int> rev;
-template<int P> vector<MInt<P>> roots{0, 1};
+template<int P> vector<Zmod<P>> roots{0, 1};
 
-template<int P> constexpr MInt<P> findPrimitiveRoot() {
-    MInt<P> i = 2;
+template<int P> constexpr Zmod<P> findPrimitiveRoot() {
+    Zmod<P> i = 2;
     int k = __builtin_ctz(P - 1);
     while (true) {
-        if (power(i, (P - 1) / 2) != 1) {
+        if (mypow(i, (P - 1) / 2) != 1) {
             break;
         }
         i += 1;
     }
-    return power(i, (P - 1) >> k);
+    return mypow(i, (P - 1) >> k);
 }
 
-template<int P> constexpr MInt<P> primitiveRoot = findPrimitiveRoot<P>();
-template<> constexpr MInt<998244353> primitiveRoot<998244353>{31};
+template<int P> constexpr Zmod<P> primitiveRoot = findPrimitiveRoot<P>();
+template<> constexpr Zmod<998244353> primitiveRoot<998244353>{31};
 
-template<int P> constexpr void dft(vector<MInt<P>> &a) {  // 离散傅里叶变换
+template<int P> constexpr void dft(vector<Zmod<P>> &a) {  // 离散傅里叶变换
     int n = a.size();
 
     if (int(rev.size()) != n) {
@@ -292,7 +292,7 @@ template<int P> constexpr void dft(vector<MInt<P>> &a) {  // 离散傅里叶变�
         int k = __builtin_ctz(roots<P>.size());
         roots<P>.resize(n);
         while ((1 << k) < n) {
-            auto e = power(primitiveRoot<P>, 1 << (__builtin_ctz(P - 1) - k - 1));
+            auto e = mypow(primitiveRoot<P>, 1 << (__builtin_ctz(P - 1) - k - 1));
             for (int i = 1 << (k - 1); i < (1 << k); i++) {
                 roots<P>[2 * i] = roots<P>[i];
                 roots<P>[2 * i + 1] = roots<P>[i] * e;
@@ -303,19 +303,19 @@ template<int P> constexpr void dft(vector<MInt<P>> &a) {  // 离散傅里叶变�
     for (int k = 1; k < n; k *= 2) {
         for (int i = 0; i < n; i += 2 * k) {
             for (int j = 0; j < k; j++) {
-                MInt<P> u = a[i + j];
-                MInt<P> v = a[i + j + k] * roots<P>[k + j];
+                Zmod<P> u = a[i + j];
+                Zmod<P> v = a[i + j + k] * roots<P>[k + j];
                 a[i + j] = u + v;
                 a[i + j + k] = u - v;
             }
         }
     }
 }
-template<int P> constexpr void idft(vector<MInt<P>> &a) {  // 逆变换
+template<int P> constexpr void idft(vector<Zmod<P>> &a) {  // 逆变换
     int n = a.size();
     reverse(a.begin() + 1, a.end());
     dft(a);
-    MInt<P> inv = (1 - P) / n;
+    Zmod<P> inv = (1 - P) / n;
     for (int i = 0; i < n; i++) {
         a[i] *= inv;
     }
@@ -347,7 +347,7 @@ template<int P = 998244353> Poly<P> berlekampMassey(const Poly<P> &s) {
             auto d = oldC;
             d *= -1;
             d.insert(d.begin(), 1);
-            MInt<P> df1 = 0;
+            Zmod<P> df1 = 0;
             for (int j = 1; j <= d.size(); j++) {
                 df1 += d[j - 1] * s[f + 1 - j];
             }
@@ -377,7 +377,7 @@ template<int P = 998244353> Poly<P> berlekampMassey(const Poly<P> &s) {
 已知线性递推，求第 $n$ 项（$0$-index）。`q` 为特征多项式，$p$ 由初值决定（Bostan-Mori）。$n$ 用 `i64`。
 
 ```cpp
-template<int P = 998244353> MInt<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n) {
+template<int P = 998244353> Zmod<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n) {
     int m = q.size() - 1;
     while (n > 0) {
         auto newq = q;
@@ -428,9 +428,11 @@ template<int P = 998244353> MInt<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n
 == 快速数论变换 NTT
 <快速数论变换-ntt>
 #specline([#O($N "log" N$)])
-模意义卷积。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。
+模意义卷积。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。头部两行自带（已抄 `contest.hpp` 时删去 `mod` 那行，勿重定义）。
 
 ```cpp
+using Z = Zmod<998244353>;  // 取模类见杂项章
+const int mod = 998244353;  // NTT 模
 struct Polynomial {
     vector<Z> z;
     vector<int> r;

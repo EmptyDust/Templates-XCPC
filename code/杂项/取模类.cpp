@@ -24,21 +24,17 @@ template<typename T> constexpr T mypow(T n, i64 k) {
     return r;
 }
 
-template<typename T> constexpr T power(int n) {
-    return mypow(T(2), n);
-}
-
-template<const int &MOD> struct Zmod {
+template<int P> struct Zmod {
     int x;
-    Zmod(signed x = 0) : x(norm(x % MOD)) {}
-    Zmod(i64 x) : x(norm(x % MOD)) {}
+    constexpr Zmod(signed x = 0) : x(norm(x % P)) {}
+    constexpr Zmod(i64 x) : x(norm(x % P)) {}
 
     constexpr int norm(int x) const noexcept {
         if (x < 0) [[unlikely]] {
-            x += MOD;
+            x += P;
         }
-        if (x >= MOD) [[unlikely]] {
-            x -= MOD;
+        if (x >= P) [[unlikely]] {
+            x -= P;
         }
         return x;
     }
@@ -49,12 +45,12 @@ template<const int &MOD> struct Zmod {
         return x;
     }
     constexpr Zmod operator-() const {
-        Zmod val = norm(MOD - x);
+        Zmod val = norm(P - x);
         return val;
     }
     constexpr Zmod inv() const {
         assert(x != 0);
-        return mypow(*this, MOD - 2);
+        return mypow(*this, P - 2);
     }
     friend constexpr auto &operator>>(istream &in, Zmod &j) {
         int v;
@@ -92,7 +88,7 @@ template<const int &MOD> struct Zmod {
         return *this;
     }
     constexpr Zmod &operator*=(const Zmod &i) {
-        x = i64(x) * i.x % MOD;
+        x = i64(x) * i.x % P;
         return *this;
     }
     constexpr Zmod &operator/=(const Zmod &i) {
@@ -130,8 +126,7 @@ template<const int &MOD> struct Zmod {
     }
 };
 
-int MOD[] = {998244353, 1000000007};  // 模板参数要引用，所以用数组元素
-using Z = Zmod<MOD[1]>;  // 现在是 1e9+7；要 998244353 改 MOD[0]
+// 用法：using Z = Zmod<998244353>; 双模两个类型：using U = Zmod<1000000007>, V = Zmod<998244353>;
 // @book-end
 
 int main() { return 0; }

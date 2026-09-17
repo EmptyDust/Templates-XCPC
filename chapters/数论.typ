@@ -1267,10 +1267,11 @@ $sum_(d \| n) phi (d) = n$ ，$sum_(d \| n) mu (d) n / d = phi (n)$ 。
 答案为 $sum_(i = 0)^n - 1^i dot binom(n, i) dot binom(m - i dot k + n - 1, n - 1)$ #link("http://acm.hdu.edu.cn/showproblem.php?pid=6397")[See1] #link("https://codeforces.com/gym/103428/problem/M")[See2];。
 
 ```cpp
- Z clac(int n, int k, int m) {
-    Z ans = 0;
-    for(int i = 0; i <= n; ++i) {
-        ans += C(n, i) * C(m - i * k + n - 1, n - 1) * pow(-1, i);
+i64 clac(int n, int k, int m) {  // 依赖组合章的 comb 与 mod（见组合数学），奇数项取负要加 mod 回正
+    i64 ans = 0;
+    for (int i = 0; i <= n; i++) {
+        i64 t = (i64)comb.C(n, i) * comb.C(m - i * k + n - 1, n - 1) % mod;
+        ans = (ans + (i & 1 ? mod - t : t)) % mod;
     }
     return ans;
 }

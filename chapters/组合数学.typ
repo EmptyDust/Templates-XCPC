@@ -15,47 +15,47 @@ $binom(n, k) = n ! \/ (k ! (n - k) !)$，选 $k$ 个。模质数：预处理阶�
 
 === 逆元+卢卡斯定理（质数取模）
 <逆元卢卡斯定理质数取模>
-$cal(O)(N)$ 预处理阶乘及逆元后 $cal(O)(1)$ 查询。模数必须为质数，写在模意义整数类型 `Z` 里；本板依赖 `Z`。`comb(1 << 21)` 预处理上限按题目改；查询超出时 `fac/inv` 会自动 `init` 扩表。`_inv[i]=(i!)^{-1}`，不是 $i^(- 1)$。
+$cal(O)(N)$ 预处理阶乘及逆元后 $cal(O)(1)$ 查询。模数必须为质数，写在开头的 `mod` 里（按题目改）；依赖基础算法章的 `mypow`。返回 `int`，手写 $% mod$——组合数是一张表加三次乘，不绑取模类（双模哈希、多项式才用 `Zmod`，见杂项章）。`comb(1 << 21)` 预处理上限按题目改；查询超出时 `fac` / `inv` 自动 `init` 扩表。`_inv[i]=(i!)^{-1}`，不是 $i^(- 1)$。
 
 ```cpp
+const int mod = 998244353;  // 模数按题目改
 struct Comb {
-    int n;  // 当前已预处理到的上限
-    vector<Z> _fac, _inv;  // _inv[i] = (i!)^{-1}，不是 i^{-1}
+    int n = 0;  // 当前已预处理到的上限
+    vector<int> _fac{1}, _inv{1};  // 0! = 1，(0!)^{-1} = 1；_inv[i] = (i!)^{-1}
 
-    Comb() : _fac{1}, _inv{0} {} // 0! = 1；_inv[0] 占位不用
-    Comb(int n) : Comb() {
-        init(n);
+    Comb(int m) {
+        init(m);
     }
     void init(int m) {
         if (m <= n) return;  // 只扩展不缩小
         _fac.resize(m + 1);
         _inv.resize(m + 1);
         for (int i = n + 1; i <= m; i++) {
-            _fac[i] = _fac[i - 1] * i;
+            _fac[i] = (i64)_fac[i - 1] * i % mod;
         }
-        _inv[m] = _fac[m].inv(); // 先求最大阶乘的逆，再往回推
+        _inv[m] = mypow(_fac[m], mod - 2, mod);  // 费马求最大阶乘的逆，再往回推
         for (int i = m; i > n; i--) {
-            _inv[i - 1] = _inv[i] * i;
+            _inv[i - 1] = (i64)_inv[i] * i % mod;
         }
         n = m;
     }
-    Z fac(int x) {
+    int fac(int x) {
         if (x > n) init(x);
         return _fac[x];
     }
-    Z inv(int x) {  // 返回 (x!)^{-1}
+    int inv(int x) {  // 返回 (x!)^{-1}
         if (x > n) init(x);
         return _inv[x];
     }
-    Z C(int x, int y) { // C(x,y)，非法下标返回 0
+    int C(int x, int y) { // C(x,y)，非法下标返回 0
         if (x < 0 || y < 0 || x < y) return 0;
-        return fac(x) * inv(y) * inv(x - y);
+        return (i64)fac(x) * inv(y) % mod * inv(x - y) % mod;
     }
-    Z P(int x, int y) { // 排列数 P(x,y)
+    int P(int x, int y) { // 排列数 P(x,y)
         if (x < 0 || y < 0 || x < y) return 0;
-        return fac(x) * inv(x - y);
+        return (i64)fac(x) * inv(x - y) % mod;
     }
-} comb(1 << 21);  // 预处理范围按题目改；模数在 Z 里定
+} comb(1 << 21);  // 预处理范围按题目改
 ```
 
 === 质因数分解
