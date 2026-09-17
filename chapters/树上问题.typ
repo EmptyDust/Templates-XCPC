@@ -2,7 +2,7 @@
 
 = 树上问题
 <树上问题>
-树上结构的主场：直径/重心、LCA 三解、虚树、DSU on tree、Prüfer、树链剖分。选型信号：路径两端点共性信息 → LCA；每次询问只涉及少数关键点 → 虚树；多组询问的子树统计离线做 → DSU on tree；链上修改/查询 → 剖分配线段树。
+树上结构的主场：直径、中心、重心、LCA 三解、虚树、DSU on tree、Prüfer、树链剖分。选型信号：路径两端点共性信息 → LCA；每次询问只涉及少数关键点 → 虚树；多组询问的子树统计离线做 → DSU on tree；链上修改/查询 → 剖分拆区间再接荷载。
 
 == 树的直径
 <树的直径>
@@ -13,108 +13,12 @@
 
 #include-code("code/树上问题/树的直径.cpp")
 
-== 树论大封装 \(直径+重心+中心)
-<树论大封装-直径重心中心>
+== 树的中心
+<树的中心>
 #specline([两遍 DFS #O($N$)])
-`d1[u]` 为向下最长链、`d2[u]` 为向下次长链（`s1/s2` 记对应儿子），`up[u]` 为向上最长链；`getCenter()` 求“到最远点距离最小”的中心与半径（`radius = min max(d1, up)`）；`getCog()` 求重心（删去后最大连通块最小，`rem` 为该最小值，`cog` 为重心）。
+到最远点距离最小的点。`d1` / `d2` 向下最长、次长，`up` 向上最长。`work` 之后取 `center`、`radius = max(d1, up)`；`diam` 为所有点 `d1+d2` 的最大（边权和）。重心见下一节点分治。
 
-```cpp
-struct Tree {
-    int n;
-    vector<vector<pair<int, int>>> e;
-    vector<int> dep, parent, maxdep, d1, d2, s1, s2, up;
-    Tree(int n) {
-        this->n = n;
-        e.resize(n + 1);
-        dep.resize(n + 1);
-        parent.resize(n + 1);
-        maxdep.resize(n + 1);
-        d1.resize(n + 1);
-        d2.resize(n + 1);
-        s1.resize(n + 1);
-        s2.resize(n + 1);
-        up.resize(n + 1);
-    }
-    void add(int u, int v, int w) {
-        e[u].push_back({w, v});
-        e[v].push_back({w, u});
-    }
-    void dfs(int u, int fa) {
-        maxdep[u] = dep[u];
-        for (auto [w, v] : e[u]) {
-            if (v == fa) continue;
-            dep[v] = dep[u] + 1;
-            parent[v] = u;
-            dfs(v, u);
-            maxdep[u] = max(maxdep[u], maxdep[v]);
-        }
-    }
-
-    void dfs1(int u, int fa) {
-        for (auto [w, v] : e[u]) {
-            if (v == fa) continue;
-            dfs1(v, u);
-            int x = d1[v] + w;
-            if (x > d1[u]) {
-                d2[u] = d1[u], s2[u] = s1[u];
-                d1[u] = x, s1[u] = v;
-            } else if (x > d2[u]) {
-                d2[u] = x, s2[u] = v;
-            }
-        }
-    }
-    void dfs2(int u, int fa) {
-        for (auto [w, v] : e[u]) {
-            if (v == fa) continue;
-            if (s1[u] == v) {
-                up[v] = max(up[u], d2[u]) + w;
-            } else {
-                up[v] = max(up[u], d1[u]) + w;
-            }
-            dfs2(v, u);
-        }
-    }
-
-    int radius, center, diam;
-    void getCenter() {
-        center = 1;  //中心
-        for (int i = 1; i <= n; i++) {
-            if (max(d1[i], up[i]) < max(d1[center], up[center])) {
-                center = i;
-            }
-        }
-        radius = max(d1[center], up[center]);  //距离最远点的距离的最小值
-        //直径：仅在 center 位于直径中点时正确；一般应取 max(d1[i] + d2[i])
-        diam = d1[center] + up[center] + 1;
-    }
-
-    int rem; //删除重心后剩余连通块体积的最小值
-    int cog; //重心
-    vector<bool> vis;
-    void getCog() {
-        vis.resize(n);
-        rem = INT_MAX;
-        cog = 1;
-        dfsCog(1);
-    }
-    int dfsCog(int u) {
-        vis[u] = true;
-        int s = 1, res = 0;
-        for (auto [w, v] : e[u]) {
-            if (vis[v]) continue;
-            int t = dfsCog(v);
-            res = max(res, t);
-            s += t;
-        }
-        res = max(res, n - s);
-        if (res < rem) {
-            rem = res;
-            cog = u;
-        }
-        return s;
-    }
-};
-```
+#include-code("code/树上问题/树的中心.cpp")
 
 == 点分治 / 树的重心
 <点分治-树的重心>
@@ -194,15 +98,13 @@ dfz(dfz, root, 0);
 === 树链剖分解法
 <树链剖分解法>
 #specline([预处理 #O($N$)], [单次 #O($"log" N$)（常数小）])
-沿重链跳 `top`，深度大的那条先跳，直到两点顶在同一条链上再比深度。
+沿重链跳 `top`，深度大的那条先跳，直到两点顶在同一条链上再比深度。`lca` / `dist` / `path` 同一份 `HLD`。
 
-#include-code("code/树上问题/树链剖分解法.cpp")
+#include-code("code/树上问题/HLD.cpp")
 
 === 树上倍增解法
 <树上倍增解法>
 #specline([预处理 #O($N "log" N$)], [单次 #O($"log" N$)（常数比树链剖分大）])
-
-#strong[封装一：基础封装，针对无权图。]
 
 #strong[封装一：基础封装，针对无权图。]
 
@@ -342,7 +244,7 @@ struct Tree {
 == 虚树
 <虚树>
 #specline([单次构造 #O($k "log" k$)（$k$ 为关键点数）])
-每次询问只涉及 $k$ 个关键点时，把关键点和它们两两的 LCA（至多新增 $k$ 个点）缩成一棵 $cal(O)(k)$ 的虚树再 dp，$sum k$ 与 $N$ 同阶时总量线性。构造：关键点按 dfn 排序，单调栈维护根到栈顶的链，新点与栈顶 LCA 的深度低于栈内链时弹栈连边。用法：`add` 建原树 → `work(1)` → 每次询问 `build(关键点)`，返回虚树上出现过的全部点（根固定 1 号，不在关键点里会自动补入），无向边留在 `h`，dp 完按返回列表清空 `h` 复用。
+每次询问只涉及 $k$ 个关键点时，把关键点和它们两两的 LCA（至多新增 $k$ 个点）缩成一棵 $cal(O)(k)$ 的虚树再 dp，$sum k$ 与 $N$ 同阶时总量线性。构造：关键点按 dfn 排序，单调栈维护根到栈顶的链，新点与栈顶 LCA 的深度低于栈内链时弹栈连边。依赖上面的 `HLD`：原树 `hld.add` / `hld.work` 之后，`build(关键点, hld)` 返回虚树上出现过的全部点（根固定 1 号，不在关键点里会自动补入），无向边留在 `h`，dp 完按返回列表清空 `h` 复用。
 
 #include-code("code/树上问题/虚树.cpp")
 
@@ -358,13 +260,13 @@ struct Tree {
 思路：先轻儿子、再重儿子（重儿子贡献保留，`hson` 标记跳过），`calc` 暴力统计轻儿子子树；`add(c)/del(c)` 为待填钩子，`res` 为当前答案。`add()` 与顶部加边的 `add(u, v)` 靠参数个数区分。
 
 ```cpp
-struct HLD {
+struct DsuOnTree {
     std::vector<std::vector<int>> e;
     std::vector<int> siz, son;
     std::vector<i64> ans;
     int hson;
     i64 res;
-    HLD(int n) {
+    DsuOnTree(int n) {
         e.resize(n + 1);
         siz.resize(n + 1);
         son.resize(n + 1);
@@ -418,8 +320,8 @@ struct HLD {
 };
 ```
 
-== prufur 序列
-<prufur-序列>
+== Prüfer 序列
+<prüfer-序列>
 $n$ 点带标号树 $arrow.l.r$ 长 $n - 2$、值域为点编号的序列，一一对应。度数 $d$ 的点在序列里出现 $d - 1$ 次。用来计数生成树，不常用来存树。
 
 === 对树建立 Prüfer 序列
@@ -472,105 +374,12 @@ Prüfer 序列可能比你想得还强大。它能创造比 #link(<cayley-公式
 
 $ n^(k - 2) dot product_(i = 1)^k s_i $
 
-== 重链剖分
-<重链剖分>
-轻量封装：给树标出重儿子与链顶，得到 `dfn` 序（`rank[tot] = u` 是其逆），只需 LCA 时用；下文“轻重链剖分/树链剖分”一节配线段树支持链上/子树修改。
-
-#pitfall[`dist(u, v)` 返回的是#strong[路径上的节点数];（带 `+1`），要边距离需去掉 `+1`。]
-
-```cpp
-struct HPD_tree
-{
-    int tree_size;
-    bool is_hpd_init = false;
-    std::vector<std::vector<std::pair<int, i64>>> adj;
-    std::vector<int> Fa, size, hson, top, rank, dfn, depth;
-    HPD_tree(int n = 0) {
-        tree_size = n;
-        adj.resize(tree_size + 1);
-    }
-    void add_edge(int u, int v, i64 w = 1) {
-        adj[u].push_back({ v,w });
-        adj[v].push_back({ u,w });
-    }
-    void HPD_init() {
-        is_hpd_init = true;
-        Fa.assign(tree_size + 1, 0);
-        size.assign(tree_size + 1, 0);
-        hson.assign(tree_size + 1, 0);
-        top.assign(tree_size + 1, 0);
-        rank.assign(tree_size + 1, 0);
-        dfn.assign(tree_size + 1, 0);
-        depth.assign(tree_size + 1, 0);
-        std::function<void(int, int, int)> dfs1 = [&](int u, int p, int d)->void {
-            hson[u] = 0;
-            size[hson[u]] = 0;
-            size[u] = 1;
-            depth[u] = d;
-            for (auto [v, w] : adj[u])if (v != p) {
-                dfs1(v, u, d + 1);
-                size[u] += size[v];
-                Fa[v] = u;
-                if (size[v] > size[hson[u]]) {
-                    hson[u] = v;
-                }
-            }
-            };
-        dfs1(1, 0, 0);
-        int tot = 0;
-        std::function<void(int, int, int)> dfs2 = [&](int u, int p, int t)->void {
-            top[u] = t;
-            dfn[u] = ++tot;
-            rank[tot] = u;
-            if (hson[u]) {
-                dfs2(hson[u], u, t);
-                for (auto [v, w] : adj[u])if (v != p && v != hson[u]) {
-                    dfs2(v, u, v);
-                }
-            }
-            };
-        dfs2(1, 0, 1);
-    }
-    int lca(int u, int v) {
-        if (!is_hpd_init)HPD_init();
-        while (top[u] != top[v]) {
-            if (depth[top[u]] > depth[top[v]])
-                u = Fa[top[u]];
-            else
-                v = Fa[top[v]];
-        }
-        return depth[u] > depth[v] ? v : u;
-    }
-    i64 dist(int u, int v) {
-        int w = lca(u, v);
-        return depth[u] - depth[w] + depth[v] - depth[w] + 1;
-    }
-    a3 get_diam() {
-        i64 cur; int pos;
-        std::function<void(int, int, i64)> dfs = [&](int u, int p, i64 d) {
-            if (d > cur) {
-                cur = d;
-                pos = u;
-            }
-            for (auto [v, dis] : adj[u])if (v != p) {
-                dfs(v, u, d + dis);
-            }
-            };
-        cur = 0, pos = 1;
-        dfs(pos, 0, cur);
-        int u = pos;
-        cur = 0;
-        dfs(pos, 0, cur);
-        int v = pos;
-        return { u,v,cur };
-    }
-};
-```
-
 == 轻重链剖分/树链剖分
 <轻重链剖分树链剖分>
-#specline([建树 #O($N "log" N$)], [单次 #O($"log"^2 N$)])
-将线段树处理的部分分离，方便修改。支持链上查询/修改、子树查询/修改。
+#specline([建树 #O($N$)], [路径拆段 #O($"log" N$)], [接区间荷载单次 #O($"log"^2 N$)])
+`HLD` 板子就是上面 LCA 那一份，不重印：`hld.add` / `hld.work` 之后，`path(u, v)` / `subtree(u)` 把 dfn 闭区间交给外面。荷载接在外面，下面是区间加、区间和，用 `path` / `subtree` 接 `modify` / `ask`。
+
+#pitfall[`path` 吐出的区间是#strong[跳链顺序];，不是从 $u$ 到 $v$ 的路径顺序：加法、最值这类可交换荷载直接用；路径哈希、按序染色这类不可交换的，要先把一侧的区间收下来反转再合并。]
 
 ```cpp
 struct Segt {
@@ -579,21 +388,15 @@ struct Segt {
     };
     vector<int> w;
     vector<node> t;
-
-    Segt() {}
     #define GL (k << 1)
     #define GR (k << 1 | 1)
-
     void init(vector<int> in) {
         int n = in.size() - 1;
-        w.resize(n + 1);
-        for (int i = 1; i <= n; i++) {
-            w[i] = in[i];
-        }
+        w = in;
         t.resize(n * 4 + 1);
-        auto build = [&](auto self, int l, int r, int k = 1) {
+        auto build = [&](auto &&self, int l, int r, int k = 1) -> void {
             if (l == r) {
-                t[k] = {l, r, w[l], 0};  // 如果有赋值为 0 的操作，则懒标记必须要 -1
+                t[k] = {l, r, w[l], 0};
                 return;
             }
             t[k] = {l, r};
@@ -604,21 +407,18 @@ struct Segt {
         };
         build(build, 1, n);
     }
-    void pushdown(node &p, int lazy) { /* 【在此更新下递函数】 */
+    void pushdown(node &p, int lazy) {
         p.w += (p.r - p.l + 1) * lazy;
         p.lazy += lazy;
     }
-    void pushdown(int k) {  // 不需要动
+    void pushdown(int k) {
         if (t[k].lazy == 0) return;
         pushdown(t[GL], t[k].lazy);
         pushdown(t[GR], t[k].lazy);
         t[k].lazy = 0;
     }
-    void pushup(int k) {  // 不需要动
-        auto pushup = [&](node &p, node &l, node &r) { /* 【在此更新上传函数】 */
-            p.w = l.w + r.w;
-        };
-        pushup(t[k], t[GL], t[GR]);
+    void pushup(int k) {
+        t[k].w = t[GL].w + t[GR].w;
     }
     void modify(int l, int r, int val, int k = 1) {
         if (l <= t[k].l && t[k].r <= r) {
@@ -644,100 +444,10 @@ struct Segt {
     }
 };
 
-struct HLD {
-    int n, idx;
-    vector<vector<int>> ver;
-    vector<int> siz, dep;
-    vector<int> top, son, parent;
-    vector<int> in, id, val;
-    Segt segt;
-
-    HLD(int n) {
-        this->n = n;
-        ver.resize(n + 1);
-        siz.resize(n + 1);
-        dep.resize(n + 1);
-
-        top.resize(n + 1);
-        son.resize(n + 1);
-        parent.resize(n + 1);
-
-        idx = 0;
-        in.resize(n + 1);
-        id.resize(n + 1);
-        val.resize(n + 1);
-    }
-    void add(int x, int y) {  // 建立双向边
-        ver[x].push_back(y);
-        ver[y].push_back(x);
-    }
-    void dfs1(int x) {
-        siz[x] = 1;
-        dep[x] = dep[parent[x]] + 1;
-        for (auto y : ver[x]) {
-            if (y == parent[x]) continue;
-            parent[y] = x;
-            dfs1(y);
-            siz[x] += siz[y];
-            if (siz[y] > siz[son[x]]) {
-                son[x] = y;
-            }
-        }
-    }
-    void dfs2(int x, int up) {
-        id[x] = ++idx;
-        val[idx] = in[x];  // 建立编号
-        top[x] = up;
-        if (son[x]) dfs2(son[x], up);
-        for (auto y : ver[x]) {
-            if (y == parent[x] || y == son[x]) continue;
-            dfs2(y, y);
-        }
-    }
-    void modify(int l, int r, int val) {  // 链上修改
-        while (top[l] != top[r]) {
-            if (dep[top[l]] < dep[top[r]]) {
-                swap(l, r);
-            }
-            segt.modify(id[top[l]], id[l], val);
-            l = parent[top[l]];
-        }
-        if (dep[l] > dep[r]) {
-            swap(l, r);
-        }
-        segt.modify(id[l], id[r], val);
-    }
-    void modify(int root, int val) {  // 子树修改
-        segt.modify(id[root], id[root] + siz[root] - 1, val);
-    }
-    int ask(int l, int r) {  // 链上查询
-        int ans = 0;
-        while (top[l] != top[r]) {
-            if (dep[top[l]] < dep[top[r]]) {
-                swap(l, r);
-            }
-            ans += segt.ask(id[top[l]], id[l]);
-            l = parent[top[l]];
-        }
-        if (dep[l] > dep[r]) {
-            swap(l, r);
-        }
-        return ans + segt.ask(id[l], id[r]);
-    }
-    int ask(int root) { // 子树查询
-        return segt.ask(id[root], id[root] + siz[root] - 1);
-    }
-    void work(auto in, int root = 1) {  // 在此初始化
-        assert(in.size() == n + 1);
-        this->in = in;
-        dfs1(root);
-        dfs2(root, root);
-        segt.init(val); // 建立线段树
-    }
-    void work(int root = 1) {  // 在此初始化
-        dfs1(root);
-        dfs2(root, root);
-        segt.init(val); // 建立线段树
-    }
-};
+// hld.add / hld.work 之后：
+hld.path(u, v, [&](int l, int r) { segt.modify(l, r, val); });
+int ans = 0;
+hld.path(u, v, [&](int l, int r) { ans += segt.ask(l, r); });
+hld.subtree(root, [&](int l, int r) { segt.modify(l, r, val); });
 ```
+

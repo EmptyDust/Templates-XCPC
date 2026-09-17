@@ -312,13 +312,13 @@ struct AhoCorasick {
             adj[link(i)].push_back(i);
         }
 
-        std::function<void(int)> dfs = [&](int x) -> void {
+        auto dfs = [&](auto &&self, int x) -> void {
             for (auto y : adj[x]) {
-                dfs(y);
+                self(self, y);
                 f[x] += f[y];
             }
-            };
-        dfs(1);
+        };
+        dfs(dfs, 1);
         return f;
     }
 

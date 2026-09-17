@@ -219,30 +219,29 @@ template<int P = 998244353> struct Poly : public vector<MInt<P>> {
         vector<Poly> q(4 * n);
         vector<Value> ans(x.size());
         x.resize(n);
-        function<void(int, int, int)> build = [&](int p, int l, int r) {
+        auto build = [&](auto &&self, int p, int l, int r) -> void {
             if (r - l == 1) {
                 q[p] = Poly{1, -x[l]};
             } else {
                 int m = (l + r) / 2;
-                build(2 * p, l, m);
-                build(2 * p + 1, m, r);
+                self(self, 2 * p, l, m);
+                self(self, 2 * p + 1, m, r);
                 q[p] = q[2 * p] * q[2 * p + 1];
             }
         };
-        build(1, 0, n);
-        function<void(int, int, int, const Poly &)> work = [&](int p, int l, int r,
-                                                                    const Poly &num) {
+        build(build, 1, 0, n);
+        auto work = [&](auto &&self, int p, int l, int r, const Poly &num) -> void {
             if (r - l == 1) {
                 if (l < int(ans.size())) {
                     ans[l] = num[0];
                 }
             } else {
                 int m = (l + r) / 2;
-                work(2 * p, l, m, num.mulT(q[2 * p + 1]).resize(m - l));
-                work(2 * p + 1, m, r, num.mulT(q[2 * p]).resize(r - m));
+                self(self, 2 * p, l, m, num.mulT(q[2 * p + 1]).resize(m - l));
+                self(self, 2 * p + 1, m, r, num.mulT(q[2 * p]).resize(r - m));
             }
         };
-        work(1, 0, n, mulT(q[1].inv(n)));
+        work(work, 1, 0, n, mulT(q[1].inv(n)));
         return ans;
     }
 };

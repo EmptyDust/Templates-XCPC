@@ -11,14 +11,13 @@ const int M = 2000005;
 const double eps = 1e-8;
 const double PI = acos(-1.0);
 
-template<class... A> int ms(A&&...);
 
 // @book-begin
 const int N = 550, INF = 0x3f3f3f3f;
 int n, m, g[N][N];
 int d[N], v[N];
 int prim() {
-    ms(d, 0x3f);  //这里的d表示到“最小生成树集合”的距离
+    memset(d, 0x3f, sizeof d);  //这里的d表示到“最小生成树集合”的距离
     int ans = 0;
     for (int i = 0; i < n; ++ i) {  //遍历 n 轮
         int t = -1;
@@ -33,7 +32,7 @@ int prim() {
     return ans;
 }
 int main() {
-    ms(g, 0x3f); cin >> n >> m;
+    memset(g, 0x3f, sizeof g); cin >> n >> m;
     while (m -- ) {
         int x, y, w; cin >> x >> y >> w;
         g[x][y] = g[y][x] = min(g[x][y], w);

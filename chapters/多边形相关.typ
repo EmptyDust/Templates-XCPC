@@ -369,6 +369,7 @@ template<typename T> vector<Point<T>> halfcut(vector<Line<T>> lines) {
         auto d2 = l2.b - l2.a;
         if (sign(d1) != sign(d2)) {  // TODO：sign 原只收标量；向量请改成 quad/极角半平面
             return sign(d1) == 1;
+        }
         return cross(d1, d2) > 0;
     });
     deque<Line<T>> ls;

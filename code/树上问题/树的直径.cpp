@@ -26,23 +26,19 @@ struct Tree {
     }
     int getlen(int root) { // 获取x所在树的直径
         map<int, int> dep; // map用于优化输入为森林时的深度计算，亦可用vector
-        function<void(int, int)> dfs = [&](int x, int fa) -> void {
+        auto dfs = [&](auto &&self, int x, int fa) -> void {
             for (auto y : ver[x]) {
                 if (y == fa) continue;
                 dep[y] = dep[x] + 1;
-                dfs(y, x);
+                self(self, y, x);
             }
             if (dep[x] > dep[root]) {
                 root = x;
             }
         };
-        dfs(root, 0);
-        int st = root; // 记录直径端点
-
+        dfs(dfs, root, 0);
         dep.clear();
-        dfs(root, 0);
-        int ed = root; // 记录直径另一端点
-
+        dfs(dfs, root, 0);
         return dep[root];
     }
 };

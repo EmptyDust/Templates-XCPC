@@ -270,7 +270,7 @@ int main() {
     }
 
     vector<int> vis(n + 1);
-    function<void(int, int)> dfs = [&](int x, int fa) {
+    auto dfs = [&](auto &&self, int x, int fa) -> void {
         vis[x] = 1;
         for (int y = 1; y <= n; ++y) {
             if (a[x][y] == 0) continue;
@@ -278,11 +278,11 @@ int main() {
                 cout << fa << " " << x << " " << y;
                 exit(0);
             }
-            if (!vis[y]) dfs(y, x);  // 这一步的if判断很关键
+            if (!vis[y]) self(self, y, x);  // 这一步的if判断很关键
         }
     };
     for (int i = 1; i <= n; ++i) {
-        if (!vis[i]) dfs(i, -1);
+        if (!vis[i]) dfs(dfs, i, -1);
     }
     cout << -1;
 }

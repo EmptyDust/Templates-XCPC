@@ -36,7 +36,7 @@ void graph(int n, int root = -1, int m = -1) {
         }
     }
 
-    random_shuffle(edge.begin(), edge.end());  // 打乱节点
+    shuffle(edge.begin(), edge.end(), rnd);  // 打乱节点
     for (auto [x, y] : edge) {
         cout << x << " " << y << endl;
     }

@@ -78,7 +78,6 @@ i64 xor_n(i64 n) {
     else return n;
 }
 
-template<class... A> int q_pow(A&&...);
 
 // @book-begin
 const int SIZE = 2;
@@ -128,7 +127,7 @@ Matrix getinv(Matrix a) {  //矩阵求逆
             puts("No Solution");
             ok = 0;
         }
-        i64 inv = q_pow(a.M[i][i], mod - 2);
+        i64 inv = mypow(a.M[i][i], mod - 2);
         for (int j = 1; j <= n; j++)
             if (j != i) {
                 i64 mul = a.M[j][i] * inv % mod;

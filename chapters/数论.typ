@@ -624,7 +624,6 @@ i64 inv(i64 x) { return mypow(x, mod - 2, mod);}
 此方法的 $"MOD"$ 没有限制，复杂度为 $cal(O)("log" X)$ ，但是比快速幂法常数大一些。
 
 ```cpp
-int x, y;
 int exgcd(int a, int b, int &x, int &y) {  //扩展欧几里得算法
     if (b == 0) {
         x = 1, y = 0;
@@ -637,7 +636,7 @@ int exgcd(int a, int b, int &x, int &y) {  //扩展欧几里得算法
     return r;  //得到a b的最大公因数
 }
 i64 getInv(int a, int mod) {  //求a在mod下的逆元，不存在逆元返回-1
-    i64 x, y, d = exgcd(a, mod, x, y);
+    int x, y, d = exgcd(a, mod, x, y);
     return d == 1 ? (x % mod + mod) % mod : -1;
 }
 ```
@@ -693,37 +692,7 @@ $phi (n)$：$1 dots.c n$ 中与 $n$ 互质的个数。$n = product p_i^(k_i)$ �
 
 === 求解 1 到 N 所有数的欧拉函数
 <求解-1-到-n-所有数的欧拉函数>
-利用上述性质，我们可以快速递推出 $2 - N$ 中每个数的欧拉函数，复杂度 $cal(O)(N)$ ，而该算法#strong[即是线性筛的算法];。
-
-$ phi (n) = (1 - 1 \/ p_1) (1 - 1 \/ p_2) (1 - 1 \/ p_3) (1 - 1 \/ p_4) dots.h.c (1 - 1 \/ p_n) ; $
-
-```cpp
-const int N = 1e5 + 7;
-int v[N], prime[N], phi[N];
-void euler(int n) {
-    ms(v, 0);  //最小质因子
-    int m = 0;  //质数数量
-    for (int i = 2; i <= n; ++ i) {
-        if (v[i] == 0) {  // i 是质数
-            v[i] = i, prime[++ m] = i;
-            phi[i] = i - 1;
-        }
-         //为当前的数 i 乘上一个质因子
-        for (int j = 1; j <= m; ++ j) {
-             //如 i 有比 prime[j] 更小的质因子，或超出 n ，停止
-            if(prime[j] > v[i] || prime[j] > n / i) break;
-             // prime[j] 是合数 i * prime[j] 的最小质因子
-            v[i * prime[j]] = prime[j];
-            phi[i * prime[j]] = phi[i] * (i % prime[j] ? prime[j] - 1 : prime[j]);
-        }
-    }
-}
-int main() {
-    int n; cin >> n; euler(n);
-    for (int i = 1; i <= n; ++ i) cout << phi[i] << endl;
-    return 0;
-}
-```
+线性筛顺带求欧拉函数，复杂度 $cal(O)(N)$：$i$ 是质数则 $phi[i] = i - 1$；$"pri"_j$ 整除 $i$ 时 $phi[i dot "pri"_j] = phi[i] dot "pri"_j$（最小质因子幂次加一），否则由积性 $phi[i dot "pri"_j] = phi[i] dot phi["pri"_j]$。
 
 ```cpp
 std::vector<int> pri, not_prime, phi;

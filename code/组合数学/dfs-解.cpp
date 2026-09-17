@@ -21,16 +21,16 @@ int main(){
     for (int i = 0; i < m; i ++ )
         cin >> p[i];
     i64 ans = 0;
-    function<void(i64, i64, i64)> dfs = [&](i64 x, i64 s, i64 odd){  // x 当前下标，s 已选积，odd 容斥符号
+    auto dfs = [&](auto &&self, i64 x, i64 s, i64 odd) -> void {  // x 当前下标，s 已选积，odd 容斥符号
         if (x == m){
             if (s == 1) return;  // 空集不贡献
             ans += odd * (n / s);
             return;
         }
-        dfs(x + 1, s, odd);  // 不选 p[x]
-        if (s <= n / p[x]) dfs(x + 1, s * p[x], -odd);  // 选；先除后乘防溢出
+        self(self, x + 1, s, odd);  // 不选 p[x]
+        if (s <= n / p[x]) self(self, x + 1, s * p[x], -odd);  // 选；先除后乘防溢出
     };
-    dfs(0, 1, -1);  // odd 初值 -1，选第一个数后变成 +
+    dfs(dfs, 0, 1, -1);  // odd 初值 -1，选第一个数后变成 +
     cout << ans << "\n";
     return 0;
 }

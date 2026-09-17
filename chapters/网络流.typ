@@ -54,7 +54,7 @@ BFS 分层，当前弧 DFS 一次找完该层所有增广。`work(s, t)` 返回�
 #pitfall[#strong[每轮 `work` 前必须先退流（`reset`）]——否则残留网络混着上一轮的流量、分组错误。]
 
 ```cpp
-void reset() {  // 原为独立函数，须移入 Flow 结构体作成员：把每条边的反向边流量退回正向边
+void reset() {  // 须移入 Flow 结构体作成员：把每条边的反向边流量退回正向边
     for (int i = 0; i < ver.size(); i += 2) {
         ver[i].w += ver[i ^ 1].w;
         ver[i ^ 1].w = 0;
@@ -89,12 +89,12 @@ signed main() {  // Gomory-Hu Tree
         adj[t].push_back({s, cut});
 
         vis.assign(n + 1, 0);
-        auto dfs = [&](auto dfs, int u) -> void {
+        auto dfs = [&](auto &&self, int u) -> void {
             vis[u] = 1;
             for (auto it : flow.h[u]) {
                 auto [v, c] = flow.ver[it];
                 if (c && !vis[v]) {
-                    dfs(dfs, v);
+                    self(self, v);
                 }
             }
         };
@@ -107,11 +107,11 @@ signed main() {  // Gomory-Hu Tree
     }
 
     for (int i = 0; i <= n; i++) {
-        auto dfs = [&](auto dfs, int u, int fa, int c) -> void {
+        auto dfs = [&](auto &&self, int u, int fa, int c) -> void {
             ans[i][u] = c;
             for (auto [v, w] : adj[u]) {
                 if (v == fa) continue;
-                dfs(dfs, v, u, min(c, w));
+                self(self, v, u, min(c, w));
             }
         };
         dfs(dfs, i, -1, 1E9);

@@ -17,7 +17,7 @@ const int N = 2e5 + 5, inf = 0x3f3f3f3f, MOD = 998244353, mod = 1e9 + 7;
 const ll llinf = 0x3f3f3f3f3f3f3f3f;
 //const double PI=acos(-1);
 // @book-begin
-typedef double db;
+using db = double;
 const db EPS = 1e-9;
 
 // long double的区分精度大约为2^-64,1e-15~1e-18

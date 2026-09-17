@@ -13,17 +13,11 @@
 == dsu 并查集
 <dsu-并查集>
 #specline([均摊 #O($alpha (N)$)（路径压缩 + 按秩/按大小）])
-维护不相交集合：同一块共用一个根。路径压缩把访问链直接接到根上，按秩/按大小合并压树高，均摊约 $cal(O)(alpha (N))$。判连通、Kruskal、维护块内点数/边数都用它。下标按各封装是 $0 dots.c n - 1$ 或 $1 dots.c n$。
-
-=== 路径优化\(普遍)
-<路径优化普遍>
-只做路径压缩，合并不看大小。最短，均摊仍约 $cal(O)(alpha (N))$。下标 $1 dots.c n$。`merge` 成功返回 true。
-
-#include-code("code/数据结构A/路径优化普遍.cpp")
+维护不相交集合：同一块共用一个根。路径压缩把访问链直接接到根上，按秩/按大小合并压树高，均摊约 $cal(O)(alpha (N))$。判连通、Kruskal、维护块内点数/边数都用它。下标按各封装是 $0 dots.c n - 1$ 或 $1 dots.c n$。瘦原语一份（按秩，已含路径压缩）；下面数组版是另一套存法，常用操作是带统计的荷载。
 
 === 根据集合的大小优化
 <根据集合的大小优化>
-数组版并查集：根为正数存集合大小的相反约定——这里根存#strong[正整数大小];，非根存#strong[负的父编号];（`unicnt[x] <= 0` 时 `-unicnt[x]` 为父）；`uni` 按大小合并。均摊约 $cal(O)(alpha (N))$。
+数组版并查集：根为正数存集合大小的相反约定——这里根存#strong[正整数大小];，非根存#strong[负的父编号];（`unicnt[x] <= 0` 时 `-unicnt[x]` 为父）；`uni` 按大小合并。均摊约 $cal(O)(alpha (N))$。和上一份 `vector` 版不是同一套存法。
 
 #include-code("code/数据结构A/根据集合的大小优化.cpp")
 
@@ -263,17 +257,17 @@ struct LazySegmentTree {
         n = init_.size();
         info.assign(4 << std::__lg(n), Info());
         tag.assign(4 << std::__lg(n), Tag());
-        std::function<void(int, int, int)> build = [&](int p, int l, int r) {
+        auto build = [&](auto &&self, int p, int l, int r) -> void {
             if (r - l == 1) {
                 info[p] = init_[l];
                 return;
             }
             int m = (l + r) / 2;
-            build(2 * p, l, m);
-            build(2 * p + 1, m, r);
+            self(self, 2 * p, l, m);
+            self(self, 2 * p + 1, m, r);
             pull(p);
-            };
-        build(1, 0, n);
+        };
+        build(build, 1, 0, n);
     }
     void pull(int p) {
         info[p] = info[2 * p] + info[2 * p + 1];
@@ -426,8 +420,6 @@ using namespace __gnu_pbds;
 using pii = std::pair<int, int>;
 const int inf = 2147483647;
 
-tree<pii, null_type, std::less<pii>, rb_tree_tag, tree_order_statistics_node_update> ver;
-
 template<typename Info>
 struct SegmentTree {
     int n;
@@ -440,13 +432,10 @@ struct SegmentTree {
         info.assign(4 << std::__lg(n), Info());
     }
 
-public:
-    // --- 初始化与构建 ---
     void build(const std::vector<int>& a) {
         _build(1, 0, n, a);
     }
 
-private:
     void _build(int p, int l, int r, const std::vector<int>& a) {
         // 从叶子节点开始，向上启发式合并来构建整棵树
         if (r - l == 1) {
@@ -468,28 +457,22 @@ private:
         }
     }
 
-public:
-    // 单点修改
     void update(int pos, int old_val, int new_val) {
         _update(1, 0, n, pos, old_val, new_val);
     }
 
-    // 查询排名 (返回比 k 小的数的个数)
     int query_rank_count(int l, int r, int k) {
         return _query_rank_count(1, 0, n, l, r, k);
     }
 
-    // 查询前驱
     int query_pred(int l, int r, int k) {
         return _query_pred(1, 0, n, l, r, k);
     }
 
-    // 查询后继
     int query_succ(int l, int r, int k) {
         return _query_succ(1, 0, n, l, r, k);
     }
 
-private:
     void _update(int p, int l, int r, int pos, int old_val, int new_val) {
         info[p].ver.erase({ old_val, pos });
         info[p].ver.insert({ new_val, pos });

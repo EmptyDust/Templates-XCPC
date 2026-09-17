@@ -40,11 +40,8 @@ void uni(int x, int y) {
 }
 
 // @book-begin
-class UnionFind {
-private:
-    std::vector<int> parent;
-    std::vector<int> rank;
-public:
+struct UnionFind {
+    vector<int> parent, rank;
     UnionFind(int n) {
         parent.resize(n, 0);
         rank.resize(n, 0);
@@ -60,7 +57,7 @@ public:
         int rootY = find(y);
         if (rootX == rootY) return;
         if (rank[rootX] > rank[rootY])
-            std::swap(rootX, rootY);
+            swap(rootX, rootY);
         parent[rootX] = rootY;
         if (rank[rootX] == rank[rootY]) {
             rank[rootY]++;

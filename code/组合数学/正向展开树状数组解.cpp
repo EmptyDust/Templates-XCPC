@@ -10,35 +10,26 @@ const int M = 2000005;
 const double eps = 1e-8;
 const double PI = acos(-1.0);
 
+// BIT 依赖数据结构章的封装（add / ask），此处仅声明供语法检查
+template<typename T> struct BIT {
+    BIT(int n, auto &in);
+    void add(int x, T v);
+    T ask(int x);
+    T ask(int l, int r);
+};
+
 // @book-begin
 #include <bits/stdc++.h>
 using namespace std;
 using i64 = long long;
 const int mod = 998244353, N = 1e6 + 10;  // 模数与数组上限按题目改
 i64 fact[N];
-struct fwt{
-    i64 n;
-    vector <i64> a;
-    fwt(i64 n) : n(n), a(n + 1) {}
-    i64 sum(i64 x){  // 前缀和 [1,x]
-        i64 res = 0;
-        for (; x; x -= x & -x)
-            res += a[x];
-        return res;
-    }
-    void add(i64 x, i64 k){
-        for (; x <= n; x += x & -x)
-            a[x] += k;
-    }
-    i64 query(i64 x, i64 y){
-        return sum(y) - sum(x - 1);
-    }
-};
 int main(){
     ios::sync_with_stdio(false);cin.tie(0);
     i64 n;
     cin >> n;
-    fwt a(n);
+    vector<i64> zero(n + 1);
+    BIT<i64> a(n, zero);  // 全 0 初值，下面逐点 add(…, 1)
     fact[0] = 1;
     for (int i = 1; i <= n; i ++ ){
         fact[i] = fact[i - 1] * i % mod;
@@ -48,7 +39,7 @@ int main(){
     for (int i = 1; i <= n; i ++ ){
         i64 x;
         cin >> x;
-        ans = (ans + a.query(1, x - 1) * fact[n - i] % mod ) % mod;  // 左边未用且比 x 小的个数
+        ans = (ans + a.ask(1, x - 1) * fact[n - i] % mod ) % mod;  // 左边未用且比 x 小的个数
         a.add(x, -1);  // 用掉 x
     }
     cout << (ans + 1) % mod << "\n";  // +1 变成 1-indexed 排名

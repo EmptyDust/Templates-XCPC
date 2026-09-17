@@ -210,7 +210,7 @@ struct V_DCC {
 // @book-begin
 namespace Graph {
     const int N = 403 * 2;  //两倍点数
-    typedef int T;  //权值大小
+    using T = int;  //权值大小
     const T inf = numeric_limits<int>::max() >> 1;
     struct Q { int u, v; T w; } e[N][N];
     T lab[N];

@@ -140,7 +140,7 @@ void floyd() {
 === （稀疏图）Kruskal 算法
 <稀疏图kruskal-算法>
 #specline([#O($M "log" M$)（瓶颈在排序）])
-边按权排序后依次加入，并查集判是否成环，加入 $n - 1$ 条即成树。不连通则边数不够。
+边按权排序后依次加入，并查集判是否成环，加入 $n - 1$ 条即成树。不连通则边数不够。`DSU`（`get` / `merge` / `same`）见数据结构章，不重抄。
 
 #include-code("code/图论/稀疏图Kruskal-算法.cpp")
 
@@ -321,7 +321,7 @@ namespace Graph {
 == 一般图最大权匹配 \(带权带花树算法)
 <一般图最大权匹配-带权带花树算法>
 #specline([#O($N^3$)])
-下方模板编号从 $1$ 开始。调用 `work(n, edges)` 返回最大总权（`edges` 元素为 `{u, v, w}`，重边自动取权值最大者）；`match()` 返回其中一种方案的配对表（每点 $i$ 配 `lk[i]`，一个匹配边可能出现两次）。权值类型由 `typedef int T` 决定，需要时改为 `i64`。
+下方模板编号从 $1$ 开始。调用 `work(n, edges)` 返回最大总权（`edges` 元素为 `{u, v, w}`，重边自动取权值最大者）；`match()` 返回其中一种方案的配对表（每点 $i$ 配 `lk[i]`，一个匹配边可能出现两次）。权值类型由 `using T = int` 决定，需要时改为 `i64`。
 
 #include-code("code/图论/一般图最大权匹配-带权带花树算法.cpp")
 
@@ -753,15 +753,15 @@ for (int i = 0; i < n; i++) {
 ```cpp
 vector<int> val(n + 1, 1);
 int ans = 0;
-function<void(int, int)> dfs = [&](int x, int fa) {
+auto dfs = [&](auto &&self, int x, int fa) -> void {
     for (auto y : ver[x]) {
         if (y == fa) continue;
-        dfs(y, x);
+        self(self, y, x);
         val[x] += val[y];
         ans += min(val[y], k - val[y]);
     }
 };
-dfs(1, 0);
+dfs(dfs, 1, 0);
 cout << ans << endl;
 ```
 

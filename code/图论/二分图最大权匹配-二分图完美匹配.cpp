@@ -229,7 +229,7 @@ struct MaxCostMatch {
         vector<bool> visl(n + 1), visr(n + 1);
         vector<int> slack(n + 1, 1E18);
         queue<int> q;
-        function<bool(int)> check = [&](int x) {
+        auto check = [&](int x) -> bool {
             visr[x] = 1;
             if (~ansr[x]) {
                 q.push(ansr[x]);

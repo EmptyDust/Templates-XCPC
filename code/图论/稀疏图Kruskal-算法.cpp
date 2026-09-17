@@ -12,28 +12,14 @@ const int M = 2000005;
 const double eps = 1e-8;
 const double PI = acos(-1.0);
 
-// @book-begin
+// DSU 依赖数据结构章的封装（get/merge/same），此处仅声明供语法检查
 struct DSU {
-    vector<int> fa;
-    DSU(int n) : fa(n + 1) {
-        iota(fa.begin(), fa.end(), 0);
-    }
-    int get(int x) {
-        while (x != fa[x]) {
-            x = fa[x] = fa[fa[x]];
-        }
-        return x;
-    }
-    bool merge(int x, int y) {  // 设x是y的祖先
-        x = get(x), y = get(y);
-        if (x == y) return false;
-        fa[y] = x;
-        return true;
-    }
-    bool same(int x, int y) {
-        return get(x) == get(y);
-    }
+    DSU(int n);
+    bool same(int x, int y);
+    void merge(int x, int y);
 };
+
+// @book-begin
 struct Tree {
     using TII = tuple<int, int, int>;
     int n;
