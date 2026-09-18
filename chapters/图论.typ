@@ -397,6 +397,8 @@ DAG 上按拓扑序松弛：入度 $0$ 入队，`dis[y]=\max(\mathrm{dis}[y],\ma
 该算法与最小生成树无关，基于最短路 `Djikstra` 算法完成（但多了个等于号）。下方代码实现的功能为：读入图后，输出以 $1$ 为根的 SPT 所使用的各条边的编号、边权和。
 
 ```cpp
+const int N = 1e5 + 7;                 // 点数上限
+using PII = pair<int, int>;            // (距离, 点)
 map<pair<int, int>, int> id;
 namespace G {
     vector<pair<int, int> > ver[N];
@@ -468,7 +470,7 @@ signed main() {
     int n, m;
     cin >> n >> m;
 
-    DSU dsu(n);  // 这里引入DSU判断图是否联通，如题目有保证，则不需要此步骤
+    DSU dsu(n);  // 判断图是否联通：用数据结构章「常用操作」那份 DSU（带 size），题目保证连通则整段删除
     vector<vector<int>> edge(n + 1, vector<int>(n + 1));
     for (int i = 1; i <= m; i++) {
         int x, y, w;
@@ -478,12 +480,13 @@ signed main() {
         edge[y][x] += w;
     }
 
-    // 图不联通：Poi(x) 应为 x 所在连通块大小，本库 DSU 无此接口，需自行补充，或题目保证连通时整段删除
-    if (dsu.Poi(1) != n || m < n - 1) {
+    // 图不连通：dsu.size(x) 为 x 所在连通块的点数（「常用操作」DSU 的接口）
+    if (dsu.size(1) != n || m < n - 1) {
         cout << 0 << endl;
         return 0;
     }
 
+    const int INF = 0x3f3f3f3f;  // 初始哨兵，须超过边权总和：仅当边权和小（int 级）时可用，否则改 i64
     int MinCut = INF, S = 1, T = 1;  // 虚拟源汇点
     vector<int> bin(n + 1);
     auto contract = [&]() -> int {  // 求解S到T的最小割，定义为 cut of phase
@@ -840,10 +843,11 @@ $n lt.eq 4$ 时的样例如上，通项公式为 $n^(n - 2)$ 。
 
 === 单源最短/次短路计数
 <单源最短次短路计数>
-依赖链式前向星段的 `h / tot / ver / ne / edge / add`；`Z` 为取模类（见杂项章）。下方 `Solve` 把边权固定为 $1$（`w = 1`），统计起点到每个点的#strong[最短路条数，以及长度恰好为最短路 $+ 1$ 的次短路条数];，按题目修改边权读入即可。
+块内自带链式前向星（`ver / ne / h / edge / tot / add`）；`Z` 为取模类（见杂项章）。下方 `Solve` 把边权固定为 $1$（`w = 1`），统计起点到每个点的#strong[最短路条数，以及长度恰好为最短路 $+ 1$ 的次短路条数];，按题目修改边权读入即可。
 
 ```cpp
 const int N = 2e5 + 7, M = 1e6 + 7, INF = 0x3f3f3f3f;
+using PIII = tuple<int, int, int>;  // (距离, 点, 0 最短路 / 1 次短路)
 int n, m, s, e; int d[N][2], v[N][2];  // 0 代表最短路， 1 代表次短路
 Z num[N][2];
 
@@ -1040,7 +1044,7 @@ auto dfs = [&](auto self, int x) -> void {
 for (int i = 1; i <= n; i++) {
     if (dis[i] == -1) {
         dis[i] = 0;
-        dfs(dfs, i);  // 从每个未访问的连通块入口开始，原来是写死的 1
+        dfs(dfs, i);  // 每个未访问的点都可能是入口（图可能不连通）
     }
 }
 ```

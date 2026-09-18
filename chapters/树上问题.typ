@@ -292,7 +292,7 @@ struct DsuOnTree {
     void del(int c) {
     }
     void calc(int u, int fa, int f) {
-        if (f == 1) add(u);  // 原来写 add() 缺参数，按规定应为对节点 u 的颜色操作
+        if (f == 1) add(u);  // 对节点 u 的颜色操作（DSU on tree 钩子）
         else del(u);
         for (auto v : e[u]) {
             if (v == fa || v == hson) continue;

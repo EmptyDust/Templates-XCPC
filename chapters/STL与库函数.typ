@@ -35,26 +35,17 @@ bit_width(x)  // 返回x二进制下的位数，9(1001) 返回 4，26(11010) 返
 
 注：以上函数为 GCC/Clang 内建，`i64` 版本只需在函数名后加 `ll`（如 `__builtin_popcountll(x)`），`unsigned long long` 加 `ull`；`bit_width` 为 C++20 标准库函数。
 
-== 数字转字符串函数
-<数字转字符串函数>
-`itoa` 虽然能将整数转换成任意进制的字符串，但是其不是标准的 C 函数，且为 Windows 独有，且不支持 `i64` ，建议手写。
+== 数字与字符串互转
+<数字与字符串互转>
+`to_string` 将各数值类型转为字符串；`stoi`/`stoll` 反向，可指定进制（`stoull`、`stod`、`stold` 同理），非法输入抛异常，越界抛 `out_of_range`。`atoi` 是 C 接口：非法输入返回 $0$、不抛异常，数字前的杂字符使结果为 $0$，前导空白自动跳过。`itoa` 非标准且 Windows 独有、不支持 `i64`，要任意进制转字符串时手写。
 
 ```cpp
-// to_string函数会直接将你的各种类型的数字转换为字符串。
-// string to_string(T val);
-double val = 12.12;
-cout << to_string(val);
+string s = to_string(12.12);                 // "12.120000"
+cout << stoi("1010", 0, 2) << endl;          // 10，(字符串, 起始位置, 进制)
+cout << stoi("0x3f3f3f3f", 0, 0) << endl;    // 1061109567，进制传 0 按前缀自动识别
+cout << stoll("aaaaaaaaaaa", 0, 16) << endl; // 11728124029610，i64 版
+cout << atoi("-12abc") << endl;              // -12，读到首个非数字字符为止
 ```
-
-#include-code("code/STL与库函数/数字转字符串函数.cpp")
-
-== 字符串转数字
-<字符串转数字>
-`stoi`/`stoll` 是 C++ 标准，可指定进制；`atoi` 是 C，非法时给 $0$、不抛异常。前导空白会跳过。
-
-#include-code("code/STL与库函数/字符串转数字.cpp")
-
-#include-code("code/STL与库函数/字符串转数字-2.cpp")
 
 == 全排列 next/prev\_permutation
 <全排列-nextprev_permutation>
@@ -67,34 +58,6 @@ cout << to_string(val);
 `next_permutation` 算法，即是按照#strong[字典序顺序];输出的全排列；相对应的，`prev_permutation` 则是按照#strong[逆字典序顺序];输出的全排列。可以是数字，亦可以是其他类型元素。其直接在序列上进行更新，故直接输出序列即可。
 
 #include-code("code/STL与库函数/全排列-nextprev_permutation.cpp")
-
-== 字符串转换为数值函数 sto
-<字符串转换为数值函数-sto>
-可以快捷的将#strong[一串字符串];转换为#strong[指定进制的数字];。
-
-使用方法
-
-- `stoi(字符串, 0, x进制)` ：将一串 $x$ 进制的字符串转换为 `int` 型数字。
-
-```cpp
-cout << stoi("1010", 0, 2) << endl;          // 10
-cout << stoi("c", 0, 16) << endl;            // 12
-cout << stoi("0x3f3f3f3f", 0, 0) << endl;    // 1061109567
-cout << stoi("10", 0, 8) << endl;            // 8
-cout << stoll("aaaaaaaaaaa", 0, 16) << endl; // 11728124029610
-```
-
-- `stoll(字符串, 0, x进制)` ：将一串 $x$ 进制的字符串转换为 `i64` 型数字。
-- `stoull`、`stod`、`stold` 同理。
-
-== 数值转换为字符串函数 to\_string
-<数值转换为字符串函数-to_string>
-允许将#strong[各种数值类型];转换为字符串类型。
-
-```cpp
-//将数值num转换为字符串s
-string s = to_string(num);
-```
 
 == 判断非递减 is\_sorted
 <判断非递减-is_sorted>
@@ -138,7 +101,7 @@ prev(it, 2); // 可选参数k：返回it前k个的迭代器
 next(it, 2); // 返回it后k个的迭代器
 
 /* 以下是一些应用 */
-auto pre = prev(s.lower_bound(x));  // 返回第一个<x的迭代器
+auto pre = prev(s.lower_bound(x));  // 最后一个<x的迭代器（<x 中的最大者）；无<x 时越过 begin()，未定义，先判 lower_bound != begin()
 int ed = *prev(S.end(), 1);  // 返回最后一个元素
 ```
 

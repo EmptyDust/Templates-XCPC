@@ -93,7 +93,7 @@ struct BIT {
         int ans = 0;
         for (int i = __lg(n); i >= 0; i--) {
             int val = ans + (1 << i);
-            if (val <= n && w[val] < k) { // val <= n：原来写成 < n，漏掉 w[n] 的情况
+            if (val <= n && w[val] < k) { // 必须 <= n：< n 会漏掉 w[n]
                 k -= w[val];
                 ans = val;
             }
@@ -602,7 +602,7 @@ void solve(){
         while (t < qt) time(++t, ql, qr);
         while (t > qt) time(t--, ql, qr);
 
-        ans[id] = val;  // 原来写成 cnt（未定义变量）
+        ans[id] = val;
     }
     for (int i = 1;i <= n;i++)    std::cout << ans[i] << '\n';
 }
@@ -614,6 +614,9 @@ void solve(){
 用于#strong[删除难实现];的问题（信息只有“加”容易撤销：如并查集、众数）：只比普通莫队多一个“右指针单调向右，左指针临时左移后回滚”的技巧。同一块内的询问直接暴力（三次遍历做“加入/统计/撤销”），跨块询问中右端点只增、左端点每次临时扩展后 `del` 撤销（#strong[不真正删除];，而是退回临时指针）。`a3` 见 contest.hpp（STL 章首），`add(x, res)` 中 `res` 引用传递更新答案。
 
 ```cpp
+int n, m;                  // 序列长度、询问数
+vector<int> w;             // 待查询序列（1-indexed，读入前 resize(n + 1)）
+
 void solve(){
     std::vector<a3> q(m + 1);
     for (int i = 1;i <= m;i++) {
@@ -629,7 +632,7 @@ void solve(){
         });
 
     int l = 1, r = 0, cur_block = 0, tmpl;
-    int res = 0;
+    i64 res = 0;  // 与 add 的 i64& 形参一致
     std::vector<i64> ans(m + 1);
     for (int i = 1;i <= m;i++) {
         auto [ql, qr, id] = q[i];

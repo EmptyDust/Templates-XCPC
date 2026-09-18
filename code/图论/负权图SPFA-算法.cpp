@@ -21,7 +21,7 @@ void add(int x, int y, int w) {
     edge[tot] = w;
 }
 void spfa() {
-    memset(d, 0x3f, sizeof d); d[1] = 0;  // 源点按题目改；原来写 ms(d, 0x3f) 但本段无此宏
+    memset(d, 0x3f, sizeof d); d[1] = 0;  // 源点按题目改
     queue<int> q; q.push(1);
     v[1] = 1;
     while(!q.empty()) {

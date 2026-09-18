@@ -16,7 +16,7 @@
 
 ```cpp
 template<typename T> T areaEx(Point<T> p1, Point<T> p2, Point<T> p3) {
-    return cross(p2, p3, p1);  // 原来写 cross(b,c,a)，参数名对不上，无法编译
+    return cross(p2, p3, p1);
 }
 ```
 
@@ -194,9 +194,9 @@ template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int f
     vector<Point<T>> ans(n * 2);
     sort(A.begin(), A.end());
     int now = -1;
-    auto bad = [&](Point<T> o, Point<T> a, Point<T> b) {  // flag=1 弹出共线，flag=0 保留
+    auto bad = [&](Point<T> o, Point<T> a, Point<T> b) {  // flag=1 弹共线（严格），flag=0 保留（非严格）
         auto cr = cross(o, a, b);
-        return flag ? cr <= 0 : cr < 0;  // 原来写死 <=0，flag 参数没用上
+        return flag ? cr <= 0 : cr < 0;
     };
     for (int i = 0; i < n; i++) {  // 维护下凸包
         while (now > 0 && bad(A[i], ans[now], ans[now - 1])) {

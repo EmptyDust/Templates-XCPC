@@ -126,10 +126,10 @@ std::vector<i64> mul(std::vector<i64> a, std::vector<i64> b) {
     int M = a.size() + b.size() - 1u, N = 1;
     while (N < M) N <<= 1;
     std::vector<int> r(N);
-    for (int i = 1; i < N; i++)  // 原来 i <= N，r[N] 越界
+    for (int i = 1; i < N; i++)  // 严格 < N：r[N] 越界
         r[i] = r[i / 2] / 2 | (i % 2 ? N / 2 : 0);
 
-    auto ntt = [&](std::vector<i64> &a, bool inv) -> void {  // 原来写成 Z ntt，类型不对
+    auto ntt = [&](std::vector<i64> &a, bool inv) -> void {
         a.resize(N);
         for(int i = 0;i < N;i++) if (i < r[i]) std::swap(a[i], a[r[i]]);
         for (int sz = 1; sz < N; sz <<= 1) {

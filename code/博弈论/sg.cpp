@@ -1,13 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// 书中正文说明：N 按最大石子数改；yes/no 为赛场宏
-#define N 1005
-#define yes cout << "Yes\n"
-#define no cout << "No\n"
-
 // @book-begin
-int n, m, a[N], num[N];  // n 堆数, m 种取法; N 按最大石子数改
+const int N = 1e6 + 7;  // 按最大石子数改
+int n, m, a[N], num[N];  // n 堆数, m 种取法
 int sg(int x) {
     if (num[x] != -1) return num[x];  // -1 未算，Solve 里 memset
     unordered_set<int> S;  // 后继局面的 SG 集合
@@ -30,8 +26,8 @@ void Solve() {
         ans ^= sg(x); // 各堆独立，异或合并
     }
 
-    if (ans == 0) no; // yes/no 为赛场宏，须自行定义
-    else yes;
+    if (ans == 0) cout << "no" << '\n';  // 输出串按题意改
+    else cout << "yes" << '\n';
 }
 // @book-end
 

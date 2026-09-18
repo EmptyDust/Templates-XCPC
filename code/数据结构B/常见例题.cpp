@@ -175,7 +175,7 @@ signed main() {
         }
     }
 
-    int Knum = max(1, (int)pow(n, 2.0 / 3));  // 带修莫队块长取 n^(2/3) 最优（原来写死 2154，须按 n 改）
+    int Knum = max(1, (int)pow(n, 2.0 / 3));  // 带修莫队块长取 n^(2/3) 最优
     vector<int> K(n + 1);
     for (int i = 1; i <= n; i++) {  // 固定块长
         K[i] = (i - 1) / Knum + 1;

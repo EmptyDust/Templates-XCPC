@@ -31,7 +31,7 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
     explicit constexpr Poly(InputIt first, InputIt last) : vector<Value>(first, last) {}
 
     template<typename F>
-    explicit constexpr Poly(int n, F f) : vector<Value>(n) {  // 原来写成 F>plicit，无法编译
+    explicit constexpr Poly(int n, F f) : vector<Value>(n) {
         for (int i = 0; i < n; i++) {
             (*this)[i] = f(i);
         }
@@ -508,7 +508,7 @@ struct Lagrange {
     void init(int n) {
         iota(x.begin(), x.end(), 0);
         for (int i = 1; i <= n + 2; i++) {
-            y[i] = y[i - 1] + mypow(Z(i), n);  // 原来 Z t 未赋值再 t.power(i,n)
+            y[i] = y[i - 1] + mypow(Z(i), n);  // 前缀和：y[i] = Σ_{k=1..i} k^n（y[0]=0）
         }
         fac[0] = 1;
         for (int i = 1; i <= n + 2; i++) {
@@ -597,7 +597,7 @@ struct Lagrange {
 - $C_m^0 + C_m^1 x + C_m^2 x^2 + dots.c + C_m^m x^m = (1 + x)^m$（二项式定理）；
 - $C_m^0 + C_(m + 1)^1 x^1 + C_(m + 2)^2 x^2 + dots.c = 1 / (1 - x)^(m + 1)$（归纳法证明）；
 - $sum_(n = 0)^oo F_n x^n = frac((F_1 - F_0) x + F_0, 1 - x - x^2)$（F 为斐波那契数列，列方程 $G (x) = x G (x) + x^2 G (x) + (F_1 - F_0) x + F_0$）；
-- $sum_(n = 0)^oo H_n x^n = frac(1 - sqrt(1 - 4 x), 2 x)$（H 为卡特兰数；原来写成 $sqrt(n - 4 x)$）；
+- $sum_(n = 0)^oo H_n x^n = frac(1 - sqrt(1 - 4 x), 2 x)$（H 为卡特兰数）；
 - 前缀和 $sum_(n = 0)^oo s_n x^n = frac(1, 1 - x) f (x)$ ；
 - 五边形数定理：$product_(i = 1)^oo (1 - x^i) = sum_(k = 0)^oo (- 1)^k x^(1 / 2 k (3 k plus.minus 1))$ 。
 

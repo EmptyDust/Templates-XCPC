@@ -274,7 +274,7 @@ template<typename T> bool pointOnSegment(Pt p, Lt l) {  // 端点也算
     return sign(cross(p, l.a, l.b)) == 0 && min(l.a.x, l.b.x) <= p.x && p.x <= max(l.a.x, l.b.x) &&
            min(l.a.y, l.b.y) <= p.y && p.y <= max(l.a.y, l.b.y);
 }
-template<typename T> bool pointOnSegmentEx(Pt p, Lt l) {  // 端点不算；原来与上一函数同名，无法重载
+template<typename T> bool pointOnSegmentEx(Pt p, Lt l) {  // 端点不算（与上一函数区分名）
     return pointOnSegment(p, l) && min(l.a.x, l.b.x) < p.x && p.x < max(l.a.x, l.b.x) &&
            min(l.a.y, l.b.y) < p.y && p.y < max(l.a.y, l.b.y);
 }
@@ -377,7 +377,7 @@ template<typename T> bool segmentIntersection(Lt l1, Lt l2) {
     auto C = max(s2.x, e2.x), CC = min(s2.x, e2.x);
     auto D = max(s2.y, e2.y), DD = min(s2.y, e2.y);
     return A >= CC && B >= DD && C >= AA && D >= BB &&
-           sign(cross(s1, s2, e1) * cross(s1, e1, e2)) != 1 &&  // 原来 ==1，端点/重叠会判不相交
+           sign(cross(s1, s2, e1) * cross(s1, e1, e2)) != 1 &&  // 不能写 ==1：端点/重叠会判不相交
            sign(cross(s2, s1, e2) * cross(s2, e2, e1)) != 1;
 }
 ```

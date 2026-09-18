@@ -3,7 +3,7 @@ using namespace std;
 
 // @book-begin
 using i64 = long long;
-i64 fib[100] = {1, 2};  // 原来 int，fib[47] 已超 INT_MAX
+i64 fib[100] = {1, 2};  // 必须 i64：fib[47] 已超 INT_MAX
 map<i64, bool> mp;  // 是否斐波那契数
 void Force() {  // 预处理，Solve 前调用一次
   for (int i = 2; i <= 86; ++ i) fib[i] = fib[i - 1] + fib[i - 2];  // 86 项盖住约 9e17

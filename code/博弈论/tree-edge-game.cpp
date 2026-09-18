@@ -7,7 +7,7 @@ vector<int> ver[N];  // 邻接表，须先建图（书中正文说明）
 int main() {
 // @book-begin
     auto dfs = [&](auto self, int x, int fa) -> int {  // 返回 R(x)=SG(x)+1
-        int res = 0;  // 原来 int x = 0 与参数同名，无法编译；res 为孩子 R 的异或
+        int res = 0;  // res 为孩子 R 的异或
         for (auto y : ver[x]) {  // ver 为邻接表，须先建图
             if (y == fa) continue;
             res ^= self(self, y, x);

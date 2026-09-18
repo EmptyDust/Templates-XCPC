@@ -342,7 +342,7 @@ vector<pair<ld, int>> val = {
     {log(z) * pow(y, x), 9}, {log(z) * x * y, 10},    {log(z) * y * x, 11}};
 
 sort(val.begin(), val.end(), [&](auto x, auto y) {
-    if (equal(x.first, y.first)) return x.second < y.second;  // equal 见二维几何；原来写成 queal
+    if (equal(x.first, y.first)) return x.second < y.second;  // equal 见二维几何
     return x.first > y.first;
 });
 cout << ans[val.front().second] << endl;
