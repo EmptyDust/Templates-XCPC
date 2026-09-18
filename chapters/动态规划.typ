@@ -189,7 +189,7 @@ int dfs(int pos, int sum, int cur, bool lead0, bool lim) {
     if (!lead0 && !lim && ~now)return now;
     int up = lim ? a[pos] : 9, res = 0;
     for (int i = 0;i <= up;++i)
-        res += dfs(pos - 1, sum + i, (cur * 10 + i) % mod, lead0 && !i, lim && i == up);
+        res += dfs(pos - 1, sum + i, (cur * 10LL + i) % mod, lead0 && !i, lim && i == up);  // cur*10 达 2^33，int 溢出
     if (!lead0 && !lim)now = res;
     return res;
 }

@@ -921,6 +921,10 @@ SPFA：某点入队超过 $n$ 次（或某点松弛次数 $gt.eq n$）则存在�
 原题：给出一张有向带权图，求解图上最小环的长度、有多少个这样的最小环 #link("https://acm.hdu.edu.cn/contest/problem?cid=1097&pid=1011")[See] 。使用 floyd，复杂度为 $cal(O)(N^3)$ ，可以扩展到无向图。
 
 ```cpp
+const int mod = 998244353;      // 计数答案的模数，按题目改
+const int N = 305;              // 点数上限
+int n, a[N][N], dis[N][N];      // a：原始边权；dis：floyd 过程中的最短路
+i64 cnt[N][N];                  // 最短路条数（% mod）：值可到 mod-1≈2^30，乘法必须 i64
 i64 Min = 1e18, ans = 0;
 for (int k = 1; k <= n; k++) {
     for (int i = 1; i <= n; i++) {
@@ -951,6 +955,8 @@ for (int k = 1; k <= n; k++) {
 原题：给出一张无向图，求解图上最小环的长度、有多少个这样的最小环 #link("https://codeforces.com/contest/1205/problem/B")[See] 。使用 floyd，可以扩展到有向图。
 
 ```cpp
+const int N = 305;              // 点数上限
+int val[N][N], dis[N][N];       // val：原始边权；dis：floyd 过程中的最短路
 int floyd(int n) {
     for (int i = 1; i <= n; ++ i) {
         for (int j = 1; j <= n; ++ j) {

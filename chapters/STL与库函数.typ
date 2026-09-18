@@ -101,7 +101,9 @@ prev(it, 2); // 可选参数k：返回it前k个的迭代器
 next(it, 2); // 返回it后k个的迭代器
 
 /* 以下是一些应用 */
-auto pre = prev(s.lower_bound(x));  // 最后一个<x的迭代器（<x 中的最大者）；无<x 时越过 begin()，未定义，先判 lower_bound != begin()
+// prev(s.lower_bound(x))：最后一个 <x 的迭代器（<x 中的最大者）
+// 无 <x 时 lower_bound 为 begin()，prev 越过 begin() 未定义——先判 != begin()
+auto pre = prev(s.lower_bound(x));
 int ed = *prev(S.end(), 1);  // 返回最后一个元素
 ```
 
