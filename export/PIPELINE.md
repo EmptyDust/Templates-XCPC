@@ -21,7 +21,7 @@ prelude.typ (macros)         │
 - `export/cover.typ` — standalone print cover (title + stamp); not part of the book page count.
 - `export/vendor/jetbrains-mono/` — vendored code font (from the Debian package, unpacked locally); passed via `--font-path`.
 
-Dependency: `typst`. `export-pdf.sh` compiles the book, flattens TOC dests, and compiles `export/cover.typ` with the same date and git short hash (plus `-dirty` if the tree is unclean). The stamp is also passed into `main.typ` for the TOC-page line and PDF metadata.
+Dependencies: Typst 0.15.1, Python 3 with pypdf (Debian/Ubuntu: `python3-pypdf`), Poppler (`poppler-utils`), and the font packages listed in README. GCC with GNU C++20 support is also required by `check.sh`. `export-pdf.sh` compiles the book, flattens TOC dests, and compiles `export/cover.typ` with the same date and git short hash (plus `-dirty` for tracked changes). The stamp is also passed into `main.typ` for the TOC-page line and PDF metadata. Untracked local notes do not affect it. Both PDFs are checked for Type 3 fonts and invalid internal destinations. Missing-font warnings fail export; compiler diagnostics are retained in `build/export-logs/`. `check.sh` and CI use this same export path, and CI uploads the PDFs and check logs.
 
 ## Known pitfalls
 
@@ -33,7 +33,7 @@ Read this section before touching the theme. Every entry is a bug that actually 
 
 3. **Typst 0.15 treats multi-letter math identifiers as variable references.** `Sum_N` is an error, not italic text; write space-separated letters (`S u m_N`) or `upright(...)`. The compiler itself suggests the fix.
 
-4. **Extracted code must stay compilable.** Files under `code/` are checked by `g++ -std=gnu++20 -fsyntax-only` in check.sh. Book-only fragments (macros, undefined helpers) belong outside the `@book-begin`/`@book-end` region or stay inline in the chapter.
+4. **Extracted code must stay compilable.** Files under `code/` are checked by `g++ -std=gnu++20 -fsyntax-only` in check.sh. Standalone syntax checking does not establish that the printed region compiles. Regression tests extract the actual printed blocks, supply only documented dependencies, instantiate their interfaces, and run the complete usage examples. Inline code needs the same checks. Synchronize registered editor snippets with `python3 tools/sync_snippets.py --write`.
 
 5. **pdfinfo (poppler) prints `Syntax Error: Suspects object is wrong type (boolean)` on Typst-produced PDFs.** The entry is `/MarkInfo/Suspects false`, which is spec-valid boolean for tagged PDF; poppler emits a spurious strictness warning. Ghostscript, mutool, pdftotext, pdffonts all read the file cleanly. Benign.
 

@@ -24,13 +24,30 @@ if [ -d export/vendor/jetbrains-mono ]; then
   font_path="--font-path export/vendor/jetbrains-mono"
 fi
 
-typst compile --root . $font_path \
+mkdir -p build/export-logs
+compile() {
+  log=$1
+  shift
+  if ! typst compile --root . $font_path "$@" 2>"$log"; then
+    cat "$log" >&2
+    exit 1
+  fi
+  if grep -qi 'unknown font family' "$log"; then
+    cat "$log" >&2
+    echo "缺少所需字体，导出未通过检查" >&2
+    exit 1
+  fi
+  cat "$log" >&2
+}
+
+compile build/export-logs/book.log \
   --input stamp="$stamp" --input rev="$rev" \
   main.typ "$out"
-typst compile --root . \
+compile build/export-logs/cover.log \
   --input stamp="$stamp" --input rev="$rev" \
   export/cover.typ "$cover"
 python3 export/flatten-pdf-dests.py "$out"
+python3 tools/check_pdf.py --links "$out" "$cover"
 
 echo "$out"
 echo "$cover"

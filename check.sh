@@ -10,19 +10,13 @@ say() { printf '%s %s\n' "$1" "$2"; }
 bad() { say "FAIL" "$1"; fail=1; }
 ok()  { say " ok " "$1"; }
 
-# 1. 入口可编译：typst compile 本身就是闸门（语法、引用、文件读取全校验）
-# 有本地 vendor 就加上；没有则走系统字体（CI / 裸 clone）。
+# 1. 与正式导出走同一路径：正文、独立封面、目录目的地和字体。
 mkdir -p build
-font_path=
-if [ -d export/vendor/jetbrains-mono ]; then
-    font_path="--font-path export/vendor/jetbrains-mono"
-fi
-if typst compile --root . $font_path main.typ build/.check-book.pdf 2>build/.check-typst.log; then
-    ok "main.typ 可编译"
+if ./export-pdf.sh >build/.check-export.log 2>&1; then
+    ok "正文与封面导出、内部链接和字体检查通过"
 else
-    bad "main.typ 编译失败（见 build/.check-typst.log）"
+    bad "PDF 导出检查失败（见 build/.check-export.log）"
 fi
-rm -f build/.check-book.pdf
 
 # 2. 孤儿章：chapters/ 里每个 .typ 必须被 main.typ include（漏 include 不报错，只会静默消失）
 orphan=0
@@ -72,20 +66,7 @@ PY
 junk=$(grep -rn '/END/\|\[TOC\]\|image("http' chapters/ 2>/dev/null | wc -l)
 [ "$junk" -eq 0 ] && ok "无 md 时代残渣" || { grep -rn '/END/\|\[TOC\]\|image("http' chapters/ | head -5; bad "md 时代残渣 $junk 处"; }
 
-# 7. 若存在导出 PDF，检查嵌入字体无 Type 3
-t3fail=0
-for f in build/*.pdf; do
-    [ -f "$f" ] || continue
-    case "$f" in *check-book*) continue ;; esac
-    t3=$(pdffonts "$f" 2>/dev/null | awk 'NR>2 && $2 ~ /Type 3/' | wc -l)
-    if [ "$t3" -ne 0 ]; then
-        bad "$f: 含 $t3 个 Type 3 字体"
-        t3fail=1
-    fi
-done
-[ $t3fail -eq 0 ] && [ -n "$(ls build/*.pdf 2>/dev/null)" ] && ok "PDF 无 Type 3 字体"
-
-# 8. 片段必须与登记来源一致；实际书稿接口和组合用法须通过运行验证。
+# 7. 片段必须与登记来源一致；实际书稿接口和组合用法须通过运行验证。
 python3 tools/sync_snippets.py || bad "片段来源检查失败"
 python3 -m unittest discover -s tests -p 'test_*.py' -v || bad "模板回归失败"
 

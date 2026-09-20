@@ -22,6 +22,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             g++ \
+            poppler-utils \
+            python3-pypdf \
             fonts-noto-core \
             fonts-noto-cjk \
             fonts-texgyre \
@@ -29,3 +31,15 @@ jobs:
             fonts-jetbrains-mono \
             fonts-montserrat
       - run: ./check.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: book-and-check-logs
+          include-hidden-files: true
+          path: |
+            build/*.pdf
+            build/.check-export.log
+            build/export-logs/
+            build/check-logs/
+            build/regression/*.log
+          retention-days: 7

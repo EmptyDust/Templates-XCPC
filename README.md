@@ -37,7 +37,7 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 ./export-pdf.sh   # 书 + 单独封面，同一日期哈希
 ```
 
-产物：`build/风铃的模板库-YYYY-MM-DD-<git短哈希>.pdf` 与 `build/封面-YYYY-MM-DD-<git短哈希>.pdf`。单独封面是两行居中的一张纸，不进正文页码。需要：`typst`、章号字体 Montserrat（Debian 包 `fonts-montserrat`）。单章预览：`typst compile --root . --font-path export/vendor/jetbrains-mono chapters/博弈论.typ /tmp/x.pdf`（跨章引用会报未定义，属正常）。
+产物：`build/风铃的模板库-YYYY-MM-DD-<git短哈希>.pdf` 与 `build/封面-YYYY-MM-DD-<git短哈希>.pdf`。单独封面是两行居中的一张纸，不进正文页码。导出依赖 Typst 0.15.1、Python 3 / pypdf、Poppler 的 `pdffonts`；Debian 对应 `python3-pypdf`、`poppler-utils`。所需字体包为 `fonts-noto-core`、`fonts-noto-cjk`、`fonts-texgyre-math`、`fonts-jetbrains-mono`、`fonts-montserrat`。缺字体、Type 3 字体、未解析或失效的内部跳转均视为导出失败。`./check.sh` 与 CI 都执行完整导出。单章预览：`typst compile --root . --font-path export/vendor/jetbrains-mono chapters/博弈论.typ /tmp/x.pdf`（跨章引用会报未定义，属正常）。
 
 ## 克隆与提交
 

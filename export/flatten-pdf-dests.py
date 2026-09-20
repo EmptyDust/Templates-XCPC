@@ -38,21 +38,23 @@ def name_map(root) -> dict:
     names = root.get("/Names")
     if names is None:
         return {}
-    dests = names.get("/Dests")
+    dests = names.get_object().get("/Dests")
     if dests is None:
         return {}
-    arr = dests.get_object()["/Names"]
     out = {}
-    for i in range(0, len(arr), 2):
-        k, v = arr[i], arr[i + 1]
-        if hasattr(v, "get_object"):
-            v = v.get_object()
-        if isinstance(v, DictionaryObject) and "/D" in v:
-            v = v["/D"]
+    stack = [dests]
+    while stack:
+        node = stack.pop().get_object()
+        stack.extend(node.get("/Kids", []))
+        arr = node.get("/Names", [])
+        for i in range(0, len(arr), 2):
+            k, v = arr[i], arr[i + 1]
             if hasattr(v, "get_object"):
                 v = v.get_object()
-        for var in _variants(k):
-            out[var] = v
+            if isinstance(v, DictionaryObject) and "/D" in v:
+                v = v["/D"].get_object()
+            for var in _variants(k):
+                out[var] = v
     return out
 
 
@@ -74,7 +76,8 @@ def already_explicit(dest) -> bool:
 
 def flatten(src: Path, dst: Path) -> tuple[int, int]:
     reader = PdfReader(str(src))
-    writer = PdfWriter(clone_from=reader)
+    writer = PdfWriter()
+    writer.clone_document_from_reader(reader)
     mapping = name_map(writer.root_object)
     replaced = 0
     missing = 0
@@ -86,7 +89,11 @@ def flatten(src: Path, dst: Path) -> tuple[int, int]:
             obj = annot.get_object()
             if str(obj.get("/Subtype")) != "/Link":
                 continue
-            dest = obj.get("/Dest")
+            owner, key = obj, "/Dest"
+            action = obj.get("/A")
+            if action is not None and action.get_object().get("/S") == "/GoTo":
+                owner, key = action.get_object(), "/D"
+            dest = owner.get(key)
             if already_explicit(dest):
                 continue
             resolved = mapping.get(dest)
@@ -97,7 +104,7 @@ def flatten(src: Path, dst: Path) -> tuple[int, int]:
             if resolved is None:
                 missing += 1
                 continue
-            obj[NameObject("/Dest")] = resolved
+            owner[NameObject(key)] = resolved
             replaced += 1
     writer.write(str(dst))
     return replaced, missing
@@ -111,9 +118,12 @@ def main() -> int:
     dst = Path(sys.argv[2]) if len(sys.argv) == 3 else src
     tmp = dst.with_name(dst.name + ".flattening")
     replaced, missing = flatten(src, tmp)
-    tmp.replace(dst)
     print(f"flatten-pdf-dests: {replaced} named dests made explicit, {missing} unresolved")
-    return 0 if missing == 0 else 1
+    if missing:
+        print(f"unresolved destinations; original retained, diagnostic output: {tmp}", file=sys.stderr)
+        return 1
+    tmp.replace(dst)
+    return 0
 
 
 if __name__ == "__main__":
