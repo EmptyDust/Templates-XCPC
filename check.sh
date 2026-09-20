@@ -33,8 +33,10 @@ done
 
 # 3. 抽取的板子：code/ 里每个 .cpp 必须过 g++ 语法检查
 cppbad=0
-for f in $(find code -name '*.cpp'); do
-    g++ -std=gnu++20 -fsyntax-only "$f" 2>build/.check-gpp.log || { bad "$f: g++ 语法检查失败（见 build/.check-gpp.log）"; cppbad=1; }
+for f in code/*/*.cpp; do
+    log="build/check-logs/${f#code/}.log"
+    mkdir -p "$(dirname "$log")"
+    g++ -std=gnu++20 -fsyntax-only "$f" 2>"$log" || { bad "$f: g++ 语法检查失败（见 $log）"; cppbad=1; }
 done
 [ $cppbad -eq 0 ] && ok "code/ 全部通过 g++ -fsyntax-only"
 
@@ -83,5 +85,8 @@ for f in build/*.pdf; do
 done
 [ $t3fail -eq 0 ] && [ -n "$(ls build/*.pdf 2>/dev/null)" ] && ok "PDF 无 Type 3 字体"
 
+# 8. 片段必须与登记来源一致；实际书稿接口和组合用法须通过运行验证。
+python3 tools/sync_snippets.py || bad "片段来源检查失败"
+python3 -m unittest discover -s tests -p 'test_*.py' -v || bad "模板回归失败"
 
 exit $fail

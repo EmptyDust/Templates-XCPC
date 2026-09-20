@@ -459,7 +459,7 @@
 			"  bool operator<(i64 x) { return r < x; }",
 			"};",
 			"struct Lines : std::vector<Line> {",
-			"  static constexpr i64 inf = numeric_limits<i64>::std::max();",
+			"  static constexpr i64 inf = numeric_limits<i64>::max();",
 			"  Lines(i64 a, i64 b) : std::vector<Line>{{a, b, inf}} {}",
 			"  Lines(std::vector<Line>& lines) {",
 			"    if (not ranges::is_sorted(lines, less())) ranges::std::sort(lines, less());",
