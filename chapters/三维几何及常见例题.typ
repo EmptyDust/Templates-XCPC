@@ -4,7 +4,7 @@
 <三维几何及常见例题>
 三维点、线、面、体的判定与度量（API 与二维章同构：叉积 `crossEx` 返回向量、混积判共面），后半是平面几何常用例题集——最近点对、最大四边形、旋转卡壳与凸包包含。
 
-依赖二维章的 `ld`、`EPS`、`sign`、`PI`。`Point3` / `Line3` / `Plane` 三点定面。原文把 `P3` / `L3` 当别名用但未 typedef，下面补上。叉积用 `crossEx` 返回向量，`cross` 返回模长。
+依赖二维章的 `ld`、`EPS`、`sign`、`PI`。`Point3` / `Line3` / `Plane` 三点定面。直线的两个端点必须不同，平面的三个点必须不共线；返回 bool 的求交函数对退化输入返回 false。线段判定允许退化为点。浮点 EPS 为绝对容差，应按坐标与运算量级调整。叉积用 `crossEx` 返回向量，`cross` 返回模长。
 
 == 三维几何必要初始化
 <三维几何必要初始化>
@@ -12,7 +12,7 @@
 
 === 点线面封装
 <点线面封装>
-`P3` 点/向量，`L3` 点+方向，`S3` 平面（点+法向）。运算见成员函数。
+`P3` 点/向量，`L3` 保存直线上两点，`Plane` 保存平面上三点。
 
 #include-code("code/三维几何及常见例题/点线面封装.cpp")
 
@@ -112,7 +112,7 @@ bool linePlaneParallel(L3 l, Plane s) {
 
 === 空间两线段是否相交
 <空间两线段是否相交>
-先求两直线交点（须共面），再判交点落在两段内。
+先判平行、共面，再用参数判交点位置。依赖点线面封装、其他函数、预置函数及 `pointOnSegment`。`segmentIntersection` 包含端点和共线重叠；`segmentIntersection1` 只接受两段严格内部的唯一交点。
 
 #include-code("code/三维几何及常见例题/空间两线段是否相交.cpp")
 
@@ -121,24 +121,12 @@ bool linePlaneParallel(L3 l, Plane s) {
 当两直线不共面、两直线平行时返回 $"false"$ 。
 
 ```cpp
-pair<bool, P3> lineIntersection(L3 l1, L3 l2) {
-    if (!onPlane(l1.a, l1.b, l2.a, l2.b) || lineParallel(l1, l2)) {
-        return {0, {}};
-    }
-    auto [s1, e1] = l1;
-    auto [s2, e2] = l2;
-    ld val = 0;
-    if (!onPlane(l1.a, l1.b, {0, 0, 0}, {0, 0, 1})) {
-        val = ((s1.x - s2.x) * (s2.y - e2.y) - (s1.y - s2.y) * (s2.x - e2.x)) /
-              ((s1.x - e1.x) * (s2.y - e2.y) - (s1.y - e1.y) * (s2.x - e2.x));
-    } else if (!onPlane(l1.a, l1.b, {0, 0, 0}, {0, 1, 0})) {
-        val = ((s1.x - s2.x) * (s2.z - e2.z) - (s1.z - s2.z) * (s2.x - e2.x)) /
-              ((s1.x - e1.x) * (s2.z - e2.z) - (s1.z - e1.z) * (s2.x - e2.x));
-    } else {
-        val = ((s1.y - s2.y) * (s2.z - e2.z) - (s1.z - s2.z) * (s2.y - e2.y)) /
-              ((s1.y - e1.y) * (s2.z - e2.z) - (s1.z - e1.z) * (s2.y - e2.y));
-    }
-    return {1, s1 + (e1 - s1) * val};
+pair<bool, P3> lineIntersection(const L3 &l1, const L3 &l2) {
+    P3 u = l1.b - l1.a, v = l2.b - l2.a, w = l2.a - l1.a;
+    P3 normal = crossEx(u, v);
+    if (sign(len(normal)) == 0 || sign(dot(w, normal)) != 0) return {false, {}};
+    ld t = dot(crossEx(w, v), normal) / dot(normal, normal);
+    return {true, l1.a + u * t};
 }
 ```
 
@@ -153,15 +141,12 @@ pair<bool, P3> lineIntersection(L3 l1, L3 l2) {
 当两平面平行、两平面为同一个时返回 $"false"$ 。
 
 ```cpp
-pair<bool, L3> planeIntersection(Plane s1, Plane s2) {
-    if (planeParallel(s1, s2) || same(s1, s2)) {
-        return {0, {}};
-    }
-    P3 U = linePlaneParallel({s2.u, s2.v}, s1) ? linePlaneCross({s2.v, s2.w}, s1).second
-                                               : linePlaneCross({s2.u, s2.v}, s1).second;
-    P3 V = linePlaneParallel({s2.w, s2.u}, s1) ? linePlaneCross({s2.v, s2.w}, s1).second
-                                               : linePlaneCross({s2.w, s2.u}, s1).second;
-    return {1, {U, V}};
+pair<bool, L3> planeIntersection(const Plane &s1, const Plane &s2) {
+    P3 n1 = getVec(s1), n2 = getVec(s2), direction = crossEx(n1, n2);
+    if (sign(len(n1)) == 0 || sign(len(n2)) == 0 || sign(len(direction)) == 0) return {false, {}};
+    ld d1 = dot(n1, s1.u), d2 = dot(n2, s2.u);
+    P3 point = crossEx(d1 * n2 - d2 * n1, direction) / dot(direction, direction);
+    return {true, {point, point + standardize(direction)}};
 }
 ```
 
@@ -485,7 +470,7 @@ signed main() {
     int cnt = 0;
     for (int i = 0; i < n; i++) {
         Pi x = in[i], y = in[(i + 1) % n];
-        cnt += (pointNotOnLineSide(x, y, {s, e}) && segmentIntersection(Line{x, y}, {s, e}));
+        cnt += (pointNotOnLineSide(x, y, {s, e}) && segmentsIntersect(Line{x, y}, {s, e}));
     }
     cout << cnt / 2 + 1 << endl;
 }

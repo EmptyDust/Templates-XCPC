@@ -25,7 +25,8 @@ template<typename T> T areaEx(Point<T> p1, Point<T> p2, Point<T> p3) {
 可以处理浮点数、共点的情况。返回分为三种情况：$2$ 代表构成正方形；$1$ 代表构成矩形；$0$ 代表其他情况。`Pt` / `Lt` 见二维章。先按坐标排序再两两对边。
 
 ```cpp
-template<typename T> int isSquare(vector<Pt> x) {
+template<typename T> int isSquare(vector<Pt<T>> x) {  // 有意复制并排序四个点
+    assert(x.size() == 4);
     sort(x.begin(), x.end());
     if (equal(dis(x[0], x[1]), dis(x[2], x[3])) && sign(dis(x[0], x[1])) &&
         equal(dis(x[0], x[2]), dis(x[1], x[3])) && sign(dis(x[0], x[2])) &&
@@ -226,7 +227,7 @@ template<typename T> vector<Point<T>> staticConvexHull(vector<Point<T>> A, int f
 #pitfall[本段的 `Line` 与二维章的 `Line` 冲突，不要同时编译。]
 
 ```cpp
-template<typename T> bool turnRight(Pt a, Pt b) {
+template<typename T> bool turnRight(const Pt<T> &a, const Pt<T> &b) {
     return cross(a, b) < 0 || (cross(a, b) == 0 && dot(a, b) < 0);
 }
 struct Line {
@@ -360,54 +361,43 @@ template<typename T> vector<Point<T>> mincowski(vector<Point<T>> P1, vector<Poin
 
 === 半平面交
 <半平面交>
-计算多条直线左边平面部分的交集。直线方向 `a→b`，左侧为半平面。`sign(d1)` 把向量当标量无法编译，须按极角半平面定义（见二维 SMU\_inch 的 `quad()`：上半平面为 $1$）。平行同向取更紧的那条，反向则空。
+计算有向直线 `a→b` 左侧闭半平面的交集，依赖二维点线封装、预置函数、叉积、点积与 `lineIntersection`。使用 `Ld` / `Pd`，每条线的两点必须不同。复杂度 $cal(O)(N "log" N)$。
+
+本接口要求交集有界：正面积时返回逆时针凸多边形；空集或退化成点、线段时返回空。不区分无界交集与空集；若题目另有矩形边界，应将其四条逆时针边加入输入，不能凭空添加“足够大”的方框。同向平行线只保留限制更紧的一条。排序使用精确极角顺序，几何判定使用 EPS；近退化数据仍须按题目尺度选择容差。
 
 ```cpp
-template<typename T> vector<Point<T>> halfcut(vector<Line<T>> lines) {
-    sort(lines.begin(), lines.end(), [&](auto l1, auto l2) {
-        auto d1 = l1.b - l1.a;
-        auto d2 = l2.b - l2.a;
-        if (sign(d1) != sign(d2)) {  // TODO：sign 原只收标量；向量请改成 quad/极角半平面
-            return sign(d1) == 1;
-        }
-        return cross(d1, d2) > 0;
+vector<Pd> halfcut(vector<Ld> lines) {  // 有意复制并排序输入
+    auto direction = [](const Ld &l) { return l.b - l.a; };
+    auto half = [](const Pd &d) { return d.y > 0 || (d.y == 0 && d.x >= 0); };
+    auto outside = [](const Ld &l, const Pd &p) { return sign(cross(l.b - l.a, p - l.a)) < 0; };
+    for (const Ld &l : lines) assert(l.a.x != l.b.x || l.a.y != l.b.y);
+    sort(lines.begin(), lines.end(), [&](const Ld &a, const Ld &b) {
+        Pd u = direction(a), v = direction(b);
+        if (half(u) != half(v)) return half(u) > half(v);
+        return cross(u, v) > 0;
     });
-    deque<Line<T>> ls;
-    deque<Point<T>> ps;
-    for (auto l : lines) {
-        if (ls.empty()) {
-            ls.push_back(l);
-            continue;
-        }
-        while (!ps.empty() && !pointOnLineLeft(ps.back(), l)) {
-            ps.pop_back();
-            ls.pop_back();
-        }
-        while (!ps.empty() && !pointOnLineLeft(ps[0], l)) {
-            ps.pop_front();
-            ls.pop_front();
-        }
-        if (cross(l.b - l.a, ls.back().b - ls.back().a) == 0) {
-            if (dot(l.b - l.a, ls.back().b - ls.back().a) > 0) {
-                if (!pointOnLineLeft(ls.back().a, l)) {
-                    assert(ls.size() == 1);
-                    ls[0] = l;
-                }
-                continue;
-            }
-            return {};
-        }
-        ps.push_back(lineIntersection(ls.back(), l));
-        ls.push_back(l);
+    vector<Ld> unique;
+    for (const Ld &l : lines) {
+        if (!unique.empty() && sign(cross(direction(unique.back()), direction(l))) == 0 &&
+            dot(direction(unique.back()), direction(l)) > 0) {
+            if (outside(l, unique.back().a)) unique.back() = l;
+        } else unique.push_back(l);
     }
-    while (!ps.empty() && !pointOnLineLeft(ps.back(), ls[0])) {
-        ps.pop_back();
-        ls.pop_back();
+    deque<Ld> q;
+    for (const Ld &l : unique) {
+        while (q.size() > 1 && outside(l, lineIntersection(q[q.size() - 2], q.back()))) q.pop_back();
+        while (q.size() > 1 && outside(l, lineIntersection(q[0], q[1]))) q.pop_front();
+        if (!q.empty() && sign(cross(direction(q.back()), direction(l))) == 0) return {};
+        q.push_back(l);
     }
-    if (ls.size() <= 2) {
-        return {};
-    }
-    ps.push_back(lineIntersection(ls[0], ls.back()));
-    return vector(ps.begin(), ps.end());
+    while (q.size() > 2 && outside(q.front(), lineIntersection(q[q.size() - 2], q.back()))) q.pop_back();
+    while (q.size() > 2 && outside(q.back(), lineIntersection(q[0], q[1]))) q.pop_front();
+    if (q.size() < 3 || sign(cross(direction(q.front()), direction(q.back()))) == 0) return {};
+    vector<Pd> result;
+    for (int i = 0; i < q.size(); ++i) result.push_back(lineIntersection(q[i], q[(i + 1) % q.size()]));
+    ld area = 0;
+    for (int i = 1; i + 1 < result.size(); ++i) area += cross(result[i] - result[0], result[i + 1] - result[0]);
+    if (sign(area) == 0) return {};
+    return result;
 }
 ```

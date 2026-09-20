@@ -14,5 +14,5 @@ const int mod = 1000000007;  // 按题目改
 const int N = 1000005;  // 按题目改
 const int M = 2000005;  // 按题目改
 const double eps = 1e-8;
-const double PI = acos(-1.0);
+const ld PI = acosl(-1.0L);
 // @book-end

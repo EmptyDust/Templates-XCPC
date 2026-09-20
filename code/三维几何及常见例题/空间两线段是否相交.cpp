@@ -1,103 +1,23 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int MOD = 998244353;
-const int mod = 1000000007;
-const int N = 1000005;
-const int M = 2000005;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
-
-struct Point3 {
-    ld x, y, z;
-    Point3(ld x_ = 0, ld y_ = 0, ld z_ = 0) : x(x_), y(y_), z(z_) {}
-    Point3 &operator+=(Point3 p) & {
-        return x += p.x, y += p.y, z += p.z, *this;
-    }
-    Point3 &operator-=(Point3 p) & {
-        return x -= p.x, y -= p.y, z -= p.z, *this;
-    }
-    Point3 &operator*=(Point3 p) & {  // 按分量乘，不是叉积；linePlaneCross 靠这个凑点积
-        return x *= p.x, y *= p.y, z *= p.z, *this;
-    }
-    Point3 &operator*=(ld t) & {
-        return x *= t, y *= t, z *= t, *this;
-    }
-    Point3 &operator/=(ld t) & {
-        return x /= t, y /= t, z /= t, *this;
-    }
-    friend Point3 operator+(Point3 a, Point3 b) { return a += b; }
-    friend Point3 operator-(Point3 a, Point3 b) { return a -= b; }
-    friend Point3 operator*(Point3 a, Point3 b) { return a *= b; }
-    friend Point3 operator*(Point3 a, ld b) { return a *= b; }
-    friend Point3 operator*(ld a, Point3 b) { return b *= a; }
-    friend Point3 operator/(Point3 a, ld b) { return a /= b; }
-    friend auto &operator>>(istream &is, Point3 &p) {
-        return is >> p.x >> p.y >> p.z;
-    }
-    friend auto &operator<<(ostream &os, Point3 p) {
-        return os << "(" << p.x << ", " << p.y << ", " << p.z << ")";
-    }
-};
-struct Line3 {
-    Point3 a, b;
-};
-struct Plane {
-    Point3 u, v, w;  // 三点定面；共线时 getVec 为零向量
-};
-using P3 = Point3;
-using L3 = Line3;
-ld len(P3 p) {  // 原点到当前点的距离计算
-    return sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
-}
-P3 crossEx(P3 a, P3 b) { // 叉乘
-    P3 ans;
-    ans.x = a.y * b.z - a.z * b.y;
-    ans.y = a.z * b.x - a.x * b.z;
-    ans.z = a.x * b.y - a.y * b.x;
-    return ans;
-}
-ld cross(P3 a, P3 b) {
-    return len(crossEx(a, b));
-}
-ld dot(P3 a, P3 b) { // 点乘
-    return a.x * b.x + a.y * b.y + a.z * b.z;
-}
-P3 getVec(Plane s) { // 获取平面法向量
-    return crossEx(s.u - s.v, s.v - s.w);
-}
-ld dis(P3 a, P3 b) { // 三维欧几里得距离公式
-    ld val = (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z);
-    return sqrt(val);
-}
-P3 standardize(P3 vec) { // 将三维向量转换为单位向量
-    return vec / len(vec);
-}
-
-template<class... A> int onLine(A&&...);
-template<class... A> int onPlane(A&&...);
-template<class... A> int pointOnSegment(A&&...);
-template<class... A> int pointOnSegmentSide(A&&...);
+#include "../contest.hpp"
+#include "空间点是否在线段上.cpp"
 
 // @book-begin
-bool segmentIntersection(L3 l1, L3 l2) {  // 重叠、相交于端点均视为相交
-    if (!onPlane(l1.a, l1.b, l2.a, l2.b)) {  // 特判不共面
-        return 0;
+bool segmentIntersection(const L3 &l1, const L3 &l2, bool strict = false) {
+    P3 u = l1.b - l1.a, v = l2.b - l2.a, w = l2.a - l1.a;
+    P3 normal = crossEx(u, v);
+    if (sign(len(normal)) == 0) {
+        if (strict) return false;  // 平行、重叠、退化均不算严格相交
+        return pointOnSegment(l1.a, l2) || pointOnSegment(l1.b, l2) ||
+               pointOnSegment(l2.a, l1) || pointOnSegment(l2.b, l1);
     }
-    if (!onLine(l1.a, l1.b, l2.a) || !onLine(l1.a, l1.b, l2.b)) {
-        return !pointOnSegmentSide(l1.a, l1.b, l2) && !pointOnSegmentSide(l2.a, l2.b, l1);
-    }
-    return pointOnSegment(l1.a, l2) || pointOnSegment(l1.b, l2) || pointOnSegment(l2.a, l1) ||
-           pointOnSegment(l2.b, l1);  // 原来写成 pointOnSegment(l2.b, l2)，点在自身线段上恒真
+    if (sign(dot(w, normal)) != 0) return false;  // 异面
+    ld denominator = dot(normal, normal);
+    ld s = dot(crossEx(w, v), normal) / denominator;
+    ld t = dot(crossEx(w, u), normal) / denominator;
+    if (strict) return sign(s) > 0 && sign(s - 1) < 0 && sign(t) > 0 && sign(t - 1) < 0;
+    return sign(s) >= 0 && sign(s - 1) <= 0 && sign(t) >= 0 && sign(t - 1) <= 0;
 }
-bool segmentIntersection1(L3 l1, L3 l2) {  // 重叠、相交于端点不视为相交
-    return onPlane(l1.a, l1.b, l2.a, l2.b) && !pointOnSegmentSide(l1.a, l1.b, l2) &&
-           !pointOnSegmentSide(l2.a, l2.b, l1);
+bool segmentIntersection1(const L3 &l1, const L3 &l2) {  // 两段严格内部交于唯一一点
+    return segmentIntersection(l1, l2, true);
 }
 // @book-end
-
-int main() { return 0; }

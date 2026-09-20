@@ -2,9 +2,9 @@
 
 = 二维几何
 <二维几何>
-平面点、线、圆、三角形的浮点运算库：预置 `sign`/`EPS`、点线封装，到交点/距离/投影/旋转、圆与切线、三角形四心，文末另附 SMU\_inch 自包含板子。所有判定走 `sign` 不直接 `==`；几何题的错大多出在精度与退化（平行、共线、圆心重合），不在公式。
+平面点、线、圆、三角形的浮点运算库：预置 `sign`/`EPS`、点线封装，到交点/距离/投影/旋转、圆与切线、三角形四心，文末另附 SMU\_inch 自包含板子。几何容差判定用 `sign`，排序使用严格顺序；几何题的错大多出在精度与退化（平行、共线、圆心重合），不在公式。
 
-本章默认 `ld = long double`，`EPS = 1e-7`（文末 SMU\_inch 板子改用 `double` + `1e-9`，两套不要混）。`T` 用 `int` / `i64` 做整点，用 `ld` 做浮点。`Pd` / `Ld` 为 `Point<ld>` / `Line<ld>`，`Pi` 为 `Point<int>`；`Pt` / `Lt` 是模板别名，随模板一起印：`template<typename T> using Pt = Point<T>;`（`Lt` 同）。`sign` 返回 $- 1 \/ 0 \/ 1$。
+本章默认 `ld = long double`，`EPS = 1e-7`（文末 SMU\_inch 板子改用 `double` + `1e-9`，两套不要混）。`T` 用 `int` / `i64` 做整点，用 `ld` 做浮点。`Pd` / `Ld` 为 `Point<ld>` / `Line<ld>`，`Pi` 为 `Point<int>`；`Pt<T>` / `Lt<T>` 是模板别名，随模板一起印：`template<typename T> using Pt = Point<T>;`（`Lt` 同）。`sign` 返回 $- 1 \/ 0 \/ 1$。
 
 == format 格式化输出小数点
 <format-格式化输出小数点>
@@ -59,7 +59,7 @@ Real dot(const Point &a, const Point &b) {
 
 === 点线封装
 <点线封装>
-点当向量用。加减缩放、`dot` 点积、`cross` 叉积。直线用点+方向，或一般式 $a x + b y + c = 0$。
+依赖预置函数的 `equal`。点当向量用；`Line<T>{a,b}` 保存直线上的两个点。整数坐标的差、点积与叉积必须在 T 范围内，必要时从一开始使用 `Point<i128>`；先溢出再转型无效。点排序按精确字典序，浮点几何相等用 EPS。
 
 #include-code("code/二维几何/点线封装.cpp")
 
@@ -69,20 +69,20 @@ Real dot(const Point &a, const Point &b) {
 
 ```cpp
 template<typename T>  // 叉乘
-T cross(Point<T> a, Point<T> b) { return a.x * b.y - a.y * b.x; }
+T cross(const Point<T> &a, const Point<T> &b) { return a.x * b.y - a.y * b.x; }
 template<typename T>  // 叉乘 (p1 - p0) x (p2 - p0);
-T cross(Point<T> p1, Point<T> p2, Point<T> p0) { return cross(p1 - p0, p2 - p0); }
+T cross(const Point<T> &p1, const Point<T> &p2, const Point<T> &p0) { return cross(p1 - p0, p2 - p0); }
 ```
 
 === 点乘
 <点乘>
-定义公式 $a dot b = lr(|a|) lr(|b|) "cos" theta$。（原文写成了 $times$，与叉乘混淆）
+定义公式 $a dot b = lr(|a|) lr(|b|) "cos" theta$。
 
 ```cpp
 template<typename T>  // 点乘
-T dot(Point<T> a, Point<T> b) { return a.x * b.x + a.y * b.y; }
+T dot(const Point<T> &a, const Point<T> &b) { return a.x * b.x + a.y * b.y; }
 template<typename T>  // 点乘 (p1 - p0) * (p2 - p0);
-T dot(Point<T> p1, Point<T> p2, Point<T> p0) { return dot(p1 - p0, p2 - p0); }
+T dot(const Point<T> &p1, const Point<T> &p2, const Point<T> &p0) { return dot(p1 - p0, p2 - p0); }
 ```
 
 === 欧几里得距离公式
@@ -118,7 +118,7 @@ Point<ld> standardize(Point<ld> vec) {  // 转换为单位向量
 将当前向量移动至原点后顺时针旋转 $90^circle.stroked.tiny$ ，即获取垂直于当前向量的、起点为原点的向量。在计算垂线时非常有用。例如，要想获取点 $a$ 绕点 $o$ 顺时针旋转 $90^circle.stroked.tiny$ 后的点，可以这样书写代码：`auto ans = o + rotate(o, a);` ；如果是逆时针旋转，那么只需更改符号即可：`auto ans = o - rotate(o, a);` 。参数顺序是 `(原点, 被旋转点)`。
 
 ```cpp
-template<typename T> Point<T> rotate(Point<T> p1, Point<T> p2) {  // 旋转
+template<typename T> Point<T> rotate(const Point<T> &p1, const Point<T> &p2) {  // 旋转
     Point<T> vec = p1 - p2;
     return {-vec.y, vec.x};
 }
@@ -195,8 +195,8 @@ y prime = (x_0 - x_1) "sin" theta + (y_0 - y_1) "cos" theta + y_1$
 #strong[需要注意];，向量的方向会影响答案；点在向量上时不视为在左侧。
 
 ```cpp
-template<typename T> bool pointOnLineLeft(Pt p, Lt l) {
-    return cross(l.b, p, l.a) > 0;
+template<typename T> bool pointOnLineLeft(const Pt<T> &p, const Lt<T> &l) {
+    return sign(cross(l.b, p, l.a)) > 0;
 }
 ```
 
@@ -205,13 +205,11 @@ template<typename T> bool pointOnLineLeft(Pt p, Lt l) {
 两点对直线叉积同号则同侧，异号则异侧。
 
 ```cpp
-template<typename T> bool pointOnLineSide(Pt p1, Pt p2, Lt vec) {
-    T val = cross(p1, vec.a, vec.b) * cross(p2, vec.a, vec.b);
-    return sign(val) == 1;
+template<typename T> bool pointOnLineSide(const Pt<T> &p1, const Pt<T> &p2, const Lt<T> &vec) {
+    return sign(cross(p1, vec.a, vec.b)) * sign(cross(p2, vec.a, vec.b)) > 0;
 }
-template<typename T> bool pointNotOnLineSide(Pt p1, Pt p2, Lt vec) {
-    T val = cross(p1, vec.a, vec.b) * cross(p2, vec.a, vec.b);
-    return sign(val) == -1;
+template<typename T> bool pointNotOnLineSide(const Pt<T> &p1, const Pt<T> &p2, const Lt<T> &vec) {
+    return sign(cross(p1, vec.a, vec.b)) * sign(cross(p2, vec.a, vec.b)) < 0;
 }
 ```
 
@@ -222,7 +220,7 @@ template<typename T> bool pointNotOnLineSide(Pt p1, Pt p2, Lt vec) {
 #pitfall[使用前先判平行，否则分母为 $0$。]
 
 ```cpp
-Pd lineIntersection(Ld l1, Ld l2) {
+Pd lineIntersection(const Ld &l1, const Ld &l2) {
     ld val = cross(l2.b - l2.a, l1.a - l2.a) / cross(l2.b - l2.a, l1.a - l1.b);
     return l1.a + (l1.b - l1.a) * val;
 }
@@ -233,15 +231,14 @@ Pd lineIntersection(Ld l1, Ld l2) {
 方向叉积 $0$ 平行；点积 $0$ 垂直；平行再看一点是否在另一线上即相同。
 
 ```cpp
-template<typename T> bool lineParallel(Lt p1, Lt p2) {
+template<typename T> bool lineParallel(const Lt<T> &p1, const Lt<T> &p2) {
     return sign(cross(p1.a - p1.b, p2.a - p2.b)) == 0;
 }
-template<typename T> bool lineVertical(Lt p1, Lt p2) {
+template<typename T> bool lineVertical(const Lt<T> &p1, const Lt<T> &p2) {
     return sign(dot(p1.a - p1.b, p2.a - p2.b)) == 0;
 }
-template<typename T> bool same(Line<T> l1, Line<T> l2) {
-    return lineParallel(Line{l1.a, l2.b}, {l1.b, l2.a}) &&
-           lineParallel(Line{l1.a, l2.a}, {l1.b, l2.b}) && lineParallel(l1, l2);
+template<typename T> bool same(const Line<T> &l1, const Line<T> &l2) {
+    return lineParallel(l1, l2) && sign(cross(l1.b - l1.a, l2.a - l1.a)) == 0;
 }
 ```
 
@@ -250,7 +247,7 @@ template<typename T> bool same(Line<T> l1, Line<T> l2) {
 垂足。距离 $= lr(|A B times A P|) \/ lr(|A B|)$。
 
 ```cpp
-pair<Pd, ld> pointToLine(Pd p, Ld l) {
+pair<Pd, ld> pointToLine(const Pd &p, const Ld &l) {
     Pd ans = lineIntersection({p, p + rotate(l.a, l.b)}, l);
     return {ans, dis(p, ans)};
 }
@@ -259,7 +256,7 @@ pair<Pd, ld> pointToLine(Pd p, Ld l) {
 如果只需要计算最近距离，下方的写法可以减少书写的代码量，效果一致。
 
 ```cpp
-template<typename T> ld disPointToLine(Pt p, Lt l) {
+template<typename T> ld disPointToLine(const Pt<T> &p, const Lt<T> &l) {
     ld ans = cross(p, l.a, l.b);
     return abs(ans) / dis(l.a, l.b);  // 面积除以底边长
 }
@@ -270,13 +267,11 @@ template<typename T> ld disPointToLine(Pt p, Lt l) {
 共线且在两端点包围盒内（点积 $lt.eq 0$ 或坐标夹在中间）。
 
 ```cpp
-template<typename T> bool pointOnSegment(Pt p, Lt l) {  // 端点也算
-    return sign(cross(p, l.a, l.b)) == 0 && min(l.a.x, l.b.x) <= p.x && p.x <= max(l.a.x, l.b.x) &&
-           min(l.a.y, l.b.y) <= p.y && p.y <= max(l.a.y, l.b.y);
+template<typename T> bool pointOnSegment(const Pt<T> &p, const Lt<T> &l) {  // 端点、退化为点的线段也算
+    return sign(cross(p - l.a, l.b - l.a)) == 0 && sign(dot(p - l.a, p - l.b)) <= 0;
 }
-template<typename T> bool pointOnSegmentEx(Pt p, Lt l) {  // 端点不算（与上一函数区分名）
-    return pointOnSegment(p, l) && min(l.a.x, l.b.x) < p.x && p.x < max(l.a.x, l.b.x) &&
-           min(l.a.y, l.b.y) < p.y && p.y < max(l.a.y, l.b.y);
+template<typename T> bool pointOnSegmentEx(const Pt<T> &p, const Lt<T> &l) {  // 只计严格内部，退化线段恒 false
+    return sign(cross(p - l.a, l.b - l.a)) == 0 && sign(dot(p - l.a, p - l.b)) < 0;
 }
 ```
 
@@ -285,7 +280,8 @@ template<typename T> bool pointOnSegmentEx(Pt p, Lt l) {  // 端点不算（与�
 垂足落在段内用垂足，否则取较近端点。
 
 ```cpp
-pair<Pd, ld> pointToSegment(Pd p, Ld l) {
+pair<Pd, ld> pointToSegment(const Pd &p, const Ld &l) {
+    if (l.a == l.b) return {l.a, dis(p, l.a)};
     if (sign(dot(p, l.b, l.a)) == -1) {  // 特判到两端点的距离
         return {l.a, dis(p, l.a)};
     } else if (sign(dot(p, l.a, l.b)) == -1) {
@@ -312,73 +308,49 @@ Pd project(Pd p, Ld l) {  // 投影
 中点 + 方向旋转 $90^circle.stroked.tiny$。外心、垂直平分用。
 
 ```cpp
-template<typename T> Lt midSegment(Lt l) {
-    Pt mid = (l.a + l.b) / 2;  // 线段中点
+Ld midSegment(const Ld &l) {  // 中点可能非整数，使用浮点
+    Pd mid = (l.a + l.b) / 2;
     return {mid, mid + rotate(l.a, l.b)};
 }
 ```
 
 === 两线段是否相交及交点
 <两线段是否相交及交点>
-该扩展版可以同时返回相交状态和交点，分为四种情况：$0$ 代表不相交；$1$ 代表普通相交；$2$ 代表重叠（交于两个点）；$3$ 代表相交于端点。#strong[需要注意];，部分运算可能会使用到直线求交点，此时务必保证变量类型为浮点数！
+`segmentIntersection(Ld,Ld)` 返回状态及交集端点：0 不相交、1 严格交于一点、2 重叠成线段、3 端点接触。输入为浮点线段，允许退化为点；依赖本章的叉积、点积、预置函数、`pointOnSegment` 与 `lineIntersection`。
 
 ```cpp
-template<typename T> tuple<int, Pt, Pt> segmentIntersection(Lt l1, Lt l2) {
-    auto [s1, e1] = l1;
-    auto [s2, e2] = l2;
-    auto A = max(s1.x, e1.x), AA = min(s1.x, e1.x);
-    auto B = max(s1.y, e1.y), BB = min(s1.y, e1.y);
-    auto C = max(s2.x, e2.x), CC = min(s2.x, e2.x);
-    auto D = max(s2.y, e2.y), DD = min(s2.y, e2.y);
-    if (A < CC || C < AA || B < DD || D < BB) {
-        return {0, {}, {}};
+tuple<int, Pd, Pd> segmentIntersection(const Ld &l1, const Ld &l2) {
+    const auto &[a, b] = l1;
+    const auto &[c, d] = l2;
+    vector<Pd> common;
+    for (const Pd &p : {a, b, c, d}) {
+        if (pointOnSegment(p, l1) && pointOnSegment(p, l2)) common.push_back(p);
     }
-    if (sign(cross(e1 - s1, e2 - s2)) == 0) {
-        if (sign(cross(s2, e1, s1)) != 0) {
-            return {0, {}, {}};
-        }
-        Pt p1(max(AA, CC), max(BB, DD));
-        Pt p2(min(A, C), min(B, D));
-        if (!pointOnSegment(p1, l1)) {
-            swap(p1.y, p2.y);
-        }
-        if (p1 == p2) {
-            return {3, p1, p2};
-        } else {
-            return {2, p1, p2};
-        }
+    if (!common.empty()) {
+        sort(common.begin(), common.end());
+        Pd first = common.front(), last = common.back();
+        return {first == last ? 3 : 2, first, last};
     }
-    auto cp1 = cross(s2 - s1, e2 - s1);
-    auto cp2 = cross(s2 - e1, e2 - e1);
-    auto cp3 = cross(s1 - s2, e1 - s2);
-    auto cp4 = cross(s1 - e2, e1 - e2);
-    if (sign(cp1 * cp2) == 1 || sign(cp3 * cp4) == 1) {
-        return {0, {}, {}};
-    }
-    // 使用下方函数时请使用浮点数
-    Pd p = lineIntersection(l1, l2);
-    if (sign(cp1) != 0 && sign(cp2) != 0 && sign(cp3) != 0 && sign(cp4) != 0) {
+    int x = sign(cross(b - a, c - a)), y = sign(cross(b - a, d - a));
+    int u = sign(cross(d - c, a - c)), v = sign(cross(d - c, b - c));
+    if (x * y < 0 && u * v < 0) {
+        Pd p = lineIntersection(l1, l2);
         return {1, p, p};
-    } else {
-        return {3, p, p};
     }
+    return {0, {}, {}};
 }
 ```
 
-如果不需要求交点，那么使用快速排斥+跨立实验即可，其中重叠、相交于端点均视为相交。
+只判是否相交可用下面的 `segmentsIntersect`，支持整数和浮点，端点接触、重叠都算。比较叉积符号，避免两个叉积再次相乘。
 
 ```cpp
-// TODO：跨立点序与上面 tuple 版不同；原文 sign==1 会把端点/重叠判成不相交，与“均视为相交”矛盾
-template<typename T> bool segmentIntersection(Lt l1, Lt l2) {
-    auto [s1, e1] = l1;
-    auto [s2, e2] = l2;
-    auto A = max(s1.x, e1.x), AA = min(s1.x, e1.x);
-    auto B = max(s1.y, e1.y), BB = min(s1.y, e1.y);
-    auto C = max(s2.x, e2.x), CC = min(s2.x, e2.x);
-    auto D = max(s2.y, e2.y), DD = min(s2.y, e2.y);
-    return A >= CC && B >= DD && C >= AA && D >= BB &&
-           sign(cross(s1, s2, e1) * cross(s1, e1, e2)) != 1 &&  // 不能写 ==1：端点/重叠会判不相交
-           sign(cross(s2, s1, e2) * cross(s2, e2, e1)) != 1;
+template<typename T> bool segmentsIntersect(const Lt<T> &l1, const Lt<T> &l2) {
+    const auto &[a, b] = l1;
+    const auto &[c, d] = l2;
+    if (pointOnSegment(a, l2) || pointOnSegment(b, l2) ||
+        pointOnSegment(c, l1) || pointOnSegment(d, l1)) return true;
+    return sign(cross(b - a, c - a)) * sign(cross(b - a, d - a)) < 0 &&
+           sign(cross(d - c, a - c)) * sign(cross(d - c, b - c)) < 0;
 }
 ```
 
@@ -489,7 +461,7 @@ ld area(Point<ld> a, Point<ld> b, Point<ld> c) {
 三角形外接圆的圆心，即三角形三边垂直平分线的交点。
 
 ```cpp
-template<typename T> Pt center1(Pt p1, Pt p2, Pt p3) {  // 外心
+Pd center1(const Pd &p1, const Pd &p2, const Pd &p3) {  // 外心
     return lineIntersection(midSegment({p1, p2}), midSegment({p2, p3}));
 }
 ```
@@ -521,10 +493,10 @@ Pd center3(Pd p1, Pd p2, Pd p3) {  // 垂心
 一般很少使用到这个函数，因为斜率的取值不可控（例如接近平行于 $x , y$ 轴时）。#strong[需要注意];，当直线平行于 $y$ 轴时斜率为 `inf` 。
 
 ```cpp
-template<typename T> ld slope(Pt p1, Pt p2) {  // 斜率，注意 inf 的情况
-    return (p1.y - p2.y) / (p1.x - p2.x);
+template<typename T> ld slope(const Pt<T> &p1, const Pt<T> &p2) {  // 斜率，注意 inf 的情况
+    return (ld(p1.y) - p2.y) / (ld(p1.x) - p2.x);
 }
-template<typename T> ld slope(Lt l) {
+template<typename T> ld slope(const Lt<T> &l) {
     return slope(l.a, l.b);
 }
 ```
@@ -534,7 +506,7 @@ template<typename T> ld slope(Lt l) {
 调用分数四则运算精确计算斜率，返回最简分数，只适用于整数计算。
 
 ```cpp
-template<typename T> Frac<T> slopeEx(Pt p1, Pt p2) {
+template<typename T> Frac<T> slopeEx(const Pt<T> &p1, const Pt<T> &p2) {
     Frac<T> U = p1.y - p2.y;
     Frac<T> V = p1.x - p2.x;
     return U / V;  // 调用分数精确计算
@@ -546,7 +518,7 @@ template<typename T> Frac<T> slopeEx(Pt p1, Pt p2) {
 返回由三个整数构成的方程，在输入较大时可能找不到较小的满足题意的一组整数解。可以处理平行于 $x , y$ 轴、两点共点的情况。
 
 ```cpp
-template<typename T> tuple<T, T, T> getfun(Lt p) {
+template<typename T> tuple<T, T, T> getfun(const Lt<T> &p) {
     T A = p.a.y - p.b.y, B = p.b.x - p.a.x, C = p.a.x * A + p.a.y * B;
     if (A < 0) {  // 符号调整
         A = -A, B = -B, C = -C;
