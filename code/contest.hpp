@@ -4,6 +4,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 using i64 = long long;
+using i128 = __int128;
 using ld = long double;
 using u64 = unsigned long long;
 using a2 = array<int, 2>;  // 莫队等板子的修改 / 询问元组：{位置, 值} / {l, r, 时间}

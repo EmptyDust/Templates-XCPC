@@ -1,36 +1,28 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int MOD = 998244353;
-const int mod = 1000000007;
-const int N = 1000005;
-const int M = 2000005;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
+#include "../contest.hpp"
 
 // @book-begin
 using i64 = long long;
 
-int mypow(i64 n, i64 k, int p) {  // 快速幂，复杂度 O(log k)；参数与累乘器 i64，n*n 不溢出 int
-    i64 r = 1;
+int mypow(i64 n, i64 k, int p) {  // k >= 0，p > 0；先归约底数
+    assert(k >= 0 && p > 0);
+    n %= p;
+    if (n < 0) n += p;
+    i64 r = 1 % p;
     for (; k; k >>= 1, n = n * n % p) {
         if (k & 1) r = r * n % p;
     }
     return r;
 }
-i64 mysqrt(i64 n) {  // 针对 sqrt 无法精确计算 i64 型；n ≤ 1e18 时不溢出
-    i64 ans = sqrt(n);
-    while ((ans + 1) * (ans + 1) <= n) ans++;
-    while (ans * ans > n) ans--;
+i64 mysqrt(i64 n) {  // floor(sqrt(n))，0 <= n <= LLONG_MAX
+    assert(n >= 0);
+    i64 ans = sqrtl(n);
+    while (ans + 1 <= n / (ans + 1)) ++ans;
+    while (ans > 0 && ans > n / ans) --ans;
     return ans;
 }
-int mylcm(int x, int y) {  // 先除后乘，防溢出
-    return x / gcd(x, y) * y;
+i64 mylcm(int x, int y) {  // int 输入的非负最小公倍数，返回 i64
+    if (x == 0 || y == 0) return 0;
+    i64 a = abs(i64(x)), b = abs(i64(y));
+    return a / gcd(a, b) * b;
 }
 // @book-end
-
-int main() { return 0; }

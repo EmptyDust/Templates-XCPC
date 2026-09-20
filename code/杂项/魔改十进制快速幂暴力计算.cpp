@@ -2,15 +2,16 @@
 int n, m;
 
 // @book-begin
-int mypow10(int n, vector<int> k, int p) {
-    int r = 1;
+int mypow10(int n, const vector<int> &k, int p) {
+    assert(p > 0);
+    int r = 1 % p;
     for (int i = k.size() - 1; i >= 0; i--) {
         for (int j = 1; j <= k[i]; j++) {
-            r = r * n % p;
+            r = i64(r) * n % p;
         }
         int v = 1;
         for (int j = 0; j <= 9; j++) {
-            v = v * n % p;
+            v = i64(v) * n % p;
         }
         n = v;
     }
@@ -23,8 +24,7 @@ signed main() {
 
     int n = 0;  // 转化并计算 n % p
     for (auto it : n_) {
-        n = n * 10 + it - '0';
-        n %= p;
+        n = (i64(n) * 10 + it - '0') % p;
     }
     vector<int> k;  // 转化 k
     for (auto it : k_) {

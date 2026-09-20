@@ -15,7 +15,7 @@
 == 多项式封装
 <多项式封装>
 #specline([乘法 #O($n "log" n$)（NTT；长度小时自动退 #O($n^2$) 直接卷）])
-依赖本节后面的 `dft` / `idft` 与取模类 `Zmod<P>`。默认模 $998244353$。`inv/log/exp/sqrt` 的 `m` 是要的前 $m$ 项。`eval` 是多点求值。
+依赖本节后面的 `dft` / `idft` 与取模类 `Zmod<P>`。默认模 $998244353$。`inv/log/exp/sqrt` 的 `m` 是要的前 $m$ 项。`eval` 是多点求值。先放取模类，再放 `dft/idft`，最后放 `Poly`。各截断长度满足 $0 <= m < P$；`inv` 要求常数项非零，`log` 要求常数项为 1，`exp` 要求常数项为 0，`sqrt` 仅支持常数项为 1 且选择常数项为 1 的平方根。`pow(k,m)` 要求非负整数指数，约定包括零多项式在内的零次幂为 1。
 
 ```cpp
 template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
@@ -31,7 +31,7 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
     explicit constexpr Poly(InputIt first, InputIt last) : vector<Value>(first, last) {}
 
     template<typename F>
-    explicit constexpr Poly(int n, F f) : vector<Value>(n) {
+    explicit constexpr Poly(int n, F &&f) : vector<Value>(n) {
         for (int i = 0; i < n; i++) {
             (*this)[i] = f(i);
         }
@@ -80,7 +80,7 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
         }
         return Poly(res);
     }
-    constexpr friend Poly operator*(Poly a, Poly b) {
+    constexpr friend Poly operator*(Poly a, Poly b) {  // 复制后补零并原地变换
         if (a.size() == 0 || b.size() == 0) {
             return Poly();
         }
@@ -111,31 +111,31 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
         a.resize(tot);
         return a;
     }
-    constexpr friend Poly operator*(Value a, Poly b) {
+    constexpr friend Poly operator*(Value a, Poly b) {  // 修改结果副本
         for (int i = 0; i < int(b.size()); i++) {
             b[i] *= a;
         }
         return b;
     }
-    constexpr friend Poly operator*(Poly a, Value b) {
+    constexpr friend Poly operator*(Poly a, Value b) {  // 修改结果副本
         for (int i = 0; i < int(a.size()); i++) {
             a[i] *= b;
         }
         return a;
     }
-    constexpr friend Poly operator/(Poly a, Value b) {
+    constexpr friend Poly operator/(Poly a, Value b) {  // 修改结果副本
         for (int i = 0; i < int(a.size()); i++) {
             a[i] /= b;
         }
         return a;
     }
-    constexpr Poly &operator+=(Poly b) {
+    constexpr Poly &operator+=(const Poly &b) {
         return (*this) = (*this) + b;
     }
-    constexpr Poly &operator-=(Poly b) {
+    constexpr Poly &operator-=(const Poly &b) {
         return (*this) = (*this) - b;
     }
-    constexpr Poly &operator*=(Poly b) {
+    constexpr Poly &operator*=(const Poly &b) {
         return (*this) = (*this) * b;
     }
     constexpr Poly &operator*=(Value b) {
@@ -162,27 +162,37 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
         return res;
     }
     constexpr Poly inv(int m) const {
+        assert(0 <= m && m < P);
+        if (m == 0) return {};
+        assert(!this->empty() && (*this)[0] != 0);
         Poly x{(*this)[0].inv()};
         int k = 1;
         while (k < m) {
-            k *= 2;
+            k = min(2 * k, m);
             x = (x * (Poly{2} - trunc(k) * x)).trunc(k);
         }
         return x.trunc(m);
     }
     constexpr Poly log(int m) const {
-        return (deriv() * inv(m)).integr().trunc(m);
+        assert(0 <= m && m < P);
+        if (m == 0) return {};
+        assert(!this->empty() && (*this)[0] == 1);
+        return (trunc(m).deriv() * inv(m)).trunc(m - 1).integr();
     }
     constexpr Poly exp(int m) const {
+        assert(0 <= m && m < P);
+        assert(this->empty() || (*this)[0] == 0);
         Poly x{1};
         int k = 1;
         while (k < m) {
-            k *= 2;
+            k = min(2 * k, m);
             x = (x * (Poly{1} - x.log(k) + trunc(k))).trunc(k);
         }
         return x.trunc(m);
     }
     constexpr Poly pow(int k, int m) const {
+        assert(k >= 0 && 0 <= m && m < P);
+        if (k == 0) return Poly{1}.trunc(m);
         int i = 0;
         while (i < this->size() && (*this)[i] == 0) {
             i++;
@@ -195,15 +205,18 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
         return (f.log(m - i * k) * k).exp(m - i * k).shift(i * k) * mypow(v, k);
     }
     constexpr Poly sqrt(int m) const {
+        assert(0 <= m && m < P);
+        if (m == 0) return {};
+        assert(!this->empty() && (*this)[0] == 1);
         Poly x{1};
         int k = 1;
         while (k < m) {
-            k *= 2;
-            x = (x + (trunc(k) * x.inv(k)).trunc(k)) * ((P + 1) / 2);  // 2 的逆元：P 为奇素数
+            k = min(2 * k, m);
+            x = (x + (trunc(k) * x.inv(k)).trunc(k)) * Value((i64(P) + 1) / 2);  // 2 的逆元：P 为奇素数
         }
         return x.trunc(m);
     }
-    constexpr Poly mulT(Poly b) const {
+    constexpr Poly mulT(Poly b) const {  // 复制后反转
         if (b.size() == 0) {
             return Poly();
         }
@@ -211,7 +224,7 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
         reverse(b.begin(), b.end());
         return ((*this) * b).shift(-(n - 1));
     }
-    constexpr vector<Value> eval(vector<Value> x) const {
+    constexpr vector<Value> eval(vector<Value> x) const {  // 复制后补齐求值点
         if (this->size() == 0) {
             return vector<Value>(x.size(), 0);
         }
@@ -237,8 +250,8 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
                 }
             } else {
                 int m = (l + r) / 2;
-                self(self, 2 * p, l, m, num.mulT(q[2 * p + 1]).resize(m - l));
-                self(self, 2 * p + 1, m, r, num.mulT(q[2 * p]).resize(r - m));
+                self(self, 2 * p, l, m, num.mulT(q[2 * p + 1]).trunc(m - l));
+                self(self, 2 * p + 1, m, r, num.mulT(q[2 * p]).trunc(r - m));
             }
         };
         work(work, 1, 0, n, mulT(q[1].inv(n)));
@@ -251,7 +264,7 @@ template<int P = 998244353> struct Poly : public vector<Zmod<P>> {
 <离散傅里叶变换-dft-与其逆变换-idft>
 点值与系数互换：单位根上求值。卷积变成点值相乘再变回。长度必须是 $2$ 的幂。`idft` 里 `(1-P)/n` 在模 $P$ 下等于 $n^(- 1)$。
 
-#pitfall[`rev` / `roots` 是按模数特化的全局表，多模数同时用会串。]
+#pitfall[`rev` 仅依赖长度，`roots<P>` 按模数独立保存。变换长度须整除 $P-1$；单元素和空数组直接返回。]
 
 ```cpp
 vector<int> rev;
@@ -274,6 +287,8 @@ template<> constexpr Zmod<998244353> primitiveRoot<998244353>{31};
 
 template<int P> constexpr void dft(vector<Zmod<P>> &a) {  // 离散傅里叶变换
     int n = a.size();
+    if (n <= 1) return;
+    assert((n & (n - 1)) == 0 && (P - 1) % n == 0);
 
     if (int(rev.size()) != n) {
         int k = __builtin_ctz(n) - 1;
@@ -313,6 +328,7 @@ template<int P> constexpr void dft(vector<Zmod<P>> &a) {  // 离散傅里叶变�
 }
 template<int P> constexpr void idft(vector<Zmod<P>> &a) {  // 逆变换
     int n = a.size();
+    if (n <= 1) return;
     reverse(a.begin() + 1, a.end());
     dft(a);
     Zmod<P> inv = (1 - P) / n;
@@ -428,16 +444,17 @@ template<int P = 998244353> Zmod<P> linearRecurrence(Poly<P> p, Poly<P> q, i64 n
 == 快速数论变换 NTT
 <快速数论变换-ntt>
 #specline([#O($N "log" N$)])
-模意义卷积。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。头部两行自带（已抄 `contest.hpp` 时删去 `mod` 那行，勿重定义）。
+模意义卷积。模数须为 NTT 模（$998244353$ 原根 $3$）。长度补到 $2$ 的幂。下面第一段构造时就做了 DFT，只是变换器；第二段 `mul` 才是完整乘法。变换器内部固定模数，不使用公共头中按题目设置的 `mod`；构造参数长度必须是非零的 $2$ 的幂，且不超过 $2^23$。
 
 ```cpp
 using Z = Zmod<998244353>;  // 取模类见杂项章
-const int mod = 998244353;  // NTT 模
 struct Polynomial {
+    static constexpr int mod = Z::modulus;
     vector<Z> z;
     vector<int> r;
-    Polynomial(vector<int> &a) {
+    Polynomial(const vector<int> &a) {
         int n = a.size();
+        assert(n > 0 && (n & (n - 1)) == 0 && (mod - 1) % n == 0);
         z.resize(n);
         r.resize(n);
         for (int i = 0; i < n; i++) {
@@ -446,15 +463,6 @@ struct Polynomial {
         }
         ntt(z, n, 1);
     }
-    i64 power(i64 a, int b) {
-        i64 res = 1;
-        for (; b; b /= 2, a = a * a % mod) {
-            if (b % 2) {
-                res = res * a % mod;
-            }
-        }
-        return res;
-    }
     void ntt(vector<Z> &a, int n, int opt) {
         for (int i = 0; i < n; i++) {
             if (r[i] < i) {
@@ -462,7 +470,7 @@ struct Polynomial {
             }
         }
         for (int k = 2; k <= n; k *= 2) {
-            Z gn = power(3, (mod - 1) / k);
+            Z gn = mypow(Z(3), (mod - 1) / k);
             for (int i = 0; i < n; i += k) {
                 Z g = 1;
                 for (int j = 0; j < k / 2; j++, g *= gn) {
@@ -474,7 +482,7 @@ struct Polynomial {
         }
         if (opt == -1) {
             reverse(a.begin() + 1, a.end());
-            Z inv = power(n, mod - 2);
+            Z inv = Z(n).inv();
             for (int i = 0; i < n; i++) {
                 a[i] *= inv;
             }
@@ -487,6 +495,8 @@ struct Polynomial {
 
 #pitfall[最后答案要除以做 DFT/IDFT 的长度；做 DFT/IDFT 的长度要一样且是 $2$ 的整数次幂；做高精度乘法时要记得把数组反向。]
 
+下面的整数系数卷积依赖基础算法章的 `mypow(n,k,p)`，模数固定为 $998244353$；结果系数归约到 $[0,998244353)$，空输入返回空。输入按值复制，用于补零与原地变换。
+
 #include-code("code/多项式/快速数论变换-NTT-2.cpp")
 
 == 拉格朗日插值
@@ -498,6 +508,7 @@ struct Lagrange {
     int n;
     vector<Z> x, y, fac, invfac;
     Lagrange(int n) {
+        assert(n >= 0 && i64(n) + 2 < Z::modulus);
         this->n = n;
         x.resize(n + 3);
         y.resize(n + 3);
@@ -519,7 +530,9 @@ struct Lagrange {
             invfac[i] = invfac[i + 1] * (i + 1);
         }
     }
-    Z solve(i64 k) {
+    Z solve(i64 k) const {
+        assert(k >= 0);
+        k = Z(k).val();
         if (k <= n + 2) {
             return y[k];
         }
@@ -534,7 +547,7 @@ struct Lagrange {
         }
         Z ans = 0;
         for (int i = 1; i <= n + 2; i++) {
-            ans = ans + y[i] * mul[n + 2] * sub[i].inv() * pow(-1, n + 2 - i) * invfac[i - 1] *
+            ans = ans + y[i] * mul[n + 2] * sub[i].inv() * ((n + 2 - i) % 2 ? -1 : 1) * invfac[i - 1] *
                             invfac[n + 2 - i];
         }
         return ans;
@@ -604,7 +617,7 @@ struct Lagrange {
 === 指数生成函数 / EGF
 <指数生成函数-egf>
 - 指数生成函数：$A (x) = a_0 + a_1 x + a_2 frac(x^2, 2 !) + a_3 frac(x^3, 3 !) + dots.c = chevron.l a_0 , a_1 , a_2 , a_3 , dots.c chevron.r$ ；
-- 普通生成函数转换为指数生成函数：系数乘以 $n !$ ；
+- 对同一序列 $a_n$，普通生成函数为 $sum a_n x^n$，指数生成函数为 $sum a_n x^n / n!$，存储的幂系数由 OGF 转 EGF 时除以 $n!$；若保持同一个级数，仅改用 $x^n/n!$ 基底，基底系数才乘以 $n!$。模运算时相关阶乘必须可逆。
 - $1 + x + frac(x^2, 2 !) + frac(x^3, 3 !) + dots.c = "exp" x$ ；
 - 长度为 $n$ 的循环置换数为 $P (x) = - "ln" (1 - x)$，长度为 n 的置换数为 $"exp" P (x) = frac(1, 1 - x)$（注意是#strong[指数];生成函数）
   - $n$ 个点的生成树个数是 $P (x) = sum_(n = 1)^oo n^(n - 2) frac(x^n, n !)$，n 个点的生成森林个数是 $"exp" P (x)$ ；

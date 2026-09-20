@@ -11,7 +11,7 @@ struct bigint {
     bigint() : sign(1) {}
     bigint operator-() const {
         bigint res = *this;
-        res.sign = -sign;
+        if (!res.isZero()) res.sign = -sign;
         return res;
     }
     bigint(i64 v) {
@@ -27,14 +27,17 @@ struct bigint {
     void operator=(i64 v) {
         a.clear();
         sign = 1;
-        if (v < 0) sign = -1, v = -v;
-        for (; v > 0; v = v / base) {
-            a.push_back(v % base);
+        if (v < 0) sign = -1;
+        u64 magnitude = v < 0 ? u64(-(v + 1)) + 1 : u64(v);
+        for (; magnitude > 0; magnitude /= base) {
+            a.push_back(magnitude % base);
         }
     }
 
     // 基础加减乘除
     bigint operator+(const bigint &v) const {
+        if (v.isZero()) return *this;
+        if (isZero()) return v;
         if (sign == v.sign) {
             bigint res = v;
             for (int i = 0, carry = 0; i < (int)max(a.size(), v.a.size()) || carry; ++i) {
@@ -52,6 +55,8 @@ struct bigint {
         return *this - (-v);
     }
     bigint operator-(const bigint &v) const {
+        if (v.isZero()) return *this;
+        if (isZero()) return -v;
         if (sign == v.sign) {
             if (abs() >= v.abs()) {
                 bigint res = *this;
@@ -70,33 +75,33 @@ struct bigint {
         return *this + (-v);
     }
     void operator*=(int v) {
-        check(v);
+        i64 factor = check(v);
         for (int i = 0, carry = 0; i < (int)a.size() || carry; ++i) {
             if (i == (int)a.size()) {
                 a.push_back(0);
             }
-            i64 cur = a[i] * (i64)v + carry;
+            i64 cur = a[i] * factor + carry;
             carry = (int)(cur / base);
             a[i] = (int)(cur % base);
         }
         trim();
     }
     void operator/=(int v) {
-        check(v);
+        assert(v != 0);
+        i64 divisor = check(v);
         for (int i = (int)a.size() - 1, rem = 0; i >= 0; --i) {
             i64 cur = a[i] + rem * (i64)base;
-            a[i] = (int)(cur / v);
-            rem = (int)(cur % v);
+            a[i] = (int)(cur / divisor);
+            rem = (int)(cur % divisor);
         }
         trim();
     }
     int operator%(int v) const {
-        if (v < 0) {
-            v = -v;
-        }
+        assert(v != 0);
+        i64 divisor = std::abs(i64(v));
         int m = 0;
         for (int i = a.size() - 1; i >= 0; --i) {
-            m = (a[i] + m * (i64)base) % v;
+            m = (a[i] + m * (i64)base) % divisor;
         }
         return m * sign;
     }
@@ -149,11 +154,9 @@ struct bigint {
         res.sign *= res.sign;
         return res;
     }
-    void check(int v) {  // 检查输入的是否为负数
-        if (v < 0) {
-            sign = -sign;
-            v = -v;
-        }
+    i64 check(int v) {  // 分离符号；先提升类型以支持 INT_MIN
+        if (v < 0) sign = -sign;
+        return std::abs(i64(v));
     }
     void trim() {  // 去除前导零
         while (!a.empty() && !a.back()) a.pop_back();
@@ -185,8 +188,7 @@ struct bigint {
     }
     friend istream &operator>>(istream &stream, bigint &v) {
         string s;
-        stream >> s;
-        v.read(s);
+        if (stream >> s) v.read(s);
         return stream;
     }
     friend ostream &operator<<(ostream &stream, const bigint &v) {
@@ -221,6 +223,7 @@ struct bigint {
     }
     friend pair<bigint, bigint> divmod(const bigint &a1,
                                        const bigint &b1) {  // 大整数除大整数，同时返回答案与余数
+        assert(!b1.isZero());
         int norm = base / (b1.a.back() + 1);
         bigint a = a1.abs() * norm;
         bigint b = b1.abs() * norm;

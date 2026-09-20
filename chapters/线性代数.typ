@@ -15,7 +15,7 @@
 #specline([插入 #O($M dot "BASE"$)])
 线性基。设位长为 `BASE`（一般取 $63$，循环用到 $0 dots.c 62$）。`insert` 失败则能异或出 $0$（`flag=1`）。最大值 `ask_max`，不必另抄一份只含插入的残缺版。
 
-#pitfall[`kthquery` 前必须先 `rebuild()`。]
+#pitfall[`kthquery(k)` 按非空子集产生的不同异或值排序，`k` 从 1 开始，越界返回 -1；是否包含 0 取决于 `flag`。查询前必须 `rebuild()`，后续每次插入或合并后也须重新预处理。输入为非负 `i64`，仅使用 bit 0 至 62。]
 
 #include-code("code/线性代数/高斯消元法.cpp")
 

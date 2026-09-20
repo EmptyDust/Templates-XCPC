@@ -1,16 +1,4 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int MOD = 998244353;
-const int mod = 1000000007;
-const int N = 1000005;
-const int M = 2000005;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
+#include "../contest.hpp"
 
 // @book-begin
 struct LB {  // Linear Basis
@@ -60,7 +48,7 @@ struct LB {  // Linear Basis
         for (int i = 0; i <= BASE - 1; i++) {
             if (d[i]) return d[i];
         }
-        return 0; // 空基；原来没有返回值
+        return 0; // 空基
     }
     void rebuild() {  // 第k小值独立预处理，把 d 消成对角再压进 p[0..cnt)
         cnt = 0;
@@ -73,17 +61,19 @@ struct LB {  // Linear Basis
             if (d[i]) p[cnt++] = d[i];
         }
     }
-    i64 kthquery(i64 k) { // 查询能被异或得到的第 k 小值, 如不存在则返回 -1
-        if (flag) k--;  // 特判 0, 如果不需要 0, 直接删去
+    i64 kthquery(u64 k) { // 非空子集的不同异或值，第 k 小，k 从 1 开始
+        if (k == 0) return -1;
+        if (flag) --k;
         if (!k) return 0;
         i64 res = 0;
-        if (k >= (1ll << cnt)) return -1;
-        for (int i = 0; i < cnt; i++) {  // 原来按下标 BASE 取 p[i]，p 只填了 [0,cnt)
+        if (k >= (1ULL << cnt)) return -1;
+        for (int i = 0; i < cnt; i++) {  // p 只填了 [0,cnt)，不能枚举到 BASE
             if (k & (1LL << i)) res ^= p[i];
         }
         return res;
     }
-    void Merge(const LB &b) {  // 合并两个线性基
+    void Merge(const LB &b) {  // 合并后需重新 rebuild 才能查询第 k 小
+        flag |= b.flag;
         for (int i = BASE - 1; i >= 0; i--) {
             if (b.d[i]) {
                 insert(b.d[i]);
@@ -92,5 +82,3 @@ struct LB {  // Linear Basis
     }
 };
 // @book-end
-
-int main() { return 0; }

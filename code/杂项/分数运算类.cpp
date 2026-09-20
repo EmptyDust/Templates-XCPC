@@ -7,6 +7,7 @@ template<typename T> struct Frac {
     Frac() : Frac(0, 1) {}
     Frac(T x_) : Frac(x_, 1) {}
     Frac(T x_, T y_) : x(x_), y(y_) {
+        assert(y != 0);
         if (y < 0) {
             y = -y;
             x = -x;
@@ -29,6 +30,7 @@ template<typename T> struct Frac {
         }
     }
     constexpr Frac &operator/=(const Frac &i) {
+        assert(i.x != 0);
         x *= i.y;
         y *= i.x;
         if (y < 0) {
@@ -40,10 +42,10 @@ template<typename T> struct Frac {
     constexpr Frac &operator+=(const Frac &i) { return x = x * i.y + y * i.x, y *= i.y, *this; }
     constexpr Frac &operator-=(const Frac &i) { return x = x * i.y - y * i.x, y *= i.y, *this; }
     constexpr Frac &operator*=(const Frac &i) { return x *= i.x, y *= i.y, *this; }
-    friend constexpr Frac operator+(const Frac i, const Frac j) { return i += j; }
-    friend constexpr Frac operator-(const Frac i, const Frac j) { return i -= j; }
-    friend constexpr Frac operator*(const Frac i, const Frac j) { return i *= j; }
-    friend constexpr Frac operator/(const Frac i, const Frac j) { return i /= j; }
+    friend constexpr Frac operator+(Frac i, const Frac j) { return i += j; }
+    friend constexpr Frac operator-(Frac i, const Frac j) { return i -= j; }
+    friend constexpr Frac operator*(Frac i, const Frac j) { return i *= j; }
+    friend constexpr Frac operator/(Frac i, const Frac j) { return i /= j; }
     friend constexpr Frac operator-(const Frac i) { return Frac(-i.x, i.y); }
     friend constexpr bool operator<(const Frac i, const Frac j) { return i.x * j.y < i.y * j.x; }
     friend constexpr bool operator>(const Frac i, const Frac j) { return i.x * j.y > i.y * j.x; }

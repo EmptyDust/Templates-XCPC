@@ -1,15 +1,4 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int mod = 1000000007;
-const int N = 1000005;
-const int M = 2000005;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
+#include "../contest.hpp"
 
 // @book-begin
 using i64 = long long;
@@ -25,11 +14,13 @@ template<typename T> constexpr T mypow(T n, i64 k) {
 }
 
 template<int P> struct Zmod {
+    static_assert(P > 1);
+    static constexpr int modulus = P;
     int x;
-    constexpr Zmod(signed x = 0) : x(norm(x % P)) {}
-    constexpr Zmod(i64 x) : x(norm(x % P)) {}
+    constexpr Zmod() : x(0) {}
+    template<integral T> constexpr Zmod(T value) : x(norm(value % P)) {}
 
-    constexpr int norm(int x) const noexcept {
+    constexpr int norm(i64 x) const noexcept {
         if (x < 0) [[unlikely]] {
             x += P;
         }
@@ -53,9 +44,8 @@ template<int P> struct Zmod {
         return mypow(*this, P - 2);
     }
     friend constexpr auto &operator>>(istream &in, Zmod &j) {
-        int v;
-        in >> v;
-        j = Zmod(v);
+        i64 v;
+        if (in >> v) j = Zmod(v);
         return in;
     }
     friend constexpr auto &operator<<(ostream &o, const Zmod &j) {
@@ -80,7 +70,7 @@ template<int P> struct Zmod {
         return res;
     }
     constexpr Zmod &operator+=(const Zmod &i) {
-        x = norm(x + i.x);
+        x = norm(i64(x) + i.x);
         return *this;
     }
     constexpr Zmod &operator-=(const Zmod &i) {
@@ -128,5 +118,3 @@ template<int P> struct Zmod {
 
 // 用法：using Z = Zmod<998244353>; 双模两个类型：using U = Zmod<1000000007>, V = Zmod<998244353>;
 // @book-end
-
-int main() { return 0; }

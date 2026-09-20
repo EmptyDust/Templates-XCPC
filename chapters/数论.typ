@@ -635,9 +635,11 @@ int exgcd(int a, int b, int &x, int &y) {  //扩展欧几里得算法
     x = temp;
     return r;  //得到a b的最大公因数
 }
-i64 getInv(int a, int mod) {  //求a在mod下的逆元，不存在逆元返回-1
+i64 getInv(int a, int mod) {  // mod > 0；不存在逆元返回 -1
+    assert(mod > 0);
+    a = (i64(a) % mod + mod) % mod;
     int x, y, d = exgcd(a, mod, x, y);
-    return d == 1 ? (x % mod + mod) % mod : -1;
+    return d == 1 ? (i64(x) % mod + mod) % mod : -1;
 }
 ```
 
@@ -916,81 +918,64 @@ unsigned xor_n(unsigned n) {
 == Min25 筛
 <min25-筛>
 #specline([#O($N^(3 \/ 4) \/ "log" N$)，实测 $10^10$ 很快])
-求 $1 dots.c N$ 的质数和（$N lt.eq 10^10$），板子对结果按 `mod` 取模。`id1/id2` 是两个 $cal(O)(sqrt(N))$ 数组，把 $⌊ N \/ x ⌋$ 的取值线形编号。`init` 在筛质数后对数论分块的值做 $cal(O)(frac(N^(3 \/ 4), "log" N))$ 的质数贡献筛，`solve` 返回 $2 dots.c N$ 质数和。求一般的积性函数前缀和需按题目改写 `calc` 与转移，具体参 oi-wiki 的 Min\_25 筛一节。
+求 $1 dots.c N$ 的质数和（$N lt.eq 10^10$），板子对结果按 `mod` 取模。`id1/id2` 是两个 $cal(O)(sqrt(N))$ 数组，把 $⌊ N \/ x ⌋$ 的取值线形编号。`solve(n,mod)` 在筛质数后对数论分块的值做质数贡献筛，返回 $2 dots.c n$ 质数和模 `mod`；每次调用独立初始化。求一般的积性函数前缀和需按题目改写 `calc` 与转移，具体参 oi-wiki 的 Min\_25 筛一节。
 
 ```cpp
-namespace min25{
-    const int N = 1000000 + 10;
-    int prime[N], id1[N], id2[N], flag[N], ncnt, m;
-    i64 g[N], sum[N], a[N], T;
-    i64 n;
-    i64 mod;
-    inline i64 ps(i64 n,i64 k) {i64 r=1;for(;k;k>>=1){if(k&1)r=r*n%mod;n=n*n%mod;}return r;}
-    void finit(){  // 最开始清0
-        memset(g, 0, sizeof(g));
-        memset(a, 0, sizeof(a));
-        memset(sum, 0, sizeof(sum));
-        memset(prime, 0, sizeof(prime));
-        memset(id1, 0, sizeof(id1));
-        memset(id2, 0, sizeof(id2));
-        memset(flag, 0, sizeof(flag));
-        ncnt = m = 0;
-    }
-    int ID(i64 x) {
-        return x <= T ? id1[x] : id2[n / x];
-    }
-
-    i64 calc(i64 x) {
-        return x * (x + 1) / 2 - 1;
-    }
-
-    i64 init(i64 x) {
-        T = sqrt(x + 0.5);
-        for (int i = 2; i <= T; i++) {
-            if (!flag[i]) prime[++ncnt] = i, sum[ncnt] = sum[ncnt - 1] + i;
-            for (int j = 1; j <= ncnt && i * prime[j] <= T; j++) {
-                flag[i * prime[j]] = 1;
-                if (i % prime[j] == 0) break;
+namespace min25 {
+    i64 solve(i64 n, int mod) {  // 2..n 的质数和模 mod；0 <= n <= 1e10
+        assert(0 <= n && n <= 10000000000LL && mod > 0);
+        if (n < 2) return 0;
+        int root = sqrtl(n);
+        while (i64(root + 1) * (root + 1) <= n) ++root;
+        vector<int> primes, least(root + 1), id1(root + 1), id2(root + 1);
+        vector<i64> prefix{0}, values{0}, sums{0};
+        for (int i = 2; i <= root; ++i) {
+            if (!least[i]) {
+                least[i] = i;
+                primes.push_back(i);
+                prefix.push_back((prefix.back() + i) % mod);
+            }
+            for (int p : primes) {
+                if (p > least[i] || p > root / i) break;
+                least[i * p] = p;
             }
         }
-        for (i64 l = 1; l <= x; l = x / (x / l) + 1) {
-            a[++m] = x / l;
-            if (a[m] <= T) id1[a[m]] = m; else id2[x / a[m]] = m;
-            g[m] = calc(a[m]);
+        for (i64 l = 1; l <= n; l = n / (n / l) + 1) {
+            i64 v = n / l;
+            int id = values.size();
+            values.push_back(v);
+            // 先在 i128 中算三角和，再按目标模数归约。
+            sums.push_back((i128(v) * (v + 1) / 2 - 1) % mod);
+            if (v <= root) id1[v] = id;
+            else id2[n / v] = id;
         }
-        for (int i = 1; i <= ncnt; i++)
-            for (int j = 1; j <= m && (i64) prime[i] * prime[i] <= a[j]; j++)
-                g[j] = g[j] - (i64) prime[i] * (g[ID(a[j] / prime[i])] - sum[i - 1]);
-    }
-    i64 solve(i64 x) {
-        if (x <= 1) return x;
-        return n = x, init(n), g[ID(n)];
+        auto id = [&](i64 v) { return v <= root ? id1[v] : id2[n / v]; };
+        for (int i = 0; i < (int)primes.size(); ++i) {
+            i64 p = primes[i];
+            for (int j = 1; j < (int)values.size() && p * p <= values[j]; ++j) {
+                i64 removed = p * ((sums[id(values[j] / p)] - prefix[i] + mod) % mod) % mod;
+                sums[j] = (sums[j] - removed + mod) % mod;
+            }
+        }
+        return sums[id(n)];
     }
 }
+```
 
-using namespace min25;
+用法（依赖公共头中的 `i64` / `i128`，模数不要求为素数）：
 
+```cpp
 int main() {
-    // while (1) {
-    int tt;
-    scanf("%d",&tt);
-    while(tt--){
-        finit();
-        scanf("%lld%lld", &n, &mod);
-        i64 ans = (n + 3) % mod * n % mod  * ps(2 , mod - 2) % mod + solve(n + 1) - 4;
-        // cout << solve(n) << endl;
-        // ans = (ans + mod) % mod;
-        ans = (ans + mod) % mod;
-        printf("%lld\n", ans);
-    }
-
-    // }
+    i64 n;
+    int mod;
+    cin >> n >> mod;
+    cout << min25::solve(n, mod) << '\n';
 }
 ```
 
 == 矩阵四则运算
 <矩阵四则运算>
-#link("https://ac.nowcoder.com/acm/contest/view-submission?submissionId=48594258")[封装来自] 。矩阵乘法复杂度 $cal(O)(N^3)$ 。#strong[`SIZE` 按题目改];；`getinv` 用高斯-约当法在素模数下求逆（依赖 `mod` 为素数），失败时置全局 `ok = 0`。
+#link("https://ac.nowcoder.com/acm/contest/view-submission?submissionId=48594258")[封装来自] 。矩阵乘法复杂度 $cal(O)(N^3)$ 。#strong[`SIZE` 按题目改];；`getinv` 用高斯-约当法在素模数下求逆（依赖 `mod` 为素数），依赖基础算法章的 `mypow(n,k,p)`，显式传入本矩阵的 `mod`。输入元素先归约；失败时置 `ok = false` 并返回零阵，成功时重置 `ok = true`，调用后先检查 `ok`。
 
 #include-code("code/数论/矩阵四则运算.cpp")
 
@@ -1072,14 +1057,14 @@ $⌊n / l⌋ = ⌊frac(n, l + 1)⌋ = dots.c = ⌊n / r⌋ arrow.l.r.double ⌊n
 
 == Miller - Rabin 素数测试
 <miller---rabin-素数测试>
-#specline([平均 #O($"log"^3 X$)（常数极小，可视作 #O($1$)）])
-#strong[确定性结论];：底数表 `B = {2,3,5,7,11,13,17,19,23}` 对 $< 3.8 times 10^18$ 的数判定#strong[完全确定无误];；如果题目给到 i64 全域（上限 $9.2 times 10^18$），把底表扩到前 12 个素数 $2 dots.c 37$ 即确定覆盖。
+#specline([7 组底数，每组 #O($"log" X$) 次模乘])
+固定底数 `2,325,9375,28178,450775,9780504,1795265022` 在 64 位无符号整数范围内给出确定性判定；本接口使用 `i64`，支持 $0 dots.c 2^63-1$，小于 2 返回假。模乘在 `i128` 中完成。
 
 #include-code("code/数论/Miller---Rabin-素数测试.cpp")
 
 == Pollard - Rho 因式分解
 <pollard---rho-因式分解>
-以单个因子 $cal(O)("log" X)$ 的复杂度输出数字 $X$ 的全部质因数，由于需要结合素数测试，总复杂度会略高一些。如果遇到超时的情况，可能需要考虑进一步优化，例如检查题目是否强制要求枚举全部质因数等等。此外，还有一个#link("https://www.luogu.com.cn/record/114757731")[较长的模板];可供参考，比这里记录的版本常数小约五倍。
+依赖上一节的 `mul` 和 `MR`。`fac(n)` 支持 $1 <= n <= 2^63-1$，返回升序质因子并保留重数，`fac(1)` 返回空数组。`PR` 只接收合数。随机迭代寻找素因子 $p$ 通常需要约 $cal(O)(sqrt(p))$ 次模运算；批量 gcd 降低常数，无固定的最坏时间保证。
 
 #include-code("code/数论/Pollard---Rho-因式分解.cpp")
 
