@@ -46,6 +46,7 @@ SOURCES = [
     ('tree_and_graph', 'pushrelabel', [('code/网络流/预流推进-HLPP.cpp', None)]),
     ('tree_and_graph', 'reset', [('chapters/网络流.typ', '最小割树-gomory-hu-tree')]),
     ('tree_and_graph', 'mincostflow', [('code/网络流/费用流.cpp', None)]),
+    ('data_structure', 'bit_3', [('chapters/数据结构A.typ', '最值查询扩展常规区间最值查询单点赋值')]),
     ('string', 'string', [('chapters/串.typ', '双哈希封装')]),
     ('string', 'get_next', [('code/串/kmp.cpp', None)]),
     ('string', 'kmp', [('code/串/kmp-2.cpp', None)]),
@@ -87,6 +88,8 @@ SOURCES = [
     ('geometry', 'areaex', [('chapters/多边形相关.typ', '两向量构成的平面四边形有向面积')]),
     ('geometry', 'issquare', [('chapters/多边形相关.typ', '判断四个点能否组成矩形正方形')]),
     ('geometry', 'line', [('chapters/多边形相关.typ', '二维动态凸包')]),
+    ('data_structure', 'lazysegmenttree', [('chapters/数据结构A.typ', 'lazyinfotag-线段树')]),
+    ('data_structure', 'segmenttree', [('chapters/数据结构A.typ', '线段树套平衡树')]),
     ('tree_and_graph', 'dijkstra', [('code/图论/Dijkstra.cpp', None)]),
 ]
 

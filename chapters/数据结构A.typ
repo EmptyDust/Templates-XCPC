@@ -128,9 +128,9 @@ signed main() {
 }
 ```
 
-=== 最值查询扩展（常规+区间最值查询+单点赋值）
+=== 最值查询扩展（区间最值+单点取大）
 <最值查询扩展常规区间最值查询单点赋值>
-`update` 单点赋值、`getMax` 区间最值均为 $cal(O)("log" N)$（原标注 $"log" "log" N$ 有误）。
+`update` 为单点取大，复杂度 $cal(O)("log" N)$；`getMax` 查询闭区间最大值，最坏 $cal(O)("log"^2 N)$。构造数组为 1-index，可包含负数。
 
 #pitfall[`update` 里 `base[x] = max(base[x], v)` 只能把值改大；需要改小（如删除/下调）请改用线段树。]
 
@@ -139,19 +139,22 @@ template<typename T> struct BIT {
     int n;
     vector<T> w, base;
     #define low(x) (x & -x)
-    BIT(int n, auto &in) : n(n), w(n + 1), base(n + 1) {
+    BIT(int n, const vector<T> &in) : n(n), w(n + 1, numeric_limits<T>::lowest()),
+        base(n + 1, numeric_limits<T>::lowest()) {
         for (int i = 1; i <= n; i++) {
             update(i, in[i]);
         }
     } /* 可以增加并使用常规封装中的几个函数 */
-    void update(int x, int v) {  // 单点赋值
+    void update(int x, T v) {  // 单点取大
+        assert(1 <= x && x <= n);
         base[x] = max(base[x], v);
         for (; x <= n; x += low(x)) {
             w[x] = max(w[x], v);
         }
     }
-    T getMax(int l, int r) {  // 最值查询
-        T ans = T();
+    T getMax(int l, int r) const {  // 闭区间最值
+        assert(1 <= l && l <= r && r <= n);
+        T ans = numeric_limits<T>::lowest();
         while (r >= l) {
             ans = max(base[r], ans);
             for (r--; r - low(r) >= l; r -= low(r)) {
@@ -233,7 +236,7 @@ struct BIT_2D {
 
 === LazyInfoTag 线段树
 <lazyinfotag-线段树>
-用法约定：区间#strong[左闭右开 $\[ l , r \)$];；`Info` 需提供 `operator+`（合并）与 `apply(Tag)`（打懒标记），`Tag` 需提供复合自身的 `apply(Tag)`；`modify(p, v)` 单点赋值，`rangeQuery(l,r)` / `rangeApply(l,r,tag)` 区间查询/区间标记，`findFirst/findLast(l, r, pred)` 在区间内找第一个/最后一个使 `pred` 为真的位置（返回 `-1` 表示不存在，要求 `pred` 具有区间可判性）。下方 `Info/Tag` 为空白壳，按题目自行填写（如区间加：`Tag.x` 为增量，`Info::apply` 累加长度倍增量）。
+用法约定：区间#strong[左闭右开 $\[ l , r \)$];；`Info` 需提供 `operator+`（合并）与 `apply(Tag)`（打懒标记），`Tag` 需提供复合自身的 `apply(Tag)`；`modify(p, v)` 单点赋值，`rangeQuery(l,r)` / `rangeApply(l,r,tag)` 区间查询/区间标记，`findFirst/findLast(l, r, pred)` 在区间内找第一个/最后一个使 `pred` 为真的位置（返回 `-1` 表示不存在，要求 `pred` 具有区间可判性）。下方 `Info/Tag` 是区间加、区间和的完整荷载，叶子使用 `Info{值,1}`，空查询的单位元为 `{0,0}`。全零数组可用 `LazySegmentTree<Info, Tag> tree(n, Info{0,1})` 构造，或 `tree.init(n, Info{0,1})` 重建。数组非空，数值、区间和及标记中间量须在 i64 内。
 
 ```cpp
 template<typename Info, typename Tag>
@@ -242,19 +245,20 @@ struct LazySegmentTree {
     std::vector<Info> info;
     std::vector<Tag> tag;
     LazySegmentTree() : n(0) {}
-    LazySegmentTree(int n_, Info v_ = Info()) {
+    LazySegmentTree(int n_, const Info& v_) {
         init(n_, v_);
     }
     template<typename T>
-    LazySegmentTree(std::vector<T> init_) {
+    LazySegmentTree(const std::vector<T>& init_) {
         init(init_);
     }
-    void init(int n_, Info v_ = Info()) {
+    void init(int n_, const Info& v_) {
         init(std::vector(n_, v_));
     }
     template<typename T>
-    void init(std::vector<T> init_) {
+    void init(const std::vector<T>& init_) {
         n = init_.size();
+        assert(n > 0);
         info.assign(4 << std::__lg(n), Info());
         tag.assign(4 << std::__lg(n), Tag());
         auto build = [&](auto &&self, int p, int l, int r) -> void {
@@ -284,6 +288,7 @@ struct LazySegmentTree {
     void modify(int p, int l, int r, int x, const Info& v) {
         if (r - l == 1) {
             info[p] = v;
+            tag[p] = Tag();
             return;
         }
         int m = (l + r) / 2;
@@ -331,7 +336,7 @@ struct LazySegmentTree {
         return rangeApply(1, 0, n, l, r, v);
     }
     template<typename F>
-    int findFirst(int p, int l, int r, int x, int y, F pred) {
+    int findFirst(int p, int l, int r, int x, int y, F&& pred) {
         if (l >= y || r <= x || !pred(info[p])) {
             return -1;
         }
@@ -347,11 +352,11 @@ struct LazySegmentTree {
         return res;
     }
     template<typename F>
-    int findFirst(int l, int r, F pred) {
+    int findFirst(int l, int r, F&& pred) {
         return findFirst(1, 0, n, l, r, pred);
     }
     template<typename F>
-    int findLast(int p, int l, int r, int x, int y, F pred) {
+    int findLast(int p, int l, int r, int x, int y, F&& pred) {
         if (l >= y || r <= x || !pred(info[p])) {
             return -1;
         }
@@ -367,24 +372,52 @@ struct LazySegmentTree {
         return res;
     }
     template<typename F>
-    int findLast(int l, int r, F pred) {
+    int findLast(int l, int r, F&& pred) {
         return findLast(1, 0, n, l, r, pred);
     }
 };
 
 struct Tag {
-    i64 x = 0;
-    void apply(Tag t) {
-    }
+    i64 add = 0;
+    void apply(Tag t) { add += t.add; }
 };
-
 struct Info {
-    i64 x = 0;
-    void apply(Tag t) {
-    }
+    i64 sum = 0;
+    int len = 0;
+    void apply(Tag t) { sum += t.add * len; }
 };
 Info operator+(Info a, Info b) {
-    return { a.x + b.x };
+    return {a.sum + b.sum, a.len + b.len};
+}
+```
+
+完整用法：输入 `n q`、初始数组；操作 1 为 `[l,r)` 加 x，2 为区间求和，3 为下标 p 赋值 x，全部下标从 0 开始。
+
+```cpp
+int main() {
+    int n, q;
+    cin >> n >> q;
+    vector<Info> a(n);
+    for (auto &v : a) {
+        cin >> v.sum;
+        v.len = 1;
+    }
+    LazySegmentTree<Info, Tag> tree(a);
+    while (q--) {
+        int op, l, r;
+        i64 x;
+        cin >> op >> l;
+        if (op == 1) {
+            cin >> r >> x;
+            tree.rangeApply(l, r, Tag{x});
+        } else if (op == 2) {
+            cin >> r;
+            cout << tree.rangeQuery(l, r).sum << '\n';
+        } else {
+            cin >> x;
+            tree.modify(l, Info{x, 1});
+        }
+    }
 }
 ```
 
@@ -411,14 +444,15 @@ zkw 式非递归线段树，单点修改/区间最值均为 $cal(O)("log" N)$，
 
 === 线段树套平衡树
 <线段树套平衡树>
-线段树每个节点放一棵 pbds `tree`（存 `{值, 下标}` 去重键），单次 $cal(O)("log"^2 N)$ 支持区间排名/前驱/后继：外区间拆成 $"log" N$ 个节点，内层 `order_of_key` 等为 $cal(O)("log" N)$。`build(a)` 按位置建树并启发式合并，`update(pos, old_val, new_val)` 单点修改，查询区间半开 $\[ x , y \)$；前驱/后继不存在时返回 `±inf`。需要包含 pbds 头文件。
+线段树每个节点放一棵 pbds `tree`（存 `{值, 下标}` 去重键），单次 $cal(O)("log"^2 N)$ 支持区间排名/前驱/后继：外区间拆成 $"log" N$ 个节点，内层 `order_of_key` 等为 $cal(O)("log" N)$。`build(a)` 按位置建树并启发式合并，`update(pos, old_val, new_val)` 单点修改，查询区间半开 $\[ x , y \)$；前驱/后继分别为严格小于/大于 k 的值，不存在时分别返回 `-inf` / `inf`。存储值为 int，查询结果用 `i64` 承接，让哨兵落在 int 值域之外。`query_rank_count` 返回严格小于 k 的个数。`build(a)` 可重复调用并重新初始化，a 必须非空。需要公共头的 `i64` 别名及下列 pbds 头文件。
 
 ```cpp
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
 using pii = std::pair<int, int>;
-const int inf = 2147483647;
+const i64 inf = 1LL << 60;
 
 template<typename Info>
 struct SegmentTree {
@@ -429,10 +463,12 @@ struct SegmentTree {
 
     void init(int n_) {
         n = n_;
+        assert(n > 0);
         info.assign(4 << std::__lg(n), Info());
     }
 
     void build(const std::vector<int>& a) {
+        init(a.size());
         _build(1, 0, n, a);
     }
 
@@ -461,15 +497,15 @@ struct SegmentTree {
         _update(1, 0, n, pos, old_val, new_val);
     }
 
-    int query_rank_count(int l, int r, int k) {
+    int query_rank_count(int l, int r, int k) const {
         return _query_rank_count(1, 0, n, l, r, k);
     }
 
-    int query_pred(int l, int r, int k) {
+    i64 query_pred(int l, int r, int k) const {
         return _query_pred(1, 0, n, l, r, k);
     }
 
-    int query_succ(int l, int r, int k) {
+    i64 query_succ(int l, int r, int k) const {
         return _query_succ(1, 0, n, l, r, k);
     }
 
@@ -482,7 +518,7 @@ struct SegmentTree {
         else _update(2 * p + 1, m, r, pos, old_val, new_val);
     }
 
-    int _query_rank_count(int p, int l, int r, int x, int y, int k) {
+    int _query_rank_count(int p, int l, int r, int x, int y, int k) const {
         if (l >= y || r <= x) return 0;
         if (l >= x && r <= y) {
             return info[p].ver.order_of_key({ k, -1 });
@@ -491,7 +527,7 @@ struct SegmentTree {
         return _query_rank_count(2 * p, l, m, x, y, k) + _query_rank_count(2 * p + 1, m, r, x, y, k);
     }
 
-    int _query_pred(int p, int l, int r, int x, int y, int k) {
+    i64 _query_pred(int p, int l, int r, int x, int y, int k) const {
         if (l >= y || r <= x) return -inf;
         if (l >= x && r <= y) {
             auto it = info[p].ver.lower_bound({ k, -1 });
@@ -499,18 +535,22 @@ struct SegmentTree {
             return (--it)->first;
         }
         int m = (l + r) / 2;
-        return std::max(_query_pred(2 * p, l, m, x, y, k), _query_pred(2 * p + 1, m, r, x, y, k));
+        auto left = _query_pred(2 * p, l, m, x, y, k);
+        auto right = _query_pred(2 * p + 1, m, r, x, y, k);
+        return max(left, right);
     }
 
-    int _query_succ(int p, int l, int r, int x, int y, int k) {
+    i64 _query_succ(int p, int l, int r, int x, int y, int k) const {
         if (l >= y || r <= x) return inf;
         if (l >= x && r <= y) {
-            auto it = info[p].ver.upper_bound({ k, inf });
+            auto it = info[p].ver.upper_bound({ k, INT_MAX });
             if (it == info[p].ver.end()) return inf;
             return it->first;
         }
         int m = (l + r) / 2;
-        return std::min(_query_succ(2 * p, l, m, x, y, k), _query_succ(2 * p + 1, m, r, x, y, k));
+        auto left = _query_succ(2 * p, l, m, x, y, k);
+        auto right = _query_succ(2 * p + 1, m, r, x, y, k);
+        return min(left, right);
     }
 };
 
