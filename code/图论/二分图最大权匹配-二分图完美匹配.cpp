@@ -1,320 +1,102 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int MOD = 998244353;
-const int mod = 1000000007;
-const int N = 1000005;
-const int M = 2000005;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
-
-struct DSU {
-    vector<int> fa;
-    DSU(int n) : fa(n + 1) {
-        iota(fa.begin(), fa.end(), 0);
-    }
-    int get(int x) {
-        while (x != fa[x]) {
-            x = fa[x] = fa[fa[x]];
-        }
-        return x;
-    }
-    bool merge(int x, int y) {  // 设x是y的祖先
-        x = get(x), y = get(y);
-        if (x == y) return false;
-        fa[y] = x;
-        return true;
-    }
-    bool same(int x, int y) {
-        return get(x) == get(y);
-    }
-};
-struct Tree {
-    using TII = tuple<int, int, int>;
-    int n;
-    priority_queue<TII, vector<TII>, greater<TII>> ver;
-
-    Tree(int n) {
-        this->n = n;
-    }
-    void add(int x, int y, int w) {
-        ver.emplace(w, x, y); // 注意顺序
-    }
-    int kruskal() {
-        DSU dsu(n);
-        int ans = 0, cnt = 0;
-        while (ver.size()) {
-            auto [w, x, y] = ver.top();
-            ver.pop();
-            if (dsu.same(x, y)) continue;
-            dsu.merge(x, y);
-            ans += w;
-            cnt++;
-        }
-        assert(cnt == n - 1); // 图不连通时 cnt < n-1，此时无生成树（原断言条件写反）
-        return ans;
-    }
-};
-struct EDCC {
-    int n, m, now, cnt;
-    vector<vector<array<int, 2>>> ver;
-    vector<int> dfn, low, col, S;
-    set<array<int, 2>> bridge, direct; // 如果不需要，删除这一部分可以得到一些时间上的优化
-
-    EDCC(int n) : n(n), low(n + 1), ver(n + 1), dfn(n + 1), col(n + 1) {
-        m = now = cnt = 0;
-    }
-    void add(int x, int y) {  // 和 scc 相比多了一条连边
-        ver[x].push_back({y, m});
-        ver[y].push_back({x, m++});
-    }
-    void tarjan(int x, int fa) {
-        dfn[x] = low[x] = ++now;
-        S.push_back(x);
-        for (auto &[y, id] : ver[x]) {
-            if (!dfn[y]) {
-                direct.insert({x, y});
-                tarjan(y, id);
-                low[x] = min(low[x], low[y]);
-                if (dfn[x] < low[y]) {
-                    bridge.insert({x, y});
-                }
-            } else if (id != fa && dfn[y] < dfn[x]) {
-                direct.insert({x, y});
-                low[x] = min(low[x], dfn[y]);
-            }
-        }
-        if (dfn[x] == low[x]) {
-            int pre;
-            cnt++;
-            do {
-                pre = S.back();
-                col[pre] = cnt;
-                S.pop_back();
-            } while (pre != x);
-        }
-    }
-    auto work() {
-        for (int i = 1; i <= n; i++) { // 避免图不连通
-            if (!dfn[i]) {
-                tarjan(i, 0);
-            }
-        }
-        /**
-         * @param cnt 新图的顶点数量, adj 新图, col 旧图节点对应的新图节点
-         * @param siz 旧图每一个边双中点的数量
-         * @param bridge 全部割边, direct 非割边定向
-         */
-        vector<int> siz(cnt + 1);
-        vector<vector<int>> adj(cnt + 1);
-        for (int i = 1; i <= n; i++) {
-            siz[col[i]]++;
-            for (auto &[j, id] : ver[i]) {
-                int x = col[i], y = col[j];
-                if (x != y) {
-                    adj[x].push_back(y);
-                }
-            }
-        }
-        return tuple{cnt, adj, col, siz};
-    }
-};
-struct V_DCC {
-    int n;
-    vector<vector<int>> ver, col;
-    vector<int> dfn, low, S;
-    int now, cnt;
-    vector<bool> point;  // 记录是否为割点
-
-    V_DCC(int n) : n(n) {
-        ver.resize(n + 1);
-        dfn.resize(n + 1);
-        low.resize(n + 1);
-        col.resize(2 * n + 1);
-        point.resize(n + 1);
-        S.clear();
-        cnt = now = 0;
-    }
-    void add(int x, int y) {
-        if (x == y) return;  // 手动去除重边
-        ver[x].push_back(y);
-        ver[y].push_back(x);
-    }
-    void tarjan(int x, int root) {
-        low[x] = dfn[x] = ++now;
-        S.push_back(x);
-        if (x == root && !ver[x].size()) {  // 特判孤立点
-            ++cnt;
-            col[cnt].push_back(x);
-            return;
-        }
-
-        int flag = 0;
-        for (auto y : ver[x]) {
-            if (!dfn[y]) {
-                tarjan(y, root);
-                low[x] = min(low[x], low[y]);
-                if (dfn[x] <= low[y]) {
-                    flag++;
-                    if (x != root || flag > 1) {
-                        point[x] = true;  // 标记为割点
-                    }
-                    int pre = 0;
-                    cnt++;
-                    do {
-                        pre = S.back();
-                        col[cnt].push_back(pre);
-                        S.pop_back();
-                    } while (pre != y);
-                    col[cnt].push_back(x);
-                }
-            } else {
-                low[x] = min(low[x], dfn[y]);
-            }
-        }
-    }
-    pair<int, vector<vector<int>>> rebuild() {  // [新图的顶点数量, 新图]：点双与割点构成的二分图
-        work();
-        vector<int> cutId(n + 1); // 割点在新图中的编号（原来把 point[j] 当编号推入，多个割点会全部指向 1）
-        int tot = cnt;
-        for (int i = 1; i <= n; i++) {
-            if (point[i]) cutId[i] = ++tot;
-        }
-        vector<vector<int>> adj(tot + 1);
-        for (int i = 1; i <= cnt; i++) {
-            if (!col[i].size()) { // 注意，孤立点也是 V-DCC
-                continue;
-            }
-            for (auto j : col[i]) {
-                if (point[j]) {  // 如果 j 是割点
-                    adj[i].push_back(cutId[j]);
-                    adj[cutId[j]].push_back(i);
-                }
-            }
-        }
-        return {tot, adj};
-    }
-    void work() {
-        for (int i = 1; i <= n; ++i) {  // 避免图不连通
-            if (!dfn[i]) {
-                tarjan(i, i);
-            }
-        }
-    }
-};
+#include "../contest.hpp"
 
 // @book-begin
 struct MaxCostMatch {
-    vector<int> ansl, ansr, pre;
-    vector<int> lx, ly;
-    vector<vector<int>> ver;
     int n;
-
-    MaxCostMatch(int n) : n(n) {
-        ver.resize(n + 1, vector<int>(n + 1));
-        ansl.resize(n + 1, -1);
-        ansr.resize(n + 1, -1);
-        lx.resize(n + 1);
-        ly.resize(n + 1, -1E18);
-        pre.resize(n + 1);
+    bool ok = false;
+    vector<vector<i64>> ver;
+    vector<vector<bool>> present;
+    vector<int> ansl, ansr;
+    MaxCostMatch(int n) : n(n), ver(n + 1, vector<i64>(n + 1)),
+        present(n + 1, vector<bool>(n + 1)), ansl(n + 1), ansr(n + 1) {}
+    void add(int x, int y, i64 w) {
+        if (!present[x][y] || w > ver[x][y]) ver[x][y] = w;
+        present[x][y] = true;
     }
-    void add(int x, int y, int w) {
-        ver[x][y] = w;
-    }
-    void bfs(int x) {
-        vector<bool> visl(n + 1), visr(n + 1);
-        vector<int> slack(n + 1, 1E18);
-        queue<int> q;
-        auto check = [&](int x) -> bool {
-            visr[x] = 1;
-            if (~ansr[x]) {
-                q.push(ansr[x]);
-                visl[ansr[x]] = 1;
-                return false;
-            }
-            while (~x) {
-                ansr[x] = pre[x];
-                swap(x, ansl[pre[x]]);
-            }
-            return true;
-        };
-        q.push(x);
-        visl[x] = 1;
-        while (1) {
-            while (!q.empty()) {
-                int x = q.front();
-                q.pop();
+    i64 work() {  // n 对 n 的最大权完美匹配；无解时 ok = false，返回值不用
+        const i64 inf = 1LL << 60;  // 要求 n * max|w| < inf / 4
+        vector<i64> left(n + 1), right(n + 1);
+        vector<int> match(n + 1), previous(n + 1);
+        ok = false;
+        fill(ansl.begin(), ansl.end(), 0);
+        fill(ansr.begin(), ansr.end(), 0);
+        for (int row = 1; row <= n; ++row) {
+            match[0] = row;
+            int column = 0;
+            vector<i64> slack(n + 1, inf);
+            vector<bool> used(n + 1);
+            do {
+                used[column] = true;
+                int x = match[column], next = -1;
+                i64 delta = inf;
                 for (int y = 1; y <= n; ++y) {
-                    if (visr[y]) continue;
-                    int del = lx[x] + ly[y] - ver[x][y];
-                    if (del < slack[y]) {
-                        pre[y] = x;
-                        slack[y] = del;
-                        if (!slack[y] && check(y)) return;
+                    if (used[y]) continue;
+                    if (present[x][y]) {
+                        i64 reduced = -ver[x][y] - left[x] - right[y];
+                        if (reduced < slack[y]) {
+                            slack[y] = reduced;
+                            previous[y] = column;
+                        }
+                    }
+                    if (slack[y] < delta) {
+                        delta = slack[y];
+                        next = y;
                     }
                 }
-            }
-            int val = 1E18;
-            for (int i = 1; i <= n; ++i) {
-                if (!visr[i]) {
-                    val = min(val, slack[i]);
+                if (next == -1) return 0;
+                for (int y = 0; y <= n; ++y) {
+                    if (used[y]) {
+                        left[match[y]] += delta;
+                        right[y] -= delta;
+                    } else if (slack[y] != inf) {
+                        slack[y] -= delta;
+                    }
                 }
-            }
-            for (int i = 1; i <= n; ++i) {
-                if (visl[i]) lx[i] -= val;
-                if (visr[i]) {
-                    ly[i] += val;
-                } else {
-                    slack[i] -= val;
-                }
-            }
-            for (int i = 1; i <= n; ++i) {
-                if (!visr[i] && !slack[i] && check(i)) {
-                    return;
-                }
-            }
+                column = next;
+            } while (match[column] != 0);
+            do {
+                int next = previous[column];
+                match[column] = match[next];
+                column = next;
+            } while (column != 0);
         }
-    }
-    int work() {
-        for (int i = 1; i <= n; ++i) {
-            for (int j = 1; j <= n; ++j) {
-                ly[i] = max(ly[i], ver[j][i]);
-            }
+        i64 answer = 0;
+        for (int y = 1; y <= n; ++y) {
+            ansr[y] = match[y];
+            ansl[match[y]] = y;
+            answer += ver[match[y]][y];
         }
-        for (int i = 1; i <= n; ++i) bfs(i);
-        int res = 0;
-        for (int i = 1; i <= n; ++i) {
-            res += ver[i][ansl[i]];
-        }
-        return res;
-    }
-    void getMatch(int x, int y) {  // 获取方案 (0代表无匹配)
-        for (int i = 1; i <= x; ++i) {
-            cout << (ver[i][ansl[i]] ? ansl[i] : 0) << " ";
-        }
-        cout << endl;
-        for (int i = 1; i <= y; ++i) {
-            cout << (ver[i][ansr[i]] ? ansr[i] : 0) << " ";
-        }
-        cout << endl;
+        ok = true;
+        return answer;
     }
 };
 
-signed main() {
+// @book-end
+
+// @example-begin
+int main() {  // 覆盖全部左侧点；右侧可多于左侧，用零权虚点补齐
     int n1, n2, m;
     cin >> n1 >> n2 >> m;
-
     MaxCostMatch match(max(n1, n2));
-    for (int i = 1; i <= m; i++) {
-        int x, y, w;
+    for (int i = 0; i < m; ++i) {
+        int x, y;
+        i64 w;
         cin >> x >> y >> w;
         match.add(x, y, w);
     }
-    cout << match.work() << '\n';
-    match.getMatch(n1, n2);
+    for (int x = n1 + 1; x <= n2; ++x) {
+        for (int y = 1; y <= n2; ++y) match.add(x, y, 0);
+    }
+    auto answer = match.work();
+    if (!match.ok) cout << "No Solution\n";
+    else {
+        cout << answer << '\n';
+        for (int x = 1; x <= n1; ++x) cout << match.ansl[x] << ' ';
+        cout << '\n';
+        for (int y = 1; y <= n2; ++y) {
+            cout << (match.ansr[y] <= n1 ? match.ansr[y] : 0) << ' ';
+        }
+        cout << '\n';
+    }
 }
-// @book-end
+// @example-end

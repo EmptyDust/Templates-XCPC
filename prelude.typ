@@ -23,15 +23,16 @@
   body)
 
 // 从独立 C++ 源文件读取板子并渲染。
-// 约定：// @book-begin 与 // @book-end 之间的行为书中展示内容；
-// 之外是让文件可独立编译的脚手架（includes、宏、main），不展示。
+// 默认读取 // @book-begin 与 // @book-end 之间的算法。
+// region: "example" 读取 @example-begin/end 之间的完整用法。
+// 区域之外是让文件可独立编译的脚手架，不展示。
 // 区域内统一的缩进（如内容包在 main 里）会被剥掉。
 // path 相对本文件（仓库根）解析，各章调用时与章位置无关。
 // lang：语法高亮语言，默认 cpp。
-#let include-code(path, lang: "cpp") = {
+#let include-code(path, lang: "cpp", region: "book") = {
   let lines = read(path).split("\n")
-  let from = lines.position(l => l.contains("@book-begin")) + 1
-  let to = lines.position(l => l.contains("@book-end"))
+  let from = lines.position(l => l.trim() == "// @" + region + "-begin") + 1
+  let to = lines.position(l => l.trim() == "// @" + region + "-end")
   let body = lines.slice(from, to)
   let indents = body.filter(l => l.trim() != "").map(l => {
     let m = l.match(regex("^ +"))

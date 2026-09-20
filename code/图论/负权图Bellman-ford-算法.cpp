@@ -1,43 +1,33 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int MOD = 998244353;
-const int mod = 1000000007;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
-
-int INF;
+#include "../contest.hpp"
 
 // @book-begin
-const int N = 550, M = 1e5 + 7;
-int n, m, k;
-struct node { int x, y, w; } ver[M];
-int d[N], backup[N];
-
-void bf() {
-    memset(d, 0x3f, sizeof d); d[1] = 0;
-    for (int i = 1; i <= k; ++ i) {
-        memcpy(backup, d, sizeof d);
-        for (int j = 1; j <= m; ++ j) {
-            int x = ver[j].x, y = ver[j].y, w = ver[j].w;
-            d[y] = min(d[y], backup[x] + w);
+vector<i64> bellmanFord(int n, const vector<tuple<int, int, i64>> &edges, int s, int k) {
+    // 1-index，至多 k 条边；inf 表示不可达，要求 k * max|w| < inf。
+    assert(k >= 0);
+    const i64 inf = 1LL << 60;
+    vector<i64> d(n + 1, inf);
+    d[s] = 0;
+    for (int step = 0; step < k; ++step) {
+        auto previous = d;
+        for (auto [u, v, w] : edges) {
+            if (previous[u] != inf) d[v] = min(d[v], previous[u] + w);
         }
     }
+    return d;
 }
-int main() {
-    cin >> n >> m >> k;
-    for (int i = 1; i <= m; ++ i) {
-        int x, y, w; cin >> x >> y >> w;
-        ver[i] = {x, y, w};
-    }
-    bf();
-    for (int i = 1; i <= n; ++ i) {
-        if (d[i] > INF / 2) cout << "N" << endl;
-        else cout << d[i] << endl;
-    }
-}
+
 // @book-end
+
+// @example-begin
+int main() {
+    int n, m, k;
+    cin >> n >> m >> k;
+    vector<tuple<int, int, i64>> edges(m);
+    for (auto &[u, v, w] : edges) cin >> u >> v >> w;
+    auto d = bellmanFord(n, edges, 1, k);
+    for (int v = 1; v <= n; ++v) {
+        if (d[v] != (1LL << 60)) cout << d[v] << '\n';
+        else cout << "N\n";
+    }
+}
+// @example-end

@@ -250,7 +250,7 @@ struct Tree {
 
 == 树上路径交
 <树上路径交>
-两条路径相交当且仅当其中一条的 LCA 落在另一条上。四个端点两两求 LCA，按深度排序后判断。返回交点个数（可退化成一个点）。直接载入任意 LCA 封装。
+四个跨路径端点对求 LCA，按深度排序后判断。返回交点个数，可退化成一个点。传入深度数组和 LCA 回调，例如 `intersection(u,v,x,y,hld.dep,[&](int a,int b){ return hld.lca(a,b); })`；不依赖某个特定树类。
 
 #include-code("code/树上问题/树上路径交.cpp")
 
@@ -384,13 +384,14 @@ $ n^(k - 2) dot product_(i = 1)^k s_i $
 ```cpp
 struct Segt {
     struct node {
-        int l, r, w, lazy;
+        int l, r;
+        i64 w, lazy;
     };
-    vector<int> w;
+    vector<i64> w;
     vector<node> t;
     #define GL (k << 1)
     #define GR (k << 1 | 1)
-    void init(vector<int> in) {
+    void init(const vector<i64> &in) {
         int n = in.size() - 1;
         w = in;
         t.resize(n * 4 + 1);
@@ -407,7 +408,7 @@ struct Segt {
         };
         build(build, 1, n);
     }
-    void pushdown(node &p, int lazy) {
+    void pushdown(node &p, i64 lazy) {
         p.w += (p.r - p.l + 1) * lazy;
         p.lazy += lazy;
     }
@@ -420,7 +421,7 @@ struct Segt {
     void pushup(int k) {
         t[k].w = t[GL].w + t[GR].w;
     }
-    void modify(int l, int r, int val, int k = 1) {
+    void modify(int l, int r, i64 val, int k = 1) {
         if (l <= t[k].l && t[k].r <= r) {
             pushdown(t[k], val);
             return;
@@ -431,23 +432,59 @@ struct Segt {
         if (mid < r) modify(l, r, val, GR);
         pushup(k);
     }
-    int ask(int l, int r, int k = 1) {
+    i64 ask(int l, int r, int k = 1) {
         if (l <= t[k].l && t[k].r <= r) {
             return t[k].w;
         }
         pushdown(k);
         int mid = (t[k].l + t[k].r) / 2;
-        int ans = 0;
+        i64 ans = 0;
         if (l <= mid) ans += ask(l, r, GL);
         if (mid < r) ans += ask(l, r, GR);
         return ans;
     }
 };
+#undef GL
+#undef GR
+```
 
-// hld.add / hld.work 之后：
-hld.path(u, v, [&](int l, int r) { segt.modify(l, r, val); });
-int ans = 0;
-hld.path(u, v, [&](int l, int r) { ans += segt.ask(l, r); });
-hld.subtree(root, [&](int l, int r) { segt.modify(l, r, val); });
+完整用法：输入 `n q root`、点权、$n-1$ 条无向边。操作 1 为路径加，2 为路径和，3 为子树加，4 为子树和。点权必须按 `hld.in` 重排后初始化线段树；各次区间和及懒标记累加须在 `i64` 内。
+
+```cpp
+int main() {
+    int n, q, root;
+    cin >> n >> q >> root;
+    vector<i64> weight(n + 1), ordered(n + 1);
+    for (int i = 1; i <= n; ++i) cin >> weight[i];
+    HLD hld(n);
+    for (int i = 1; i < n; ++i) {
+        int u, v;
+        cin >> u >> v;
+        hld.add(u, v);
+    }
+    hld.work(root);
+    for (int i = 1; i <= n; ++i) ordered[hld.in[i]] = weight[i];
+    Segt segt;
+    segt.init(ordered);
+    while (q--) {
+        int op, u, v;
+        i64 value;
+        cin >> op >> u;
+        if (op == 1) {
+            cin >> v >> value;
+            hld.path(u, v, [&](int l, int r) { segt.modify(l, r, value); });
+        } else if (op == 2) {
+            cin >> v;
+            i64 answer = 0;
+            hld.path(u, v, [&](int l, int r) { answer += segt.ask(l, r); });
+            cout << answer << '\n';
+        } else if (op == 3) {
+            cin >> value;
+            hld.subtree(u, [&](int l, int r) { segt.modify(l, r, value); });
+        } else {
+            hld.subtree(u, [&](int l, int r) { cout << segt.ask(l, r) << '\n'; });
+        }
+    }
+}
 ```
 

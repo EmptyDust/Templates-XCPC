@@ -83,38 +83,63 @@ bidirectional edges：双向边
 === （正权稀疏图）动态数组存图+Dijkstra 算法
 <正权稀疏图动态数组存图dijkstra-算法>
 #specline([堆优化 #O($M "log" N$)])
-每次弹出当前距离最小的未确定点，用它松弛邻边；正权保证弹出即为最终答案。`d` 初值 INF。
+每次弹出距离最小的点，用它松弛邻边；非负边权保证正确，零权边也可使用。普通邻接表、0-index，返回 `vector<i64>`，不可达为 `LLONG_MAX`；所有有限最短距离须小于这个哨兵。距离和堆均使用 `i64`，加法前排除达到哨兵的候选距离。示例输入 `n m s`，将 1-index 顶点转为 0-index，无向边需加入两次。
+
+#include-code("code/图论/Dijkstra.cpp")
+
+完整用法：
+
+#include-code("code/图论/Dijkstra.cpp", region: "example")
 
 === （负权图）Bellman ford 算法
 <负权图bellman-ford-算法>
-#specline([#O($N M$)])
-使用结构体存边（该算法无需存图）。当所求点的路径上存在负环时，所求点的答案无法得到，但是会比 INF 小（因为负环之后到所求点之间的边权会将 `d[end]` 的值更新），该性质可以用于判断路径上是否存在负环：在 $N - 1$ 轮后仍无法得到答案（一般与 `INF / 2` 进行比较）的点，到达其的路径上存在负环。
+#specline([#O($k M + k N$)])
+下方求从 1 到各点、至多经过 $k$ 条边的最短距离，顶点为 $1 dots.c n$。每轮只使用上一轮的距离，避免一轮走多条边；返回 `vector<i64>`，不可达为 `1LL << 60`，只从可达点松弛。设 $W$ 为最大边权绝对值，要求 $k W < 2^60$，包含中间路径前缀。边数有限时可以含负环。
 
-下方代码例题：求解从 $1$ 到 $n$ 号节点的、最多经过 $k$ 条边的最短距离。
+无边数限制且没有源点可达负环时，$n-1$ 轮足够；第 $n$ 轮仍可松弛才说明存在可达负环。不可达与受负环影响是两回事，不能用 `INF / 2` 判断负环。
 
 #include-code("code/图论/负权图Bellman-ford-算法.cpp")
+
+完整用法：
+
+#include-code("code/图论/负权图Bellman-ford-算法.cpp", region: "example")
 
 === （负权图）SPFA 算法
 <负权图spfa-算法>
 #specline([平时 #O($K M$)], [最坏 #O($N M$)])
 
-#pitfall[可被特殊构造卡掉；无负权时优先用堆优化 Dijkstra。]
+普通邻接表、下标从 0 开始；支持负边。`spfa(adj, s)` 返回距离向量，源点 s 必须是有效顶点；返回空向量表示源点可达负环。正常返回时 `1LL << 60` 表示不可达。设 $W$ 为最大边权绝对值，要求 $n W < 2^60$，为检测负环前的松弛保留余量。示例将输入的 1-index 顶点转为 0-index。
+
+#pitfall[可被特殊构造卡到 $cal(O)(N M)$；无负权时优先用堆优化 Dijkstra。]
 
 #include-code("code/图论/负权图SPFA-算法.cpp")
+
+完整用法：
+
+#include-code("code/图论/负权图SPFA-算法.cpp", region: "example")
 
 == 多源汇最短路 \(Floyd)
 <多源汇最短路-floyd>
 #specline([#O($N^3$)])
-枚举中转点 $k$，用 $i arrow.r k arrow.r j$ 松弛。可负权，有负环则对角线会被更新成负。邻接矩阵、下标 $1 dots.c n$，无边先赋无穷。这里加的是单向边，双向要加两次。
+枚举中转点 $k$，用 $i arrow.r k arrow.r j$ 松弛。矩阵下标从 0 开始，对角线初始化为 0，无边为 `LLONG_MAX`；重边取最小值。允许负边，要求无负环，所有有限最短距离严格位于 `LLONG_MIN` 与 `LLONG_MAX` 之间。原地修改矩阵。
 
 #pitfall[$k$ 必须在最外层循环——放里面会漏松弛。]
 
 ```cpp
-void floyd() {
-    for (int k = 1; k <= n; k ++)
-        for (int i = 1; i <= n; i ++)
-            for (int j = 1; j <= n; j ++)
-                d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+void floyd(vector<vector<i64>> &d) {
+    int n = d.size();
+    for (int k = 0; k < n; ++k) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (d[i][k] == LLONG_MAX || d[k][j] == LLONG_MAX) continue;
+                i128 next = i128(d[i][k]) + d[k][j];
+                if (next < d[i][j]) {
+                    assert(next > LLONG_MIN);
+                    d[i][j] = next;
+                }
+            }
+        }
+    }
 }
 ```
 
@@ -191,7 +216,11 @@ struct SCC {
             } while (pre != x);
         }
     }
-    auto work() {  // [cnt 新图的顶点数量]
+    auto work() {  // 返回分量数、缩点图、每点分量、分量大小
+        now = cnt = 0;
+        S.clear();
+        fill(dfn.begin(), dfn.end(), -1);
+        fill(col.begin(), col.end(), -1);
         for (int i = 1; i <= n; i++) {  // 避免图不连通
             if (dfn[i] == -1) {
                 tarjan(i);
@@ -209,7 +238,7 @@ struct SCC {
                 }
             }
         }
-        return {cnt, adj, col, siz};
+        return tuple{cnt, move(adj), col, move(siz)};
     }
 };
 ```
@@ -255,11 +284,13 @@ namespace Graph {
     int n, siz[N], dis[N];  // 点数、子树大小、深度（dfs 填）
     vector<int> a;  // DFS 序
 
-    void clear(int n) {
-        tot = 0;  //多组样例清空
+    void clear(int count) {
+        n = count;
+        tot = 0;
+        a.clear();
         for (int i = 1; i <= n; ++i) {
             h[i] = 0;
-            deg[i] = vis[i] = 0;
+            deg[i] = vis[i] = siz[i] = dis[i] = 0;
         }
     }
     void add(int x, int y) {
@@ -279,6 +310,7 @@ namespace Graph {
         a.push_back(x);
     }
     void bfs(int s) {
+        fill(dis, dis + n + 1, 0);
         queue<int> q;
         q.push(s);
         dis[s] = 1;
@@ -294,18 +326,19 @@ namespace Graph {
         }
     }
     bool topsort() {
+        vector<int> indegree(deg, deg + n + 1);
         queue<int> q;
         vector<int> ans;
         for (int i = 1; i <= n; ++i)
-            if (deg[i] == 0) q.push(i);
+            if (indegree[i] == 0) q.push(i);
         while (!q.empty()) {
             int x = q.front();
             q.pop();
             ans.push_back(x);
             for (int i = h[x]; i; i = ne[i]) {
                 int y = ver[i];
-                --deg[y];
-                if (deg[y] == 0) q.push(y);
+                --indegree[y];
+                if (indegree[y] == 0) q.push(y);
             }
         }
         return ans.size() == n;  //判断是否存在拓扑排序
@@ -365,11 +398,15 @@ namespace Graph {
 一般我们规定，左半部包含 $n_1$ 个点（编号 $1 - n_1$），右半部包含 $n_2$ 个点（编号 $1 - n_2$ ）。
 ]
 
-使用 KM（Kuhn–Munkres）算法解（与上一节的匈牙利算法常被混称），要求存在完美匹配。
+使用 KM / Hungarian 势能增广算法求最大权完美匹配，支持负权和缺边，零权边也算边。`MaxCostMatch(n)` 表示两侧各 n 点；边权、顶标及答案用 `i64`。设 $W$ 为最大边权绝对值，要求 $n W < 2^58$，给顶标与 slack 的加减留余量。
 
-#specline([#O($N^3$)])下方模板用于求解最大权值、且可以输出其中一种可行方案：`work()` 返回最大权，`getMatch(n1, n2)` 输出方案；例题为 #link("https://uoj.ac/problem/80")[UOJ \#80. 二分图最大权匹配] 。
+#specline([#O($N^3$)]) `work()` 返回最大权和，调用后检查成员 `ok`；无完美匹配时 `ok = false`，返回值不用。每次调用重新计算，成功后 `ansl` / `ansr` 给出双方方案。示例要求覆盖全部左侧点，右侧可多于左侧，通过零权虚点补齐；未匹配右点输出 0。
 
 #include-code("code/图论/二分图最大权匹配-二分图完美匹配.cpp")
+
+完整用法：
+
+#include-code("code/图论/二分图最大权匹配-二分图完美匹配.cpp", region: "example")
 
 == 二分图最大独立点集 \(König 定理)
 <二分图最大独立点集-könig-定理>
@@ -382,9 +419,13 @@ cout << n - flow.work(s, t) << endl;
 == 最长路 \(topsort+DP 算法)
 <最长路-topsortdp-算法>
 #specline([#O($N + M$)])
-DAG 上按拓扑序松弛：入度 $0$ 入队，`dis[y]=\max(\mathrm{dis}[y],\mathrm{dis}[x]+w)`。有环先 Tarjan 缩点。`topsort(s,t)` 返回 $s$ 到 $t$，不可达为 $- 10^18$。
+DAG 上按拓扑序松弛，仅从可达点转移。`topsort(s,t)` 直接返回 `i64` 距离，不可达为 `-DAG::inf`，可重复查询。设 $W$ 为最大边权绝对值，要求 $n W < 2^60$。只接受 DAG；一般有环图的最长路不能通过简单缩点解决。
 
 #include-code("code/图论/最长路-topsort+DP-算法.cpp")
+
+完整用法：
+
+#include-code("code/图论/最长路-topsort+DP-算法.cpp", region: "example")
 
 == 最短路径树 \(SPT 问题)
 <最短路径树-spt-问题>
@@ -906,81 +947,119 @@ void Solve() {
 
 === 判定图中是否存在负环
 <判定图中是否存在负环>
-SPFA：某点入队超过 $n$ 次（或某点松弛次数 $gt.eq n$）则存在负环。$cal(O)(K M)$，常数比裸最短路更高，可被卡。
+SPFA 全点入队可检测任意连通分量的负环。`length[v] = length[u] + 1` 记录本次松弛路径的边数，达到 $n$ 即存在负环；它不是累计松弛次数。普通邻接表、下标从 0 开始，距离用 `i64`；设 $W$ 为最大边权绝对值，要求 $n W < 2^60$。最坏复杂度 $cal(O)(N M)$。
 
 #include-code("code/图论/判定图中是否存在负环.cpp")
 
+完整用法：
+
+#include-code("code/图论/判定图中是否存在负环.cpp", region: "example")
+
 === 输出任意一个三元环
 <输出任意一个三元环>
-原题：给出一张有向完全图，输出任意一个三元环上的全部元素 #link("https://codeforces.com/problemset/problem/117/C")[See] 。使用 dfs，复杂度 $cal(O)(N + M)$，可以扩展到非完全图和无向图。
+原题：给出一张有向完全图，输出任意一个三元环上的全部元素 #link("https://codeforces.com/problemset/problem/117/C")[See] 。这里输入竞赛图：任意两个不同顶点间恰有一条有向边。`tournamentTriangle(a)` 接收 0-index 邻接矩阵，返回依次相连的三个顶点；不存在时返回 `{-1,-1,-1}`。DFS 为 $cal(O)(N^2)$；该三元环判据不适用于一般有向图或无向图。
 
 #include-code("code/图论/输出任意一个三元环.cpp")
 
+完整用法：读入 01 邻接矩阵，输出 1-index 顶点编号。
+
+#include-code("code/图论/输出任意一个三元环.cpp", region: "example")
+
 === 带权最小环大小与计数
 <带权最小环大小与计数>
-原题：给出一张有向带权图，求解图上最小环的长度、有多少个这样的最小环 #link("https://acm.hdu.edu.cn/contest/problem?cid=1097&pid=1011")[See] 。使用 floyd，复杂度为 $cal(O)(N^3)$ ，可以扩展到无向图。
+有向简单图，边权严格为正，矩阵下标从 0 开始，-1 表示无边。返回最小环权和及其条数（按 `countMod` 取模）；无环返回 `{-1,0}`，自环计入。每个环只在其最大编号顶点处计数，环权和须小于 `LLONG_MAX`，`countMod` 为正。Floyd 复杂度 $cal(O)(N^3)$。
 
 ```cpp
-const int mod = 998244353;      // 计数答案的模数，按题目改
-const int N = 305;              // 点数上限
-int n, a[N][N], dis[N][N];      // a：原始边权；dis：floyd 过程中的最短路
-i64 cnt[N][N];                  // 最短路条数（% mod）：值可到 mod-1≈2^30，乘法必须 i64
-i64 Min = 1e18, ans = 0;
-for (int k = 1; k <= n; k++) {
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= n; j++) {
-            if (dis[i][j] > dis[i][k] + dis[k][j]) {
-                dis[i][j] = dis[i][k] + dis[k][j];
-                cnt[i][j] = cnt[i][k] * cnt[k][j] % mod;
-            } else if (dis[i][j] == dis[i][k] + dis[k][j]) {
-                cnt[i][j] = (cnt[i][j] + cnt[i][k] * cnt[k][j] % mod) % mod;
+pair<i64, int> directedMinCycle(const vector<vector<i64>> &edge, int countMod = 998244353) {
+    // 有向简单图，边权严格为正，-1 表示无边。每个环按旋转等价只计一次。
+    assert(countMod > 0);
+    const i64 inf = LLONG_MAX;
+    int n = edge.size();
+    auto distance = edge;
+    vector ways(n, vector<int>(n));
+    i64 best = inf;
+    int count = 0;
+    auto relaxCycle = [&](i128 length, int number) {
+        if (length < best) {
+            best = length;
+            count = number % countMod;
+        } else if (length == best) {
+            count = (i64(count) + number) % countMod;
+        }
+    };
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (edge[i][j] < 0) distance[i][j] = inf;
+            else {
+                assert(edge[i][j] > 0);
+                ways[i][j] = 1 % countMod;
+            }
+        }
+        if (edge[i][i] >= 0) relaxCycle(edge[i][i], 1);
+        distance[i][i] = 0;
+        ways[i][i] = 1 % countMod;
+    }
+    for (int k = 0; k < n; ++k) {
+        for (int i = 0; i < k; ++i) {
+            if (edge[k][i] >= 0 && distance[i][k] != inf) {
+                relaxCycle(i128(edge[k][i]) + distance[i][k], ways[i][k]);
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            if (i == k || distance[i][k] == inf) continue;
+            for (int j = 0; j < n; ++j) {
+                if (j == k || distance[k][j] == inf) continue;
+                i128 next = i128(distance[i][k]) + distance[k][j];
+                int number = i64(ways[i][k]) * ways[k][j] % countMod;
+                if (next < distance[i][j]) {
+                    distance[i][j] = next;
+                    ways[i][j] = number;
+                } else if (next == distance[i][j] && next != inf) {
+                    ways[i][j] = (i64(ways[i][j]) + number) % countMod;
+                }
             }
         }
     }
-    for (int i = 1; i < k; i++) {
-        if (a[k][i]) {
-            if (a[k][i] + dis[i][k] < Min) {
-                Min = a[k][i] + dis[i][k];
-                ans = cnt[i][k];
-            } else if (a[k][i] + dis[i][k] == Min) {
-                ans = (ans + cnt[i][k]) % mod;
-            }
-        }
-    }
+    return best == inf ? pair<i64, int>{-1, 0} : pair<i64, int>{best, count};
 }
 ```
 
 === 最小环大小
 <最小环大小>
-原题：给出一张无向图，求解图上最小环的长度、有多少个这样的最小环 #link("https://codeforces.com/contest/1205/problem/B")[See] 。使用 floyd，可以扩展到有向图。
+无向简单图的最小环权和，边权非负；矩阵下标从 0 开始，-1 表示无边。只统计至少三个点的环，无环返回 -1；最小环权和须小于 `LLONG_MAX`。先用中间点编号小于 $k$ 的路径更新环，再进行第 $k$ 轮 Floyd，复杂度 $cal(O)(N^3)$。
 
 ```cpp
-const int N = 305;              // 点数上限
-int val[N][N], dis[N][N];       // val：原始边权；dis：floyd 过程中的最短路
-int floyd(int n) {
-    for (int i = 1; i <= n; ++ i) {
-        for (int j = 1; j <= n; ++ j) {
-            val[i][j] = dis[i][j];  // 记录最初的边权值
-        }
+i64 minCycle(const vector<vector<i64>> &edge) {
+    // 无向简单图，非负边权，-1 表示无边；不含自环和重边。
+    const i64 inf = LLONG_MAX;
+    int n = edge.size();
+    auto distance = edge;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) if (distance[i][j] < 0) distance[i][j] = inf;
+        distance[i][i] = 0;
     }
-    int ans = 0x3f3f3f3f;
-    for (int k = 1; k <= n; ++ k) {
-        for (int i = 1; i < k; ++ i) {  // 注意这里是没有等于号的
-            for (int j = 1; j < i; ++ j) {
-                ans = min(ans, dis[i][j] + val[i][k] + val[k][j]);
+    i64 answer = inf;
+    for (int k = 0; k < n; ++k) {
+        for (int i = 0; i < k; ++i) {
+            for (int j = 0; j < i; ++j) {
+                if (distance[i][j] == inf || edge[i][k] < 0 || edge[k][j] < 0) continue;
+                i128 cycle = i128(distance[i][j]) + edge[i][k] + edge[k][j];
+                if (cycle < answer) answer = cycle;
             }
         }
-    for (int i = 1; i <= n; ++ i) {  // 往下是标准的floyd
-        for (int j = 1; j <= n; ++ j) {
-                dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (distance[i][k] == inf || distance[k][j] == inf) continue;
+                i128 next = i128(distance[i][k]) + distance[k][j];
+                if (next < distance[i][j]) distance[i][j] = next;
             }
         }
     }
-    return ans;
+    return answer == inf ? -1 : answer;
 }
 ```
 
-使用 bfs，复杂度为 $cal(O)(N^2)$ 。
+无权无向简单图也可从每个点 BFS，复杂度为 $cal(O)(N(N+M))$。下例初始 `ans = INT_MAX`；最终仍为此值表示无环。
 
 ```cpp
 auto bfs = [&] (int s) {

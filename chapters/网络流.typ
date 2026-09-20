@@ -11,14 +11,14 @@
 === Dinic 解
 <dinic-解>
 #specline([最坏 #O($N^2 M$)], [例题 $N = 1200 , med m = 5 times 10^3$])
-BFS 分层，当前弧 DFS 一次找完该层所有增广。`work(s, t)` 返回最大流。
+BFS 分层，当前弧 DFS 一次找完该层所有增广。`Flow_<T>` 的 `T` 为容量类型；容量非负，源汇不同，最大流须能由 `T` 表示。`work(s,t)` 返回本次追加的流量并保留残量网络。
 
 #include-code("code/网络流/Dinic-解.cpp")
 
 === 预流推进 HLPP
 <预流推进-hlpp>
 #specline([最坏 #O($N^2 sqrt(M)$)], [例题 $N = 1200 , med m = 1.2 times 10^5$])
-预流推进（HLPP，最高标号预流推进）是实际运行速度最快的最大流实现之一，适合大数据量、边较多的场合。用法与 Dinic 相同：`PushRelabel<i64> pr(n);`（模板参数须能容纳 `INF = 0x3f3f3f3f3f3f3f3f3f`）→ 反复 `addedge(u, v, w)` → `pr.work(s, t)`。
+预流推进（HLPP，最高标号预流推进）是实际运行速度最快的最大流实现之一，适合大数据量、边较多的场合。用法与 Dinic 相同：`PushRelabel<i64> pr(n);`（模板参数为有符号整数，容量和超额流均用该类型；所有容量之和须能表示）→ 反复 `addedge(u, v, w)` → `pr.work(s, t)`。每个对象完成一次最大流求解；换图或换源汇时重新构造。
 
 实现要点：`init` 从汇点反向 BFS 赋高度标签（`f` 控制是否入 gap 桶），`PushPoint` 对虚流做推流/重贴标签，`gobalcnt` 累计入桶次数、超过 $10 n$ 时重新 `init` 防退化；`work` 开头 `ex[s] = INF` 只是哨兵，结尾 `ex[s] -= INF` 扣回，`maxflow` 由此而来。
 
@@ -46,90 +46,87 @@ BFS 分层，当前弧 DFS 一次找完该层所有增广。`work(s, t)` 返回�
 
 == 最小割树 Gomory-Hu Tree
 <最小割树-gomory-hu-tree>
-#specline([最坏 #O($N^3 M$)（$n$ 轮最小割）], [点距预处理 #O($N^2$)])
-无向连通图抽象出的一棵树，满足任意两点间的距离是他们的最小割。
+#specline([$n-1$ 次最大流], [点对预处理 #O($N^2$)])
+无向非负容量图的最小割树；原图可以不连通。任意两个不同顶点的最小割等于树上路径的最小边权。依赖 Dinic 的 `Flow_<T>`，顶点为 $1 dots.c n$，容量及割值须能由 `T` 表示。
 
-过程：分治 $n$ 轮，每一轮在图上随机选点，跑一轮最小割后连接树边；这一网络的残留网络会将剩余的点分为两组，根据分组分治。实现上每个连通分量用 `fa[x] == x` 的点作代表（初始全部归属 0），每轮取第一个非代表的点与其代表跑最小割，再按残留网络可达性（点集 `vis`）把另一侧的点改挂到新代表。
-
-#pitfall[#strong[每轮 `work` 前必须先退流（`reset`）]——否则残留网络混着上一轮的流量、分组错误。]
+每轮从原始容量复制一个流对象；残量网络的可达集用于调整父节点和割值。返回普通邻接表，查询可以接树上路径最小值。
 
 ```cpp
-void reset() {  // 须移入 Flow 结构体作成员：把每条边的反向边流量退回正向边
-    for (int i = 0; i < ver.size(); i += 2) {
-        ver[i].w += ver[i ^ 1].w;
-        ver[i ^ 1].w = 0;
+template<class T>
+vector<vector<pair<int, T>>> gomoryHu(int n, const vector<tuple<int, int, T>> &edges) {
+    assert(n >= 1);
+    Flow_<T> original(n);
+    for (auto [u, v, capacity] : edges) {
+        original.add(u, v, capacity);
+        original.add(v, u, capacity);
     }
+    vector<int> parent(n + 1, 1);
+    vector<T> cut(n + 1);
+    parent[1] = 0;
+    for (int s = 2; s <= n; ++s) {
+        int t = parent[s];
+        auto flow = original;  // 每轮复制原始容量，不改 Dinic 内部接口
+        T value = flow.work(s, t);
+        // work 结束时最后一次 BFS 的 d 标记源点在残量网络中的可达集。
+        for (int v = s + 1; v <= n; ++v) {
+            if (parent[v] == t && flow.d[v] != -1) parent[v] = s;
+        }
+        if (t != 1 && flow.d[parent[t]] != -1) {
+            parent[s] = parent[t];
+            parent[t] = s;
+            cut[s] = cut[t];
+            cut[t] = value;
+        } else {
+            cut[s] = value;
+        }
+    }
+    vector<vector<pair<int, T>>> tree(n + 1);
+    for (int v = 2; v <= n; ++v) {
+        tree[v].push_back({parent[v], cut[v]});
+        tree[parent[v]].push_back({v, cut[v]});
+    }
+    return tree;
 }
+```
 
-signed main() {  // Gomory-Hu Tree
+完整用法：输入无向边后读询问，预处理全部不同点对的答案。
+
+```cpp
+int main() {
     int n, m;
     cin >> n >> m;
-
-    Flow<int> flow(n);
-    for (int i = 1; i <= m; i++) {
-        int u, v, w;
-        cin >> u >> v >> w;
-        flow.add(u, v, w);
-        flow.add(v, u, w);
+    vector<tuple<int, int, i64>> edges;
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        i64 capacity;
+        cin >> u >> v >> capacity;
+        edges.emplace_back(u, v, capacity);
     }
-
-    vector<int> vis(n + 1), fa(n + 1);
-    vector ans(n + 1, vector<int>(n + 1, 1E9));  // N^2 枚举出全部答案
-    vector<vector<pair<int, int>>> adj(n + 1);
-    for (int i = 1; i <= n; i++) { // 分治 n 轮
-        int s = 0;  // 本质是在树上随机选点、跑最小割后连边
-        for (; s <= n; s++) {
-            if (fa[s] != s) break;
-        }
-        int t = fa[s];
-
-        flow.reset();  // 每轮最小割前退流，否则残留网络不干净、分组错误
-        int cut = flow.work(s, t); // 残留网络将点集分为两组，分治
-        adj[s].push_back({t, cut});
-        adj[t].push_back({s, cut});
-
-        vis.assign(n + 1, 0);
-        auto dfs = [&](auto &&self, int u) -> void {
-            vis[u] = 1;
-            for (auto it : flow.h[u]) {
-                auto [v, c] = flow.ver[it];
-                if (c && !vis[v]) {
-                    self(self, v);
-                }
+    auto tree = gomoryHu(n, edges);
+    vector answer(n + 1, vector<i64>(n + 1));
+    for (int s = 1; s <= n; ++s) {
+        auto dfs = [&](auto &&self, int u, int parent, i64 value) -> void {
+            answer[s][u] = value;
+            for (auto [v, capacity] : tree[u]) {
+                if (v != parent) self(self, v, u, min(value, capacity));
             }
         };
-        dfs(dfs, s);
-        for (int j = 0; j <= n; j++) {
-            if (vis[j] && fa[j] == t) {
-                fa[j] = s;
-            }
-        }
+        dfs(dfs, s, 0, LLONG_MAX);
     }
-
-    for (int i = 0; i <= n; i++) {
-        auto dfs = [&](auto &&self, int u, int fa, int c) -> void {
-            ans[i][u] = c;
-            for (auto [v, w] : adj[u]) {
-                if (v == fa) continue;
-                self(self, v, u, min(c, w));
-            }
-        };
-        dfs(dfs, i, -1, 1E9);
-    }
-
     int q;
     cin >> q;
     while (q--) {
         int u, v;
         cin >> u >> v;
-        cout << ans[u][v] << "\n"; // 预处理答数组
+        assert(u != v);
+        cout << answer[u][v] << '\n';
     }
 }
 ```
 
 == 费用流
 <费用流>
-#specline([总计 #O($f dot M "log" N$)（$f$ 为流量）], [单次增广 #O($M "log" N$)])
-给定一个带费用的网络，规定 $(u , v)$ 间的费用为 $f (u , v) times w (u , v)$ ，求解该网络中总花费最小的最大流称之为#strong[最小费用最大流];。用法：`MinCostFlow mcf(n);` → 反复 `mcf.add(u, v, 流量, 费用)`（负费用的处理见 `add` 的注释）→ `mcf.flow(s, t)` 返回 `{最大流, 最小费用}`。下方实现用 #strong[Dijkstra + 势能];（`h` 数组，Johnson 重赋权保证边权非负）代替 SPFA 找增广路。
+#specline([总计 #O($N M + f dot M "log" N$)（$f$ 为追加流量）], [单次增广 #O($M "log" N$)])
+给定一个带费用的网络，规定 $(u , v)$ 间的费用为 $f (u , v) times w (u , v)$ ，求解该网络中总花费最小的最大流称之为#strong[最小费用最大流];。用法：`MinCostFlow mcf(n);` → 反复 `mcf.add(u, v, 流量, 费用)`（容量非负，可直接加入负费用边）→ `mcf.flow(s, t)` 返回 `{最大流, 最小费用}`。顶点为 $0 dots.c n-1$，源汇不同；初始网络不得含负费用环，不处理独立的费用环流。先用 SPFA 初始化势能，再用 Dijkstra 增广。重复调用返回本次追加的流量和费用。边费用、距离及势能用 `i64`；设 $W$ 为最大边费用绝对值，要求 $n W < 2^58$，给约化费用留余量。容量、总流量和最终费用须在 `i64` 内；流量乘路径费用及其累加局部使用 `i128`，允许最终相消前超过 `i64`。
 
 #include-code("code/网络流/费用流.cpp")

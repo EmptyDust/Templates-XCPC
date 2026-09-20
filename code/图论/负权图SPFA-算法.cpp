@@ -1,50 +1,56 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int MOD = 998244353;
-const int mod = 1000000007;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
+#include "../contest.hpp"
 
 // @book-begin
-const int N = 1e5 + 7, M = 1e6 + 7, INF = 0x3f3f3f3f;  // INF 与下面 memset 的值一致
-int n, m;
-int ver[M], ne[M], h[N], edge[M], tot;
-int d[N], v[N];
-
-void add(int x, int y, int w) {
-    ver[++ tot] = y, ne[tot] = h[x], h[x] = tot;
-    edge[tot] = w;
-}
-void spfa() {
-    memset(d, 0x3f, sizeof d); d[1] = 0;  // 源点按题目改
-    queue<int> q; q.push(1);
-    v[1] = 1;
-    while(!q.empty()) {
-        int x = q.front(); q.pop(); v[x] = 0;
-        for (int i = h[x]; i; i = ne[i]) {
-            int y = ver[i];
-            if(d[y] > d[x] + edge[i]) {
-                d[y] = d[x] + edge[i];
-                if(v[y] == 0) q.push(y), v[y] = 1;
+vector<i64> spfa(const vector<vector<pair<int, i64>>> &adj, int s) {
+    // 0-index，s 为有效顶点；空向量表示源点可达负环。
+    // inf 表示不可达，要求 n * max|w| < inf。
+    int n = adj.size();
+    const i64 inf = 1LL << 60;
+    vector<i64> d(n, inf);
+    vector<int> length(n);
+    vector<bool> queued(n);
+    queue<int> q;
+    d[s] = 0;
+    q.push(s);
+    queued[s] = true;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        queued[u] = false;
+        for (auto [v, w] : adj[u]) {
+            if (d[v] <= d[u] + w) continue;
+            d[v] = d[u] + w;
+            length[v] = length[u] + 1;
+            if (length[v] >= n) return {};
+            if (!queued[v]) {
+                q.push(v);
+                queued[v] = true;
             }
         }
     }
+    return d;
 }
-int main() {
-    cin >> n >> m;
-    for (int i = 1; i <= m; ++ i) {
-        int x, y, w; cin >> x >> y >> w;
-        add(x, y, w);
-    }
-    spfa();
-    for (int i = 1; i <= n; ++ i) {
-        if (d[i] == INF) cout << "N" << endl;
-        else cout << d[i] << endl;
-    }
-}
+
 // @book-end
+
+// @example-begin
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<pair<int, i64>>> adj(n);
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        i64 w;
+        cin >> u >> v >> w;
+        adj[u - 1].push_back({v - 1, w});
+    }
+    auto distance = spfa(adj, 0);
+    if (distance.empty()) cout << "Negative cycle\n";
+    else {
+        for (i64 d : distance) {
+            if (d != (1LL << 60)) cout << d << '\n';
+            else cout << "N\n";
+        }
+    }
+}
+// @example-end

@@ -1,16 +1,4 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int MOD = 998244353;
-const int mod = 1000000007;
-const int N = 1000005;
-const int M = 2000005;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
+#include "../contest.hpp"
 
 // @book-begin
 struct HLD {
@@ -48,10 +36,14 @@ struct HLD {
         }
     }
     void work(int root = 1) {
+        assert(1 <= root && root <= n);
+        dfn = 0;
+        fill(parent.begin(), parent.end(), 0);
+        fill(son.begin(), son.end(), 0);
         dfs1(root);
         dfs2(root, root);
     }
-    int lca(int u, int v) {
+    int lca(int u, int v) const {
         while (top[u] != top[v]) {
             if (dep[top[u]] < dep[top[v]]) {
                 swap(u, v);
@@ -60,11 +52,11 @@ struct HLD {
         }
         return dep[u] < dep[v] ? u : v;
     }
-    int dist(int u, int v) {  // 边数
+    int dist(int u, int v) const {  // 边数
         return dep[u] + dep[v] - 2 * dep[lca(u, v)];
     }
     template<class F>
-    void path(int u, int v, F &&op) {  // 点路径，闭区间
+    void path(int u, int v, F &&op) const {  // 点路径，闭区间
         while (top[u] != top[v]) {
             if (dep[top[u]] < dep[top[v]]) {
                 swap(u, v);
@@ -78,10 +70,8 @@ struct HLD {
         op(in[u], in[v]);
     }
     template<class F>
-    void subtree(int u, F &&op) {
+    void subtree(int u, F &&op) const {
         op(in[u], in[u] + siz[u] - 1);
     }
 };
 // @book-end
-
-int main() { return 0; }
