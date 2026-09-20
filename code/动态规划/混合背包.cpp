@@ -1,51 +1,30 @@
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long i64;
-typedef long long ll;
-typedef long long LL;
-typedef long double ld;
-typedef unsigned long long u64;
-const int MOD = 998244353;
-const int mod = 1000000007;
-const int N = 1000005;
-const int M = 2000005;
-const double eps = 1e-8;
-const double PI = acos(-1.0);
+#include "../contest.hpp"
 
 // @book-begin
-#include <bits/stdc++.h>
-using namespace std;
-int n, W, w, v, s;
-int main(){
+int main() {
+    int n, W;
     cin >> n >> W;
-    vector <int> f(W + 1);
-    for (int i = 0; i < n; i ++ ){
-        cin >> w >> v >> s;
-        if (s == -1){
-            for (int j = W; j >= w; j -- )
-                f[j] = max(f[j], f[j - w] + v);
+    vector<i64> dp(W + 1);
+    for (int i = 0; i < n; ++i) {
+        int w, count;
+        i64 value;
+        cin >> w >> value >> count;
+        assert(w > 0);
+        assert(count >= -1);
+        if (count == -1) count = 1;
+        if (count == 0) {  // 完全背包
+            for (int j = w; j <= W; ++j) dp[j] = max(dp[j], dp[j - w] + value);
+            continue;
         }
-        else if (s == 0){
-            for (int j = w; j <= W; j ++ )
-                f[j] = max(f[j], f[j - w] + v);
-        }
-        else {
-            int t = 1, cnt = 0;
-            vector <int> x(s + 1), y(s + 1);
-            while (s >= t){
-                x[++cnt] = w * t;
-                y[cnt] = v * t;
-                s -= t;
-                t *= 2;
-            }
-            x[++cnt] = w * s;
-            y[cnt] = v * s;
-            for (int i = 1; i <= cnt; i ++ )
-                for (int j = W; j >= x[i]; j -- )
-                    f[j] = max(f[j], f[j - x[i]] + y[i]);
+        count = min(count, W / w);
+        for (i64 chunk = 1; count > 0; chunk *= 2) {
+            int take = min<i64>(chunk, count);
+            count -= take;
+            int volume = w * take;
+            i64 gain = value * take;
+            for (int j = W; j >= volume; --j) dp[j] = max(dp[j], dp[j - volume] + gain);
         }
     }
-    cout << f[W] << "\n";
-    return 0;
+    cout << dp[W] << '\n';
 }
 // @book-end

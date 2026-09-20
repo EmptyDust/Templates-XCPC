@@ -124,30 +124,39 @@
 
 #pitfall[`num[]` 记忆化须先置 $-1$（`Solve` 里的 `memset` 多测每组都要清），带着上一组的残值会错判。]
 
-我们使用以下几条规则来定义暴力求解的过程：
-
-- 使用数字来表示输赢情况，$0$ 代表局面必败，非 $0$ 代表*存在必胜可能*，我们称这个数字为这个局面的 SG 值；
-- 找到最终态，根据题意人为定义最终态的输赢情况；
-- 对于非最终态的某个节点，其 SG 值为所有子节点的 SG 值取 $upright("mex")$；
-- 单个游戏的输赢态即对应根节点的 SG 值是否为 $0$，为 $0$ 代表先手必败，非 $0$ 代表先手必胜；
-- 多个游戏的总 SG 值为单个游戏 SG 值的异或和。
-
-使用哈希表，以 #O($N + M$) 的复杂度计算。
+SG 定理适用于有限、无环、正常规则的公平组合游戏：无合法行动者负，终止状态的 SG 为 0，其余状态取后继 SG 的 mex。SG 为 0 表示必败，非 0 表示存在必胜策略。每回合只移动一个独立子游戏时，总 SG 为各分量的异或；不能把反常规则的终态任意改值后继续套用。
 
 #include-code("code/博弈论/sg.cpp")
 
 == Anti-SG 游戏 (反 SG 游戏)
 
-SJ 定理：把 Anti-Nim 的堆大小换成各子游戏 SG 值，判据相同。
+无合法行动者胜。正常规则下的 SG 值不能决定任意游戏的反常胜负，前面的 Anti-Nim 判据只在 Nim 模型中使用。
 
-SG 游戏中最先不能行动的一方获胜。
+反例：后继表 `0: {}，1: {0}，2: {0,1}，3: {2}` 的正常 SG 为 `[0,1,2,0]`，反常规则的胜负为 `[胜,负,胜,负]`。状态 0 和 3 的 SG 同为 0，反常胜负却不同。
 
-*以下局面先手必胜：*
+有限 DAG 可直接做胜负 DP：终态胜，非终态当且仅当存在必败后继时胜。下面返回 0-index 图上每个状态的胜负；多分量每回合只动一份时，需要对组合状态建图，不能直接异或单份答案。递归深度等于最长路径，长链应改逆拓扑顺序。
 
-- *单局游戏的 SG 值均不超过* $bold(1)$ *，且总 SG 值为* $bold(0)$；
-- *至少有一局单局游戏的 SG 值大于* $bold(1)$ *，且总 SG 值不为* $bold(0)$。
-
-在本质上，这与 Anti-Nim 游戏的结论一致。
+<反常规则-dag>
+```cpp
+vector<bool> misereWin(const vector<vector<int>> &adj) {
+    int n = adj.size();
+    vector<int> color(n);
+    vector<bool> win(n);
+    auto dfs = [&](auto &&self, int u) -> void {
+        assert(color[u] != 1);  // 要求 DAG
+        if (color[u] == 2) return;
+        color[u] = 1;
+        win[u] = adj[u].empty();
+        for (int v : adj[u]) {
+            self(self, v);
+            if (!win[v]) win[u] = true;
+        }
+        color[u] = 2;
+    };
+    for (int u = 0; u < n; ++u) dfs(dfs, u);
+    return win;
+}
+```
 
 == Lasker’s-Nim 游戏 (Multi-SG 游戏)
 
@@ -175,19 +184,59 @@ $
 
 == Every-SG 游戏
 
-每回合必须移动所有还能动的棋子；胜负只看各子游戏最长步数——存在奇数 $"step"$ 则先手必胜。
+在有限 DAG 上，每回合对每个尚未终止的分量各走一步，已终止的分量保持不动；所有分量都终止时，当前手负。各分量独立，移动一个分量不改变其他分量的合法后继。
 
-#quote(block: true)[
-给出一个有向无环图，其中 $K$ 个顶点上放置了石子，两名玩家轮流行动，按以下规则操作石子：
+定义 step：终态为 0；存在偶数 step 后继时，取这些后继的最大 step 加 1；否则取全部后继的最小 step 加 1。因此单局必胜态的 step 为奇数，必败态为偶数。这是考虑双方策略的递推，不是最长路径。
 
-移动图上所有还能够移动的石子；
+组合局面先手必胜当且仅当#strong[所有分量 step 的最大值为奇数];。证明：最大值为奇数时，奇数分量各走到最大的偶数后继，非零偶数分量各走到最小的奇数后继，可使新最大值为偶数。最大值为非零偶数时，任何走法中，原最大分量都会变成不小于它减一的奇数，而所有偶数后继都更小，故新最大值必为奇数。
 
-无法移动石子的一方出局。双方均采用最优策略，询问谁会获胜。
-]
+例如后继 `2: {0,1}，1: {0}，0: {}` 中 step[2] 为 1；两条确定链分别剩 1、2 步时，最大值为 2，先手必败。
 
-定义 $"step"$ 为某一局游戏至多需要经过的回合数。
+<every-sg-步数>
+```cpp
+vector<int> everySG(const vector<vector<int>> &adj) {
+    int n = adj.size();
+    vector<int> color(n), step(n);
+    auto dfs = [&](auto &&self, int u) -> void {
+        assert(color[u] != 1);  // 要求 DAG；长链改用逆拓扑 DP
+        if (color[u] == 2) return;
+        color[u] = 1;
+        int largestEven = -1, smallest = INT_MAX;
+        for (int v : adj[u]) {
+            self(self, v);
+            smallest = min(smallest, step[v]);
+            if (step[v] % 2 == 0) largestEven = max(largestEven, step[v]);
+        }
+        if (!adj[u].empty()) step[u] = (largestEven >= 0 ? largestEven : smallest) + 1;
+        color[u] = 2;
+    };
+    for (int u = 0; u < n; ++u) dfs(dfs, u);
+    return step;
+}
+```
 
-以下局面先手必胜：$"step"$ 为奇数。
+两份 DAG DP 均为 $cal(O)(N+M)$。Every-SG 用法：
+
+```cpp
+int main() {
+    int n, m, k;
+    cin >> n >> m >> k;
+    vector<vector<int>> adj(n);
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+    }
+    auto step = everySG(adj);
+    int longest = 0;
+    while (k--) {
+        int start;
+        cin >> start;
+        longest = max(longest, step[start]);
+    }
+    cout << (longest % 2 ? "First\n" : "Second\n");
+}
+```
 
 == 威佐夫博弈
 

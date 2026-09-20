@@ -32,7 +32,7 @@ align(center)[#table(
 ]
 
 #specline([最坏 #O($N + M$)])
-计算 $t$ 在 $s$ 中出现的全部位置。
+`get_next(t)` 返回长度为 $|t|+1$ 的 border 表；`kmp(s,t)` 判断是否包含，空模式返回 true。下方匹配函数依赖前面的 `get_next`。
 
 #include-code("code/串/kmp.cpp")
 
@@ -121,17 +121,16 @@ int main(){
 
 === 双哈希封装
 <双哈希封装>
-先 `init()` 生成幂表；`Zmod` 见杂项章。前导哨兵 `1`（空串哈希为 `1`），`substring(l, r)` 为 $0$ 下标闭区间，`modify(idx, x)` 单点替换。随机质数：1111111121、1211111123、1311111119。
+先 `init(n)` 生成幂表，n 不小于待处理串的最大长度；`Zmod` 见杂项章。前导哨兵 `1`（空串哈希为 `1`），`substring(l, r)` 为 $0$ 下标闭区间，`modify(idx, x)` 返回假设单点替换后的整串哈希，不修改原串或前缀表；实际动态修改须另接数据结构。随机质数：1111111121、1211111123、1311111119。
 
 ```cpp
-const int N = 1 << 21;
 static const int mod1 = 1E9 + 7, base1 = 127;
 static const int mod2 = 1E9 + 9, base2 = 131;
 using U = Zmod<mod1>;
 using V = Zmod<mod2>;
 vector<U> val1;
 vector<V> val2;
-void init(int n = N) {
+void init(int n) {
     val1.resize(n + 1), val2.resize(n + 2);
     val1[0] = 1, val2[0] = 1;
     for (int i = 1; i <= n; i++) {
@@ -144,22 +143,22 @@ struct String {
     vector<V> hash2;
     string s;
 
-    String(string s_) : s(s_), hash1{1}, hash2{1} {
+    String(const string &s_) : hash1{1}, hash2{1}, s(s_) {
         for (auto it : s) {
             hash1.push_back(hash1.back() * base1 + it);
             hash2.push_back(hash2.back() * base2 + it);
         }
     }
-    pair<U, V> get() {  // 输出整串的哈希值
+    pair<U, V> get() const {  // 输出整串的哈希值
         return {hash1.back(), hash2.back()};
     }
-    pair<U, V> substring(int l, int r) { // 输出子串的哈希值
+    pair<U, V> substring(int l, int r) const { // 输出子串的哈希值
         if (l > r) swap(l, r);
         U ans1 = hash1[r + 1] - hash1[l] * val1[r - l + 1];
         V ans2 = hash2[r + 1] - hash2[l] * val2[r - l + 1];
         return {ans1, ans2};
     }
-    pair<U, V> modify(int idx, char x) { // 修改 idx 位为 x
+    pair<U, V> modify(int idx, char x) const { // 返回假设替换后的整串哈希，不修改状态
         int n = s.size() - 1;
         U ans1 = hash1.back() + val1[n - idx] * (x - s[idx]);
         V ans2 = hash2.back() + val2[n - idx] * (x - s[idx]);
@@ -267,7 +266,7 @@ struct Trie {
 == AC 自动机
 <ac-自动机>
 #specline([#O($sum lr(|s_i|) + lr(|S|)$)，字符集默认 $26$])
-多模式串同时在文本里匹配。先 `insert` 每个模式，`build()` 求 fail（失配跳到当前后缀里最长的已有前缀），再 `query(文本)`。fail 把 Trie 连成 KMP 自动机，匹配沿边走即可。第二份 `add` 返回模式终点，`work(文本)` 在 fail 树上汇总出现次数。
+多模式串同时在文本里匹配。先 `insert` 每个模式，`build()` 求 fail（失配跳到当前后缀里最长的已有前缀），再 `query(文本)`。fail 把 Trie 连成 KMP 自动机，匹配沿边走即可。第一份按插入次数统计在文本中出现过的模式，允许重复查询；第二份 `add` 返回模式终点，`work(文本)` 汇总每个模式的出现次数，允许重复调用。两份均只允许构建前插入非空小写模式；第二份 `init()` 可清空重建。第一份固定数组较大，使用静态对象或堆分配。
 
 #include-code("code/串/AC-自动机.cpp")
 
@@ -285,11 +284,30 @@ struct Trie {
 == 后缀自动机 SAM
 <后缀自动机-sam>
 #specline([#O($N "log" lr(|Sigma|)$)])
-识别一个串的全部子串：每个状态对应 endpos 相同的一类子串。`len` 是该状态最长串的长度，`link` 指向更短的后缀状态。逐字符 `last = extend(last, c)`（第一份从节点 `p` 接字符 `c`，返回新 last；多串时 last 复位为 $0$ 即广义 SAM）。本质不同子串数 $sum ("len" [v] - "len" ["link" [v]])$，复杂度 $cal(O)(N "log" lr(|Sigma|))$。
+识别一个串的全部子串：每个状态对应 endpos 相同的一类子串。`len` 是该状态最长串的长度，`link` 指向更短的后缀状态。逐字符 `last = extend(last, c)`（第一份从节点 `p` 接字符 `c`，返回新 last；根是 1，0 是虚拟状态；字符传 `c - 'a'`，多串时 last 复位为 1 即广义 SAM）。本质不同子串数 $sum ("len" [v] - "len" ["link" [v]])$，复杂度 $cal(O)(N "log" lr(|Sigma|))$。
 
 #include-code("code/串/后缀自动机-SAM.cpp")
 
-第二个 SAM 封装：`endpos` 为该状态最短出现位置记录（按需使用），`size` 为出现次数——按 `len` 降序（即节点编号倒序，clones 在前）把 `size` 累加到 `link` 上即可；以 `link` 为父边构成的后缀链接树可当后缀树用。复杂度 $cal(O)(N "log" lr(|Sigma|))$（`next` 用 `std::map`）。
+第一份只维护子串结构，固定数组较大，使用静态对象。下面统计多个小写字符串中本质不同的非空子串：
+
+```cpp
+int main() {
+    static SuffixAutomaton sam;
+    int k;
+    cin >> k;
+    while (k--) {
+        string s;
+        cin >> s;
+        int last = SuffixAutomaton::root;
+        for (char c : s) last = sam.extend(last, c - 'a');
+    }
+    i64 answer = 0;
+    for (int v = 2; v <= sam.cntNodes; ++v) answer += sam.t[v].len - sam.t[sam.t[v].link].len;
+    cout << answer << '\n';
+}
+```
+
+第二个 SAM 根为 0，接收完整字符串，也可用 `extend(c, pos)` 追加字符（`pos` 从 1 连续递增）。`endpos` 是首次出现的结束位置，clone 继承原状态；`size` 只保存原始贡献。`countOccurrences()` 按长度降序汇总并返回每个状态的出现次数，允许重复调用，追加后重新调用即可。编号倒序不等于长度倒序。构建复杂度 $cal(O)(N "log" lr(|Sigma|))$，统计 $cal(O)(N)$。
 
 #include-code("code/串/后缀自动机-SAM-2.cpp")
 

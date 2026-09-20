@@ -78,6 +78,8 @@ for (int i = 1; i <= n; i++)
 
 上述方法的时间复杂度为 $O (n \* m \* s)$。
 
+二进制分组用法：输入 `n W`，随后每行体积、价值、非负数量；体积为正，价值和 DP 中间量在 i64 内。
+
 #include-code("code/动态规划/多重背包-2.cpp")
 
 尽管采用了 #strong[二进制优化];，时间复杂度还是太高，采用 #strong[单调队列优化];，将时间复杂度优化至 $O (n \* m)$：按 $j mod w$ 分组后在每组内做滑动窗口，窗口长度为 $s + 1$，维护 $g [k] - ⌊ (k - j) \/ w ⌋ v$ 的最大值。
@@ -86,6 +88,7 @@ for (int i = 1; i <= n; i++)
 
 == 混合背包
 <混合背包>
+输入 `n W` 后，每行体积、价值、数量；数量 -1 为 01 背包、0 为完全背包、正数为有限数量。体积必须为正，容量为非负 int，价值及 DP 中间量在 i64 内。二进制分组直接更新，不分配按数量长度的临时数组。
 放入背包的物品可能只有 #strong[1] 件（01 背包），也可能有#strong[无限];件（完全背包），也可能只有#strong[可数的几件];（多重背包）。
 
 #strong[思路：]
@@ -363,30 +366,26 @@ int main(){
 设给定的字符串为 $s$，可以定义数组 $d p [i] , d p [i]$ 表示以 $s [i]$ 结尾的字符串里最长的括号匹配的字符。显然，从 $i - d p [i] + 1$ 到 $i$ 的字符串是括号匹配的，当找到一个字符是‘)’或‘\]’时，再去判断第 $i - 1 - d p [i - 1]$ 的字符和第 $i$ 位的字符是否匹配，如果是，那么 `dp[i] = dp[i - 1] + 2 + dp[i - 2 - dp[i - 1]]` 。
 
 ```cpp
-#include <bits/stdc++.h>
-using namespace std;
-const int maxn = 1e6 + 10;
-string s;
-int len, dp[maxn], ans, id;
-int main(){
-    cin >> s;
-    len = s.length();
-    for (int i = 1; i < len; i++){
-        if ((s[i] == ')' && s[i - 1 - dp[i - 1]] == '(' ) || (s[i] == ']' && s[i - 1 - dp[i - 1]] == '[')){
-            dp[i] = dp[i - 1] + 2 + dp[i - 2 - dp[i - 1]];
-            // ↑ 当 dp[i-1] = i-1（前缀整体匹配，如 "()" 的第二个字符）时 i-2-dp[i-1] = -1，
-            //   直接写 dp[-1] 是数组越界（UB），应改成：
-            //   dp[i] = dp[i - 1] + 2 + (i - 2 - dp[i - 1] >= 0 ? dp[i - 2 - dp[i - 1]] : 0);
-            if (dp[i] > ans) {
-                ans = dp[i];  //记录长度
-                id = i;  //记录位置
+string longestBrackets(const string &s) {
+    int n = s.size(), best = 0, start = 0;
+    vector<int> dp(n);
+    for (int i = 1; i < n; ++i) {
+        int left = i - 1 - dp[i - 1];
+        if (left < 0) continue;
+        if ((s[left] == '(' && s[i] == ')') || (s[left] == '[' && s[i] == ']')) {
+            dp[i] = dp[i - 1] + 2 + (left > 0 ? dp[left - 1] : 0);
+            if (dp[i] > best) {
+                best = dp[i];
+                start = i - best + 1;
             }
         }
     }
-    for (int i = id - ans + 1; i <= id; i++)
-        cout << s[i];
-    cout << "\n";
-    return 0;
+    return s.substr(start, best);
+}
+int main() {
+    string s;
+    cin >> s;
+    cout << longestBrackets(s) << '\n';
 }
 ```
 

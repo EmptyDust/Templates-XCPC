@@ -1,18 +1,17 @@
 #include "../contest.hpp"
-int n, m;
 
 // @book-begin
 int main() {
-    vector<int> val;  // 堆数
-    for (int i = 1, x; i <= n; i++) {
+    int n;
+    cin >> n;
+    vector<int> val;
+    for (int i = 0; i < n; ++i) {
+        int x;
         cin >> x;
-        int it = upper_bound(val.begin(), val.end(), x) - val.begin();  // low/upp: 严格/非严格递增
-        if (it >= val.size()) {  // 新增一堆
-            val.push_back(x);
-        } else {  // 更新对应位置元素
-            val[it] = x;
-        }
+        auto it = lower_bound(val.begin(), val.end(), x);  // 严格递增；非递减改为 upper_bound
+        if (it == val.end()) val.push_back(x);
+        else *it = x;
     }
-    cout << val.size() << endl;
+    cout << val.size() << '\n';
 }
 // @book-end
