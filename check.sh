@@ -35,7 +35,7 @@ done
 [ $cppbad -eq 0 ] && ok "code/ 全部通过 g++ -fsyntax-only"
 
 # 4. 目录级标题宽度：= / == 标题按 CJK=2、ASCII=1 计，须 ≤ 38（目录不折行的实测边界）
-python3 - <<'PY' && ok "目录级标题宽度 ≤ 38" || bad "超宽标题（见上）"
+uv run python - <<'PY' && ok "目录级标题宽度 ≤ 38" || bad "超宽标题（见上）"
 import glob, sys
 bad = []
 for fn in glob.glob('chapters/*.typ'):
@@ -50,7 +50,7 @@ sys.exit(1 if bad else 0)
 PY
 
 # 5. 图片引用：image("/images/...") 的文件必须存在
-python3 - <<'PY' && ok "图片引用存在" || bad "缺图（见上）"
+uv run python - <<'PY' && ok "图片引用存在" || bad "缺图（见上）"
 import glob, os, re, sys
 missing = []
 for fn in glob.glob('chapters/*.typ'):
@@ -67,7 +67,7 @@ junk=$(grep -rn '/END/\|\[TOC\]\|image("http' chapters/ 2>/dev/null | wc -l)
 [ "$junk" -eq 0 ] && ok "无 md 时代残渣" || { grep -rn '/END/\|\[TOC\]\|image("http' chapters/ | head -5; bad "md 时代残渣 $junk 处"; }
 
 # 7. 片段必须与登记来源一致；实际书稿接口和组合用法须通过运行验证。
-python3 tools/sync_snippets.py || bad "片段来源检查失败"
-python3 -m unittest discover -s tests -p 'test_*.py' -v || bad "模板回归失败"
+uv run python tools/sync_snippets.py || bad "片段来源检查失败"
+uv run python -m unittest discover -s tests -p 'test_*.py' -v || bad "模板回归失败"
 
 exit $fail

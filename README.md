@@ -23,13 +23,14 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 - `check.sh` — 验证闸，改动后跑一遍；推 `main` / 开 PR 时 GitHub Actions 也会跑它
 - `tests/` — 抽取实际书稿正文运行的回归测试（小规模穷举、朴素参考和数值性质），编译源与日志保留在 `build/regression/`
 - `tools/sync_snippets.py` — 检查已登记片段与来源一致；修改来源后用 `--write` 同步对应正文
+- `pyproject.toml` / `uv.lock` — Python 工具的依赖声明与锁定版本，环境由 uv 放在 `.venv/`
 
 ## 使用
 
 - 分章阅读：打开 `chapters/` 里对应 `.typ`
 - VS Code 片段：把 `code-snippets/*.code-snippets` 复制到项目 `.vscode/` 目录，即可在 cpp 文件中用前缀触发
 
-片段与书中代码共用 `code/contest.hpp` 的基础声明；额外依赖按对应小节说明拼接。修改模板时同步书稿、用法和片段，再运行 `./check.sh`。单独运行回归：`python3 -m unittest discover -s tests -p 'test_*.py' -v`。已登记来源之外的历史片段尚未获得同等验证。
+片段与书中代码共用 `code/contest.hpp` 的基础声明；额外依赖按对应小节说明拼接。修改模板时同步书稿、用法和片段，再运行 `./check.sh`。单独运行回归：`uv run python -m unittest discover -s tests -p 'test_*.py' -v`。已登记来源之外的历史片段尚未获得同等验证。
 
 ## 导出 PDF
 
@@ -37,7 +38,11 @@ XCPC 算法模板库：按主题分章（图论、数论、数据结构、几何
 ./export-pdf.sh   # 书 + 单独封面，同一日期哈希
 ```
 
-产物：`build/风铃的模板库-YYYY-MM-DD-<git短哈希>.pdf` 与 `build/封面-YYYY-MM-DD-<git短哈希>.pdf`。单独封面是两行居中的一张纸，不进正文页码。导出依赖 Typst 0.15.1、Python 3 / pypdf、Poppler 的 `pdffonts`；Debian 对应 `python3-pypdf`、`poppler-utils`。所需字体包为 `fonts-noto-core`、`fonts-noto-cjk`、`fonts-texgyre-math`、`fonts-jetbrains-mono`、`fonts-montserrat`。缺字体、Type 3 字体、未解析或失效的内部跳转均视为导出失败。`./check.sh` 与 CI 都执行完整导出。单章预览：`typst compile --root . --font-path export/vendor/jetbrains-mono chapters/博弈论.typ /tmp/x.pdf`（跨章引用会报未定义，属正常）。
+产物：`build/风铃的模板库-YYYY-MM-DD-<git短哈希>.pdf` 与 `build/封面-YYYY-MM-DD-<git短哈希>.pdf`。单独封面是两行居中的一张纸，不进正文页码。
+
+导出依赖 Typst 0.15.1、uv、Python 3.10+ 和 Poppler 的 `pdffonts`（Debian：`poppler-utils`）。脚本通过 `uv run` 自动检查锁文件、同步项目 `.venv/` 并运行 Python；也可先执行 `uv sync` 准备环境。使用 `uv add` / `uv remove` 调整依赖。`pyproject.toml` 和 `uv.lock` 一并入库，`.venv/` 不入库。
+
+所需字体包为 `fonts-noto-core`、`fonts-noto-cjk`、`fonts-texgyre-math`、`fonts-jetbrains-mono`、`fonts-montserrat`。缺字体、Type 3 字体、未解析或失效的内部跳转均视为导出失败。`./check.sh` 与 CI 都执行完整导出。单章预览：`typst compile --root . --font-path export/vendor/jetbrains-mono chapters/博弈论.typ /tmp/x.pdf`（跨章引用会报未定义，属正常）。
 
 ## 克隆与提交
 

@@ -144,7 +144,7 @@ def sync(write=False):
         body = json.dumps(expected, ensure_ascii=False, indent="\t").replace("\n", "\n\t\t")
         path.write_text(text[:start] + body + text[start + length:], encoding="utf-8")
     if failures:
-        raise SystemExit("片段与来源不同；运行 python3 tools/sync_snippets.py --write：\n" + "\n".join(failures))
+        raise SystemExit("片段与来源不同；运行 uv run python tools/sync_snippets.py --write：\n" + "\n".join(failures))
     print(f"片段来源一致：{len(SOURCES)} 项")
 
 

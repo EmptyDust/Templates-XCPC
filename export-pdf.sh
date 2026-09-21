@@ -7,6 +7,9 @@
 set -eu
 cd "$(dirname "$0")"
 
+# Sync first so lockfile updates are included in the Git state below.
+uv sync
+
 mkdir -p build
 stamp=$(date +%Y-%m-%d)
 rev=unknown
@@ -46,8 +49,8 @@ compile build/export-logs/book.log \
 compile build/export-logs/cover.log \
   --input stamp="$stamp" --input rev="$rev" \
   export/cover.typ "$cover"
-python3 export/flatten-pdf-dests.py "$out"
-python3 tools/check_pdf.py --links "$out" "$cover"
+uv run python export/flatten-pdf-dests.py "$out"
+uv run python tools/check_pdf.py --links "$out" "$cover"
 
 echo "$out"
 echo "$cover"

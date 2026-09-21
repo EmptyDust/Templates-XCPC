@@ -1,4 +1,5 @@
 /build/
 /export/vendor/
+/.venv/
 .~*
 __pycache__/
