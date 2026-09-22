@@ -31,13 +31,7 @@ template<typename T> struct Frac {
     }
     constexpr Frac &operator/=(const Frac &i) {
         assert(i.x != 0);
-        x *= i.y;
-        y *= i.x;
-        if (y < 0) {
-            x = -x;
-            y = -y;
-        }
-        return *this;
+        return *this = Frac(x * i.y, y * i.x);  // 先构造结果，允许自除
     }
     constexpr Frac &operator+=(const Frac &i) { return x = x * i.y + y * i.x, y *= i.y, *this; }
     constexpr Frac &operator-=(const Frac &i) { return x = x * i.y - y * i.x, y *= i.y, *this; }

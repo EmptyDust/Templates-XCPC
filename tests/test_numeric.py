@@ -240,6 +240,11 @@ int main() {
     assert(F(1, 2) * F(1, 3) == F(1, 6));
     assert(F(1, 2) / F(1, 3) == F(3, 2));
     assert(F(1, -2).norm() == F(-1, 2));
+    for (i64 numerator : {-2, 2}) for (i64 denominator : {-3, 1, 3}) {
+        F value(numerator, denominator);
+        value /= value;
+        assert(value == F(1));
+    }
     assert(str(bigint(LLONG_MIN)) == to_string(LLONG_MIN));
     assert(str(-bigint(0)) == "0");
     assert(str(bigint(6) * -2) == "-12" && str(bigint(6) / -2) == "-3");

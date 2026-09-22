@@ -299,6 +299,39 @@ int main() {
                     expected.append(str(sum(values[z] for z in vertices)))
             run(exe,'\n'.join(lines)+'\n','\n'.join(expected))
 
+    def test_hld_deep_tree(self):
+        import resource
+        import subprocess
+
+        exe = compile_program('hld_deep_tree', printed('code/树上问题/HLD.cpp') + r'''
+int main() {
+    const int n = 200000;
+    HLD h(n);
+    for (int v = 2; v <= n; ++v) h.add(v - 1, v);
+    for (int root : {1, n, 1}) {
+        h.work(root);
+        assert(h.dfn == n && h.lca(1, n) == root && h.dist(1, n) == n - 1);
+        for (int v = 1; v <= n; ++v) {
+            int position = root == 1 ? v : n - v + 1;
+            assert(h.in[v] == position && h.dep[v] == position);
+            assert(h.top[v] == root && h.siz[v] == n - position + 1);
+            h.subtree(v, [&](int l, int r) { assert(l == position && r == n); });
+        }
+        int length = 0;
+        h.path(1, n, [&](int l, int r) { length += r - l + 1; });
+        assert(length == n);
+    }
+}
+''')
+
+        def limit_stack():
+            resource.setrlimit(resource.RLIMIT_STACK, (8 * 1024**2, 8 * 1024**2))
+            resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+
+        result = subprocess.run([str(exe)], text=True, capture_output=True,
+                                timeout=30, preexec_fn=limit_stack)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_maximum_flows_and_cut_tree(self):
         source = printed('code/网络流/Dinic-解.cpp') + printed('code/网络流/预流推进-HLPP.cpp')
         source += printed('chapters/网络流.typ','最小割树-gomory-hu-tree')
