@@ -285,7 +285,7 @@ bool triangleIntersection(vector<P3> a, vector<P3> b) {
 
 - 由小正三角形拼成的大正三角形，耗费的小三角形数量即为构成一条边的小三角形数量的平方。如下图，总数量即为 $4^2$ #link("https://codeforces.com/problemset/problem/559/A")[See];。
 
-  #image("/images/img-02.png")
+  #image("/images/img-02.png", width: 45mm)
 
 - 正 $n$ 边形圆心角为 $360^circle.stroked.tiny / n$ ，圆周角为 $180^circle.stroked.tiny / n$ 。定义正 $n$ 边形上的三个顶点 $A , B$ 和 $C$（可以不相邻），使得 $angle A B C = theta$ ，当 $n lt.eq 360$ 时，$theta$ 可以取 $1^circle.stroked.tiny$ 到 $179^circle.stroked.tiny$ 间的任何一个整数 #link("https://codeforces.com/problemset/problem/1096/C")[See];。
 
@@ -451,7 +451,13 @@ signed main() {
 <线段将多边形切割为几个部分>
 题意：给定平面上一线段与一个任意多边形，求解线段将多边形切割为几个部分；保证线段的端点不在多边形内、多边形边上，多边形顶点不位于线段上，多边形的边不与线段重叠；多边形端点按逆时针顺序给出。下方的几个样例均合法，答案均为 $3$ 。
 
-#image("/images/img-03.png");#image("/images/img-04.png")
+#align(center, grid(
+  columns: (75mm, 90mm),
+  column-gutter: 8mm,
+  align: horizon,
+  image("/images/img-03.png", width: 100%),
+  image("/images/img-04.png", width: 100%),
+))
 
 当线段切割多边形时，本质是与多边形的边交于两个点、或者说是与多边形的两条边相交，设交点数目为 $x$ ，那么答案即为 $x / 2 + 1$ 。于是，我们只需要计算交点数量即可，先判断某一条边是否与线段相交，再判断边的两个端点是否位于线段两侧。
 

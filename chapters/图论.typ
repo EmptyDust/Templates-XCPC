@@ -24,7 +24,7 @@ bidirectional edges：双向边
 
 图的半径：图的半径不同于圆的半径，其不等于直径的一半（但对于绝对中心定义上的直径而言是一半）。定义为 $r = "min" #scale(x: 120%, y: 120%)[{] e c c (u) #scale(x: 120%, y: 120%)[}]$ ，即#strong[中心的偏心距];。计算方式：使用全源最短路，计算出所有点的偏心距，再加以计算。
 
-#image("/images/img-07.png")
+#image("/images/img-07.png", width: 60mm)
 
 == 平面图性质
 <平面图性质>
@@ -794,7 +794,7 @@ for (int i = 0; i < n; i++) {
 
 可以转化为边上问题：对于每一条边，其被利用的次数即为 $"min" { upright("其左边的点的数量") , upright("其右边的点的数量") }$ ，使用树形 `dp` 计算一遍即可。如下图样例，答案为 $10$ 。
 
-#image("/images/img-08.png")
+#image("/images/img-08.png", width: 70mm)
 
 ```cpp
 vector<int> val(n + 1, 1);
@@ -1090,7 +1090,7 @@ cout << ans;
 <本质不同简单环计数>
 原题：给出一张无向图，输出简单环的数量 #link("https://codeforces.com/contest/11/problem/D")[See] 。注意这里环套环需要分别多次统计，下图答案应当为 $7$。使用状压 dp，复杂度为 $cal(O)(M dot 2^N)$，可以扩展到有向图。
 
-#figure([#image("/images/img-11.png");],
+#figure([#image("/images/img-11.png", width: 55mm);],
   caption: [
     image.png
   ]
@@ -1138,7 +1138,7 @@ for (int i = 1; i <= n; i++) {
 <有向图环计数>
 原题：给出一张有向图，输出环的数量。注意这里环套环仅需要计算一次，数据包括二元环和自环，下图例应当输出 $3$ 个环。使用 dfs 染色法，复杂度为 $cal(O)(N + M)$。
 
-#image("/images/img-10.png")
+#image("/images/img-10.png", width: 65mm)
 
 ```cpp
 int ans = 0;

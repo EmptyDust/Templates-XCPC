@@ -15,7 +15,7 @@
   set page(
     paper: "a4",
     margin: (x: 36pt, top: 40pt, bottom: 44pt),
-    // 页眉 running head：偶数页书名、奇数页当前章号+章名；起章页与首章之前无页眉。
+    // 页眉 running head：偶数页当前节/小节名、奇数页章号+章名；起章页与首章之前无页眉。
     // 起章页不放页眉——页眉取的是 here() 之前最后一个章标题，章首会顶着上一章的章名。
     header: context {
       let heads = query(heading.where(level: 1))
@@ -25,7 +25,8 @@
       let even = calc.even(counter(page).get().first())
       let cur = past.last()
       align(if even { left } else { right }, text(8.5pt, fill: luma(90), if even {
-        [风铃的模板库]
+        // 取页首前最近的节/小节；本章尚无小节时回退到章名。
+        query(selector(heading).before(here())).filter(h => h.level <= 3).last().body
       } else {
         [#chapter-num(cur)#h(0.45em)#cur.body]
       }))
