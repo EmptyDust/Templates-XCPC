@@ -89,5 +89,46 @@ class PdfDestinations(unittest.TestCase):
             check_links(source)
 
 
+class TypstChecks(unittest.TestCase):
+    def test_code_regions_and_marker_errors(self):
+        import subprocess
+        import tempfile
+        from pathlib import Path
+        from pypdf import PdfReader
+        from support import ROOT
+
+        BUILD.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=BUILD) as directory:
+            directory = Path(directory)
+            source, main, pdf = directory/'sample.cpp', directory/'main.typ', directory/'out.pdf'
+            path = source.relative_to(ROOT).as_posix()
+            main.write_text(f'#import "/prelude.typ": include-code\n#include-code("{path}")\n'
+                            f'#include-code("{path}", region: "example")\n')
+            command = ['typst', 'compile', '--root', str(ROOT), str(main), str(pdf)]
+            source.write_text('int outside;\n  // @book-begin\n    int book_value;\n'
+                              '  // @book-end\n// @example-begin\nint example_value;\n// @example-end\n')
+            result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            text = PdfReader(pdf).pages[0].extract_text()
+            self.assertIn('book_value', text)
+            self.assertIn('example_value', text)
+            self.assertNotIn('outside', text)
+
+            cases = [
+                ('// @book-end\n', '@book-begin'),
+                ('// @book-begin\n', '@book-end'),
+                ('// @book-begin\n// @book-begin\n// @book-end\n', '@book-begin'),
+                ('// @book-begin\n// @book-end\n// @book-end\n', '@book-end'),
+                ('// @book-end\n// @book-begin\n', 'must precede'),
+            ]
+            for body, diagnostic in cases:
+                with self.subTest(body=body):
+                    source.write_text(body)
+                    result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn(path, result.stderr)
+                    self.assertIn(diagnostic, result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

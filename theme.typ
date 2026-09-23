@@ -1,6 +1,4 @@
 // theme.typ — 视觉层：全书的字体、版面、代码、目录样式
-// 与 export/template.typ 同一套设计，差异只在标题层级：
-// 原生结构里章 = level 1（pandoc 管线里章 = level 2）。
 // 用法：#import "theme.typ": * 然后 #show: theme
 
 // 章序号（两位补零，Montserrat）：章首巨号、目录、页眉三处共用同一计数。
@@ -58,7 +56,7 @@
       place(top + right, dy: -11pt,
         text(size: 64pt, weight: 900, fill: luma(230), chapter-num(it)))
     }
-    // 间距显式接管（绝对 pt）：线的落位以 protoA/B 版为基准——纸顶 29.0mm。
+    // 间距显式接管（绝对 pt）：标题细线距纸顶约 29.0mm。
     // block 的 above 在页首会塌缩，页首间距必须用强 v()。
     v(7.5pt)
     block(below: 6pt, {
@@ -103,7 +101,7 @@
     },
   )
   // 行内代码：等宽 + 浅色下划线，extent 原生延伸
-  // raw 默认自带 0.8em 缩小；1.125 × 0.8 = 0.9，与旧版 wida `code { font-size: 0.9em }` 一致
+  // raw 默认自带 0.8em 缩小；1.125 × 0.8 = 0.9，行内代码字号为正文的 0.9 倍
   show raw.where(block: false): set text(font: ("JetBrains Mono", "Noto Sans Mono CJK SC", "Noto Serif CJK SC"), size: 1.125em)
   show raw.where(block: false): it => underline(
     offset: 2.2pt,

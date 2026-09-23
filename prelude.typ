@@ -31,9 +31,16 @@
 // lang：语法高亮语言，默认 cpp。
 #let include-code(path, lang: "cpp", region: "book") = {
   let lines = read(path).split("\n")
-  let from = lines.position(l => l.trim() == "// @" + region + "-begin") + 1
-  let to = lines.position(l => l.trim() == "// @" + region + "-end")
-  let body = lines.slice(from, to)
+  let begin = "// @" + region + "-begin"
+  let end = "// @" + region + "-end"
+  for marker in (begin, end) {
+    assert(lines.filter(l => l.trim() == marker).len() == 1,
+      message: path + ": expected exactly one " + marker)
+  }
+  let from = lines.position(l => l.trim() == begin)
+  let to = lines.position(l => l.trim() == end)
+  assert(from < to, message: path + ": " + begin + " must precede " + end)
+  let body = lines.slice(from + 1, to)
   let indents = body.filter(l => l.trim() != "").map(l => {
     let m = l.match(regex("^ +"))
     if m == none { 0 } else { m.text.len() }
