@@ -10,7 +10,7 @@
 
 // ---- 封面并入目录页，无页脚 ----
 #[
-  #set page(footer: none)
+  #set page(numbering: "i", footer: none)
   #text(17pt, weight: "bold")[风铃的模板库]
   #h(1fr)
   // 11pt 拉丁相对 17pt 思源宋基线偏低，上移对齐字身中线。
@@ -27,7 +27,7 @@
 // ---- 正文：页码从 1 起算，页脚居中 ----
 #pagebreak()
 #counter(page).update(1)
-#set page(footer: context {
+#set page(numbering: "1", footer: context {
   let n = counter(page).get().first()
   if n >= 1 { align(center, text(8.5pt)[#n]) }
 })

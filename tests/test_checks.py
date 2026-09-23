@@ -129,6 +129,29 @@ class TypstChecks(unittest.TestCase):
                     self.assertIn(path, result.stderr)
                     self.assertIn(diagnostic, result.stderr)
 
+    def test_chapter_toc_links_cover_whole_rows(self):
+        import subprocess
+        import tempfile
+        from pathlib import Path
+        from pypdf import PdfReader
+        from support import ROOT
+
+        BUILD.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=BUILD) as directory:
+            directory = Path(directory)
+            main, pdf = directory/'main.typ', directory/'out.pdf'
+            main.write_text('#import "/theme.typ": theme\n#show: theme\n'
+                            '#outline(title: none, depth: 1)\n= First\nText.\n= Second\nText.\n')
+            result = subprocess.run(['typst', 'compile', '--root', str(ROOT), str(main), str(pdf)],
+                                    capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            page = PdfReader(pdf).pages[0]
+            links = [ref.get_object() for ref in page['/Annots']]
+            full_rows = [link for link in links if link.get('/Subtype') == '/Link'
+                         and float(link['/Rect'][0]) <= 36.1
+                         and float(link['/Rect'][2]) >= float(page.mediabox.right) - 36.1]
+            self.assertEqual(len(full_rows), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

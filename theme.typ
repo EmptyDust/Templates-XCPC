@@ -146,15 +146,15 @@
   })
 
   // 目录条目：章条目带 Montserrat 章号（与章首巨号同计数）。entry 无 body/page 字段，
-  // 手工重建 编号+标题｜点线(it.fill)｜页码 三栏，标题挂链目标的地。
+  // 手工重建 编号+标题｜点线(it.fill)｜页码 三栏，整行链接到章标题。
   show outline.entry.where(level: 1): it => {
     set text(weight: "bold")
-    grid(
+    link(it.element.location(), grid(
       columns: (auto, 1fr, auto),
-      link(it.element.location(), [#chapter-num(it.element)#h(0.5em)#it.element.body]),
-      box(it.fill),
-      [#str(counter(page).at(it.element.location()).first())],
-    )
+      [#chapter-num(it.element)#h(0.5em)#it.element.body],
+      text(fill: black, box(it.fill)),
+      text(fill: black, [#str(counter(page).at(it.element.location()).first())]),
+    ))
   }
 
   doc
